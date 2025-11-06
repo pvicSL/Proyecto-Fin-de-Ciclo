@@ -1,0 +1,32 @@
+# === Archivos temporales ===
+*.tmp
+*.temp
+
+# === Archivos del sistema ===
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# === VS Code ===
+.vscode/
+
+# === Logs y backups ===
+*.log
+*.bak
+*.swp
+
+# === Dependencias y builds (si usas Node, Java, etc.) ===
+node_modules/
+dist/
+build/
+target/
+
+# === Archivos temporales de compilación ===
+*.class
+*.pyc
+__pycache__/
+
+# === Archivos de entorno ===
+.env
+.env.local
