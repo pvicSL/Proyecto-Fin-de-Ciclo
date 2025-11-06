@@ -8,10 +8,10 @@
 ---
 
 ## Índice
-- [Descripción breve](#-descripción-breve)
-- [Enlaces rápidos](#-enlaces-rápidos)
-- [Tecnologías utilizadas](#-tecnologías-utilizadas)
-- [Licencia y atribuciones](#-licencia-y-atribuciones)
+- [Descripción breve](#descripción-breve)
+- [Enlaces rápidos](#enlaces-rápidos)
+- [Tecnologías utilizadas](#tecnologías-utilizadas)
+- [Licencia y atribuciones](#licencia-y-atribuciones)
 
 ---
 
@@ -31,6 +31,7 @@ in ultrices sapien. Donec volutpat eros in mauris tempus, a aliquam sapien iacul
     &wdPreviousSessionSrc=AppHomeWeb&ct=1762442040318" target="_blank" rel="noopener noreferrer">Notas Compartidas (MS 365)</a>  
 - <a href="https://www.figma.com/design/MxFSHWId6q4pA8QOgZy2xJ/Gu%C3%ADa-de-Estilo-PFC?node-id=613-372&p=f&t=SQJvHF5REshyNsUX-0" target="_blank" rel="noopener noreferrer">Guía de Estilo - Figma</a>
 
+[↑ Volver al índice](#índice)
 ---
 
 ## Tecnologías utilizadas:
@@ -39,7 +40,7 @@ in ultrices sapien. Donec volutpat eros in mauris tempus, a aliquam sapien iacul
 - Figma (diseño UI/UX)
 - Spring Boot
 
-  
+[↑ Volver al índice](#índice)
 ---
 
 ## Licencia y atribuciones
@@ -48,6 +49,7 @@ Atribuciones:
 
 Licencia:
 
+[↑ Volver al índice](#índice)
 ---
 
 *Repositorio creado como parte del Proyecto de Fin de Ciclo del Grado Superior en Desarrollo de Aplicaciones Web (2ºDAW) - Universidad Internacional de La Rioja (UNIR).*
