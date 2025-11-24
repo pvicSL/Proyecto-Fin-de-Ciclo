@@ -26,7 +26,7 @@ import proyecto.modelo.enums.Tipo;
 import proyecto.modelo.enums.Zona;
 
 @Entity
-@Table(name="USUARIOS")
+@Table(name="usuarios")
 public class Servicio implements Serializable{
 
 	/**

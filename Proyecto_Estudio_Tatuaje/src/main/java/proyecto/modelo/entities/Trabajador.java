@@ -16,7 +16,7 @@ import proyecto.modelo.enums.Rol;
 
 
 @Entity
-@Table(name="TRABAJADORES")
+@Table(name="trabajadores")
 public class Trabajador implements Serializable {
 
 	/**
