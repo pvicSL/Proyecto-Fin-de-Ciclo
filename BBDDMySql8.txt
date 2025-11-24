@@ -1,18 +1,18 @@
-CREATE DATABASE ESTUDIO_TATUAJE;
-USE ESTUDIO_TATUAJE;
+CREATE DATABASE estudio_tatuajes;
+USE estudio_tatuajes;
 
-CREATE TABLE IF NOT EXISTS CLIENTES (
+CREATE TABLE IF NOT EXISTS clientes (
 id_cliente INTEGER PRIMARY KEY AUTO_INCREMENT,
 nombre VARCHAR (30) NOT NULL,
 apellido1 VARCHAR (30) NOT NULL,
 apellido2 VARCHAR (30),
 email VARCHAR (50) NOT NULL,
 telefono VARCHAR (30) NOT NULL,
+documento_identificacion VARCHAR(30),
 UNIQUE INDEX ID_UNIQUE_CLIENTE (nombre, apellido1, telefono) /*Evita inserción de registros duplicados*/
-/*NIF que pueda ser null*/
 );
 
-CREATE TABLE IF NOT EXISTS TRABAJADORES (
+CREATE TABLE IF NOT EXISTS trabajadores (
 id_trabajador INT PRIMARY KEY AUTO_INCREMENT,
 contrasenia VARCHAR (255) NOT NULL,
 nombre VARCHAR (30) NOT NULL,
@@ -24,7 +24,7 @@ rol ENUM ('ADMIN', 'TRABAJADOR') NOT NULL,	/*controla las opciones del rol*/
 funciones ENUM ('CREACION', 'ELIMINACION') NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS SERVICIOS (
+CREATE TABLE IF NOT EXISTS servicios(
 id_servicio INT PRIMARY KEY AUTO_INCREMENT,
 tipo ENUM ('TATUAJE', 'ELIMINACION', 'COVER', 'RETOQUE') NOT NULL,
 zona ENUM ('BRAZO', 'ANTEBRAZO', 'CODO', 'HOMBRO', 'TÓRAX', 'ABDOMEN', 'PUBIS', 'MUSLO', 'RODILLA',
@@ -40,7 +40,7 @@ comentarios VARCHAR (200),
 id_cliente INTEGER NOT NULL,
 factura BOOLEAN NOT NULL,
 estatus ENUM ('PENDIENTE', 'CONFIRMADO'),
-FOREIGN KEY (id_cliente) REFERENCES CLIENTES (id_cliente),
+FOREIGN KEY (id_cliente) REFERENCES clientes (id_cliente),
 UNIQUE INDEX ID_UNIQUE_SERVICIO (id_cliente, id_servicio) /*evita servicios duplicados*/
 /*imagen1 LONGBLOB NOT NULL,
 imagen2 LONGBLOB,*/
@@ -48,3 +48,19 @@ imagen2 LONGBLOB,*/
 );
 
 /*TABLA FACTURA? PRESUPUESTO? Triggeeer*/
+
+drop table clientes;
+drop table servicios;
+drop table trabajadores;
+
+/*------------------------------------------------------------------------*/
+/*INSERCIÓIN DATOS*/
+
+INSERT INTO clientes (nombre, apellido1, apellido2, email, telefono, documento_identificacion) 
+VALUES 
+    ('Ana', 'García', 'López', 'ana.garcia@email.com', '612345678', '12345678A'),
+    ('Carlos', 'Martínez', NULL, 'carlos.martinez@gmail.com', '654987321', '87654321B'),
+    ('María', 'Rodríguez', 'Fernández', 'maria.rodriguez@hotmail.com', '698765432', NULL),
+    ('Juan', 'Sánchez', NULL, 'juan.sanchez@yahoo.com', '611223344', NULL);
+    
+    select * from clientes;
