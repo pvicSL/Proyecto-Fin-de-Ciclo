@@ -9,6 +9,7 @@ apellido2 VARCHAR (30),
 email VARCHAR (50) NOT NULL,
 telefono VARCHAR (30) NOT NULL,
 UNIQUE INDEX ID_UNIQUE_CLIENTE (nombre, apellido1, telefono) /*Evita inserción de registros duplicados*/
+/*NIF que pueda ser null*/
 );
 
 CREATE TABLE IF NOT EXISTS TRABAJADORES (
@@ -30,12 +31,20 @@ zona ENUM ('BRAZO', 'ANTEBRAZO', 'CODO', 'HOMBRO', 'TÓRAX', 'ABDOMEN', 'PUBIS',
  'PANTORILLA', 'PIE', 'MANO', 'CERVIAL', 'LUMBARES', 'NALGA', 'CABEZA') NOT NULL,
 tamanio ENUM ('MINI', 'PEQUEÑO', 'MEDIANO', 'GRANDE', 'MUY_GRANDE') NOT NULL,
 detalle ENUM ('SENCILLO', 'MEDIO', 'DENSO') NOT NULL,
-estilo ENUM ('ANIME', 'BLACKANDGREY', 'BLACK', 'FINELINE', 'FULLCOLOR', 'LETERING', 'JAPONES', 
+coloracion ENUM ('COLOR', 'NEGRO') NOT NULL,
+estilo ENUM ('ANIME', 'BLACKANDGREY', 'FINELINE', 'LETERING', 'JAPONES', 
 'REALISMO', 'TRADICIONAL') NOT NULL,
+fecha DATE, /*YYYY-YY-DD*/
+hora TIME, /*HH:MM:SS*/
 comentarios VARCHAR (200),
 id_cliente INTEGER NOT NULL,
-FOREIGN KEY (id_cliente) REFERENCES CLIENTES (id_cliente)
-/*PENDIENTE RUTAS IMÁGENES*/
+factura BOOLEAN NOT NULL,
+estatus ENUM ('PENDIENTE', 'CONFIRMADO'),
+FOREIGN KEY (id_cliente) REFERENCES CLIENTES (id_cliente),
+UNIQUE INDEX ID_UNIQUE_SERVICIO (id_cliente, id_servicio) /*evita servicios duplicados*/
+/*imagen1 LONGBLOB NOT NULL,
+imagen2 LONGBLOB,*/
+
 );
 
-/*TABLA FACTURA? PRESUPUESTO?*/
+/*TABLA FACTURA? PRESUPUESTO? Triggeeer*/
