@@ -1,0 +1,137 @@
+:root {
+    --burgundy: #7e1527;
+    --cardinal: #c62d49;
+    --robin-egg-blue: #11c3b9;
+    --dark-cyan: #07958b;
+    --antiflash-white: #ececec;
+    --jet: #2a2a2a;
+    --night: #151515;
+}
+
+/* Header */
+.site-header {
+    background: var(--jet);
+    color: white;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+.logo-placeholder {
+    gap: .5rem;
+}
+
+.logo-mark {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--burgundy), var(--cardinal));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.logo-text strong {
+    color: white;
+    line-height: 1;
+}
+
+/* Banner (responsive height) */
+.banner {
+    background-image: url('https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1400&q=80');
+    background-size: cover;
+    background-position: center;
+    border-radius: .5rem;
+    overflow: hidden;
+    min-height: 30vh;
+    /* responsive approach */
+    max-height: 55vh;
+    display: flex;
+    align-items: flex-end;
+}
+
+.banner-inner {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.45) 100%);
+    min-height: 30vh;
+}
+
+/* Colors for headings etc. */
+h1,
+h2,
+h3,
+h4,
+h5 {
+    color: var(--jet);
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--robin-egg-blue);
+    border-color: var(--robin-egg-blue);
+    color: #fff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: var(--dark-cyan);
+    border-color: var(--dark-cyan);
+    box-shadow: 0 6px 18px rgba(7, 149, 139, 0.12);
+}
+
+/* Footer */
+.site-footer {
+    background: linear-gradient(180deg, var(--night), var(--jet));
+    color: #fff;
+}
+
+.site-footer a.footer-link {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+}
+
+.site-footer a.footer-link:hover {
+    color: var(--robin-egg-blue);
+}
+
+.site-footer .social-link {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.25rem;
+    text-decoration: none;
+}
+
+.site-footer .social-link:hover {
+    color: var(--robin-egg-blue);
+}
+
+/* Card small tweaks */
+.card {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: .5rem;
+}
+
+/* Form tweaks */
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+    border-color: #dc3545;
+    box-shadow: none;
+}
+
+/* Small screens */
+@media (max-width: 767.98px) {
+    .banner {
+        min-height: 35vh;
+    }
+
+    .logo-mark {
+        width: 40px;
+        height: 40px;
+        font-size: .95rem;
+    }
+}
+
+/* Minor utility */
+.text-muted small {
+    color: rgba(255, 255, 255, 0.85);
+}
