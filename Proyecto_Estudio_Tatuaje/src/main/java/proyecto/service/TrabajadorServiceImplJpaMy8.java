@@ -3,10 +3,12 @@ package proyecto.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import proyecto.modelo.entities.Trabajador;
 import proyecto.modelo.repository.TrabajadorRepository;
 
+@Service
 public class TrabajadorServiceImplJpaMy8 implements TrabajadorService {
 
 	@Autowired

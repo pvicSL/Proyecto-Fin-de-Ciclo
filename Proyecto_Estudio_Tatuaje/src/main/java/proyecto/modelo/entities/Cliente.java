@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="CLIENTES")
+@Table(name="clientes")
 public class Cliente implements Serializable{
 
 	/**
@@ -33,14 +33,22 @@ public class Cliente implements Serializable{
 	private String email;
 	@Column(nullable = false)
 	private String telefono;
+	@Column(name="documento_identificacion")
+	private String documentoIdentificacion;
 	
 	
+	
+
+
 	public Cliente() {
 		super();
 	}
+	
+	
 
 
-	public Cliente(int idCliente, String nombre, String apellido1, String apellido2, String email, String telefono) {
+	public Cliente(int idCliente, String nombre, String apellido1, String apellido2, String email, String telefono,
+			String documentoIdentificacion) {
 		super();
 		this.idCliente = idCliente;
 		this.nombre = nombre;
@@ -48,7 +56,10 @@ public class Cliente implements Serializable{
 		this.apellido2 = apellido2;
 		this.email = email;
 		this.telefono = telefono;
+		this.documentoIdentificacion = documentoIdentificacion;
 	}
+
+
 
 
 	public int getIdCliente() {
@@ -109,6 +120,24 @@ public class Cliente implements Serializable{
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
+
+
+	public String getDocumentoIdentificacion() {
+		return documentoIdentificacion;
+	}
+
+
+	public void setDocumentoIdentificacion(String documentoIdentificacion) {
+		this.documentoIdentificacion = documentoIdentificacion;
+	}
+
+
+
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 
 
 

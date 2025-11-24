@@ -2,9 +2,12 @@ package proyecto.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import proyecto.modelo.entities.Cliente;
 import proyecto.modelo.repository.ClienteRepository;
 
+@Service
 public class ClienteServiceImplJpaMy8 implements ClienteService {
 
 	@Autowired
