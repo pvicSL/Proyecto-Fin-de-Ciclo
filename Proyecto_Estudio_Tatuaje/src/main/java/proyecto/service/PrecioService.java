@@ -1,7 +1,9 @@
 package proyecto.service;
 
+
 import java.util.List;
 import proyecto.modelo.entities.Precio;
+import proyecto.modelo.enums.CategoriaEnum;
 
 
 public interface PrecioService {
@@ -12,4 +14,5 @@ public interface PrecioService {
 	int eliminarPrecio(int idPrecio);
 	Precio actualizarPrecio(Precio precio);
 	
+	Precio encontrarPorCategoriaValor (CategoriaEnum categoria, String valor);
 }

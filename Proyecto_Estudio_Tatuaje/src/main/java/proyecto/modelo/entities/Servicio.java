@@ -26,7 +26,7 @@ import proyecto.modelo.enums.Tipo;
 import proyecto.modelo.enums.Zona;
 
 @Entity
-@Table(name="usuarios")
+@Table(name="servicios")
 public class Servicio implements Serializable{
 
 	/**
@@ -59,6 +59,16 @@ public class Servicio implements Serializable{
 	@Enumerated(EnumType.STRING)
 	private Coloracion coloracion;
 	
+	public Coloracion getColoracion() {
+		return coloracion;
+	}
+
+
+
+	public void setColoracion(Coloracion coloracion) {
+		this.coloracion = coloracion;
+	}
+
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Estilo estilo;

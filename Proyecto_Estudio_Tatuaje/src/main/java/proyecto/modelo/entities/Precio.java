@@ -17,6 +17,8 @@ import proyecto.modelo.enums.CategoriaEnum;
 @Table(name="precios_adicionales")
 public class Precio {
 	
+	/*Solo almacena datos, no hace cálculos*/
+	
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
