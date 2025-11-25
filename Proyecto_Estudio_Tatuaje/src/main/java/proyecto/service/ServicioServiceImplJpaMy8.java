@@ -21,25 +21,25 @@ public class ServicioServiceImplJpaMy8 implements ServicioService {
 	}
 
 	@Override
-	public Servicio buscarUnTrabajador(int idServicio) {
+	public Servicio buscarUnServicio(int idServicio) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Servicio altaTrabajador(Servicio servicio) {
+	public Servicio altaServicio(Servicio servicio) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int eliminarTrabajador(int idServicio) {
+	public int eliminarServicio(int idServicio) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public Servicio actualizarTrabajador(Servicio servicio) {
+	public Servicio actualizarServicio(Servicio servicio) {
 		// TODO Auto-generated method stub
 		return null;
 	}

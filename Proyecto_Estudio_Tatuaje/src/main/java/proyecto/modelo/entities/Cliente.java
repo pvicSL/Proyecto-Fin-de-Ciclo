@@ -47,10 +47,9 @@ public class Cliente implements Serializable{
 	
 
 
-	public Cliente(int idCliente, String nombre, String apellido1, String apellido2, String email, String telefono,
+	public Cliente(String nombre, String apellido1, String apellido2, String email, String telefono,
 			String documentoIdentificacion) {
 		super();
-		this.idCliente = idCliente;
 		this.nombre = nombre;
 		this.apellido1 = apellido1;
 		this.apellido2 = apellido2;

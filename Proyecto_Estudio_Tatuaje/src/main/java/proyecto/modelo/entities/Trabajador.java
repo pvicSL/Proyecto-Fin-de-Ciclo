@@ -50,10 +50,9 @@ public class Trabajador implements Serializable {
 		super();
 	}
 
-	public Trabajador(int idTrabajador, String contrasenia, String nombre, String apellido1, String apellido2,
+	public Trabajador(String contrasenia, String nombre, String apellido1, String apellido2,
 			String email, String telefono, Rol rol, Funciones funciones) {
 		super();
-		this.idTrabajador = idTrabajador;
 		this.contrasenia = contrasenia;
 		this.nombre = nombre;
 		this.apellido1 = apellido1;

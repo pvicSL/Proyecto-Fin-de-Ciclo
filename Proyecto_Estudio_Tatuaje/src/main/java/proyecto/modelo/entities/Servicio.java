@@ -88,11 +88,10 @@ public class Servicio implements Serializable{
 	
 	
 
-	public Servicio(int idServicio, Tipo tipo, Zona zona, Tamanio tamanio, Detalle detalle, Coloracion coloracion,
+	public Servicio(Tipo tipo, Zona zona, Tamanio tamanio, Detalle detalle, Coloracion coloracion,
 			Estilo estilo, LocalDate fecha, LocalTime hora, String comentarios, Boolean factura, Estatus estatus,
 			Cliente cliente) {
 		super();
-		this.idServicio = idServicio;
 		this.tipo = tipo;
 		this.zona = zona;
 		this.tamanio = tamanio;

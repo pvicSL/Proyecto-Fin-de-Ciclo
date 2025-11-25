@@ -8,9 +8,9 @@ import proyecto.modelo.entities.Servicio;
 public interface ServicioService {
 
 	List<Servicio>leerTodos();
-	Servicio buscarUnTrabajador(int idServicio);
-	Servicio altaTrabajador(Servicio servicio);
-	int eliminarTrabajador(int idServicio);
-	Servicio actualizarTrabajador(Servicio servicio);
+	Servicio buscarUnServicio(int idServicio);
+	Servicio altaServicio(Servicio servicio);
+	int eliminarServicio(int idServicio);
+	Servicio actualizarServicio(Servicio servicio);
 	
 }
