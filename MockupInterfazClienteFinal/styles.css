@@ -11,87 +11,191 @@
 
 
 /* ESTILOS PARA CABECERA */
-header {
+.site-header {
     background-color: var(--jet);
+    color: white;
 }
 
 .logo {
-    height: 60px;
+    height: 3rem;
+    max-height: 12vh;
     width: auto;
 }
 
 
+/*ESTULOS SECCION HERO*/
+/* Ajustes generales */
+#hero {
+    /* Fondo gris medio temporal hasta que meta el carrusel*/
+    background-color: #444;
 
-.banner {
-    background-image: url('https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1400&q=80');
+    color: white;
+    height: 45vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding-block: 5vh;
+}
+
+/* Carrusel - aún está pendiente */
+#heroCarousel .carousel-item {
+    height: 45vh;
     background-size: cover;
     background-position: center;
-    height: 40vh;
-    /* altura flexible */
-    border-radius: 0.5rem;
+    transition: opacity 1s ease-in-out;
 }
 
-.banner-inner {
-    height: 100%;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+/* Texto del hero - general */
+.hero-text {
+    max-width: 90%;
+    margin-inline: auto;
+    text-align: left;
+    padding-inline: 5vw;
+    padding-block: 3vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-/* centrado de texto y márgenes */
-.text-center {
-    text-align: center;
+/* texto SOMOS */
+.hero-subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--antiflash-white);
+    font-weight: 500;
+    margin-bottom: 0.4em;
 }
 
-/* Colors for headings etc. */
-h1,
-h2,
-h3,
-h4,
-h5 {
-    color: var(--jet);
+/* texto INK&CO */
+.hero-title {
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.3em;
+    line-height: 1.1;
 }
 
-/* Botón principal */
-.btn-primary {
-    background-color: var(--robin-egg-blue);
-    border-color: var(--robin-egg-blue);
+/* texto ESTUDIO DE */
+.hero-tagline {
+    font-size: clamp(1.2rem, 3.4vw, 2.1rem);
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.8em;
+    line-height: 1.3;
 }
 
-.btn-primary:hover {
+/* texto TATUAJE PROFESIONAL en burdeos */
+.hero-tagline .highlight {
+    color: var(--burgundy);
+}
+
+/* Párrafo de descripción */
+.hero-description {
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    color: var(--antiflash-white);
+    text-align: justify;
+    margin-bottom: 1em;
+    line-height: 1.5;
+    max-width: 90%;
+}
+
+/* Enlace de ubicación */
+.hero-location {
+    font-size: clamp(0.9rem, 1.3vw, 1rem);
+    color: var(--antiflash-white);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: 0.6em;
+    align-self: center;
+}
+
+/* color del icono de la ubicación*/
+.hero-location i {
+    color: var(--dark-cyan);
+    font-size: 1.2em;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* efecto para el icono al hacer hover*/
+.hero-location:hover i {
+    color: var(--robin-egg-blue);
+    transform: scale(1.15);
+}
+
+/* para que salga la línea de subrayado en la dirección*/
+.hero-location span {
+    position: relative;
+}
+
+/* Línea del subrayado  - efecto de hover*/
+.hero-location span::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -0.1em;
+    transform: translateX(-50%) scaleX(0);
+    transform-origin: center;
+    width: 100%;
+    height: 0.08em;
+    background-color: white;
+    transition: transform 0.35s ease;
+}
+
+/* la línea de hover sale desde el centro */
+.hero-location:hover span::after {
+    transform: translateX(-50%) scaleX(1);
+}
+
+/* ESTILOS SECCIÓN BOTÓN DE RESERVA*/
+/* Padding para esta sección */
+.cta-wrapper {
+    padding-block: 2vh;
+}
+
+/* Botón de reservar */
+.btn-reservar {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    font-weight: 600;
+    padding-block: 0.9em;
+    padding-inline: 2em;
     background-color: var(--dark-cyan);
-    border-color: var(--dark-cyan);
+    border: none;
+    border-radius: 0.6em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: white;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Efecto hover del botón de reserva */
+.btn-reservar:hover {
+    background-color: var(--robin-egg-blue);
+}
+
+/* esto sirve para crear un salto de línea
+sin tener que recurrir al br*/
+.cta-line2 {
+    display: block;
 }
 
 /* Enlace "AQUÍ" */
 .link-modify {
-    color: var(--cardinal);
+    color: var(--burgundy);
 }
 
 .link-modify:hover {
-    color: var(--burgundy);
-    text-decoration: underline;
-}
-
-/* Centrado y espaciado */
-.text-center {
-    text-align: center;
-}
-
-.card {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
-}
-
-.link-modify {
     color: var(--cardinal);
-}
-
-.link-modify:hover {
-    color: var(--burgundy);
     text-decoration: underline;
 }
 
-
-/* FOOTER */
+/* ESTILOS DE FOOTER */
 .site-footer {
     background: linear-gradient(180deg, var(--night), var(--jet));
     color: #fff;
@@ -120,20 +224,44 @@ h5 {
     .text-muted {
         color: rgba(255, 255, 255, 0.7) !important;
     }
+}
 
+@media (max-width: 768px) {
+    #hero {
+        min-height: 55vh;
+    }
 
+    .hero-text {
+        width: 100%;
+        margin: 0 auto;
+        padding-left: 6vw;
+        padding-right: 6vw;
+    }
 
+    .hero-description {
+        line-height: 1.4;
+    }
 
-    /* Small screens */
-    @media (max-width: 767.98px) {
-        .banner {
-            min-height: 35vh;
-        }
+    .btn-reservar {
+        width: 80%;
+        padding-block: 1em;
+    }
 
-        .logo-mark {
-            width: 40px;
-            height: 40px;
-            font-size: .95rem;
-        }
+    .cta-wrapper {
+        padding-block: 8vh;
+    }
+
+    .banner {
+        min-height: 35vh;
+    }
+
+    .logo-mark {
+        width: 40px;
+        height: 40px;
+        font-size: .95rem;
+    }
+
+    .logo {
+        height: 2rem;
     }
 }
