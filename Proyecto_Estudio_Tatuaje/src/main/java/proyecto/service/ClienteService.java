@@ -1,6 +1,7 @@
 package proyecto.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import proyecto.modelo.entities.Cliente;
 
@@ -11,6 +12,7 @@ public interface ClienteService {
 	Cliente altaCliente(Cliente cliente);
 	int eliminarCliente(int idCliente);
 	Cliente actualizarCliente(Cliente cliente);
+	Optional<Cliente> buscarPorDocumento(String documento);
 	
 	
 }
