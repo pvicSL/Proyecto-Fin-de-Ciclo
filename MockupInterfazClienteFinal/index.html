@@ -23,112 +23,53 @@
     <!--Comentarios para mí:
     py- es de Bootstrap, pone tamaño de padding del 1 al 5
     también se pude usar m para margin-->
-    <header class="py-3">
+    <header class="site-header py-3">
         <!-- container vale para limitar el ancho del contenido
          d-flex vale para activar flexbox
          las otras dos clases tienen nombres explicativos-->
         <div class="container d-flex justify-content-center align-items-center">
             <a href="index.html">
-                <img src="assets/logo-placeholder.svg" alt="Logotipo del estudio" class="logo">
+                <img src="assets/logo-placeholder.svg" alt="Logotipo del estudio" class="logo mb-2">
             </a>
         </div>
     </header>
 
-    <!-- MAIN -->
-    <main class="container my-4">
-        <!-- Banner -->
-        <section class="banner mb-4 rounded">
-            <!-- Puedes reemplazar el background-image por una imagen real en styles.css o aquí -->
-            <div class="banner-inner d-flex align-items-end p-4">
+    <section id="hero" class="position-relative overflow-hidden">
+        <!-- Carrusel de fondo -->
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+            <div class="carousel-inner">
+                <div class="carousel-item active" style="background-image: url('assets/hero1.jpg');"></div>
+                <div class="carousel-item" style="background-image: url('assets/hero2.jpg');"></div>
+                <div class="carousel-item" style="background-image: url('assets/hero3.jpg');"></div>
             </div>
-        </section>
-
-        <!-- Título y acciones -->
-        <div>
-            <h1 class="text-center mb-2 h4">@NombreProfTatuador</h1>
-            <p class="text-muted text-center small mb-4">Tatuajes personalizados · Reserva tu cita</p>
         </div>
 
-        <!-- FAQ -->
-        <section class="faq text-center">
-            <!-- Botón para mostrar/ocultar el acordeón completo -->
-            <button class="btn btn-outline-dark mb-3" type="button" data-bs-toggle="collapse"
-                data-bs-target="#faqSection" aria-expanded="false" aria-controls="faqSection">
-                Preguntas frecuentes
-            </button>
-
-            <!-- Contenedor de FAQs (colapsable) -->
-            <div class="collapse" id="faqSection">
-                <div class="accordion" id="faqAccordion">
-
-                    <!-- Pregunta 1 -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="faqHeading1">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#faq1" aria-expanded="false" aria-controls="faq1">
-                                ¿Duele hacerse un tatuaje?
-                            </button>
-                        </h2>
-                        <div id="faq1" class="accordion-collapse collapse" aria-labelledby="faqHeading1"
-                            data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Depende de la zona y la tolerancia personal, pero la mayoría de las personas describen
-                                la sensación como molestia más que dolor agudo.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pregunta 2 -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="faqHeading2">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
-                                ¿Qué cuidados son necesarios?
-                            </button>
-                        </h2>
-                        <div id="faq2" class="accordion-collapse collapse" aria-labelledby="faqHeading2"
-                            data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Mantén la zona limpia, aplica la pomada recomendada, evita sol directo y no rasques la
-                                costra.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pregunta 3 -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="faqHeading3">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
-                                ¿Puedo llevar referencias?
-                            </button>
-                        </h2>
-                        <div id="faq3" class="accordion-collapse collapse" aria-labelledby="faqHeading3"
-                            data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Sí, puedes subir hasta 3 imágenes como referencia al solicitar la cita.
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-
-        <!-- BOTÓN Y TEXTO DE RESERVA -->
-        <div class="text-center mt-4">
-            <!-- Botón que despliega el formulario -->
-            <button class="btn btn-primary mb-2" type="button" data-bs-toggle="collapse"
-                data-bs-target="#appointmentForm" aria-expanded="false" aria-controls="appointmentForm">
-                <i class="bi bi-calendar-plus me-1"></i> RESERVAR CITA
-            </button>
-
-            <p class="mt-2">
-                ¿Cambio de planes?
-                <a href="#" class="text-decoration-none link-modify">Modifica tu cita <strong>AQUÍ</strong></a>.
+        <!-- Texto superpuesto -->
+        <div class="hero-text text-white position-absolute top-50 start-50 translate-middle">
+            <p class="hero-subtitle mb-1">SOMOS</p>
+            <h1 class="hero-title mb-2">@INK&CO</h1>
+            <h2 class="hero-tagline mb-3">ESTUDIO DE <span class="highlight">TATUAJE PROFESIONAL</span></h2>
+            <p class="hero-description mb-3">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse non
+                elit quis leo rhoncus aliquet. Phasellus viverra odio lectus, ut pretium ligula
+                ullamcorper eu.
             </p>
+            <a href="#" class="hero-location d-inline-flex align-items-center gap-2">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>Dirección física con enlace para saber cómo llegar</span>
+            </a>
         </div>
+    </section>
+
+
+    <!-- BOTÓN Y TEXTO DE RESERVA -->
+    <div class="text-center mt-4 cta-wrapper">
+        <!-- Botón que despliega el formulario -->
+        <!-- Botón que despliega el formulario -->
+        <button class="btn btn-primary btn-reservar mb-3" type="button" data-bs-toggle="collapse"
+            data-bs-target="#appointmentForm" aria-expanded="false" aria-controls="appointmentForm">
+            <i class="bi bi-calendar-plus me-2"></i> RESERVAR CITA
+        </button>
 
         <!-- FORMULARIO (COLLAPSE DE BOOTSTRAP) -->
         <div class="collapse mt-4" id="appointmentForm">
@@ -232,6 +173,88 @@
             </div>
         </div>
 
+        <p class="mt-3 cta-text">
+            ¿Cambio de planes? <span class="cta-line1">Modifica</span>
+            <span class="cta-line2">tu cita
+                <a href="#" class="text-decoration-none link-modify">
+                    <strong>AQUÍ</strong>
+                </a>.
+            </span>
+        </p>
+
+    </div>
+
+
+
+    <!-- FAQ -->
+    <section class="faq text-center">
+        <!-- Botón para mostrar/ocultar el acordeón completo -->
+        <button class="btn btn-outline-dark mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#faqSection"
+            aria-expanded="false" aria-controls="faqSection">
+            Preguntas frecuentes
+        </button>
+
+        <!-- Contenedor de FAQs (colapsable) -->
+        <div class="collapse" id="faqSection">
+            <div class="accordion" id="faqAccordion">
+
+                <!-- Pregunta 1 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faq1" aria-expanded="false" aria-controls="faq1">
+                            ¿Duele hacerse un tatuaje?
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse" aria-labelledby="faqHeading1"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Depende de la zona y la tolerancia personal, pero la mayoría de las personas describen
+                            la sensación como molestia más que dolor agudo.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 2 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                            ¿Qué cuidados son necesarios?
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" aria-labelledby="faqHeading2"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Mantén la zona limpia, aplica la pomada recomendada, evita sol directo y no rasques la
+                            costra.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pregunta 3 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
+                            ¿Puedo llevar referencias?
+                        </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" aria-labelledby="faqHeading3"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Sí, puedes subir hasta 3 imágenes como referencia al solicitar la cita.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+
 
     </main>
 
@@ -291,7 +314,8 @@
                 // email match validation
                 if (email.value && confirmEmail.value && email.value !== confirmEmail.value) {
                     confirmEmail.classList.add('is-invalid');
-                    confirmEmail.nextElementSibling && (confirmEmail.nextElementSibling.textContent = 'Los correos no coinciden.');
+                    confirmEmail.nextElementSibling &&
+                        (confirmEmail.nextElementSibling.textContent = 'Los correos no coinciden.');
                     event.preventDefault();
                     event.stopPropagation();
                 } else {
@@ -301,7 +325,6 @@
                 form.classList.add('was-validated');
                 if (form.checkValidity() && email.value === confirmEmail.value) {
                     event.preventDefault(); // evitar envío real en mockup
-                    // Aquí normalmente harías fetch() al backend.
                     alert('Solicitud enviada (mockup). Más adelante la integraremos con el backend o Angular.');
                     form.reset();
                     form.classList.remove('was-validated');
@@ -312,6 +335,33 @@
                 }
             }, false);
         })();
+    </script>
+
+    <!-- New script: auto scroll to the appointment form -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reserveBtn = document.querySelector('.btn-reservar');
+            const appointmentForm = document.getElementById('appointmentForm');
+
+            if (!reserveBtn || !appointmentForm) return;
+
+            reserveBtn.addEventListener('click', () => {
+                const collapse = new bootstrap.Collapse(appointmentForm, { toggle: false });
+                const isVisible = appointmentForm.classList.contains('show');
+
+                if (!isVisible) {
+                    collapse.show();
+                    // Espera un poco para que la animación de Bootstrap termine
+                    setTimeout(() => {
+                        const yOffset = -window.innerHeight * 0.14;
+                        const y = appointmentForm.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }, 400);
+                } else {
+                    collapse.hide();
+                }
+            });
+        });
     </script>
 </body>
 
