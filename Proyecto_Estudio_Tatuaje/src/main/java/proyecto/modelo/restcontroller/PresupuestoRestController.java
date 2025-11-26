@@ -17,7 +17,7 @@ public class PresupuestoRestController {
 
 	
 	@Autowired
-	PresupuestoService presupuestoService;
+	private PresupuestoService presupuestoService;
 	
 	@GetMapping("/presupuestos")
 	public List<Presupuesto>leerTodos() {

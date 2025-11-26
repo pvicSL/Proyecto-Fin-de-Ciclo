@@ -25,10 +25,10 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	private static final BigDecimal IVA_PORCENTAJE = new BigDecimal("0.21"); // 21%
 	
 	@Autowired
-	PresupuestoRepository presupuestoRepository;
+	private PresupuestoRepository presupuestoRepository;
 	
 	@Autowired
-	PrecioRepository precioRepository;
+	private PrecioRepository precioRepository;
 	
 	@Autowired
 	ServicioRepository servicioRepository;

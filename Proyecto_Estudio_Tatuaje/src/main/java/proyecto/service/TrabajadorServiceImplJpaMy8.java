@@ -12,7 +12,7 @@ import proyecto.modelo.repository.TrabajadorRepository;
 public class TrabajadorServiceImplJpaMy8 implements TrabajadorService {
 
 	@Autowired
-	TrabajadorRepository trabajadorRepository;
+	private TrabajadorRepository trabajadorRepository;
 
 	@Override
 	public List<Trabajador> leerTodos() {

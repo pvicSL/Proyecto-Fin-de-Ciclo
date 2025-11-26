@@ -12,7 +12,7 @@ import proyecto.modelo.repository.ServicioRepository;
 public class ServicioServiceImplJpaMy8 implements ServicioService {
 
 	@Autowired
-	ServicioRepository servicioRepository;
+	private ServicioRepository servicioRepository;
 
 	@Override
 	public List<Servicio> leerTodos() {

@@ -12,7 +12,7 @@ import proyecto.modelo.repository.PrecioRepository;
 public class PrecioServiceImplJpaMy8 implements PrecioService {
 
 	@Autowired
-	PrecioRepository precioRepository;
+	private PrecioRepository precioRepository;
 	
 	
 	@Override

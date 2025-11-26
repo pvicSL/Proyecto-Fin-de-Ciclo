@@ -1,6 +1,8 @@
 package proyecto.service;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +13,7 @@ import proyecto.modelo.repository.ClienteRepository;
 public class ClienteServiceImplJpaMy8 implements ClienteService {
 
 	@Autowired
-	ClienteRepository clienteRepository;
+	private ClienteRepository clienteRepository;
 
 	@Override
 	public List<Cliente> leerTodos() {
@@ -37,5 +39,10 @@ public class ClienteServiceImplJpaMy8 implements ClienteService {
 	@Override
 	public Cliente actualizarCliente(Cliente cliente) {
 		return clienteRepository.save(cliente);
+	}
+
+	@Override
+	public Optional<Cliente> buscarPorDocumento(String documento) {
+		return clienteRepository.findByDocumentoIdentificacionIgnoreCase(documento);
 	}
 }
