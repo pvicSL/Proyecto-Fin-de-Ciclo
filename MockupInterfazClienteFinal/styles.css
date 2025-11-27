@@ -195,6 +195,247 @@ sin tener que recurrir al br*/
     text-decoration: underline;
 }
 
+/*ESTILOS PARA EL FORMULARIO*/
+/* =========================================================
+   FORMULARIO DE RESERVA — ESTILOS
+   ========================================================= */
+
+.booking-card {
+    background-color: var(--jet);
+    border-radius: 0.625rem;
+    color: #fff;
+    border: none;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 600px;
+    text-align: left;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔸 Más padding interno, con ajuste responsive */
+.booking-card .card-body {
+    padding: clamp(1.5rem, 5vw, 3rem);
+    /* +aire lateral y vertical */
+}
+
+/* 🔸 Título */
+.booking-title {
+    font-size: clamp(1.4rem, 2.8vw, 1.8rem);
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* 🔸 Etiquetas e inputs */
+.booking-card .form-label,
+.booking-card .form-check-label {
+    color: #fff;
+    text-align: left;
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+/* 🔸 Inputs: límite de ancho + centrado visual */
+.booking-card input.form-control,
+.booking-card select.form-select,
+.booking-card textarea.form-control {
+    max-width: 90%;
+    margin: 0 auto 0.75rem auto;
+    display: block;
+}
+
+/* 🔸 Inputs de una sola columna (como Teléfono, Color/B&N, Comentarios...) */
+.booking-card .col-12 input.form-control,
+.booking-card .col-12 select.form-select,
+.booking-card .col-12 textarea.form-control {
+    max-width: 85%;
+}
+
+/* 🔸 Radios y checkboxes */
+.booking-card .form-check,
+.booking-card .form-check-inline {
+    text-align: left;
+    max-width: 85%;
+    margin: 0.25rem auto;
+}
+
+.booking-card .form-check-inline .form-check-input {
+    margin-right: 0.4rem;
+}
+
+/* 🔸 Checkbox de factura y términos */
+.booking-card .form-check-input[type="checkbox"] {
+    accent-color: var(--robin-egg-blue);
+}
+
+/* 🔹 Alinear el grupo de radio buttons con el resto de inputs */
+.booking-card .col-12 .form-check-inline {
+    margin-left: 5%;
+    /* mismo margen que inputs */
+}
+
+/* 🔹 Ajuste del label "¿Color o blanco y negro?" para compensar diferencias visuales */
+.booking-card .col-12 label.form-label.d-block {
+    margin-left: 5%;
+    margin-bottom: 0.4rem;
+}
+
+/* 🔹 Asegura que el espacio total del grupo se mantenga */
+.booking-card .col-12 .form-check-inline:not(:last-child) {
+    margin-right: 1.5rem;
+    /* separación entre "Color" y "B/N" */
+}
+
+/* 🔸 Botón principal (enviar) */
+.btn-reservar-submit {
+    background-color: var(--dark-cyan);
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    padding: 0.8rem 2rem;
+    border-radius: 0.6rem;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.btn-reservar-submit:hover:enabled {
+    background-color: var(--robin-egg-blue);
+    box-shadow: 0 0 12px rgba(17, 195, 185, 0.5);
+}
+
+.btn-reservar-submit:disabled {
+    background-color: #666;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* 🔸 Selector de fechas/horas */
+.slot-picker {
+    background-color: #fff;
+    color: var(--jet);
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    width: 90%;
+    max-width: 420px;
+    /* más proporcionado */
+    margin: 0 auto;
+}
+
+/* 🔸 Alineación izquierda coherente (sin centrado) */
+.booking-card .form-label {
+    display: block;
+    margin-left: 5%;
+    /* margen proporcional */
+    margin-bottom: 0.3rem;
+}
+
+.booking-card input.form-control,
+.booking-card select.form-select,
+.booking-card textarea.form-control {
+    max-width: 90%;
+    margin-left: 5%;
+}
+
+
+
+/* Cabecera del selector: mes y año */
+.slot-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+/* Botones < y > */
+.slot-nav {
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+/* Días de la semana */
+.slot-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    font-size: 0.8rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: var(--jet);
+}
+
+/* Días */
+.slot-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+}
+
+.day {
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    cursor: default;
+}
+
+/* Día sin huecos */
+.day-none {
+    background-color: #ddd;
+    color: #888;
+}
+
+/* Día no laborable */
+.day-closed {
+    background-color: var(--cardinal);
+    color: #fff;
+}
+
+/* Día con huecos */
+.day-available {
+    background-color: var(--robin-egg-blue);
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Día seleccionado */
+.day-selected {
+    outline: 2px solid var(--dark-cyan);
+    outline-offset: 2px;
+}
+
+/* Horas disponibles */
+.slot-times {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.time-slot {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid #ccc;
+    font-size: 0.85rem;
+    cursor: pointer;
+    background-color: #f5f5f5;
+    color: var(--jet);
+}
+
+/* Hora seleccionada */
+.time-slot-selected {
+    background-color: var(--robin-egg-blue);
+    border-color: var(--robin-egg-blue);
+    color: #fff;
+}
+
 /* ESTILOS DE FOOTER */
 .site-footer {
     background: linear-gradient(180deg, var(--night), var(--jet));

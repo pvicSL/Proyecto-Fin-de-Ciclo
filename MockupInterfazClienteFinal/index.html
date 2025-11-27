@@ -65,48 +65,95 @@
     <!-- BOTÓN Y TEXTO DE RESERVA -->
     <div class="text-center mt-4 cta-wrapper">
         <!-- Botón que despliega el formulario -->
-        <!-- Botón que despliega el formulario -->
-        <button class="btn btn-primary btn-reservar mb-3" type="button" data-bs-toggle="collapse"
+        <button id="toggleFormBtn" class="btn btn-primary btn-reservar mb-3" type="button" data-bs-toggle="collapse"
             data-bs-target="#appointmentForm" aria-expanded="false" aria-controls="appointmentForm">
             <i class="bi bi-calendar-plus me-2"></i> RESERVAR CITA
         </button>
 
+
         <!-- FORMULARIO (COLLAPSE DE BOOTSTRAP) -->
         <div class="collapse mt-4" id="appointmentForm">
-            <div class="card mx-auto" style="max-width: 700px;">
+            <div class="card mx-auto booking-card" style="max-width: 50vw;">
                 <div class="card-body">
-                    <h3 class="h5 mb-3 text-center">Solicitud de cita</h3>
+                    <h3 class="booking-title text-center mb-4">RESERVA TU CITA</h3>
+
                     <form id="formAppointment" novalidate>
                         <div class="row g-3">
-                            <div class="col-md-6">
+
+                            <!-- 1ª línea: nombre y apellidos -->
+                            <div class="col-md-4">
                                 <label for="firstName" class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="firstName" placeholder="Escribe tu nombre"
+                                <input type="text" class="form-control" id="firstName" placeholder="Nombre..." required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="lastSurname" class="form-label">Apellido 1</label>
+                                <input type="text" class="form-control" id="lastSurname" placeholder="Apellido 1..."
                                     required>
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="lastName" class="form-label">Apellidos</label>
-                                <input type="text" class="form-control" id="lastName"
-                                    placeholder="Escribe tus apellidos" required>
+                            <div class="col-md-4">
+                                <label for="secondSurname" class="form-label">Apellido 2</label>
+                                <input type="text" class="form-control" id="secondSurname" placeholder="Apellido 2...">
                             </div>
 
+                            <!-- 2ª línea: email y confirmar email -->
                             <div class="col-md-6">
                                 <label for="email" class="form-label">Correo electrónico</label>
-                                <input type="email" class="form-control" id="email" placeholder="Escribe tu correo"
+                                <input type="email" class="form-control" id="email" placeholder="Correo electrónico..."
                                     required>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="confirmEmail" class="form-label">Confirma tu correo</label>
+                                <label for="confirmEmail" class="form-label">Confirma tu correo electrónico</label>
                                 <input type="email" class="form-control" id="confirmEmail"
-                                    placeholder="Confirma tu correo" required>
+                                    placeholder="Confirma tu correo..." required>
                             </div>
 
+                            <!-- 3ª línea: teléfono -->
                             <div class="col-md-6">
                                 <label for="phone" class="form-label">Teléfono</label>
-                                <input type="tel" class="form-control" id="phone" placeholder="Escribe tu teléfono">
+                                <input type="tel" class="form-control" id="phone" placeholder="Teléfono..." required>
                             </div>
 
+
+                            <!-- 4ª línea: checkbox factura -->
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="needInvoice">
+                                    <label class="form-check-label" for="needInvoice">
+                                        ¿Necesitas factura?
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Campos de factura (ocultos hasta marcar el checkbox) -->
+                            <div id="invoiceFields" class="row g-3 d-none">
+                                <div class="col-md-6">
+                                    <label for="cif" class="form-label">CIF / NIF</label>
+                                    <input type="text" class="form-control" id="cif" placeholder="CIF/NIF...">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="billingAddress" class="form-label">Dirección postal</label>
+                                    <input type="text" class="form-control" id="billingAddress"
+                                        placeholder="Dirección postal...">
+                                </div>
+                            </div>
+
+                            <!-- 5ª línea: servicio -->
+                            <div class="col-md-6">
+                                <label for="service" class="form-label">Servicio</label>
+                                <select id="service" class="form-select" required>
+                                    <option value="" selected>Selecciona...</option>
+                                    <option value="tattoo-new">Tatuaje nuevo</option>
+                                    <option value="tattoo-retouch">Retoque</option>
+                                    <option value="cover-up">Cover / tapado</option>
+                                    <option value="design-only">Diseño previo</option>
+                                </select>
+                            </div>
+
+
+                            <!-- 6ª línea: zona del cuerpo y tamaño -->
                             <div class="col-md-6">
                                 <label for="bodyZone" class="form-label">Zona del cuerpo</label>
                                 <select id="bodyZone" class="form-select" required>
@@ -119,18 +166,42 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="size" class="form-label">Tamaño</label>
                                 <select id="size" class="form-select" required>
                                     <option value="" selected>Selecciona...</option>
-                                    <option>Pequeño (≤5 cm)</option>
-                                    <option>Mediano (5–15 cm)</option>
-                                    <option>Grande (>15 cm)</option>
+                                    <option value="small">Pequeño (≤5 cm)</option>
+                                    <option value="medium">Mediano (5–15 cm)</option>
+                                    <option value="large">Grande (>15 cm)</option>
                                 </select>
                             </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label d-block">¿Color o B/N?</label>
+                            <!-- 7ª línea: estilo y color/B&N -->
+                            <div class="col-md-6">
+                                <label for="style" class="form-label">Estilo</label>
+                                <select id="style" class="form-select" required>
+                                    <option value="" selected>Selecciona...</option>
+                                    <option>Realismo</option>
+                                    <option>Tradicional</option>
+                                    <option>Neo-tradicional</option>
+                                    <option>Acuarela</option>
+                                    <option>Blackwork</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="size" class="form-label">Tamaño</label>
+                                <select id="size" class="form-select" required>
+                                    <option value="" selected>Selecciona...</option>
+                                    <option value="small">Pequeño (≤5 cm)</option>
+                                    <option value="medium">Mediano (5–15 cm)</option>
+                                    <option value="large">Grande (>15 cm)</option>
+                                </select>
+                            </div>
+
+                            <!-- 8ª línea: color/B&N en una fila completa -->
+                            <div class="col-12">
+                                <label class="form-label d-block">¿Color o blanco y negro?</label>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="colorMode" id="colorYes"
                                         value="color" checked>
@@ -139,34 +210,69 @@
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="colorMode" id="colorBW"
                                         value="bw">
-                                    <label class="form-check-label" for="colorBW">B/N</label>
+                                    <label class="form-check-label" for="colorBW">Blanco y negro</label>
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <label for="style" class="form-label">Estilo</label>
-                                <select id="style" class="form-select">
-                                    <option selected>Selecciona...</option>
-                                    <option>Realismo</option>
-                                    <option>Tradicional</option>
-                                    <option>Neo-tradicional</option>
-                                    <option>Acuarela</option>
-                                </select>
+                            <!-- 9ª línea: comentarios y referencias (uno al lado del otro) -->
+                            <div class="col-md-6">
+                                <label for="comments" class="form-label">Comentarios</label>
+                                <textarea id="comments" class="form-control" rows="3"
+                                    placeholder="¿Quieres decirnos algo?"></textarea>
                             </div>
 
-                            <div class="col-12">
+                            <div class="col-md-6">
                                 <label for="references" class="form-label">Referencias (máx. 3 imágenes)</label>
                                 <input class="form-control" type="file" id="references" accept="image/*" multiple>
                                 <div class="form-text">Puedes subir hasta 3 imágenes (máx. 5 MB cada una).</div>
                             </div>
 
+                            <!-- 9ª línea: selector de fecha y hora -->
+                            <div class="col-12 d-flex justify-content-center mt-3">
+                                <div class="slot-picker">
+                                    <div class="slot-header">
+                                        <button type="button" class="slot-nav" id="prevMonth">&lt;</button>
+                                        <span id="slotMonthLabel">Mes - 2XXX</span>
+                                        <button type="button" class="slot-nav" id="nextMonth">&gt;</button>
+                                    </div>
+
+                                    <div class="slot-weekdays">
+                                        <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                                    </div>
+
+                                    <div class="slot-days" id="slotDays">
+                                        <!-- se rellenará con JS -->
+                                    </div>
+
+                                    <div class="slot-times" id="slotTimes">
+                                        <!-- horas disponibles para el día seleccionado -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 10ª línea: botones borrar / cancelar -->
+                            <div class="col-12 d-flex justify-content-center gap-3 mt-4">
+                                <button type="button" class="btn btn-outline-light" id="btnClear">Borrar</button>
+                                <button type="button" class="btn btn-outline-danger" id="btnCancel">Cancelar</button>
+                            </div>
+
+                            <!-- 11ª línea: términos y enviar -->
+                            <div class="col-12 mt-3">
+                                <div class="form-check text-center">
+                                    <input class="form-check-input" type="checkbox" id="acceptTerms">
+                                    <label class="form-check-label" for="acceptTerms">
+                                        Acepto los términos y condiciones
+                                    </label>
+                                </div>
+                            </div>
+
                             <div class="col-12 text-center mt-3">
-                                <button class="btn btn-primary me-2" type="submit">Enviar</button>
-                                <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#appointmentForm">
-                                    Cancelar
+                                <button class="btn btn-primary btn-reservar-submit" id="btnSubmit" type="submit"
+                                    disabled>
+                                    RESERVAR CITA
                                 </button>
                             </div>
+
                         </div>
                     </form>
                 </div>
@@ -252,10 +358,6 @@
         </div>
     </section>
 
-
-
-
-
     </main>
 
     <!-- FOOTER -->
@@ -337,6 +439,184 @@
         })();
     </script>
 
+    <!-- SCRPIT para suscribir al botón de reserva grande al cierre
+ o paertura del formulario, así aparece o desaparece-->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('toggleFormBtn');
+            const formCollapse = document.getElementById('appointmentForm');
+
+            formCollapse.addEventListener('show.bs.collapse', () => {
+                toggleBtn.style.display = 'none'; // ocultamos el botón cuando el form se abre
+            });
+
+            formCollapse.addEventListener('hidden.bs.collapse', () => {
+                toggleBtn.style.display = 'inline-block'; // lo mostramos de nuevo al cerrar
+            });
+        });
+    </script>
+
+    <!-- SCRIPT PARA VALIDACIONES DEL FORMULARIO-->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            /* ---------- 1. Mostrar / ocultar campos de factura ---------- */
+            const needInvoice = document.getElementById('needInvoice');
+            const invoiceFields = document.getElementById('invoiceFields');
+
+            needInvoice.addEventListener('change', () => {
+                if (needInvoice.checked) {
+                    invoiceFields.classList.remove('d-none'); // mostramos
+                } else {
+                    invoiceFields.classList.add('d-none'); // ocultamos
+                }
+            });
+
+            /* ---------- 2. Limitar archivos a 3 imágenes (ya lo hacías, pero lo dejamos aquí también) ---------- */
+            const refs = document.getElementById('references');
+            if (refs) {
+                refs.addEventListener('change', () => {
+                    if (refs.files.length > 3) {
+                        alert('Puedes subir un máximo de 3 imágenes.');
+                        refs.value = '';
+                    }
+                });
+            }
+
+            /* ---------- 3. Selector de fecha y hora (mock de comportamiento) ---------- */
+
+            // Datos de ejemplo: días de una semana con su estado y horas libres
+            const mockDays = [
+                { day: 8, status: 'available', slots: ['09:00', '12:00', '16:00'] },
+                { day: 9, status: 'available', slots: ['13:00', '16:00', '19:00'] },
+                { day: 10, status: 'none', slots: [] },
+                { day: 11, status: 'available', slots: ['10:00', '18:00'] },
+                { day: 12, status: 'closed', slots: [] },
+                { day: 13, status: 'available', slots: ['11:00', '15:00'] },
+                { day: 14, status: 'none', slots: [] }
+            ];
+
+            const slotMonthLabel = document.getElementById('slotMonthLabel');
+            const slotDaysContainer = document.getElementById('slotDays');
+            const slotTimesContainer = document.getElementById('slotTimes');
+            const prevMonthBtn = document.getElementById('prevMonth');
+            const nextMonthBtn = document.getElementById('nextMonth');
+
+            let selectedDayIndex = null;
+            let selectedSlot = null;
+
+            // Para el ejemplo, usamos siempre el mismo mes ficticio
+            slotMonthLabel.textContent = 'Mes - 2XXX';
+
+            // Función que pinta los días en el calendario
+            function renderDays() {
+                slotDaysContainer.innerHTML = '';
+                mockDays.forEach((item, index) => {
+                    const span = document.createElement('span');
+                    span.textContent = item.day;
+                    span.classList.add('day');
+
+                    if (item.status === 'available') {
+                        span.classList.add('day-available');
+                        span.addEventListener('click', () => {
+                            selectedDayIndex = index;
+                            selectedSlot = null;
+                            renderDays();   // repintamos días para marcar el seleccionado
+                            renderTimes();  // mostramos horas del nuevo día
+                        });
+                    } else if (item.status === 'none') {
+                        span.classList.add('day-none');
+                    } else if (item.status === 'closed') {
+                        span.classList.add('day-closed');
+                    }
+
+                    if (selectedDayIndex === index) {
+                        span.classList.add('day-selected');
+                    }
+
+                    slotDaysContainer.appendChild(span);
+                });
+            }
+
+            // Función que pinta las horas del día seleccionado
+            function renderTimes() {
+                slotTimesContainer.innerHTML = '';
+
+                if (selectedDayIndex === null) return;
+
+                const dayData = mockDays[selectedDayIndex];
+
+                dayData.slots.forEach(time => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = time;
+                    btn.classList.add('time-slot');
+                    if (selectedSlot === time) {
+                        btn.classList.add('time-slot-selected');
+                    }
+
+                    btn.addEventListener('click', () => {
+                        selectedSlot = time;
+                        renderTimes();
+                    });
+
+                    slotTimesContainer.appendChild(btn);
+                });
+            }
+
+            // Inicializamos con el primer día disponible
+            const firstAvailableIndex = mockDays.findIndex(d => d.status === 'available');
+            if (firstAvailableIndex !== -1) {
+                selectedDayIndex = firstAvailableIndex;
+            }
+            renderDays();
+            renderTimes();
+
+            // Botones de mes (por ahora solo muestran un alert, ya que es mock)
+            prevMonthBtn.addEventListener('click', () => {
+                alert('En la versión final aquí cambiaríamos al mes anterior.');
+            });
+            nextMonthBtn.addEventListener('click', () => {
+                alert('En la versión final aquí cambiaríamos al mes siguiente.');
+            });
+
+            /* ---------- 4. Botones borrar / cancelar y activación de enviar ---------- */
+            const form = document.getElementById('formAppointment');
+            const btnClear = document.getElementById('btnClear');
+            const btnCancel = document.getElementById('btnCancel');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const acceptTerms = document.getElementById('acceptTerms');
+
+            // Limpiar
+            btnClear.addEventListener('click', () => {
+                form.reset();
+                selectedDayIndex = firstAvailableIndex;
+                selectedSlot = null;
+                renderDays();
+                renderTimes();
+                btnSubmit.disabled = true;
+            });
+
+            // Cancelar = limpiar + cerrar formulario
+            btnCancel.addEventListener('click', () => {
+                form.reset();
+                selectedDayIndex = firstAvailableIndex;
+                selectedSlot = null;
+                renderDays();
+                renderTimes();
+                btnSubmit.disabled = true;
+
+                const collapseEl = document.querySelector('#appointmentForm');
+                const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
+                bsCollapse.hide();
+            });
+
+            // Activar botón enviar solo si se aceptan términos
+            acceptTerms.addEventListener('change', () => {
+                btnSubmit.disabled = !acceptTerms.checked;
+            });
+        });
+    </script>
+
     <!-- New script: auto scroll to the appointment form -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -351,9 +631,9 @@
 
                 if (!isVisible) {
                     collapse.show();
-                    // Espera un poco para que la animación de Bootstrap termine
+                    // Esto permite que haya una pequeña pausa en el movimiento
                     setTimeout(() => {
-                        const yOffset = -window.innerHeight * 0.14;
+                        const yOffset = -window.innerHeight * 0.05;
                         const y = appointmentForm.getBoundingClientRect().top + window.pageYOffset + yOffset;
                         window.scrollTo({ top: y, behavior: 'smooth' });
                     }, 400);
