@@ -6,27 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>TatuSys — Mockup</title>
 
-    <!-- Bootstrap CSS -->
+    <!-- CSS de Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bootstrap Icons -->
+    <!-- Librería de iconos de Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- CSS -->
+    <!-- CSS propio -->
     <link rel="stylesheet" href="styles.css" />
+
 </head>
 
-<body class="bg-light">
+
+<body>
 
     <!-- HEADER -->
-
-    <!--Comentarios para mí:
-    py- es de Bootstrap, pone tamaño de padding del 1 al 5
-    también se pude usar m para margin-->
+    <!-- MIS NOTAS: py- sirve para poner tamaño de padding del 1 al 5 (también hay margen con m-)-->
     <header class="site-header py-3">
-        <!-- container vale para limitar el ancho del contenido
-         d-flex vale para activar flexbox
-         las otras dos clases tienen nombres explicativos-->
+        <!-- MIS NOTAS: container limita el ancho del contenido// d-flex activa el flexbox
+         las otras dos clases tienen nombres muy explicativos-->
+
+        <!-- Logotipo del header -->
         <div class="container d-flex justify-content-center align-items-center">
             <a href="index.html">
                 <img src="assets/logo-placeholder.svg" alt="Logotipo del estudio" class="logo mb-2">
@@ -34,17 +34,26 @@
         </div>
     </header>
 
-    <section id="hero" class="position-relative overflow-hidden">
+    <section id="hero" class="position-relative">
         <!-- Carrusel de fondo -->
-        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
             <div class="carousel-inner">
-                <div class="carousel-item active" style="background-image: url('assets/hero1.jpg');"></div>
-                <div class="carousel-item" style="background-image: url('assets/hero2.jpg');"></div>
-                <div class="carousel-item" style="background-image: url('assets/hero3.jpg');"></div>
+                <div class="carousel-item active">
+                    <div class="hero-slide" style="background-image: url('assets/hero1.jpg');"></div>
+                </div>
+                <div class="carousel-item">
+                    <div class="hero-slide" style="background-image: url('assets/hero2.jpg');"></div>
+                </div>
+                <div class="carousel-item">
+                    <div class="hero-slide" style="background-image: url('assets/hero3.jpg');"></div>
+                </div>
             </div>
         </div>
 
-        <!-- Texto superpuesto -->
+        <!-- Capa oscura para contraste -->
+        <div class="hero-overlay"></div>
+
+        <!-- Texto de presentación -->
         <div class="hero-text text-white position-absolute top-50 start-50 translate-middle">
             <p class="hero-subtitle mb-1">SOMOS</p>
             <h1 class="hero-title mb-2">@INK&CO</h1>
@@ -62,7 +71,8 @@
     </section>
 
 
-    <!-- BOTÓN Y TEXTO DE RESERVA -->
+
+    <!-- BOTÓN, FORMULARIO Y MODIFICACIÓN DE RESERVA -->
     <div class="text-center mt-4 cta-wrapper">
         <!-- Botón que despliega el formulario -->
         <button id="toggleFormBtn" class="btn btn-primary btn-reservar mb-3" type="button" data-bs-toggle="collapse"
@@ -71,7 +81,7 @@
         </button>
 
 
-        <!-- FORMULARIO (COLLAPSE DE BOOTSTRAP) -->
+        <!-- Formulario (CON COLLAPSE DE BOOTSTRAP) -->
         <div class="collapse mt-4" id="appointmentForm">
             <div class="card mx-auto booking-card" style="max-width: 50vw;">
                 <div class="card-body">
@@ -81,21 +91,29 @@
                         <div class="row g-3">
 
                             <!-- 1ª línea: nombre y apellidos -->
-                            <div class="col-md-4">
-                                <label for="firstName" class="form-label">Nombre</label>
-                                <input type="text" class="form-control" id="firstName" placeholder="Nombre..." required>
+                            <div class="row g-3">
+                                <!-- Fila 1: Nombre -->
+                                <div class="col-md-6">
+                                    <label for="firstName" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="firstName" placeholder="Nombre..."
+                                        required>
+                                </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <label for="lastSurname" class="form-label">Apellido 1</label>
-                                <input type="text" class="form-control" id="lastSurname" placeholder="Apellido 1..."
+
+                            <!-- Fila 2: Apellidos -->
+                            <div class="col-md-6">
+                                <label for="lastSurname" class="form-label">Primer apellido</label>
+                                <input type="text" class="form-control" id="lastSurname" placeholder="Obligatorio..."
                                     required>
                             </div>
 
-                            <div class="col-md-4">
-                                <label for="secondSurname" class="form-label">Apellido 2</label>
-                                <input type="text" class="form-control" id="secondSurname" placeholder="Apellido 2...">
+                            <div class="col-md-6">
+                                <label for="secondSurname" class="form-label">Segundo apellido</label>
+                                <input type="text" class="form-control" id="secondSurname" placeholder="Opcional...">
                             </div>
+
+
 
                             <!-- 2ª línea: email y confirmar email -->
                             <div class="col-md-6">
@@ -144,11 +162,11 @@
                             <div class="col-md-6">
                                 <label for="service" class="form-label">Servicio</label>
                                 <select id="service" class="form-select" required>
-                                    <option value="" selected>Selecciona...</option>
-                                    <option value="tattoo-new">Tatuaje nuevo</option>
-                                    <option value="tattoo-retouch">Retoque</option>
-                                    <option value="cover-up">Cover / tapado</option>
-                                    <option value="design-only">Diseño previo</option>
+                                    <option value="" selected>¿Qué necesitas...?</option>
+                                    <option value="tattoo-new">Tatuaje</option>
+                                    <option value="tattoo-retouch">Eliminación</option>
+                                    <option value="cover-up">Cover</option>
+                                    <option value="design-only">Retoque</option>
                                 </select>
                             </div>
 
@@ -157,22 +175,35 @@
                             <div class="col-md-6">
                                 <label for="bodyZone" class="form-label">Zona del cuerpo</label>
                                 <select id="bodyZone" class="form-select" required>
-                                    <option value="" selected>Selecciona...</option>
+                                    <option value="" selected>¿Dónde lo quieres...?</option>
                                     <option>Brazo</option>
-                                    <option>Espalda</option>
-                                    <option>Pierna</option>
-                                    <option>Costado</option>
+                                    <option>Antebrazo</option>
+                                    <option>Codo</option>
+                                    <option>Hombro</option>
+                                    <option>Tórax</option>
+                                    <option>Abdomen</option>
+                                    <option>Pubis</option>
+                                    <option>Muslo</option>
+                                    <option>Rodilla</option>
+                                    <option>Pantorrilla</option>
+                                    <option>Pie</option>
                                     <option>Mano</option>
+                                    <option>Cervical</option>
+                                    <option>Lumbares</option>
+                                    <option>Nalga</option>
+                                    <option>Cabeza</option>
                                 </select>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="size" class="form-label">Tamaño</label>
                                 <select id="size" class="form-select" required>
-                                    <option value="" selected>Selecciona...</option>
-                                    <option value="small">Pequeño (≤5 cm)</option>
-                                    <option value="medium">Mediano (5–15 cm)</option>
-                                    <option value="large">Grande (>15 cm)</option>
+                                    <option value="" selected>¿Grande o pequeño?...</option>
+                                    <option value="mini">Mini</option>
+                                    <option value="small">Pequeño</option>
+                                    <option value="medium">Mediano</option>
+                                    <option value="large">Grande</option>
+                                    <option value="xtralarge">Muy grande</option>
                                 </select>
                             </div>
 
@@ -180,27 +211,31 @@
                             <div class="col-md-6">
                                 <label for="style" class="form-label">Estilo</label>
                                 <select id="style" class="form-select" required>
-                                    <option value="" selected>Selecciona...</option>
+                                    <option value="" selected>¿Clásico, minimalista...?</option>
                                     <option>Realismo</option>
                                     <option>Tradicional</option>
-                                    <option>Neo-tradicional</option>
-                                    <option>Acuarela</option>
-                                    <option>Blackwork</option>
+                                    <option>Japonés</option>
+                                    <option>Lettering</option>
+                                    <option>Fineline</option>
+                                    <option>Black And Grey</option>
+                                    <option>Anime</option>
+                                </select>
+                            </div>
+
+
+                            <!-- 8ª línea: color/B&N en una fila completa -->
+                            <!-- 7ª línea: estilo y color/B&N -->
+                            <div class="col-md-6">
+                                <label for="style" class="form-label">Detalle</label>
+                                <select id="style" class="form-select" required>
+                                    <option value="" selected>¿Cuánto detalle quieres...?</option>
+                                    <option>Sencillo</option>
+                                    <option>Medio</option>
+                                    <option>Denso</option>
                                 </select>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="size" class="form-label">Tamaño</label>
-                                <select id="size" class="form-select" required>
-                                    <option value="" selected>Selecciona...</option>
-                                    <option value="small">Pequeño (≤5 cm)</option>
-                                    <option value="medium">Mediano (5–15 cm)</option>
-                                    <option value="large">Grande (>15 cm)</option>
-                                </select>
-                            </div>
-
-                            <!-- 8ª línea: color/B&N en una fila completa -->
-                            <div class="col-12">
                                 <label class="form-label d-block">¿Color o blanco y negro?</label>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="colorMode" id="colorYes"

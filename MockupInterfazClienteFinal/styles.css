@@ -6,7 +6,7 @@
     --antiflash-white: #ececec;
     --jet: #2a2a2a;
     --night: #151515;
-    margin: auto;
+
 }
 
 
@@ -22,32 +22,59 @@
     width: auto;
 }
 
-
-/*ESTULOS SECCION HERO*/
-/* Ajustes generales */
-#hero {
-    /* Fondo gris medio temporal hasta que meta el carrusel*/
-    background-color: #444;
-
-    color: white;
-    height: 45vh;
-    display: flex;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    padding-block: 5vh;
+body {
+    background-color: var(--antiflash-white);
+    margin: auto;
 }
 
-/* Carrusel - aún está pendiente */
-#heroCarousel .carousel-item {
+/* ============================
+   ESTILOS SECCIÓN HERO
+   ============================ */
+
+/* Contenedor general del hero */
+#hero {
+    position: relative;
+    color: white;
     height: 45vh;
+    min-height: 320px;
+    overflow: hidden;
+}
+
+/* Carrusel y slides ocupan todo el alto del hero */
+#heroCarousel,
+#heroCarousel .carousel-inner,
+#heroCarousel .carousel-item {
+    height: 100%;
+}
+
+/* Cada slide del carrusel (con background-image) */
+.hero-slide {
+    height: 100%;
+    width: 100%;
     background-size: cover;
     background-position: center;
+}
+
+/* Transición suave entre imágenes */
+#heroCarousel .carousel-item {
     transition: opacity 1s ease-in-out;
 }
 
-/* Texto del hero - general */
+/* Capa oscura para mejorar contraste del texto */
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1;
+}
+
+/* Texto del hero (centrado vertical/horizontal y por encima del carrusel) */
 .hero-text {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     max-width: 90%;
     margin-inline: auto;
     text-align: left;
@@ -86,12 +113,28 @@
     line-height: 1.3;
 }
 
-/* texto TATUAJE PROFESIONAL en burdeos */
+/* palabra TATUAJE PROFESIONAL en burdeos */
 .hero-tagline .highlight {
     color: var(--burgundy);
+    position: relative;
+    z-index: 1;
+    font-weight: 700;
 }
 
-/* Párrafo de descripción */
+/* Capa de fondo sólida tipo marcador */
+.hero-tagline .highlight::before {
+    content: "";
+    position: absolute;
+    left: -1;
+    bottom: 0.05em;
+    width: 102%;
+    height: 1.1em;
+    background-color: #ececec;
+    opacity: 0.90;
+    z-index: -1;
+}
+
+/* Párrafo descriptivo */
 .hero-description {
     font-size: clamp(0.9rem, 1.5vw, 1.1rem);
     color: var(--antiflash-white);
@@ -113,25 +156,24 @@
     align-self: center;
 }
 
-/* color del icono de la ubicación*/
+/* Icono del enlace de ubicación */
 .hero-location i {
     color: var(--dark-cyan);
     font-size: 1.2em;
     transition: transform 0.3s ease, color 0.3s ease;
 }
 
-/* efecto para el icono al hacer hover*/
+/* Hover sobre el icono */
 .hero-location:hover i {
     color: var(--robin-egg-blue);
     transform: scale(1.15);
 }
 
-/* para que salga la línea de subrayado en la dirección*/
+/* Subrayado animado del texto del enlace */
 .hero-location span {
     position: relative;
 }
 
-/* Línea del subrayado  - efecto de hover*/
 .hero-location span::after {
     content: "";
     position: absolute;
@@ -145,10 +187,10 @@
     transition: transform 0.35s ease;
 }
 
-/* la línea de hover sale desde el centro */
 .hero-location:hover span::after {
     transform: translateX(-50%) scaleX(1);
 }
+
 
 /* ESTILOS SECCIÓN BOTÓN DE RESERVA*/
 /* Padding para esta sección */
@@ -441,30 +483,30 @@ sin tener que recurrir al br*/
     background: linear-gradient(180deg, var(--night), var(--jet));
     color: #fff;
     text-align: center;
+}
 
-    .footer-link {
-        color: rgba(255, 255, 255, 0.9);
-        text-decoration: none;
-    }
+.footer-link {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+}
 
-    .footer-link:hover {
-        color: var(--robin-egg-blue);
-        text-decoration: underline;
-    }
+.footer-link:hover {
+    color: var(--robin-egg-blue);
+    text-decoration: underline;
+}
 
-    .social-link {
-        color: rgba(255, 255, 255, 0.95);
-        font-size: 1.25rem;
-        text-decoration: none;
-    }
+.social-link {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.25rem;
+    text-decoration: none;
+}
 
-    .social-link:hover {
-        color: var(--robin-egg-blue);
-    }
+.social-link:hover {
+    color: var(--robin-egg-blue);
+}
 
-    .text-muted {
-        color: rgba(255, 255, 255, 0.7) !important;
-    }
+.text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
 }
 
 @media (max-width: 768px) {
