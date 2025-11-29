@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>TatuSys — Mockup</title>
 
+    <!-- Google Fonts: Poppins y Figtree -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+
     <!-- CSS de Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -34,6 +40,7 @@
         </div>
     </header>
 
+    <!-- SECCIÓN DE PRESENTACIÓN DEL ESTUDIO Y CARRUSEL DE IMG -->
     <section id="hero" class="position-relative">
         <!-- Carrusel de fondo -->
         <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
@@ -56,7 +63,7 @@
         <!-- Texto de presentación -->
         <div class="hero-text text-white position-absolute top-50 start-50 translate-middle">
             <p class="hero-subtitle mb-1">SOMOS</p>
-            <h1 class="hero-title mb-2">@INK&CO</h1>
+            <h1 class="hero-title mb-2">@INK<span class="highlight">&</span>CO</h1>
             <h2 class="hero-tagline mb-3">ESTUDIO DE <span class="highlight">TATUAJE PROFESIONAL</span></h2>
             <p class="hero-description mb-3">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse non
@@ -77,7 +84,7 @@
         <!-- Botón que despliega el formulario -->
         <button id="toggleFormBtn" class="btn btn-primary btn-reservar mb-3" type="button" data-bs-toggle="collapse"
             data-bs-target="#appointmentForm" aria-expanded="false" aria-controls="appointmentForm">
-            <i class="bi bi-calendar-plus me-2"></i> RESERVAR CITA
+            <i class="bi bi-calendar-plus me-2"></i>PIDE CITA
         </button>
 
 
@@ -90,9 +97,8 @@
                     <form id="formAppointment" novalidate>
                         <div class="row g-3">
 
-                            <!-- 1ª línea: nombre y apellidos -->
+                            <!-- Fila 1: nombre -->
                             <div class="row g-3">
-                                <!-- Fila 1: Nombre -->
                                 <div class="col-md-6">
                                     <label for="firstName" class="form-label">Nombre</label>
                                     <input type="text" class="form-control" id="firstName" placeholder="Nombre..."
@@ -100,8 +106,7 @@
                                 </div>
                             </div>
 
-
-                            <!-- Fila 2: Apellidos -->
+                            <!-- Fila 2: apellidos -->
                             <div class="col-md-6">
                                 <label for="lastSurname" class="form-label">Primer apellido</label>
                                 <input type="text" class="form-control" id="lastSurname" placeholder="Obligatorio..."
@@ -113,9 +118,7 @@
                                 <input type="text" class="form-control" id="secondSurname" placeholder="Opcional...">
                             </div>
 
-
-
-                            <!-- 2ª línea: email y confirmar email -->
+                            <!-- Fila 3: email y confirmar email -->
                             <div class="col-md-6">
                                 <label for="email" class="form-label">Correo electrónico</label>
                                 <input type="email" class="form-control" id="email" placeholder="Correo electrónico..."
@@ -126,16 +129,19 @@
                                 <label for="confirmEmail" class="form-label">Confirma tu correo electrónico</label>
                                 <input type="email" class="form-control" id="confirmEmail"
                                     placeholder="Confirma tu correo..." required>
+                                <div class="invalid-feedback">
+                                    Los correos no coinciden.
+                                </div>
                             </div>
 
-                            <!-- 3ª línea: teléfono -->
+                            <!-- Fila 4: teléfono -->
                             <div class="col-md-6">
                                 <label for="phone" class="form-label">Teléfono</label>
                                 <input type="tel" class="form-control" id="phone" placeholder="Teléfono..." required>
                             </div>
 
 
-                            <!-- 4ª línea: checkbox factura -->
+                            <!-- checkbox factura -->
                             <div class="col-12">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="needInvoice">
@@ -145,7 +151,7 @@
                                 </div>
                             </div>
 
-                            <!-- Campos de factura (ocultos hasta marcar el checkbox) -->
+                            <!-- Fila opcional: campos de factura -->
                             <div id="invoiceFields" class="row g-3 d-none">
                                 <div class="col-md-6">
                                     <label for="cif" class="form-label">CIF / NIF</label>
@@ -158,7 +164,7 @@
                                 </div>
                             </div>
 
-                            <!-- 5ª línea: servicio -->
+                            <!-- Fila 5: tipo de servicio y zona del cuerpo -->
                             <div class="col-md-6">
                                 <label for="service" class="form-label">Servicio</label>
                                 <select id="service" class="form-select" required>
@@ -170,8 +176,6 @@
                                 </select>
                             </div>
 
-
-                            <!-- 6ª línea: zona del cuerpo y tamaño -->
                             <div class="col-md-6">
                                 <label for="bodyZone" class="form-label">Zona del cuerpo</label>
                                 <select id="bodyZone" class="form-select" required>
@@ -195,6 +199,7 @@
                                 </select>
                             </div>
 
+                            <!-- Fila 6: tamaño y estilo -->
                             <div class="col-md-6">
                                 <label for="size" class="form-label">Tamaño</label>
                                 <select id="size" class="form-select" required>
@@ -207,7 +212,6 @@
                                 </select>
                             </div>
 
-                            <!-- 7ª línea: estilo y color/B&N -->
                             <div class="col-md-6">
                                 <label for="style" class="form-label">Estilo</label>
                                 <select id="style" class="form-select" required>
@@ -223,8 +227,7 @@
                             </div>
 
 
-                            <!-- 8ª línea: color/B&N en una fila completa -->
-                            <!-- 7ª línea: estilo y color/B&N -->
+                            <!-- FIla 7: nivel de detalle y color/bn -->
                             <div class="col-md-6">
                                 <label for="style" class="form-label">Detalle</label>
                                 <select id="style" class="form-select" required>
@@ -238,18 +241,18 @@
                             <div class="col-md-6">
                                 <label class="form-label d-block">¿Color o blanco y negro?</label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="colorMode" id="colorYes"
-                                        value="color" checked>
-                                    <label class="form-check-label" for="colorYes">Color</label>
-                                </div>
-                                <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="colorMode" id="colorBW"
                                         value="bw">
                                     <label class="form-check-label" for="colorBW">Blanco y negro</label>
                                 </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="colorMode" id="colorYes"
+                                        value="color" checked>
+                                    <label class="form-check-label" for="colorYes">Color</label>
+                                </div>
                             </div>
 
-                            <!-- 9ª línea: comentarios y referencias (uno al lado del otro) -->
+                            <!-- Fila 8: comentarios e imágenes de referencia -->
                             <div class="col-md-6">
                                 <label for="comments" class="form-label">Comentarios</label>
                                 <textarea id="comments" class="form-control" rows="3"
@@ -262,7 +265,8 @@
                                 <div class="form-text">Puedes subir hasta 3 imágenes (máx. 5 MB cada una).</div>
                             </div>
 
-                            <!-- 9ª línea: selector de fecha y hora -->
+                            <!-- Fila 9: selector de fecha y hora -->
+                            <!-- esto por ahora funciona con un array, no toma datos reales -->
                             <div class="col-12 d-flex justify-content-center mt-3">
                                 <div class="slot-picker">
                                     <div class="slot-header">
@@ -276,22 +280,20 @@
                                     </div>
 
                                     <div class="slot-days" id="slotDays">
-                                        <!-- se rellenará con JS -->
                                     </div>
 
                                     <div class="slot-times" id="slotTimes">
-                                        <!-- horas disponibles para el día seleccionado -->
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- 10ª línea: botones borrar / cancelar -->
+                            <!-- Fila 10: botones borrar / cancelar -->
                             <div class="col-12 d-flex justify-content-center gap-3 mt-4">
-                                <button type="button" class="btn btn-outline-light" id="btnClear">Borrar</button>
-                                <button type="button" class="btn btn-outline-danger" id="btnCancel">Cancelar</button>
+                                <button type="button" class="btn btn-outline-light" id="btnClear">BORRAR</button>
+                                <button type="button" class="btn btn-outline-danger" id="btnCancel">CANCELAR</button>
                             </div>
 
-                            <!-- 11ª línea: términos y enviar -->
+                            <!-- checkbox de términos y condiciones -->
                             <div class="col-12 mt-3">
                                 <div class="form-check text-center">
                                     <input class="form-check-input" type="checkbox" id="acceptTerms">
@@ -301,10 +303,11 @@
                                 </div>
                             </div>
 
+                            <!-- Fila 11: botón submit -->
                             <div class="col-12 text-center mt-3">
                                 <button class="btn btn-primary btn-reservar-submit" id="btnSubmit" type="submit"
                                     disabled>
-                                    RESERVAR CITA
+                                    ENVIAR
                                 </button>
                             </div>
 
@@ -314,7 +317,8 @@
             </div>
         </div>
 
-        <p class="mt-3 cta-text">
+        <!-- Texto para modificar cita -->
+        <p class="mt-2 cta-text modify-text">
             ¿Cambio de planes? <span class="cta-line1">Modifica</span>
             <span class="cta-line2">tu cita
                 <a href="#" class="text-decoration-none link-modify">
@@ -326,18 +330,22 @@
     </div>
 
 
-
     <!-- FAQ -->
-    <section class="faq text-center">
-        <!-- Botón para mostrar/ocultar el acordeón completo -->
-        <button class="btn btn-outline-dark mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#faqSection"
-            aria-expanded="false" aria-controls="faqSection">
-            Preguntas frecuentes
+    <section class="faq text-center py-3">
+
+        <!-- Botón de mostrar/ocultar el acordeón -->
+        <button
+            class="btn btn-outline-dark faq-toggle-btn d-flex align-items-center justify-content-between mx-auto mb-4 px-4 py-"
+            type="button" data-bs-toggle="collapse" data-bs-target="#faqSection" aria-expanded="false"
+            aria-controls="faqSection">
+            <i class="bi bi-question-circle me-2 faq-icon-left"></i>
+            <span class="flex-grow-1 m-2">PREGUNTAS FRECUENTES (FAQ)</span>
+            <i class="bi bi-plus faq-icon-right"></i>
         </button>
 
-        <!-- Contenedor de FAQs (colapsable) -->
+        <!-- Contenedor de FAQs -->
         <div class="collapse" id="faqSection">
-            <div class="accordion" id="faqAccordion">
+            <div class="accordion mx-auto" id="faqAccordion">
 
                 <!-- Pregunta 1 -->
                 <div class="accordion-item">
@@ -378,7 +386,7 @@
                     <h2 class="accordion-header" id="faqHeading3">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
-                            ¿Puedo llevar referencias?
+                            ¿Puedo enviar referencias?
                         </button>
                     </h2>
                     <div id="faq3" class="accordion-collapse collapse" aria-labelledby="faqHeading3"
@@ -399,126 +407,222 @@
     <footer class="site-footer mt-auto py-4">
         <div class="container text-center">
 
-            <!-- Línea 1: legales -->
-            <div class="mb-3">
+            <!-- Línea 1: enlace de cuestiones legales -->
+            <div class="mb-2">
                 <a href="#" class="footer-link mx-2">Política de privacidad</a>
                 <a href="#" class="footer-link mx-2">Términos de servicio</a>
                 <a href="#" class="footer-link mx-2">Contacto</a>
             </div>
 
-            <!-- Línea 2: redes -->
-            <div class="mb-3">
+            <!-- Línea 2: enlaces a perfiles en redes -->
+            <div class="mb-2">
                 <a href="#" class="social-link mx-2" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                 <a href="#" class="social-link mx-2" aria-label="X/Twitter"><i class="bi bi-x"></i></a>
                 <a href="#" class="social-link mx-2" aria-label="TikTok"><i class="bi bi-music-note-beamed"></i></a>
             </div>
 
-            <!-- Línea 3: copyright -->
+            <!-- Línea 3: texto de copyright -->
             <div class="small text-muted">
-                TatuSys © 2026. Todos los derechos reservados.
+                INK&CO © 2026. Todos los derechos reservados.
+            </div>
+
+            <!-- Línea 4: Powered by -->
+            <div class="powered-by text-end mt-2">
+                Powered by
+                <a href="#" class="powered-link"><strong>TatuSys</strong></a>. @2026.
             </div>
         </div>
     </footer>
 
-    <!-- Bootstrap Bundle (includes Popper) -->
+
+    <!-- ============================
+            ZONA DE SCRIPTS
+    ============================ -->
+
+    <!-- Bootstrap Bundle - esto carga el JavaScript de Bootstrap -->
+    <!-- es de donde se cargan funciones como los carruseles, el cierre tipo collapse y otras cosas -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Small script: form validation + email confirm + file count -->
+    <!-- Script para validar el formulario: -->
     <script>
         (function () {
+            //use strict es para usar una sintaxis más estricta, y esto vale para
+            //evitar que se produzcan ciertos errores
             'use strict';
 
+            // esto es para recoger la info de los elementos del formulario
             const form = document.getElementById('formAppointment');
+            if (!form) return;
             const email = document.getElementById('email');
             const confirmEmail = document.getElementById('confirmEmail');
             const refs = document.getElementById('references');
-
-            // limit files to 3
-            refs.addEventListener('change', () => {
-                if (refs.files.length > 3) {
-                    alert('Puedes subir un máximo de 3 imágenes.');
-                    refs.value = '';
-                }
-            });
-
-            form.addEventListener('submit', function (event) {
-                // Basic Bootstrap validation
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-
-                // email match validation
-                if (email.value && confirmEmail.value && email.value !== confirmEmail.value) {
-                    confirmEmail.classList.add('is-invalid');
-                    confirmEmail.nextElementSibling &&
-                        (confirmEmail.nextElementSibling.textContent = 'Los correos no coinciden.');
-                    event.preventDefault();
-                    event.stopPropagation();
-                } else {
-                    confirmEmail.classList.remove('is-invalid');
-                }
-
-                form.classList.add('was-validated');
-                if (form.checkValidity() && email.value === confirmEmail.value) {
-                    event.preventDefault(); // evitar envío real en mockup
-                    alert('Solicitud enviada (mockup). Más adelante la integraremos con el backend o Angular.');
-                    form.reset();
-                    form.classList.remove('was-validated');
-                    // cerrar collapse
-                    const collapseEl = document.querySelector('#appointmentForm');
-                    const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
-                    bsCollapse.hide();
-                }
-            }, false);
-        })();
-    </script>
-
-    <!-- SCRPIT para suscribir al botón de reserva grande al cierre
- o paertura del formulario, así aparece o desaparece-->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleBtn = document.getElementById('toggleFormBtn');
-            const formCollapse = document.getElementById('appointmentForm');
-
-            formCollapse.addEventListener('show.bs.collapse', () => {
-                toggleBtn.style.display = 'none'; // ocultamos el botón cuando el form se abre
-            });
-
-            formCollapse.addEventListener('hidden.bs.collapse', () => {
-                toggleBtn.style.display = 'inline-block'; // lo mostramos de nuevo al cerrar
-            });
-        });
-    </script>
-
-    <!-- SCRIPT PARA VALIDACIONES DEL FORMULARIO-->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            /* ---------- 1. Mostrar / ocultar campos de factura ---------- */
             const needInvoice = document.getElementById('needInvoice');
             const invoiceFields = document.getElementById('invoiceFields');
+            const btnClear = document.getElementById('btnClear');
+            const btnCancel = document.getElementById('btnCancel');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const acceptTerms = document.getElementById('acceptTerms');
 
-            needInvoice.addEventListener('change', () => {
-                if (needInvoice.checked) {
-                    invoiceFields.classList.remove('d-none'); // mostramos
-                } else {
-                    invoiceFields.classList.add('d-none'); // ocultamos
-                }
-            });
+            // esto muestra/oculta los inputs para factura
+            if (needInvoice && invoiceFields) {
+                needInvoice.addEventListener('change', () => {
+                    invoiceFields.classList.toggle('d-none', !needInvoice.checked);
+                });
+            }
 
-            /* ---------- 2. Limitar archivos a 3 imágenes (ya lo hacías, pero lo dejamos aquí también) ---------- */
-            const refs = document.getElementById('references');
+            // esta parte es para limitar cuántas img sube el usuario
+            // cuando se produce un 'change', mira cuántas imágenes lleva
+            // y si supera el límite, le manda un 'alert' en pantalla
             if (refs) {
                 refs.addEventListener('change', () => {
                     if (refs.files.length > 3) {
-                        alert('Puedes subir un máximo de 3 imágenes.');
+                        alert('Máx. de 3 imágenes.');
                         refs.value = '';
                     }
                 });
             }
 
-            /* ---------- 3. Selector de fecha y hora (mock de comportamiento) ---------- */
+            // esto captura el envío del formulario
+            form.addEventListener('submit', function (event) {
+                // Y esto comprueba que el formulario cumple
+                //con las exigencias de Bootstrap
+                // p. ej., no se envía si hay algo vacío o con formato incorrecto
+                const isFormValid = form.checkValidity();
 
+                if (!isFormValid) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                // esta parte comprueba que el correo y su repetición coinciden
+                const emailsRellenados = email && confirmEmail && email.value && confirmEmail.value;
+                let emailsCoinciden = true;
+
+                if (emailsRellenados && email.value !== confirmEmail.value) {
+                    emailsCoinciden = false;
+
+                    if (confirmEmail) {
+                        confirmEmail.classList.add('is-invalid');
+                        const feedback = confirmEmail.nextElementSibling;
+                        if (feedback) {
+                            feedback.textContent = 'Los correos no coinciden.';
+                        }
+                    }
+
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else if (confirmEmail) {
+                    // quitamos el estado de error si antes lo tenía
+                    confirmEmail.classList.remove('is-invalid');
+                }
+
+                // activamos estilos de validación de Bootstrap
+                form.classList.add('was-validated');
+
+                // si el formulario es válido y los correos coinciden -> mock de envío
+                if (isFormValid && emailsCoinciden) {
+                    // ⚠️ en producción quitas esta línea para permitir el envío real
+                    event.preventDefault();
+
+                    alert('Solicitud enviada (NO ES VERDAD, AÚN ESTAMOS EN EL MOCKUP).');
+
+                    // limpiamos el formulario y sus estados visuales
+                    form.reset();
+                    form.classList.remove('was-validated');
+                    if (confirmEmail) {
+                        confirmEmail.classList.remove('is-invalid');
+                    }
+
+                    // cerramos el collapse del formulario
+                    const collapseEl = document.querySelector('#appointmentForm');
+                    if (collapseEl && bootstrap && bootstrap.Collapse) {
+                        const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
+                        bsCollapse.hide();
+                    }
+
+                    // desactivamos de nuevo el botón enviar hasta aceptar términos
+                    if (btnSubmit) btnSubmit.disabled = true;
+                }
+            });
+
+            // esto es para los botones que vacían o cierran el formulario
+            if (btnClear) {
+                btnClear.addEventListener('click', () => {
+                    form.reset();
+                    form.classList.remove('was-validated');      // 🔹 quitamos estado de validación
+                    if (confirmEmail) confirmEmail.classList.remove('is-invalid'); // 🔹 quitamos borde rojo
+                    if (btnSubmit) btnSubmit.disabled = true;    // desactivamos envío
+                });
+            }
+
+            if (btnCancel) {
+                btnCancel.addEventListener('click', () => {
+                    form.reset();
+                    form.classList.remove('was-validated');
+                    if (confirmEmail) confirmEmail.classList.remove('is-invalid');
+                    if (btnSubmit) btnSubmit.disabled = true;
+
+                    const collapseEl = document.querySelector('#appointmentForm');
+                    if (collapseEl && bootstrap && bootstrap.Collapse) {
+                        const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
+                        bsCollapse.hide();
+                    }
+                });
+            }
+
+            // esto permite que el botón enviar esté desactivado hasta aceptar los términos
+            if (acceptTerms && btnSubmit) {
+                btnSubmit.disabled = !acceptTerms.checked; // estado inicial
+                acceptTerms.addEventListener('change', () => {
+                    btnSubmit.disabled = !acceptTerms.checked;
+                });
+            }
+        })();
+    </script>
+
+    <!-- SCRIPT para mostrar u ocultar el botón 'RESERVAR CITA' al abrir o cerrar el formulario-->
+    <script>
+        //una vez carga el DOM, captura el botón y el contenedor del formulario
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('toggleFormBtn');
+            const formCollapse = document.getElementById('appointmentForm');
+
+            // oculta el botón al abrir el formulario
+            formCollapse.addEventListener('show.bs.collapse', () => {
+                toggleBtn.style.display = 'none';
+            });
+
+            // muestra el botón al abrir el formulario
+            formCollapse.addEventListener('hidden.bs.collapse', () => {
+                toggleBtn.style.display = 'inline-block';
+            });
+        });
+    </script>
+
+    <!-- SCRIPT para ocultar la modificación de cita al abrir el formulario-->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const appointmentForm = document.getElementById('appointmentForm');
+            const modifyText = document.querySelector('.modify-text');
+
+            if (appointmentForm && modifyText) {
+                // Cuando se abre el formulario
+                appointmentForm.addEventListener('show.bs.collapse', () => {
+                    modifyText.style.display = 'none';
+                });
+
+                // Cuando se cierra el formulario
+                appointmentForm.addEventListener('hidden.bs.collapse', () => {
+                    modifyText.style.display = 'block';
+                });
+            }
+        });
+    </script>
+
+
+    <!--MOCKUP DE COMPORTAMIENTO DEL SELECTOR DE FECHA Y HORA-->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
             // Datos de ejemplo: días de una semana con su estado y horas libres
             const mockDays = [
                 { day: 8, status: 'available', slots: ['09:00', '12:00', '16:00'] },
@@ -539,7 +643,7 @@
             let selectedDayIndex = null;
             let selectedSlot = null;
 
-            // Para el ejemplo, usamos siempre el mismo mes ficticio
+            // Un mes y año ficticios
             slotMonthLabel.textContent = 'Mes - 2XXX';
 
             // Función que pinta los días en el calendario
@@ -555,8 +659,8 @@
                         span.addEventListener('click', () => {
                             selectedDayIndex = index;
                             selectedSlot = null;
-                            renderDays();   // repintamos días para marcar el seleccionado
-                            renderTimes();  // mostramos horas del nuevo día
+                            renderDays();
+                            renderTimes();
                         });
                     } else if (item.status === 'none') {
                         span.classList.add('day-none');
@@ -575,7 +679,7 @@
             // Función que pinta las horas del día seleccionado
             function renderTimes() {
                 slotTimesContainer.innerHTML = '';
-
+                // si no hay un día seleccionado, termina la ejecución
                 if (selectedDayIndex === null) return;
 
                 const dayData = mockDays[selectedDayIndex];
@@ -598,7 +702,7 @@
                 });
             }
 
-            // Inicializamos con el primer día disponible
+            // Esta parte inicializa el calendario
             const firstAvailableIndex = mockDays.findIndex(d => d.status === 'available');
             if (firstAvailableIndex !== -1) {
                 selectedDayIndex = firstAvailableIndex;
@@ -606,53 +710,17 @@
             renderDays();
             renderTimes();
 
-            // Botones de mes (por ahora solo muestran un alert, ya que es mock)
+            // Botones para cambiar de mes (no son funcionales aún)
             prevMonthBtn.addEventListener('click', () => {
-                alert('En la versión final aquí cambiaríamos al mes anterior.');
+                alert('En la versión final pasaría al mes anterior.');
             });
             nextMonthBtn.addEventListener('click', () => {
-                alert('En la versión final aquí cambiaríamos al mes siguiente.');
-            });
-
-            /* ---------- 4. Botones borrar / cancelar y activación de enviar ---------- */
-            const form = document.getElementById('formAppointment');
-            const btnClear = document.getElementById('btnClear');
-            const btnCancel = document.getElementById('btnCancel');
-            const btnSubmit = document.getElementById('btnSubmit');
-            const acceptTerms = document.getElementById('acceptTerms');
-
-            // Limpiar
-            btnClear.addEventListener('click', () => {
-                form.reset();
-                selectedDayIndex = firstAvailableIndex;
-                selectedSlot = null;
-                renderDays();
-                renderTimes();
-                btnSubmit.disabled = true;
-            });
-
-            // Cancelar = limpiar + cerrar formulario
-            btnCancel.addEventListener('click', () => {
-                form.reset();
-                selectedDayIndex = firstAvailableIndex;
-                selectedSlot = null;
-                renderDays();
-                renderTimes();
-                btnSubmit.disabled = true;
-
-                const collapseEl = document.querySelector('#appointmentForm');
-                const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
-                bsCollapse.hide();
-            });
-
-            // Activar botón enviar solo si se aceptan términos
-            acceptTerms.addEventListener('change', () => {
-                btnSubmit.disabled = !acceptTerms.checked;
+                alert('En la versión final pasaría al mes siguiente.');
             });
         });
     </script>
 
-    <!-- New script: auto scroll to the appointment form -->
+    <!-- Desplazamiento de la pantalla al abrir el formulario para verlo mejor-->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const reserveBtn = document.querySelector('.btn-reservar');
@@ -676,6 +744,25 @@
                     collapse.hide();
                 }
             });
+        });
+    </script>
+
+    <!-- Desplazamiento al abrir las preguntas frecuentes-->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqButton = document.querySelector('.faq-toggle-btn');
+            const faqSection = document.getElementById('faqSection');
+
+            if (faqButton && faqSection) {
+                faqSection.addEventListener('show.bs.collapse', () => {
+                    // Espera un momento a que empiece la animación de apertura
+                    setTimeout(() => {
+                        const yOffset = -window.innerHeight * 0.1;  // desplazamiento 10% hacia arriba
+                        const y = faqButton.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                    }, 300); // 300ms = tiempo medio del colapso Bootstrap
+                });
+            }
         });
     </script>
 </body>
