@@ -9,45 +9,69 @@
 
 }
 
-
-/* ESTILOS PARA CABECERA */
+/* ============================
+      ESTILOS PARA CABECERA
+   ============================ */
+/* color del header */
 .site-header {
-    background-color: var(--jet);
-    color: white;
+    background: linear-gradient(180deg, var(--night), var(--jet));
 }
 
+/* tamaño del logo */
 .logo {
     height: 3rem;
     max-height: 12vh;
     width: auto;
 }
 
+/* ============================
+      ESTILOS PARA BODY
+   ============================ */
+/* Estilos generales para el body */
 body {
-    background-color: var(--antiflash-white);
+    background-color: #ececec;
     margin: auto;
+    font-family: 'Figtree', Arial, sans-serif;
+    font-weight: 400;
+}
+
+/* Encabezados y títulos */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.hero-title,
+.hero-tagline,
+.booking-title {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: inherit;
 }
 
 /* ============================
-   ESTILOS SECCIÓN HERO
+      ESTILOS SECCIÓN HERO
    ============================ */
 
 /* Contenedor general del hero */
 #hero {
     position: relative;
     color: white;
-    height: 45vh;
+    height: 38vh;
     min-height: 320px;
     overflow: hidden;
 }
 
-/* Carrusel y slides ocupan todo el alto del hero */
+/* Tamaño del carrusel y slides */
 #heroCarousel,
 #heroCarousel .carousel-inner,
 #heroCarousel .carousel-item {
     height: 100%;
 }
 
-/* Cada slide del carrusel (con background-image) */
+/* Slides del carrusel */
 .hero-slide {
     height: 100%;
     width: 100%;
@@ -64,11 +88,11 @@ body {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.7);
     z-index: 1;
 }
 
-/* Texto del hero (centrado vertical/horizontal y por encima del carrusel) */
+/* Texto de la sección hero */
 .hero-text {
     position: absolute;
     z-index: 2;
@@ -97,16 +121,24 @@ body {
 
 /* texto INK&CO */
 .hero-title {
-    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-size: clamp(2rem, 5vw, 3.8rem);
     font-weight: 700;
     color: white;
     margin-bottom: 0.3em;
     line-height: 1.1;
 }
 
+/* letra & en cyan claro */
+.hero-title .highlight {
+    color: var(--robin-egg-blue);
+    position: relative;
+    z-index: 1;
+    font-weight: 700;
+}
+
 /* texto ESTUDIO DE */
 .hero-tagline {
-    font-size: clamp(1.2rem, 3.4vw, 2.1rem);
+    font-size: clamp(1.1rem, 2.8vw, 1.8rem);
     font-weight: 600;
     color: white;
     margin-bottom: 0.8em;
@@ -115,23 +147,10 @@ body {
 
 /* palabra TATUAJE PROFESIONAL en burdeos */
 .hero-tagline .highlight {
-    color: var(--burgundy);
+    color: var(--cardinal);
     position: relative;
     z-index: 1;
     font-weight: 700;
-}
-
-/* Capa de fondo sólida tipo marcador */
-.hero-tagline .highlight::before {
-    content: "";
-    position: absolute;
-    left: -1;
-    bottom: 0.05em;
-    width: 102%;
-    height: 1.1em;
-    background-color: #ececec;
-    opacity: 0.90;
-    z-index: -1;
 }
 
 /* Párrafo descriptivo */
@@ -147,7 +166,7 @@ body {
 /* Enlace de ubicación */
 .hero-location {
     font-size: clamp(0.9rem, 1.3vw, 1rem);
-    color: var(--antiflash-white);
+    color: var(--robin-egg-blue);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -191,18 +210,20 @@ body {
     transform: translateX(-50%) scaleX(1);
 }
 
+/* ===============================
+  ESTILOS SECCIÓN BOTÓN DE RESERVA
+   =============================== */
 
-/* ESTILOS SECCIÓN BOTÓN DE RESERVA*/
 /* Padding para esta sección */
 .cta-wrapper {
     padding-block: 2vh;
 }
 
-/* Botón de reservar */
+/* Botón RESERVAR CITA */
 .btn-reservar {
     font-size: clamp(1rem, 2.5vw, 1.3rem);
     font-weight: 600;
-    padding-block: 0.9em;
+    padding-block: 0.6em;
     padding-inline: 2em;
     background-color: var(--dark-cyan);
     border: none;
@@ -216,32 +237,55 @@ body {
     justify-content: center;
 }
 
-/* Efecto hover del botón de reserva */
-.btn-reservar:hover {
+/* Efecto hover del botón RESERVAR CITA */
+.btn-reservar:hover,
+.btn-reservar-submit:hover:enabled {
     background-color: var(--robin-egg-blue);
 }
 
-/* esto sirve para crear un salto de línea
-sin tener que recurrir al br*/
-.cta-line2 {
-    display: block;
+/* Evitar cambio de color al mantener clic en el botón RESERVAR CITA */
+.btn-reservar:active,
+.btn-reservar:focus {
+    background-color: var(--dark-cyan) !important;
+    /* conserva el color original */
+    box-shadow: none !important;
+    /* elimina el halo azul */
+    outline: none !important;
+    /* elimina borde de enfoque */
 }
 
-/* Enlace "AQUÍ" */
+/* En algunos navegadores móviles (WebKit) */
+.btn-reservar {
+    -webkit-tap-highlight-color: transparent;
+    /* quita flash azul en móviles */
+}
+
+/* Enlace de modificar cita: "AQUÍ" */
 .link-modify {
     color: var(--burgundy);
 }
 
+/* Efecto hover de modificar cita */
 .link-modify:hover {
     color: var(--cardinal);
     text-decoration: underline;
 }
 
-/*ESTILOS PARA EL FORMULARIO*/
-/* =========================================================
-   FORMULARIO DE RESERVA — ESTILOS
-   ========================================================= */
+/* Salto de línea sin tener que recurrir al br*/
+.cta-line2 {
+    display: block;
+}
 
+.cta-text {
+    font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+    margin-bottom: 0.5rem;
+    margin-top: 0.3rem;
+}
+
+/* ===============================
+    ESTILOS PARA EL FORMULARIO
+   =============================== */
+/* contenedor del formulario */
 .booking-card {
     background-color: var(--jet);
     border-radius: 0.625rem;
@@ -254,83 +298,159 @@ sin tener que recurrir al br*/
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
 }
 
-/* 🔸 Más padding interno, con ajuste responsive */
+/* Padding interno, con ajuste responsive */
 .booking-card .card-body {
     padding: clamp(1.5rem, 5vw, 3rem);
-    /* +aire lateral y vertical */
 }
 
-/* 🔸 Título */
+/* Título */
 .booking-title {
     font-size: clamp(1.4rem, 2.8vw, 1.8rem);
+    color: var(--robin-egg-blue);
     font-weight: 700;
-    color: #fff;
     text-align: center;
     margin-bottom: 1.5rem;
 }
 
-/* 🔸 Etiquetas e inputs */
-.booking-card .form-label,
-.booking-card .form-check-label {
-    color: #fff;
+/* Formato de labels e inputs */
+.booking-card .form-label {
     text-align: left;
     display: block;
     font-weight: 500;
     margin-bottom: 0.3rem;
+    margin-left: 5%;
+    margin-bottom: 0.3rem;
 }
 
-/* 🔸 Inputs: límite de ancho + centrado visual */
-.booking-card input.form-control,
-.booking-card select.form-select,
-.booking-card textarea.form-control {
+/* Inputs centrados y con límite de altura */
+.booking-card .form-control,
+.booking-card .form-select,
+.booking-card .form-control {
     max-width: 90%;
     margin: 0 auto 0.75rem auto;
     display: block;
 }
 
-/* 🔸 Inputs de una sola columna (como Teléfono, Color/B&N, Comentarios...) */
-.booking-card .col-12 input.form-control,
-.booking-card .col-12 select.form-select,
-.booking-card .col-12 textarea.form-control {
-    max-width: 85%;
-}
-
-/* 🔸 Radios y checkboxes */
+/* SELECTORES DE RADIO*/
+/* Base */
 .booking-card .form-check,
 .booking-card .form-check-inline {
     text-align: left;
-    max-width: 85%;
-    margin: 0.25rem auto;
+    max-width: 90%;
+    margin: 0 auto 0.75rem auto;
 }
 
-.booking-card .form-check-inline .form-check-input {
-    margin-right: 0.4rem;
+/* Color corporativo al estar seleccionados */
+.form-check-input[type="radio"]:checked {
+    background-color: var(--robin-egg-blue);
+    border-color: var(--robin-egg-blue);
 }
 
-/* 🔸 Checkbox de factura y términos */
-.booking-card .form-check-input[type="checkbox"] {
-    accent-color: var(--robin-egg-blue);
+/* Efecto de foco no azul */
+.form-check-input[type="radio"]:focus {
+    box-shadow: 0 0 0 0.25rem rgba(17, 195, 185, 0.25);
+    /* tono robin egg translúcido */
+    outline: none;
 }
 
-/* 🔹 Alinear el grupo de radio buttons con el resto de inputs */
-.booking-card .col-12 .form-check-inline {
+/* Eliminar el flash azul en móviles */
+.form-check-input[type="radio"] {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Contenedor general de los radios */
+.booking-card .form-check {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
     margin-left: 5%;
-    /* mismo margen que inputs */
 }
 
-/* 🔹 Ajuste del label "¿Color o blanco y negro?" para compensar diferencias visuales */
-.booking-card .col-12 label.form-label.d-block {
-    margin-left: 5%;
-    margin-bottom: 0.4rem;
+/* Cada radio individual */
+.booking-card .form-check-inline {
+    display: inline-flex !important;
+    align-items: center;
+    margin-top: 0.2em;
 }
 
-/* 🔹 Asegura que el espacio total del grupo se mantenga */
-.booking-card .col-12 .form-check-inline:not(:last-child) {
-    margin-right: 1.5rem;
-    /* separación entre "Color" y "B/N" */
+/* Evitar que el texto de los radios se corte o baje de línea */
+.booking-card .form-check-inline .form-check-label {
+    white-space: nowrap;
+    overflow: visible;
 }
 
-/* 🔸 Botón principal (enviar) */
+/* CHEKBOXES*/
+.booking-card .form-check-label {
+    text-align: left;
+    display: inline-block;
+    font-weight: 400;
+    margin-bottom: 0.3rem;
+    margin-left: 0;
+}
+
+/* Centrar el checkbox de "Términos y condiciones" */
+.booking-card .form-check.text-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    /* pequeña separación entre el recuadro y el texto */
+}
+
+
+/* Color de fondo y borde cuando están marcados */
+.form-check-input[type="checkbox"]:checked {
+    background-color: var(--robin-egg-blue);
+    border-color: var(--robin-egg-blue);
+}
+
+/* Anillo de foco en tu color en lugar de azul */
+.form-check-input[type="checkbox"]:focus {
+    box-shadow: 0 0 0 0.25rem rgba(17, 195, 185, 0.25);
+    outline: none;
+}
+
+/* Evitar flash raro en móviles */
+.form-check-input[type="checkbox"] {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Botón borrar y cancelar */
+#btnClear,
+#btnCancel {
+    margin-top: 0.3em;
+    padding: 0.6rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 400;
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    transition: all 0.25s ease;
+}
+
+#btnClear {
+
+    background-color: var(--robin-egg-blue);
+    color: var(--antiflash-white);
+    border: none;
+}
+
+#btnClear:hover {
+    background-color: var(--antiflash-white);
+    color: var(--night);
+}
+
+/* --- BOTÓN CANCELAR --- */
+#btnCancel {
+    background-color: var(--burgundy);
+    color: #fff;
+    border: none;
+}
+
+#btnCancel:hover {
+    background-color: var(--cardinal);
+}
+
+/* Botón enviar */
 .btn-reservar-submit {
     background-color: var(--dark-cyan);
     border: none;
@@ -342,18 +462,16 @@ sin tener que recurrir al br*/
     transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.btn-reservar-submit:hover:enabled {
-    background-color: var(--robin-egg-blue);
-    box-shadow: 0 0 12px rgba(17, 195, 185, 0.5);
-}
-
 .btn-reservar-submit:disabled {
-    background-color: #666;
+    background-color: #ececec;
+    color: #2a2a2a;
     opacity: 0.7;
     cursor: not-allowed;
 }
 
-/* 🔸 Selector de fechas/horas */
+
+/* FECHA Y HORA */
+/* Selector de fechas y horas */
 .slot-picker {
     background-color: #fff;
     color: var(--jet);
@@ -361,26 +479,9 @@ sin tener que recurrir al br*/
     padding: 1rem 1.25rem;
     width: 90%;
     max-width: 420px;
-    /* más proporcionado */
     margin: 0 auto;
+    margin-top: 1.2em;
 }
-
-/* 🔸 Alineación izquierda coherente (sin centrado) */
-.booking-card .form-label {
-    display: block;
-    margin-left: 5%;
-    /* margen proporcional */
-    margin-bottom: 0.3rem;
-}
-
-.booking-card input.form-control,
-.booking-card select.form-select,
-.booking-card textarea.form-control {
-    max-width: 90%;
-    margin-left: 5%;
-}
-
-
 
 /* Cabecera del selector: mes y año */
 .slot-header {
@@ -478,6 +579,93 @@ sin tener que recurrir al br*/
     color: #fff;
 }
 
+/*+++++++++++++++++++*/
+/* SECCION FAQS*/
+/*+++++++++++++++++++*/
+
+/* Botón principal de despliegue */
+.faq-toggle-btn {
+    width: 25%;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 1.05rem;
+    background-color: #fff;
+    color: var(--jet);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.faq-toggle-btn:hover {
+    background-color: var(--robin-egg-blue);
+    color: white;
+
+}
+
+.faq-icon-left,
+.faq-icon-right {
+    color: var(--dark-cyan);
+    font-size: 1.4rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.faq-toggle-btn:hover .faq-icon-left,
+.faq-toggle-btn:hover .faq-icon-right {
+    color: white;
+}
+
+/* Rotación del + → – al abrir */
+.faq-toggle-btn[aria-expanded="true"] .faq-icon-right {
+    transform: rotate(45deg);
+}
+
+/* Centramos y reducimos ancho */
+.faq .accordion {
+    max-width: 55%;
+    margin: 0 auto;
+    text-align: left;
+    border-radius: 10px;
+}
+
+/* Fondo, bordes y tipografía */
+.accordion-item {
+    border: 2px solid #fff;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+}
+
+/* Estilo de las preguntas */
+.accordion-button {
+    background-color: #fff;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Cuando la pregunta está abierta */
+.accordion-button:not(.collapsed)::after {
+    filter: brightness(0) invert(1);
+}
+
+/* Pregunta abierta */
+.accordion-button:not(.collapsed) {
+    background-color: var(--dark-cyan);
+    color: white;
+    box-shadow: none;
+}
+
+/* Elimina color azul predeterminado del borde */
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+/* Texto de respuesta */
+.accordion-body {
+    background-color: #fff;
+    color: var(--jet);
+    text-align: justify;
+    line-height: 1.6;
+}
+
 /* ESTILOS DE FOOTER */
 .site-footer {
     background: linear-gradient(180deg, var(--night), var(--jet));
@@ -490,9 +678,9 @@ sin tener que recurrir al br*/
     text-decoration: none;
 }
 
-.footer-link:hover {
+.footer-link:hover,
+.social-link:hover {
     color: var(--robin-egg-blue);
-    text-decoration: underline;
 }
 
 .social-link {
@@ -501,14 +689,28 @@ sin tener que recurrir al br*/
     text-decoration: none;
 }
 
-.social-link:hover {
-    color: var(--robin-egg-blue);
+.site-footer .text-muted {
+    color: var(--antiflash-white) !important;
 }
 
-.text-muted {
-    color: rgba(255, 255, 255, 0.7) !important;
+.powered-by {
+    font-family: 'Poppins', Arial, sans-serif;
+    color: var(--antiflash-white);
+    text-align: right;
 }
 
+.powered-link {
+    color: var(--burgundy);
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.powered-link:hover {
+    color: var(--cardinal);
+}
+
+/* SECCIÓN PARA RESPONSIVE */
 @media (max-width: 768px) {
     #hero {
         min-height: 55vh;
@@ -532,16 +734,6 @@ sin tener que recurrir al br*/
 
     .cta-wrapper {
         padding-block: 8vh;
-    }
-
-    .banner {
-        min-height: 35vh;
-    }
-
-    .logo-mark {
-        width: 40px;
-        height: 40px;
-        font-size: .95rem;
     }
 
     .logo {
