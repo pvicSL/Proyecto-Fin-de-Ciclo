@@ -395,9 +395,7 @@ h6,
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    /* pequeña separación entre el recuadro y el texto */
 }
-
 
 /* Color de fondo y borde cuando están marcados */
 .form-check-input[type="checkbox"]:checked {
@@ -416,22 +414,40 @@ h6,
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Enlace del check de términos y condciones */
+.terms-link {
+    color: var(--dark-cyan);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Check de t&c - hover */
+.terms-link:hover {
+    color: var(--robin-egg-blue);
+}
+
+/* Check de t&c - visitado */
+.terms-link:visited {
+    color: var(--cardinal);
+}
+
+/* ---- BOTONES FORMULARIO -----*/
 /* Botón borrar y cancelar */
 #btnClear,
 #btnCancel {
     margin-top: 0.3em;
-    padding: 0.6rem 1.5rem;
+    padding: 0.45rem 1.5rem;
     border-radius: 10px;
     font-weight: 400;
     font-size: clamp(1rem, 2.2vw, 1.2rem);
     transition: all 0.25s ease;
+    min-width: 150px;
+    text-align: center;
 }
 
 #btnClear {
-
-    background-color: var(--robin-egg-blue);
     color: var(--antiflash-white);
-    border: none;
+    border: 2px solid var(--robin-egg-blue);
 }
 
 #btnClear:hover {
@@ -439,11 +455,9 @@ h6,
     color: var(--night);
 }
 
-/* --- BOTÓN CANCELAR --- */
 #btnCancel {
-    background-color: var(--burgundy);
+    border: 3px solid var(--burgundy);
     color: #fff;
-    border: none;
 }
 
 #btnCancel:hover {
@@ -470,7 +484,161 @@ h6,
 }
 
 
-/* FECHA Y HORA */
+/* .-.-.-.-.-.-.-.-.-.-. 
+ ESTILOS DE MODIFICAR CITA 
+.-.-.-.-.-.-.-.-.-.-. */
+
+/* Caja principal */
+#modifyAppointment .booking-card {
+    background-color: var(--jet);
+    width: 35%;
+    border-radius: 10px;
+    border: none;
+    color: var(--antiflash-white);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+    margin-top: 1rem !important;
+}
+
+/* Título principal */
+.modify-title {
+    font-family: 'Figtree', sans-serif;
+    color: var(--antiflash-white);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+}
+
+/* Recuadro gris con los datos */
+.appointment-box {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    padding: 1.5rem 1.2rem;
+    width: 80%;
+    max-width: 450px;
+}
+
+/* Texto "TU CITA ES EL:" */
+.appointment-label {
+    font-family: 'Figtree', sans-serif;
+    color: var(--jet);
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 0.8rem;
+}
+
+/* Distribución interna (fecha / hora) */
+.appointment-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    color: var(--jet);
+}
+
+/* Línea divisoria */
+.divider {
+    width: 0.2rem;
+    height: 4.5rem;
+    background-color: var(--jet);
+    opacity: 0.4;
+}
+
+/* FECHA */
+.appointment-date {
+    color: var(--burgundy);
+    font-family: 'Figtree', sans-serif;
+    text-align: center;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.appointment-date p {
+    margin: 0.15rem 0;
+    font-size: 1.5rem;
+}
+
+.appointment-day {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 600;
+}
+
+/* HORA */
+.appointment-time {
+    color: var(--dark-cyan);
+    font-family: 'Figtree', sans-serif;
+    text-align: center;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.appointment-time p {
+    margin: 0.15rem 0;
+    font-size: 1.5rem;
+}
+
+.appointment-hour {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 600;
+}
+
+/* Texto de contacto */
+.contact-text {
+    font-family: 'Figtree', sans-serif;
+    color: var(--antiflash-white);
+    margin-top: 1.2rem;
+    /* 🔹 reduce separación vertical */
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+}
+
+/* Enlace "Escríbenos" */
+.contact-link {
+    color: var(--robin-egg-blue);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.contact-link:hover {
+    text-decoration: underline;
+    color: var(--antiflash-white);
+}
+
+/* Botones */
+#btnModify {
+    border: 2px solid var(--robin-egg-blue);
+    color: white;
+    border-radius: 10px;
+    transition: all 0.25s ease;
+}
+
+#btnModify:hover {
+    background-color: var(--robin-egg-blue);
+    color: var(--night);
+}
+
+#btnCancelChange {
+    border: 2px solid var(--cardinal);
+    color: white;
+    border-radius: 10px;
+    transition: all 0.25s ease;
+}
+
+#btnCancelChange:hover {
+    background-color: var(--cardinal);
+    color: var(--antiflash-white);
+}
+
+/*oCULTAR Boton faq*/
+.hidden-element {
+    display: none !important;
+}
+
+
+/* .-.-.-.-.-.-.-.-.-.-. 
+ESTILOS DE SELECTOR DE FECHA
+.-.-.-.-.-.-.-.-.-.-. */
+
 /* Selector de fechas y horas */
 .slot-picker {
     background-color: #fff;
@@ -579,9 +747,9 @@ h6,
     color: #fff;
 }
 
-/*+++++++++++++++++++*/
-/* SECCION FAQS*/
-/*+++++++++++++++++++*/
+/* .-.-.-.-.-.-.-.-.-.-. 
+ESTILOS PREGUNTAS FRECUENTES 
+.-.-.-.-.-.-.-.-.-.-. */
 
 /* Botón principal de despliegue */
 .faq-toggle-btn {
@@ -666,7 +834,9 @@ h6,
     line-height: 1.6;
 }
 
-/* ESTILOS DE FOOTER */
+/* .-.-.-.-.-.-.-.-.-.-. 
+ ESTILOS DE FOOTER 
+.-.-.-.-.-.-.-.-.-.-. */
 .site-footer {
     background: linear-gradient(180deg, var(--night), var(--jet));
     color: #fff;
@@ -710,7 +880,9 @@ h6,
     color: var(--cardinal);
 }
 
+/* .-.-.-.-.-.-.-.-.-.-. */
 /* SECCIÓN PARA RESPONSIVE */
+/* .-.-.-.-.-.-.-.-.-.-. */
 @media (max-width: 768px) {
     #hero {
         min-height: 55vh;
