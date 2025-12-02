@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS clientes (
 	documento_identificacion VARCHAR(30),
 	UNIQUE INDEX ID_UNIQUE_CLIENTE (nombre, apellido1, telefono) /*Evita inserción de registros duplicados*/
 );
-+
+
 CREATE INDEX idx_documento_upper ON clientes ((UPPER(documento_identificacion)));
 
 CREATE TABLE IF NOT EXISTS trabajadores (
@@ -49,13 +49,20 @@ CREATE TABLE IF NOT EXISTS servicios(
 
 );
 
+
 CREATE TABLE IF NOT EXISTS precios_adicionales (
     id INT PRIMARY KEY AUTO_INCREMENT,
     categoria ENUM('TIPO', 'ZONA', 'TAMANIO', 'DETALLE', 'COLORACION', 'ESTILO'),
-    valor VARCHAR(50),				/*Valor que le damos al enum seleccionado de las categorías*/
+    /*Valor: valo que le damos al enum seleccionado de las categorías(ejemplo: cattegoria detalle, valor medio)*/
+    valor VARCHAR(50),		/*Precio que la damos al valor seleccionado*/
     precio_adicional DECIMAL(8,2),
     activo BOOLEAN DEFAULT TRUE		/*Si se pone a false, se desactiva el servicio pero no se elimina de la bbdd*/
 );
+
+/*Nos aseguramos que solo se le puede dar un precio a cada servicio concreto*/
+ALTER TABLE precios_adicionales 
+ADD CONSTRAINT unique_categoria_valor 
+UNIQUE(categoria, valor);
 
 CREATE TABLE IF NOT EXISTS presupuestos (
 	id_presupuesto INT PRIMARY KEY AUTO_INCREMENT,
