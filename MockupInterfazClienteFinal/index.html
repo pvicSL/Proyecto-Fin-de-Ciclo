@@ -17,7 +17,7 @@
     <!-- CSS de Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Librería de iconos de Bootstrap -->
+    <!-- Iconos de Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- CSS propio -->
@@ -28,7 +28,10 @@
 
 <body>
 
-    <!-- HEADER -->
+    <!-- --------------
+     ----- HEADER -----
+     -------------- -->
+
     <!-- MIS NOTAS: py- sirve para poner tamaño de padding del 1 al 5 (también hay margen con m-)-->
     <header class="site-header py-3">
         <!-- MIS NOTAS: 'container' limita el ancho del contenido// 'd-flex' activa el flexbox
@@ -44,6 +47,7 @@
 
     <!-- SECCIÓN DE PRESENTACIÓN DEL ESTUDIO Y CARRUSEL DE IMG -->
     <section id="hero" class="position-relative">
+
         <!-- Carrusel de fondo -->
         <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
             <div class="carousel-inner">
@@ -79,11 +83,17 @@
         </div>
     </section>
 
+    <!-- ---------------------------------------
+     ------------- BOTÓN, FORMULARIO -----------
+     ----- Y TEXTO MODIFICACIÓN DE RESERVA -----
+     --------------------------------------- -->
 
-    <!-- BOTÓN, FORMULARIO Y MODIFICACIÓN DE RESERVA -->
+    <!-- NOTAS: cta-wrapper es una clase envolvente para esta sección
+      de llamadas a la acción. -->
     <div class="text-center mt-4 cta-wrapper">
+
         <!-- Botón que despliega el formulario -->
-        <button id="toggleFormBtn" class="btn btn-primary btn-reservar mb-3" type="button" data-bs-toggle="collapse"
+        <button id="toggleFormBtn" class="btn btn-reservar mb-3" type="button" data-bs-toggle="collapse"
             data-bs-target="#appointmentForm" aria-expanded="false" aria-controls="appointmentForm">
             <i class="bi bi-calendar-plus me-2"></i>PIDE CITA
         </button>
@@ -155,7 +165,7 @@
                             <!-- Fila opcional: campos de factura -->
                             <div id="invoiceFields" class="row g-3 d-none">
                                 <div class="col-md-6">
-                                    <label for="cif" class="form-label">CIF / NIF</label>
+                                    <label for="cif" class="form-label">CIF/NIF</label>
                                     <input type="text" class="form-control" id="cif" placeholder="CIF/NIF...">
                                 </div>
                                 <div class="col-md-6">
@@ -243,12 +253,12 @@
                                 <label class="form-label d-block">¿Color o blanco y negro?</label>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="colorMode" id="colorBW"
-                                        value="bw">
+                                        value="bw" checked>
                                     <label class="form-check-label" for="colorBW">Blanco y negro</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="colorMode" id="colorYes"
-                                        value="color" checked>
+                                        value="color">
                                     <label class="form-check-label" for="colorYes">Color</label>
                                 </div>
                             </div>
@@ -318,7 +328,7 @@
             </div>
         </div>
 
-        <!-- Texto para modificar cita -->
+        <!-- SECCIÓN PARA MODIFICAR LA CITA -->
         <p class="mt-2 cta-text modify-text">
             ¿Cambio de planes? <span class="cta-line1">Modifica</span>
             <span class="cta-line2">tu cita
@@ -330,12 +340,16 @@
 
     </div>
 
-    <!-- CONTENEDOR DE MODIFICACIÓN DE CITA -->
+
+    <!-- ---------------------------------------
+     --- CONTENEDOR DE MODIFICACIÓN DE CITA ----
+     --------------------------------------- -->
     <div id="modifyAppointment" class="collapse mt-3">
-        <div class="card mx-auto booking-card" style="max-width: 50vw;">
+        <div class="card mx-auto booking-card">
             <div class="card-body text-center" id="modifyContent">
 
                 <!-- ESTADO INICIAL -->
+                <!-- Estado por defecto: simula que ya tiene una cita en la fecha X -->
                 <div id="stateInicial" class="modify-state">
                     <h3 class="modify-title mb-4">¿CAMBIO DE PLANES?</h3>
 
@@ -358,14 +372,17 @@
                     </div>
 
                     <p class="mt-3 contact-text">
-                        Aquí solo puedes cambiar la fecha de tu cita.¿Quieres cambiar algún detalle de tu servicio?
-                        <a href="mailto:info@tatustudio.com" class="contact-link">Escríbenos</a>.
+                        Aquí solo puedes cambiar la fecha de tu cita. ¿Quieres cambiar algún detalle de tu servicio?
+                        <a href="mailto:#" class="contact-link">Escríbenos</a>.
                     </p>
 
                     <div class="d-flex justify-content-center gap-3 mt-3">
                         <button type="button" id="btnModify" class="btn btn-outline-info px-4">MODIFICAR CITA</button>
                         <button type="button" id="btnCancelChange" class="btn btn-outline-danger px-4">CANCELAR
                             CITA</button>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="button" id="btnBackClose" class="btn btn-outline-light px-4">VOLVER</button>
                     </div>
                 </div>
 
@@ -389,7 +406,7 @@
                     <button class="btn btn-outline-secondary mt-2" id="btnBack">VOLVER</button>
                 </div>
 
-                <!-- ESTADO CONFIRMADO -->
+                <!-- ESTADO CAMBIO CONFIRMADO -->
                 <div id="stateConfirmado" class="modify-state d-none">
                     <h3 class="modify-title mb-4">¡TODO LISTO!</h3>
                     <div class="appointment-box mx-auto mb-3">
@@ -411,7 +428,7 @@
                     <button class="btn btn-outline-info mt-2" id="btnBackToStart">VOLVER</button>
                 </div>
 
-                <!-- ESTADO CANCELADO -->
+                <!-- ESTADO CITA CANCELADA -->
                 <div id="stateCancelado" class="modify-state d-none">
                     <h3 class="modify-title mb-4">TODO LISTO</h3>
                     <div class="appointment-box mx-auto mb-3 text-center">
@@ -426,20 +443,22 @@
     </div>
 
 
-    <!-- FAQ -->
+
+    <!-- ---------------------------------------
+     ----- SECCIÓN DE PREGUNTAS FRECUENTES -----
+     --------------------------------------- -->
     <section class="faq text-center py-3">
 
         <!-- Botón de mostrar/ocultar el acordeón -->
-        <button
-            class="btn btn-outline-dark faq-toggle-btn d-flex align-items-center justify-content-between mx-auto mb-4 px-4 py-"
+        <button class="btn faq-toggle-btn d-flex align-items-center justify-content-between mx-auto mb-4 px-4 py-"
             type="button" data-bs-toggle="collapse" data-bs-target="#faqSection" aria-expanded="false"
             aria-controls="faqSection">
             <i class="bi bi-question-circle me-2 faq-icon-left"></i>
-            <span class="flex-grow-1 m-2">PREGUNTAS FRECUENTES (FAQ)</span>
+            <span class="flex-grow-1 m-2">PREGUNTAS FRECUENTES</span>
             <i class="bi bi-plus faq-icon-right"></i>
         </button>
 
-        <!-- Contenedor de FAQs -->
+        <!-- Contenedor de acordeón de FAQs -->
         <div class="collapse" id="faqSection">
             <div class="accordion mx-auto" id="faqAccordion">
 
@@ -497,9 +516,9 @@
         </div>
     </section>
 
-    </main>
-
-    <!-- FOOTER -->
+    <!-- -------------
+     ----- FOOTER-----
+     ------------- -->
     <footer class="site-footer mt-auto py-4">
         <div class="container text-center">
 
@@ -507,6 +526,7 @@
             <div class="mb-2">
                 <a href="#" class="footer-link mx-2">Política de privacidad</a>
                 <a href="#" class="footer-link mx-2">Términos de servicio</a>
+                <a href="#" class="footer-link mx-2">Sobre nosotros</a>
                 <a href="#" class="footer-link mx-2">Contacto</a>
             </div>
 
@@ -518,7 +538,7 @@
             </div>
 
             <!-- Línea 3: texto de copyright -->
-            <div class="small text-muted">
+            <div class="small">
                 INK&CO © 2026. Todos los derechos reservados.
             </div>
 
@@ -532,14 +552,14 @@
 
 
     <!-- ============================
-            ZONA DE SCRIPTS
-    ============================ -->
+    ---------ZONA DE SCRIPTS---------
+    ============================== -->
 
     <!-- Bootstrap Bundle - esto carga el JavaScript de Bootstrap -->
     <!-- es de donde se cargan funciones como los carruseles, el cierre tipo collapse y otras cosas -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Script para validar el formulario: -->
+    <!-- SCRIPT PARA VALIDAR EL FORMULARIO -->
     <script>
         (function () {
             //use strict es para usar una sintaxis más estricta, y esto vale para
@@ -548,6 +568,7 @@
 
             // esto es para recoger la info de los elementos del formulario
             const form = document.getElementById('formAppointment');
+            //si no hay formulario, esto se para
             if (!form) return;
             const email = document.getElementById('email');
             const confirmEmail = document.getElementById('confirmEmail');
@@ -676,30 +697,38 @@
         })();
     </script>
 
-    <!-- SCRIPT para mostrar u ocultar el botón 'RESERVAR CITA' al abrir o cerrar el formulario-->
+    <!-- SCRIPT PARA HACER TOGGLE DE 'RESERVAR CITA' AL ABRIR/CERRAR EL FORMULARIO -->
     <script>
         //una vez carga el DOM, captura el botón y el contenedor del formulario
         document.addEventListener('DOMContentLoaded', () => {
             const toggleBtn = document.getElementById('toggleFormBtn');
             const formCollapse = document.getElementById('appointmentForm');
+            const ctaText = document.querySelector('.cta-text');
 
             // oculta el botón al abrir el formulario
             formCollapse.addEventListener('show.bs.collapse', () => {
                 toggleBtn.style.display = 'none';
+                if (ctaText) ctaText.style.display = 'none';
             });
 
             // muestra el botón al abrir el formulario
             formCollapse.addEventListener('hidden.bs.collapse', () => {
                 toggleBtn.style.display = 'inline-block';
+                if (ctaText) ctaText.style.display = 'block';
             });
         });
     </script>
 
-    <!------------------------------------------------------------
-    SCRIPT para simular los estados de la modificación de la cita
-    -------------------------------------------------------------- -->
+    <!-- SCRIPT QUE SIMULA EL LA MODIFICACIÓN DE CITAS -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+
+            const modifyLink = document.querySelector('.link-modify');
+            const modifyContainer = document.getElementById('modifyAppointment');
+            const reserveBtn = document.getElementById('toggleFormBtn');
+            const faqBtn = document.querySelector('.faq-toggle-btn');
+            const ctaText = document.querySelector('.cta-text');
+
             const states = {
                 inicial: document.getElementById('stateInicial'),
                 modificando: document.getElementById('stateModificando'),
@@ -713,122 +742,104 @@
             const btnBack = document.getElementById('btnBack');
             const btnBackToStart = document.getElementById('btnBackToStart');
             const btnBackFromCancel = document.getElementById('btnBackFromCancel');
-            const newDateSelect = document.getElementById('newDate');
+            const btnBackClose = document.getElementById('btnBackClose');
+            const selectNewDate = document.getElementById('newDate');
+
+            const newWeekdayEl = document.getElementById('newWeekday');
+            const newDayEl = document.getElementById('newDay');
+            const newYearEl = document.getElementById('newYear');
+            const newHourEl = document.getElementById('newHour');
 
             function showState(state) {
                 Object.values(states).forEach(el => el.classList.add('d-none'));
                 states[state].classList.remove('d-none');
             }
 
-            // Estado inicial → modificar
-            btnModify.addEventListener('click', () => showState('modificando'));
+            function abrirModificarCita() {
+                reserveBtn?.classList.add('hidden-element');
+                faqBtn?.classList.add('hidden-element');
+                ctaText?.classList.add('hidden-element');
 
-            // Selector: habilitar botón cuando se elige fecha
-            newDateSelect.addEventListener('change', () => {
-                btnConfirmChange.disabled = !newDateSelect.value;
+                const collapse = new bootstrap.Collapse(modifyContainer, { toggle: true });
+                setTimeout(() => {
+                    const y = modifyContainer.getBoundingClientRect().top + window.pageYOffset - 100;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                }, 400);
+
+                showState('inicial');
+            }
+
+            function cerrarModificarCita() {
+                const collapse = bootstrap.Collapse.getOrCreateInstance(modifyContainer);
+                collapse.hide();
+                reserveBtn?.classList.remove('hidden-element');
+                faqBtn?.classList.remove('hidden-element');
+                ctaText?.classList.remove('hidden-element');
+                showState('inicial');
+            }
+
+            // Apertura del recuadro
+            modifyLink?.addEventListener('click', (e) => {
+                e.preventDefault();
+                abrirModificarCita();
             });
 
-            // Confirmar nueva cita
-            btnConfirmChange.addEventListener('click', () => {
-                const selected = new Date(newDateSelect.value);
-                const day = selected.toLocaleDateString('es-ES', { day: '2-digit' });
-                const month = selected.toLocaleDateString('es-ES', { month: 'short' }).toUpperCase();
-                const year = selected.getFullYear();
-                const weekday = selected.toLocaleDateString('es-ES', { weekday: 'long' });
-                const hour = selected.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            // Estado inicial a MODIFICAR CITA
+            btnModify?.addEventListener('click', () => showState('modificando'));
 
-                document.getElementById('newWeekday').textContent = weekday;
-                document.getElementById('newDay').textContent = `${day} ${month}`;
-                document.getElementById('newYear').textContent = year;
-                document.getElementById('newHour').textContent = hour;
+            // Estado inicial a CANCELAR CITA
+            btnCancelChange?.addEventListener('click', () => {
+                const confirmCancel = confirm('¿Seguro que deseas cancelar tu cita?\nSi lo haces, perderás la fianza.');
+                if (confirmCancel) {
+                    showState('cancelado');
+                }
+            });
+
+            // Desde estado INICIAL, clic en VOLVER
+            btnBackClose?.addEventListener('click', () => {
+                cerrarModificarCita();
+            });
+
+            // Desde estado MODIFICANDO, clic en VOLVER (vuelve al estado inicial)
+            btnBack?.addEventListener('click', () => showState('inicial'));
+
+            // Desde CONFIRMADO o CANCELADO, clic en VOLVER (cierra el recuadro)
+            btnBackToStart?.addEventListener('click', cerrarModificarCita);
+            btnBackFromCancel?.addEventListener('click', cerrarModificarCita);
+
+            // El botón de ENVIAR CAMBIO se activa al seleccionar algo
+            selectNewDate?.addEventListener('change', () => {
+                btnConfirmChange.disabled = !selectNewDate.value;
+            });
+
+            // ENVIAR CAMBIO
+            btnConfirmChange?.addEventListener('click', () => {
+                const value = selectNewDate.value;
+                if (!value) {
+                    alert('Selecciona una fecha y hora antes de enviar el cambio.');
+                    return;
+                }
+
+                const fecha = new Date(value);
+                const day = fecha.toLocaleDateString('es-ES', { day: '2-digit' });
+                const month = fecha.toLocaleDateString('es-ES', { month: 'short' }).toUpperCase();
+                const year = fecha.getFullYear();
+                const weekday = fecha.toLocaleDateString('es-ES', { weekday: 'long' });
+                const hour = fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+                if (newWeekdayEl) newWeekdayEl.textContent = weekday;
+                if (newDayEl) newDayEl.textContent = `${day} ${month}`;
+                if (newYearEl) newYearEl.textContent = year;
+                if (newHourEl) newHourEl.textContent = hour;
 
                 showState('confirmado');
             });
-
-            // Cancelar cita
-            btnCancelChange.addEventListener('click', () => {
-                const confirmCancel = confirm('¿Seguroque deseas cancelar tu cita?\nSi lo haces, perderás la fianza.');
-                if (confirmCancel) showState('cancelado');
-            });
-
-            // Botones de volver
-            btnBack.addEventListener('click', () => showState('inicial'));
-            btnBackToStart.addEventListener('click', () => showState('inicial'));
-            btnBackFromCancel.addEventListener('click', () => showState('inicial'));
-        });
-    </script>
-
-    <!-- SCRIPT para ocultar la modificación de cita al abrir el formulario-->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const appointmentForm = document.getElementById('appointmentForm');
-            const modifyText = document.querySelector('.modify-text');
-
-            if (appointmentForm && modifyText) {
-                // Cuando se abre el formulario
-                appointmentForm.addEventListener('show.bs.collapse', () => {
-                    modifyText.style.display = 'none';
-                });
-
-                // Cuando se cierra el formulario
-                appointmentForm.addEventListener('hidden.bs.collapse', () => {
-                    modifyText.style.display = 'block';
-                });
-            }
-        });
-    </script>
-
-    <!--script para la ventana de modificar cita-->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const modifyLink = document.querySelector('.link-modify');
-            const modifyContainer = document.getElementById('modifyAppointment');
-            const reserveBtn = document.getElementById('toggleFormBtn');
-            const faqBtn = document.querySelector('.faq-toggle-btn'); // 👈 botón de FAQ directamente
-            const ctaText = document.querySelector('.cta-text');
-            const cancelChangeBtn = document.getElementById('btnCancelChange');
-
-            if (modifyLink && modifyContainer) {
-                modifyLink.addEventListener('click', (event) => {
-                    event.preventDefault();
-
-                    // 🔹 Oculta todos los elementos visibles
-                    if (reserveBtn) reserveBtn.classList.add('hidden-element');
-                    if (faqBtn) faqBtn.classList.add('hidden-element');
-                    if (ctaText) ctaText.classList.add('hidden-element');
-
-                    // 🔹 Muestra el contenedor de modificación
-                    const collapse = new bootstrap.Collapse(modifyContainer, { toggle: true });
-
-                    // 🔹 Desplaza suavemente la vista
-                    setTimeout(() => {
-                        const y = modifyContainer.getBoundingClientRect().top + window.pageYOffset - 100;
-                        window.scrollTo({ top: y, behavior: 'smooth' });
-                    }, 400);
-                });
-            }
-
-            // 🔹 Botón "Cancelar" dentro del contenedor
-            if (cancelChangeBtn) {
-                cancelChangeBtn.addEventListener('click', () => {
-                    const collapse = bootstrap.Collapse.getOrCreateInstance(modifyContainer);
-                    collapse.hide();
-
-                    // 🔹 Muestra de nuevo todos los elementos
-                    if (reserveBtn) reserveBtn.classList.remove('hidden-element');
-                    if (faqBtn) faqBtn.classList.remove('hidden-element');
-                    if (ctaText) ctaText.classList.remove('hidden-element');
-                });
-            }
         });
     </script>
 
 
 
-
-
-
-    <!--MOCKUP DE COMPORTAMIENTO DEL SELECTOR DE FECHA Y HORA-->
+    <!-- SCRIPT DE MOCKUP DE COMPORTAMIENTO DEL SELECTOR DE FECHA Y HORA-->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Datos de ejemplo: días de una semana con su estado y horas libres
@@ -851,13 +862,33 @@
             let selectedDayIndex = null;
             let selectedSlot = null;
 
-            // Un mes y año ficticios
+            // mes y año sin especificar
             slotMonthLabel.textContent = 'Mes - 2XXX';
 
-            // Función que pinta los días en el calendario
+            // Esto pinta los días en el calendario
             function renderDays() {
                 slotDaysContainer.innerHTML = '';
+                const weekdaysRow = document.querySelector('.slot-weekdays');
+                if (weekdaysRow) weekdaysRow.innerHTML = '';
+
+                const weekdayLetters = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+                let visibleIndex = 0;
+
                 mockDays.forEach((item, index) => {
+                    // En móvil, mostrar solo días disponibles
+                    const isMobile = window.innerWidth <= 480;
+                    if (isMobile && item.status !== 'available') {
+                        return;
+                    }
+
+                    // Agregar la letra del día (solo las que corresponden a días visibles)
+                    if (weekdaysRow) {
+                        const spanLetter = document.createElement('span');
+                        spanLetter.textContent = weekdayLetters[index];
+                        weekdaysRow.appendChild(spanLetter);
+                    }
+
+                    // Crear el círculo con el número
                     const span = document.createElement('span');
                     span.textContent = item.day;
                     span.classList.add('day');
@@ -881,10 +912,11 @@
                     }
 
                     slotDaysContainer.appendChild(span);
+                    visibleIndex++;
                 });
             }
 
-            // Función que pinta las horas del día seleccionado
+            // Esto pinta las horas del día seleccionado
             function renderTimes() {
                 slotTimesContainer.innerHTML = '';
                 // si no hay un día seleccionado, termina la ejecución
@@ -918,17 +950,39 @@
             renderDays();
             renderTimes();
 
-            // Botones para cambiar de mes (no son funcionales aún)
+            // Botones para cambiar de mes (no son funcionales)
             prevMonthBtn.addEventListener('click', () => {
                 alert('En la versión final pasaría al mes anterior.');
             });
             nextMonthBtn.addEventListener('click', () => {
                 alert('En la versión final pasaría al mes siguiente.');
             });
+
+            // AJUSTE RESPONSIVE: en móvil solo aparecen días disponibles
+            function ajustarDiasParaMovil() {
+                if (window.innerWidth <= 480) {
+                    document.querySelectorAll('.day').forEach(day => {
+                        if (!day.classList.contains('day-available')) {
+                            day.style.display = 'none';
+                        }
+                    });
+                } else {
+                    // Si se vuelve a escritorio, se muestran todos otra vez
+                    document.querySelectorAll('.day').forEach(day => {
+                        day.style.display = 'flex';
+                    });
+                }
+            }
+
+            // Ejecutar al cargar
+            ajustarDiasParaMovil();
+
+            // Y también al cambiar tamaño (por si giran el móvil)
+            window.addEventListener('resize', ajustarDiasParaMovil);
         });
     </script>
 
-    <!-- Desplazamiento de la pantalla al abrir el formulario para verlo mejor-->
+    <!-- SCRIPT PARA DESPLAZAR LA PANTLLA AL ABRIR EL FORMULARIO, PARA VERLO MEJOR -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const reserveBtn = document.querySelector('.btn-reservar');
@@ -955,7 +1009,7 @@
         });
     </script>
 
-    <!-- Desplazamiento al abrir las preguntas frecuentes-->
+    <!-- SCRIPT PARA DESPLAZAR LA PANTALLA Y VER MEJOR LAS PREGUNTAS FRECUENTES -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const faqButton = document.querySelector('.faq-toggle-btn');
@@ -963,12 +1017,11 @@
 
             if (faqButton && faqSection) {
                 faqSection.addEventListener('show.bs.collapse', () => {
-                    // Espera un momento a que empiece la animación de apertura
                     setTimeout(() => {
-                        const yOffset = -window.innerHeight * 0.1;  // desplazamiento 10% hacia arriba
+                        const yOffset = -window.innerHeight * 0.1;
                         const y = faqButton.getBoundingClientRect().top + window.pageYOffset + yOffset;
                         window.scrollTo({ top: y, behavior: 'smooth' });
-                    }, 300); // 300ms = tiempo medio del colapso Bootstrap
+                    }, 300);
                 });
             }
         });
