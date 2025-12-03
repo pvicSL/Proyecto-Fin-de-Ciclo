@@ -6,12 +6,11 @@
     --antiflash-white: #ececec;
     --jet: #2a2a2a;
     --night: #151515;
-
 }
 
-/* ============================
-      ESTILOS PARA CABECERA
-   ============================ */
+/* ==============================
+----- ESTILOS PARA CABECERA -----
+============================== */
 /* color del header */
 .site-header {
     background: linear-gradient(180deg, var(--night), var(--jet));
@@ -24,9 +23,9 @@
     width: auto;
 }
 
-/* ============================
-      ESTILOS PARA BODY
-   ============================ */
+/* ==============================
+----- ESTILOS PARA EL BODY -----
+=============================== */
 /* Estilos generales para el body */
 body {
     background-color: #ececec;
@@ -35,7 +34,7 @@ body {
     font-weight: 400;
 }
 
-/* Encabezados y títulos */
+/* Encabezados y títulos del body */
 h1,
 h2,
 h3,
@@ -51,11 +50,11 @@ h6,
     color: inherit;
 }
 
-/* ============================
-      ESTILOS SECCIÓN HERO
-   ============================ */
+/* ==============================
+----- ESTILOS SECCIÓN HERO -----
+================================ */
 
-/* Contenedor general del hero */
+/* Contenedor del hero */
 #hero {
     position: relative;
     color: white;
@@ -64,14 +63,14 @@ h6,
     overflow: hidden;
 }
 
-/* Tamaño del carrusel y slides */
+/* Tamaño del carrusel e img */
 #heroCarousel,
 #heroCarousel .carousel-inner,
 #heroCarousel .carousel-item {
     height: 100%;
 }
 
-/* Slides del carrusel */
+/* img del carrusel */
 .hero-slide {
     height: 100%;
     width: 100%;
@@ -92,7 +91,7 @@ h6,
     z-index: 1;
 }
 
-/* Texto de la sección hero */
+/* Texto general de la sección hero */
 .hero-text {
     position: absolute;
     z-index: 2;
@@ -128,7 +127,7 @@ h6,
     line-height: 1.1;
 }
 
-/* letra & en cyan claro */
+/* letra '&' en huevo zorzal */
 .hero-title .highlight {
     color: var(--robin-egg-blue);
     position: relative;
@@ -145,7 +144,7 @@ h6,
     line-height: 1.3;
 }
 
-/* palabra TATUAJE PROFESIONAL en burdeos */
+/* palabra TATUAJE PROFESIONAL */
 .hero-tagline .highlight {
     color: var(--cardinal);
     position: relative;
@@ -188,6 +187,12 @@ h6,
     transform: scale(1.15);
 }
 
+.hero-location:hover {
+    color: var(--antiflash-white);
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
 /* Subrayado animado del texto del enlace */
 .hero-location span {
     position: relative;
@@ -202,7 +207,7 @@ h6,
     transform-origin: center;
     width: 100%;
     height: 0.08em;
-    background-color: white;
+    color: var(--antiflash-white);
     transition: transform 0.35s ease;
 }
 
@@ -237,27 +242,23 @@ h6,
     justify-content: center;
 }
 
-/* Efecto hover del botón RESERVAR CITA */
+/* hover del botón RESERVAR CITA */
 .btn-reservar:hover,
 .btn-reservar-submit:hover:enabled {
     background-color: var(--robin-egg-blue);
 }
 
-/* Evitar cambio de color al mantener clic en el botón RESERVAR CITA */
+/* color de paleta al mantener clic en RESERVAR CITA */
 .btn-reservar:active,
 .btn-reservar:focus {
     background-color: var(--dark-cyan) !important;
-    /* conserva el color original */
     box-shadow: none !important;
-    /* elimina el halo azul */
     outline: none !important;
-    /* elimina borde de enfoque */
 }
 
-/* En algunos navegadores móviles (WebKit) */
+/* Para algún navegador móvil, color huevo zorzal */
 .btn-reservar {
     -webkit-tap-highlight-color: transparent;
-    /* quita flash azul en móviles */
 }
 
 /* Enlace de modificar cita: "AQUÍ" */
@@ -271,11 +272,12 @@ h6,
     text-decoration: underline;
 }
 
-/* Salto de línea sin tener que recurrir al br*/
+/* Salto de línea sin br*/
 .cta-line2 {
     display: block;
 }
 
+/* formato del texto */
 .cta-text {
     font-size: clamp(0.9rem, 1.3vw, 1.1rem);
     margin-bottom: 0.5rem;
@@ -285,6 +287,8 @@ h6,
 /* ===============================
     ESTILOS PARA EL FORMULARIO
    =============================== */
+
+/*-------general-----------*/
 /* contenedor del formulario */
 .booking-card {
     background-color: var(--jet);
@@ -312,6 +316,7 @@ h6,
     margin-bottom: 1.5rem;
 }
 
+/*-------inputs-----------*/
 /* Formato de labels e inputs */
 .booking-card .form-label {
     text-align: left;
@@ -331,8 +336,8 @@ h6,
     display: block;
 }
 
-/* SELECTORES DE RADIO*/
-/* Base */
+/*-------selectores tipo radio-----------*/
+/* radio base */
 .booking-card .form-check,
 .booking-card .form-check-inline {
     text-align: left;
@@ -340,25 +345,24 @@ h6,
     margin: 0 auto 0.75rem auto;
 }
 
-/* Color corporativo al estar seleccionados */
+/* colores de radio al estar seleccionados */
 .form-check-input[type="radio"]:checked {
     background-color: var(--robin-egg-blue);
     border-color: var(--robin-egg-blue);
 }
 
-/* Efecto de foco no azul */
+/* efecto de foco de radio color de la paleta */
 .form-check-input[type="radio"]:focus {
     box-shadow: 0 0 0 0.25rem rgba(17, 195, 185, 0.25);
-    /* tono robin egg translúcido */
     outline: none;
 }
 
-/* Eliminar el flash azul en móviles */
+/* quitar flash azul en móviles */
 .form-check-input[type="radio"] {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Contenedor general de los radios */
+/* Contenedor de los radios , posición */
 .booking-card .form-check {
     display: flex;
     align-items: center;
@@ -367,7 +371,7 @@ h6,
     margin-left: 5%;
 }
 
-/* Cada radio individual */
+/* posicionamiento de cada radio */
 .booking-card .form-check-inline {
     display: inline-flex !important;
     align-items: center;
@@ -380,7 +384,8 @@ h6,
     overflow: visible;
 }
 
-/* CHEKBOXES*/
+/*-------checboxes-----------*/
+/* Estilo de checkboxes */
 .booking-card .form-check-label {
     text-align: left;
     display: inline-block;
@@ -403,13 +408,13 @@ h6,
     border-color: var(--robin-egg-blue);
 }
 
-/* Anillo de foco en tu color en lugar de azul */
+/* foco en color de la paleta */
 .form-check-input[type="checkbox"]:focus {
     box-shadow: 0 0 0 0.25rem rgba(17, 195, 185, 0.25);
     outline: none;
 }
 
-/* Evitar flash raro en móviles */
+/* evitar flash azul en móviles */
 .form-check-input[type="checkbox"] {
     -webkit-tap-highlight-color: transparent;
 }
@@ -431,8 +436,8 @@ h6,
     color: var(--cardinal);
 }
 
-/* ---- BOTONES FORMULARIO -----*/
-/* Botón borrar y cancelar */
+/*-------botones-----------*/
+/* Botones borrar y cancelar */
 #btnClear,
 #btnCancel {
     margin-top: 0.3em;
@@ -464,7 +469,6 @@ h6,
     background-color: var(--cardinal);
 }
 
-/* Botón enviar */
 .btn-reservar-submit {
     background-color: var(--dark-cyan);
     border: none;
@@ -484,11 +488,11 @@ h6,
 }
 
 
-/* .-.-.-.-.-.-.-.-.-.-. 
- ESTILOS DE MODIFICAR CITA 
-.-.-.-.-.-.-.-.-.-.-. */
+/* ===============================
+    ESTILOS PARA MODIFICAR CITA
+   =============================== */
 
-/* Caja principal */
+/* contenedor principal */
 #modifyAppointment .booking-card {
     background-color: var(--jet);
     width: 35%;
@@ -499,7 +503,7 @@ h6,
     margin-top: 1rem !important;
 }
 
-/* Título principal */
+/* título principal */
 .modify-title {
     font-family: 'Figtree', sans-serif;
     color: var(--antiflash-white);
@@ -527,7 +531,7 @@ h6,
     margin-bottom: 0.8rem;
 }
 
-/* Distribución interna (fecha / hora) */
+/* Distribución interna de fecha y hora (fecha / hora) */
 .appointment-info {
     display: flex;
     justify-content: center;
@@ -544,7 +548,8 @@ h6,
     opacity: 0.4;
 }
 
-/* FECHA */
+/*-----------------*/
+/* Fecha- general */
 .appointment-date {
     color: var(--burgundy);
     font-family: 'Figtree', sans-serif;
@@ -563,7 +568,7 @@ h6,
     font-weight: 600;
 }
 
-/* HORA */
+/* Hora - general */
 .appointment-time {
     color: var(--dark-cyan);
     font-family: 'Figtree', sans-serif;
@@ -587,12 +592,15 @@ h6,
     font-family: 'Figtree', sans-serif;
     color: var(--antiflash-white);
     margin-top: 1.2rem;
-    /* 🔹 reduce separación vertical */
     margin-bottom: 0.8rem;
     font-size: 1rem;
 }
 
-/* Enlace "Escríbenos" */
+#stateCancelado .contact-text {
+    color: var(--night);
+}
+
+/* Enlace de "Escríbenos" */
 .contact-link {
     color: var(--robin-egg-blue);
     text-decoration: none;
@@ -604,7 +612,8 @@ h6,
     color: var(--antiflash-white);
 }
 
-/* Botones */
+/*--------botones----------*/
+/* Botón modificar */
 #btnModify {
     border: 2px solid var(--robin-egg-blue);
     color: white;
@@ -617,6 +626,7 @@ h6,
     color: var(--night);
 }
 
+/* botón cancelar */
 #btnCancelChange {
     border: 2px solid var(--cardinal);
     color: white;
@@ -629,15 +639,54 @@ h6,
     color: var(--antiflash-white);
 }
 
-/*oCULTAR Boton faq*/
+#modifyAppointment #btnConfirmChange {
+    background-color: var(--dark-cyan);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+#modifyAppointment #btnConfirmChange:hover:enabled {
+    background-color: var(--robin-egg-blue);
+}
+
+#stateModificando select:focus {
+    border-color: var(--robin-egg-blue);
+    box-shadow: 0 0 0 0.2rem rgba(17, 195, 185, 0.25);
+    outline: none;
+}
+
+/* botones volver */
+#btnBackClose,
+#btnBack,
+#btnBackToStart,
+#btnBackFromCancel {
+    border: 2px solid var(--antiflash-white);
+    color: var(--antiflash-white);
+    border-radius: 10px;
+    font-weight: 400;
+    padding: 0.2rem 1.2rem;
+    transition: all 0.25s ease;
+}
+
+#btnBackClose:hover,
+#btnBack:hover,
+#btnBackToStart:hover,
+#btnBackFromCancel:hover {
+    background-color: var(--antiflash-white);
+    color: var(--night);
+}
+
+/*ocultar boton faq al abrir la modificación de cita */
 .hidden-element {
     display: none !important;
 }
 
 
-/* .-.-.-.-.-.-.-.-.-.-. 
-ESTILOS DE SELECTOR DE FECHA
-.-.-.-.-.-.-.-.-.-.-. */
+/* ===============================
+    ESTILOS PARA EL SELECTOR DE FECHA MOCKUP
+   =============================== */
 
 /* Selector de fechas y horas */
 .slot-picker {
@@ -671,7 +720,7 @@ ESTILOS DE SELECTOR DE FECHA
 /* Días de la semana */
 .slot-weekdays {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(1.5rem, 1fr));
     font-size: 0.8rem;
     text-align: center;
     margin-bottom: 0.5rem;
@@ -681,9 +730,10 @@ ESTILOS DE SELECTOR DE FECHA
 /* Días */
 .slot-days {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(2rem, 1fr));
     gap: 0.35rem;
     margin-bottom: 0.75rem;
+    justify-items: center;
 }
 
 .day {
@@ -747,9 +797,9 @@ ESTILOS DE SELECTOR DE FECHA
     color: #fff;
 }
 
-/* .-.-.-.-.-.-.-.-.-.-. 
-ESTILOS PREGUNTAS FRECUENTES 
-.-.-.-.-.-.-.-.-.-.-. */
+/* ===============================
+    ESTILOS PARA PREGUNTAS FRECUENTES
+   =============================== */
 
 /* Botón principal de despliegue */
 .faq-toggle-btn {
@@ -769,6 +819,7 @@ ESTILOS PREGUNTAS FRECUENTES
 
 }
 
+/* iconos de los lados del botón FAQ*/
 .faq-icon-left,
 .faq-icon-right {
     color: var(--dark-cyan);
@@ -786,7 +837,7 @@ ESTILOS PREGUNTAS FRECUENTES
     transform: rotate(45deg);
 }
 
-/* Centramos y reducimos ancho */
+/* acordeón centrado y tamaño ajustado */
 .faq .accordion {
     max-width: 55%;
     margin: 0 auto;
@@ -794,7 +845,7 @@ ESTILOS PREGUNTAS FRECUENTES
     border-radius: 10px;
 }
 
-/* Fondo, bordes y tipografía */
+/* fondo, borde y ajustes de cada elemento */
 .accordion-item {
     border: 2px solid #fff;
     border-radius: 10px;
@@ -802,31 +853,31 @@ ESTILOS PREGUNTAS FRECUENTES
     overflow: hidden;
 }
 
-/* Estilo de las preguntas */
+/* estilo de las preguntas */
 .accordion-button {
     background-color: #fff;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
-/* Cuando la pregunta está abierta */
+/* formato con la pregunta abierta */
 .accordion-button:not(.collapsed)::after {
     filter: brightness(0) invert(1);
 }
 
-/* Pregunta abierta */
+/* pregunta abierta */
 .accordion-button:not(.collapsed) {
     background-color: var(--dark-cyan);
     color: white;
     box-shadow: none;
 }
 
-/* Elimina color azul predeterminado del borde */
+/* quitar color azul del borde al clicar */
 .accordion-button:focus {
     box-shadow: none;
 }
 
-/* Texto de respuesta */
+/* texto de las respuestas */
 .accordion-body {
     background-color: #fff;
     color: var(--jet);
@@ -834,35 +885,46 @@ ESTILOS PREGUNTAS FRECUENTES
     line-height: 1.6;
 }
 
-/* .-.-.-.-.-.-.-.-.-.-. 
- ESTILOS DE FOOTER 
-.-.-.-.-.-.-.-.-.-.-. */
+/* margen para separar faq de footer un poco*/
+.faq {
+    margin-bottom: 3rem;
+}
+
+/* ===============================
+    ESTILOS PARA FOOTER
+   =============================== */
+/* degradado negro del fondo */
 .site-footer {
     background: linear-gradient(180deg, var(--night), var(--jet));
     color: #fff;
     text-align: center;
 }
 
+/*color de los enlaces*/
 .footer-link {
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
 }
 
+/*hover de los enlaces*/
 .footer-link:hover,
 .social-link:hover {
     color: var(--robin-egg-blue);
 }
 
+/*redes sociales*/
 .social-link {
     color: rgba(255, 255, 255, 0.95);
     font-size: 1.25rem;
     text-decoration: none;
 }
 
+/*texto de derechos en blanco*/
 .site-footer .text-muted {
     color: var(--antiflash-white) !important;
 }
 
+/*formato de enlace a empresa de desarrollo*/
 .powered-by {
     font-family: 'Poppins', Arial, sans-serif;
     color: var(--antiflash-white);
@@ -880,35 +942,476 @@ ESTILOS PREGUNTAS FRECUENTES
     color: var(--cardinal);
 }
 
-/* .-.-.-.-.-.-.-.-.-.-. */
-/* SECCIÓN PARA RESPONSIVE */
-/* .-.-.-.-.-.-.-.-.-.-. */
-@media (max-width: 768px) {
+
+/* ===============================
+   RESPONSIVE – MÓVIL EN VERTICAL
+   =============================== */
+@media (max-width: 480px) {
+
+    /* ==== SECCIÓN HERO ==== */
     #hero {
-        min-height: 55vh;
+        height: 55vh;
+        min-height: 400px;
     }
 
     .hero-text {
-        width: 100%;
-        margin: 0 auto;
-        padding-left: 6vw;
-        padding-right: 6vw;
+        text-align: center;
+        padding: 1rem 1rem;
+        padding-top: 4em;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .hero-tagline {
+        font-size: 1.2rem;
     }
 
     .hero-description {
+        font-size: 0.9rem;
+        max-width: 95%;
+        text-align: justify;
+    }
+
+    .hero-location {
+        font-size: 0.85rem;
+        gap: 0.4rem;
+        padding-bottom: 4em;
+    }
+
+    /* ==== BOTÓN Y CTA ==== */
+    .btn-reservar {
+        width: 85%;
+        font-size: 1.15rem;
+        padding-block: 0.8em;
+    }
+
+    .cta-text {
+        font-size: 0.9rem;
+        margin-top: 0.6rem;
+    }
+
+    /* ==== FORMULARIO ==== */
+    .booking-card {
+        width: 85% !important;
+        max-width: none !important;
+        padding: 0rem;
+    }
+
+    #appointmentForm .card.booking-card {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+
+    .booking-card .form-label {
+        margin-left: 2%;
+        font-size: 0.9rem;
+    }
+
+    .booking-card .form-control,
+    .booking-card .form-select {
+        font-size: 0.9rem;
+        max-width: 95%;
+    }
+
+    .btn-reservar-submit {
+        width: 60%;
+        padding: 0.6rem;
+        font-size: 1rem;
+        margin-bottom: 1.2em;
+    }
+
+    .col-12.d-flex.justify-content-center.gap-3.mt-4 {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    #btnClear,
+    #btnCancel {
+        min-width: 60%;
+        font-size: 0.9rem;
+        padding: 0.4rem 1rem;
+    }
+
+    /* ==== MODIFICAR CITA ==== */
+    .cta-text {
+        font-size: 1.1rem;
         line-height: 1.4;
     }
 
+    #modifyAppointment {
+        margin-top: 0rem !important;
+        margin-bottom: 0rem !important;
+    }
+
+    #modifyAppointment .booking-card {
+        width: 90%;
+        max-width: none;
+    }
+
+    .appointment-box {
+        width: 95%;
+        padding: 1rem;
+    }
+
+    .appointment-label {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .appointment-day,
+    .appointment-hour {
+        font-size: 1.6rem;
+    }
+
+    .appointment-date p,
+    .appointment-time p {
+        font-size: 1.3rem;
+    }
+
+    .divider {
+        height: 3.5rem;
+    }
+
+    .appointment-info {
+        gap: 0.6rem;
+    }
+
+    #stateInicial .d-flex.justify-content-center.gap-3 {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    #btnModify,
+    #btnCancelChange {
+        width: 70%;
+        font-size: 0.9rem;
+        padding: 0.4rem 0.5rem;
+    }
+
+    #btnBackClose,
+    #btnBack,
+    #btnBackToStart,
+    #btnBackFromCancel {
+        font-size: 0.9rem;
+        padding: 0.3rem 1rem;
+        width: 70%;
+    }
+
+    /* ==== Selector de nueva fecha/hora en móvil ==== */
+    #stateModificando select:focus {
+        border-color: var(--robin-egg-blue);
+        box-shadow: 0 0 0 0.25rem rgba(17, 195, 185, 0.35);
+        outline: none;
+    }
+
+
+    #stateModificando select option:checked {
+        background-color: var(--robin-egg-blue);
+        color: var(--night);
+    }
+
+    #stateModificando select {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ==== FAQ ==== */
+    section.faq {
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.2rem !important;
+    }
+
+    .faq-toggle-btn {
+        width: 85%;
+        font-size: 0.95rem;
+        padding: 0.6rem 1rem;
+        margin-bottom: 0.8rem !important;
+    }
+
+    .faq .accordion {
+        max-width: 90%;
+    }
+
+    .accordion-button {
+        font-size: 0.9rem;
+        padding: 0.8rem 1rem;
+    }
+
+    .accordion-body {
+        font-size: 0.85rem;
+        text-align: justify;
+        font-size: 1.03rem;
+    }
+
+    /* ==== FOOTER ==== */
+    .site-footer {
+        width: 100vw;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .site-footer .container {
+        max-width: 100vw !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .site-footer .mb-2:first-child {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .site-footer .mb-2:first-child .footer-link {
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+
+    .footer-link,
+    .social-link {
+        font-size: 1.03rem;
+        ;
+    }
+
+    .social-link i {
+        font-size: 1.1rem;
+    }
+
+    .powered-by {
+        text-align: center !important;
+        margin-top: 0.8rem;
+    }
+
+    .powered-link {
+        font-size: 1rem;
+    }
+
+    /* footer quede siempre al fondo */
+    html,
+    body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    body>footer {
+        margin-top: auto;
+    }
+}
+
+/* ===============================
+   RESPONSIVE – MÓVILES APAISADO
+   =============================== */
+@media (max-width: 740px) and (orientation: landscape) {
+
+    /* ==== SECCIÓN HERO ==== */
+    #hero {
+        height: 80vh;
+    }
+
+    .hero-text {
+        position: absolute;
+        top: 50%;
+        left: 54%;
+        transform: translate(-50%, -50%);
+        width: 85vw;
+        max-width: 100%;
+        padding: 1rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        text-align: left;
+    }
+
+    .hero-subtitle,
+    .hero-title,
+    .hero-tagline {
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: left;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .hero-title {
+        font-size: 2.6rem;
+        line-height: 1.1;
+    }
+
+    .hero-tagline {
+        font-size: 1.4rem;
+        margin-top: 0.2rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .hero-description {
+        text-align: justify;
+        width: 95%;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 1rem;
+        line-height: 1.45;
+        margin-top: 0.6rem;
+    }
+
+    .hero-location {
+        font-size: 0.9rem;
+        margin-top: 0.8rem;
+        justify-content: flex-start;
+        margin-left: calc(2.5% + 0.5rem);
+    }
+
+    /* ==== BOTÓN Y CTA ==== */
     .btn-reservar {
-        width: 80%;
-        padding-block: 1em;
+        width: 60%;
+        font-size: 1rem;
+        padding-block: 0.7em;
     }
 
-    .cta-wrapper {
-        padding-block: 8vh;
+    .cta-text {
+        font-size: 1rem;
+        margin-top: 0.5rem;
     }
 
-    .logo {
-        height: 2rem;
+    /* ==== FORMULARIO ==== */
+    .booking-card {
+        width: 70% !important;
+        max-width: none !important;
+    }
+
+    #appointmentForm .card.booking-card {
+        margin: 0 auto;
+    }
+
+    .btn-reservar-submit {
+        width: 45%;
+        margin-bottom: 1rem;
+    }
+
+    /* ==== MODIFICAR CITA ==== */
+    #modifyAppointment {
+        margin-top: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    #modifyAppointment .booking-card {
+        width: 65%;
+        margin: 0 auto;
+    }
+
+    .appointment-box {
+        width: 90%;
+        padding: 1rem;
+    }
+
+    .appointment-info {
+        gap: 1rem;
+    }
+
+    #stateInicial .d-flex.justify-content-center.gap-3 {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    #btnModify,
+    #btnCancelChange {
+        width: 50%;
+        font-size: 1rem;
+        padding: 0.4rem 0.5rem;
+    }
+
+    #btnBackClose,
+    #btnBack,
+    #btnBackToStart,
+    #btnBackFromCancel {
+        width: 50%;
+        margin-top: 0.5rem;
+        padding: 0.4rem 0.5rem;
+    }
+
+    /* ==== Selector de nueva fecha/hora en móvil ==== */
+    #stateModificando select:focus {
+        border-color: var(--robin-egg-blue);
+        box-shadow: 0 0 0 0.25rem rgba(17, 195, 185, 0.35);
+        outline: none;
+    }
+
+    #stateModificando select option:checked {
+        background-color: var(--robin-egg-blue);
+        color: var(--night);
+    }
+
+    #stateModificando select {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ==== FAQ ==== */
+    .faq-toggle-btn {
+        width: 60%;
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+        margin-bottom: 0.6rem !important;
+    }
+
+    .faq .accordion {
+        max-width: 70%;
+    }
+
+    .accordion-body {
+        font-size: 1rem;
+    }
+
+    /* ==== FOOTER ==== */
+    .site-footer {
+        width: 100vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .site-footer .container {
+        max-width: 100vw !important;
+    }
+
+    .site-footer .mb-2:first-child {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .footer-link {
+        font-size: 1rem;
+    }
+
+    .social-link {
+        font-size: 1.4rem;
+        margin-inline: 0.5rem;
+    }
+
+    .powered-by {
+        text-align: center !important;
+        margin-top: 0.5rem;
+    }
+
+    html,
+    body {
+        height: auto;
+        overflow-x: hidden;
     }
 }
