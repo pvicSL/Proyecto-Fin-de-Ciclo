@@ -43,7 +43,7 @@ public class TrabajadorServiceImplJpaMy8 implements TrabajadorService {
 
 	@Override
 	public Optional<Trabajador> buscarPorDocumento(String documento) {
-		return trabajadorRepository.findByDocumentoIdentificacionIgnoreCase(documento);
+		return trabajadorRepository.findByDniIgnoreCase(documento);
 	}
 	
 }

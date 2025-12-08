@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import proyecto.modelo.entities.Cliente;
 import proyecto.modelo.entities.Trabajador;
 
 public interface TrabajadorRepository extends JpaRepository<Trabajador, Integer>{
@@ -12,5 +11,5 @@ public interface TrabajadorRepository extends JpaRepository<Trabajador, Integer>
 	/*Optional: Puede contener un valor o estar vacío*/
 	Optional<Trabajador> findByEmail(String email);
 	
-	Optional<Trabajador> findByDocumentoIdentificacionIgnoreCase(String documento);
+	Optional<Trabajador> findByDniIgnoreCase(String documento);
 }

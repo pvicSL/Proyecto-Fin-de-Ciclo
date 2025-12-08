@@ -29,7 +29,7 @@ public class Trabajador implements Serializable {
 	@Column(name="id_trabajador")
 	private int idTrabajador;
 	private String dni;
-	@Column(name="numera_cuenta")
+	@Column(name="numero_cuenta")
 	private String numeroCuenta;
 	@Column(nullable = false)
 	private String contrasenia;
