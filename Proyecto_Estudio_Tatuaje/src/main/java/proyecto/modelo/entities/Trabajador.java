@@ -28,6 +28,9 @@ public class Trabajador implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id_trabajador")
 	private int idTrabajador;
+	private String dni;
+	@Column(name="numera_cuenta")
+	private String numeroCuenta;
 	@Column(nullable = false)
 	private String contrasenia;
 	@Column(nullable = false)
@@ -50,9 +53,14 @@ public class Trabajador implements Serializable {
 		super();
 	}
 
-	public Trabajador(String contrasenia, String nombre, String apellido1, String apellido2,
-			String email, String telefono, Rol rol, Funciones funciones) {
+
+
+	public Trabajador(int idTrabajador, String dni, String numeroCuenta, String contrasenia, String nombre,
+			String apellido1, String apellido2, String email, String telefono, Rol rol, Funciones funciones) {
 		super();
+		this.idTrabajador = idTrabajador;
+		this.dni = dni;
+		this.numeroCuenta = numeroCuenta;
 		this.contrasenia = contrasenia;
 		this.nombre = nombre;
 		this.apellido1 = apellido1;
@@ -63,9 +71,22 @@ public class Trabajador implements Serializable {
 		this.funciones = funciones;
 	}
 
-	public int getIdTrabajador() {
-		return idTrabajador;
+
+
+
+
+
+	public String getNumeroCuenta() {
+		return numeroCuenta;
 	}
+
+
+
+	public void setNumeroCuenta(String numeroCuenta) {
+		this.numeroCuenta = numeroCuenta;
+	}
+
+
 
 	public void setIdTrabajador(int idTrabajador) {
 		this.idTrabajador = idTrabajador;
@@ -155,6 +176,18 @@ public class Trabajador implements Serializable {
 			return false;
 		Trabajador other = (Trabajador) obj;
 		return idTrabajador == other.idTrabajador;
+	}
+
+
+
+	public String getDni() {
+		return dni;
+	}
+
+
+
+	public void setDni(String dni) {
+		this.dni = dni;
 	}
 
 }

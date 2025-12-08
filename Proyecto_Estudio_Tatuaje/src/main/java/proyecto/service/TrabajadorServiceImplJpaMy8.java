@@ -1,6 +1,7 @@
 package proyecto.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,20 +17,17 @@ public class TrabajadorServiceImplJpaMy8 implements TrabajadorService {
 
 	@Override
 	public List<Trabajador> leerTodos() {
-		// TODO Auto-generated method stub
-		return null;
+		return trabajadorRepository.findAll();
 	}
 
 	@Override
 	public Trabajador buscarUnTrabajador(int idTrabajador) {
-		// TODO Auto-generated method stub
-		return null;
+		return trabajadorRepository.findById(idTrabajador).orElse(null);
 	}
 
 	@Override
 	public Trabajador altaTrabajador(Trabajador trabajador) {
-		// TODO Auto-generated method stub
-		return null;
+		return trabajadorRepository.save(trabajador);
 	}
 
 	@Override
@@ -40,8 +38,12 @@ public class TrabajadorServiceImplJpaMy8 implements TrabajadorService {
 
 	@Override
 	public Trabajador actualizarTrabajador(Trabajador trabajador) {
-		// TODO Auto-generated method stub
-		return null;
+		return trabajadorRepository.save(trabajador);
+	}
+
+	@Override
+	public Optional<Trabajador> buscarPorDocumento(String documento) {
+		return trabajadorRepository.findByDocumentoIdentificacionIgnoreCase(documento);
 	}
 	
 }

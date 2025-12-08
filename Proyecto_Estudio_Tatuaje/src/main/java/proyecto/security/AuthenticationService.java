@@ -32,7 +32,7 @@ public class AuthenticationService {
             .orElseThrow(() -> new RuntimeException("Email o contraseña incorrectos"));
         
         // 2. Verificar contraseña (comparar texto plano con hash almacenado)
-        if (!passwordEncoder.matches(password, trabajador.getContrasenia())) {
+        if (!password.equals(trabajador.getContrasenia())) {
             throw new RuntimeException("Email o contraseña incorrectos");
         }
         
