@@ -2,6 +2,7 @@ package proyecto.security;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
@@ -39,7 +40,7 @@ public class JwtService {
     public String generateToken(Trabajador trabajador) {
     	// 1. Crear un "mapa" con datos extra para incluir en el token
         Map<String, Object> claims = new HashMap<>();
-        claims.put("rol", trabajador.getRol().toString());		// ← "ADMIN" o "TRABAJADOR"
+        claims.put("authorities", List.of("ROLE_" + trabajador.getRol().toString()));		// ← "ADMIN" o "TRABAJADOR"
         claims.put("nombre", trabajador.getNombre());			// ← "Juan"
         
         return Jwts.builder()

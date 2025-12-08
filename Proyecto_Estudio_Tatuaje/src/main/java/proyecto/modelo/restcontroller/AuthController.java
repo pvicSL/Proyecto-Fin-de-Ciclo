@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import proyecto.security.AuthenticationService;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @CrossOrigin(origins = "*") // Permitir requests desde cualquier origen (frontend)
 public class AuthController {
     
@@ -34,7 +34,7 @@ public class AuthController {
             return ResponseEntity.badRequest()
                 .body(new ErrorResponse("Error", e.getMessage()));
         }
-    }
+    } /*Para testear los logins con endpoints protegidos: en headers, key: Authorization, value: Bearer + tokken*/
     
     // Clases para estructurar las peticiones y respuestas JSON
     public static class LoginRequest {
