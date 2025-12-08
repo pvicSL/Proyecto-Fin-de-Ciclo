@@ -64,10 +64,6 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	
 	
 
-    // 3. Calcular IVA
-    // 4. Crear objeto Presupuesto
-    // 5. Guardar en BD
-    // 6. Devolver presupuesto guardado
 	@Override
 	public Presupuesto calcularPresupuesto(Servicio servicio) {
 		
