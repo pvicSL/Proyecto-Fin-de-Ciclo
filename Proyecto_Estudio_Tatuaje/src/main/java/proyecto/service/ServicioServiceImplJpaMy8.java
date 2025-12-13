@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import proyecto.modelo.entities.Servicio;
-import proyecto.modelo.repository.ServicioRepository;
+import proyecto.modelo.repository.CitaRepository;
+
 
 @Service
 public class ServicioServiceImplJpaMy8 implements ServicioService {
 
 	@Autowired
-	private ServicioRepository servicioRepository;
+	private CitaRepository citaRepository;
 
 	@Override
 	public List<Servicio> leerTodos() {

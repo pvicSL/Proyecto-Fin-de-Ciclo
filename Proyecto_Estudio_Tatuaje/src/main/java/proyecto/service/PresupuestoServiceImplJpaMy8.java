@@ -8,15 +8,15 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Precio;
 import proyecto.modelo.entities.Presupuesto;
-import proyecto.modelo.entities.Servicio;
 import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Estado;
+import proyecto.modelo.repository.CitaRepository;
 import proyecto.modelo.repository.PrecioRepository;
 import proyecto.modelo.repository.PresupuestoRepository;
-import proyecto.modelo.repository.ServicioRepository;
+
 
 @Service
 public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
@@ -31,7 +31,7 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	private PrecioRepository precioRepository;
 	
 	@Autowired
-	ServicioRepository servicioRepository;
+	CitaRepository citaRepository;
 
 	@Override
 	public List<Presupuesto> leerTodos() {
@@ -65,15 +65,15 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	
 
 	@Override
-	public Presupuesto calcularPresupuesto(Servicio servicio) {
+	public Presupuesto calcularPresupuesto(Cita cita) {
 		
-		/*Extraer valores del servicio y almacenar en variables*/
-		String tipoServicio = servicio.getTipo().toString();
-		String zonaServicio = servicio.getZona().toString();
-		String tamanioServicio = servicio.getTamanio().toString();
-		String detalleServicio = servicio.getDetalle().toString();
-		String coloracionServicio = servicio.getColoracion().toString();
-		String estiloServicio = servicio.getEstilo().toString();
+		/*Extraer valores de la cita y almacenar en variables*/
+		String tipoServicio = cita.getTipo().toString();
+		String zonaServicio = cita.getZona().toString();
+		String tamanioServicio = cita.getTamanio().toString();
+		String detalleServicio = cita.getDetalle().toString();
+		String coloracionServicio = cita.getColoracion().toString();
+		String estiloServicio = cita.getEstilo().toString();
 		
 		/*Se optiene el objeto Precio completo de la BBDD*/
 		Optional<Precio> precioTipo = precioRepository.findByCategoriaAndValor(CategoriaEnum.TIPO, tipoServicio);
@@ -101,7 +101,7 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 		
 		/*Creamos objeto Presupuesto*/
 		Presupuesto presupuesto = new Presupuesto (
-				servicio.getIdServicio(), precioSinIva, iva, precioConIva, LocalDateTime.now(), true,Estado.PENDIENTE, null);
+			    cita.getIdCita(), precioSinIva, iva, precioConIva, LocalDateTime.now(), true,Estado.PENDIENTE, null);
 
 
 		/*Guardamos en BBDD*/
@@ -112,16 +112,14 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	}
 
 	@Override
-	public Presupuesto calcularPresupuestoPorId(int idServicio) {
-		// Buscar servicio por ID
-	    Optional<Servicio> servicioOpt = servicioRepository.findById(idServicio);
+	public Presupuesto calcularPresupuestoPorId(int idCita) {
+	    Optional<Cita> citaOpt = citaRepository.findById(idCita);
 	    
-	    if (servicioOpt.isPresent()) {
-	        Servicio servicio = servicioOpt.get();
-	        
-	        return calcularPresupuesto(servicio);
+	    if (citaOpt.isPresent()) {
+	        Cita cita = citaOpt.get();
+	        return calcularPresupuesto(cita);
 	    } else {
-	        throw new RuntimeException("Servicio no encontrado con ID: " + idServicio);
+	        throw new RuntimeException("Cita no encontrada con ID: " + idCita);
 	    }
 	}
 }

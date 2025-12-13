@@ -3,9 +3,9 @@ package proyecto.service;
 
 import java.util.List;
 
-
+import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Presupuesto;
-import proyecto.modelo.entities.Servicio;
+
 
 
 /*Realiza los cálculos*/
@@ -19,7 +19,7 @@ public interface PresupuestoService {
 	Presupuesto actualizarPresupuesto(Presupuesto presupuesto);
 	
 	
-	Presupuesto calcularPresupuesto (Servicio servicio);
-	Presupuesto calcularPresupuestoPorId(int idServicio);
+	Presupuesto calcularPresupuesto (Cita cita);
+	Presupuesto calcularPresupuestoPorId(int idCita);
 	
 }
