@@ -18,7 +18,7 @@ import proyecto.modelo.entities.Trabajador;
 import proyecto.service.TrabajadorService;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @CrossOrigin(origins = "*")
 public class TrabajadorRestController {
 
