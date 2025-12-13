@@ -1,0 +1,315 @@
+
+/*=============================
+--- COLORES PREDETERMINADOS ---
+=============================*/
+:root {
+  --color-1: #7e1527; /* Burdeos */
+  --color-2: #c62d49; /* Cardenal */
+  --color-3: #11c3b9; /* Robin Egg - Turquesa */
+  --color-4: #07958b; /* Cyan Oscuro */
+  --color-5: #ececec; /* Gris suave */
+  --color-6: #2a2a2a; /* Gris Carbon */
+  --color-7: #151515; /* Negro mate */
+  font-size: 16px; /* ajuste medida rem en la tipografía */
+  box-sizing: border-box;
+}
+
+/*=============================
+--- ESTILOS PARA EL BODY ---
+=============================*/
+
+/* Estilos base para la página */
+body{
+    background-color: white;
+    font-family: 'Figtree', Arial, sans-serif; /* tipgrafía del cuerpo */
+    font-weight: normal;
+    color:#000; /* color base de la tipografía */
+}
+
+/* color y métricas del contenedor principal */
+.container{
+    background-color: var(--color-5);
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+    padding: 5rem;
+    border-radius: 10px;
+    max-width: 600px;
+}
+
+/* Encabezado */
+h1{
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: bold;
+    font-size: 2.4rem;
+    text-align: center;
+   
+}
+
+/* Cambio de color de "TatuSys" */
+.texto-cyan{
+    color: var(--color-4);
+}
+
+/* ajustes y alineación del texto adicional */
+p{
+    font-weight: normal;
+    text-align: center;
+}
+
+/* color base enlace a contraseña olvidada */
+a{
+    text-decoration: none;
+    color: #000;
+}
+
+/* cambio de color enlace en hover */
+a:hover{
+    color: var(--color-4);
+}
+
+/* Cambio de color input-checked */
+.form-check-input:checked{
+    background-color: var(--color-4);
+    border-color: var(--color-4);
+}
+
+/* ajustes personalizados botón principal */
+.btn{
+    background-color: var(--color-4);
+    color: white;
+    font-weight: bold;
+    border: 2px solid var(--color-4)
+}
+
+/* cambio de color del btn principal en hover */
+.btn:hover{
+    background-color: var(--color-3);
+}
+
+/* ajustes personalizados botón secundario */
+.btn-secondary{
+    background-color: white;
+    color: black;
+    border: 2px solid var(--color-4);
+    font-weight: bold;
+}
+
+/* cambio de color del btn secundario en hover */
+.btn-secondary:hover{
+    background-color: var(--color-4);
+    color: white;
+    border-color: var(--color-4);
+}
+
+.active{
+    background-color: var(--color-4) !important;
+    color: white !important;
+    border: 2px solid var(--color-4) !important;
+}
+
+/*=============================
+----------- SIDEBAR -----------
+=============================*/
+
+li{
+    list-style: none;
+}
+
+.wrapper{
+    display: flex;
+    height: 100vh;
+    width:fit-content;
+    position: sticky;
+
+}
+
+#sidebar{
+    width: 80px;
+    min-width: 80px;
+    z-index: 1000;
+    transition: all .25s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-4);
+}
+
+
+
+#sidebar.expand{
+    width: 260px;
+    min-width: 260px;
+}
+
+#toggle-btn{
+    background-color: transparent;
+    cursor: pointer;
+    border: 0;
+    padding: 1rem 1.5rem;
+}
+
+#toggle-btn i{
+    font-size: 2rem;
+    color: white;
+}
+
+.sidebar-logo{
+    margin: auto 0;
+    padding-top: 1rem;
+}
+
+.sidebar-logo p{
+    color:white;
+    min-width: 115px;
+}
+
+#sidebar:not(.expand) .sidebar-logo,
+#sidebar:not(.expand) a.sidebar-link span{
+    display: none;
+}
+
+.sidebar-nav{
+    padding: 2rem 0;
+    flex: 1 1 auto;
+}
+
+.sidebar-footer{
+    padding: 0;
+}
+
+a.sidebar-link{
+   padding: 0.625rem 1.625rem; 
+   color: white;
+   display: block;
+   font-size: 1rem;
+   white-space: nowrap;
+   border-left: 3px solid transparent;
+}
+
+.sidebar-link i{
+    font-size: 1.5rem;
+    margin-top: 0.5rem;
+    margin-right: 0.75rem;
+
+}
+
+.sidebar-link:hover{
+    background-color: var(--color-3);
+}
+
+.sidebar-item .active{
+    background-color: var(--color-3) !important;
+    border-color: var(--color-3) !important;
+}
+
+/*=================================================
+----- ESTILOS PARA EL CONTENIDO DEL DASHBOARD -----
+==================================================*/
+
+.main-content{
+    overflow: hidden;
+    width: 80%;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+
+/*=====================================
+----- ESTILOS PARA NAV-BREADCRUMB -----
+=====================================*/
+
+.breadcrumb-nav{
+    margin: auto;
+    margin-top:0.5rem;
+}
+
+.breadcrumb-nav ol li a:last-child{
+    color: #000;
+    font-size: 0.8rem;
+}
+
+.breadcrumb-nav ol li a span:hover{
+    color: var(--color-4);
+}
+
+
+
+.footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 1rem;
+}
+.alerts{
+    width: 60%;
+}
+
+.alert{
+    background-color: white;
+    border: 2px solid var(--color-2);
+    padding: 0.75rem 0.75rem 0rem 0.75rem;
+    margin: 2px;
+}
+
+.alert a{
+    color: var(--color-2);
+    display: flex;
+}
+
+.alert a i{
+    margin-right: 1rem;
+}
+
+
+/*=================================================
+----- ESTILOS PARA EL HEADER DEL MAIN CONTENT -----
+=================================================*/
+
+.main-content-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 0.5rem;
+    max-height: 100vh;
+}
+
+.text-subtitle{
+    width: 70%;
+}
+
+.time-buttons{
+    width: 30%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.text-subtitle{
+    text-align: start;
+}
+
+/*=============================
+---- ESTILOS PARA LA TABLA ----
+=============================*/
+
+#table-confirmadas{
+    margin-top: 0.5rem;
+    text-align: center;
+    border-radius: 8px;
+    overflow: hidden; /*oculta los desbordamientos de las celdas */
+}
+
+
+.table-header th{
+    background-color: var(--color-4);
+    color: white;
+    padding: 1rem 1rem;
+}
+
+.table-body td{
+    padding: 0.75rem 0.75rem;
+}
+
+

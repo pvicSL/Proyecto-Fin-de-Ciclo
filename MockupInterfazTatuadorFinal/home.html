@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Home - Página principal del tatuador">
+    <meta name="author" content="SMP">
+    
+    <!-- CSS de Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- Iconos de Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Google Fonts: Figtree y Poppins-->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Link a archivos CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <title>Home</title>
+</head>
+<body class="d-flex">
+
+    <div class="wrapper">
+        <aside id="sidebar">
+            <div class="d-flex">
+                <button id="toggle-btn" type="button">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="sidebar-logo">
+                    <p>Nombre usuario</p>
+                </div>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link active">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-envelope-fill"></i>
+                        <span>Solicitudes</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-file-earmark-ruled-fill"></i>
+                        <span>Facturas</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-calendar2-event-fill"></i>
+                        <span>Calendario</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Trabajadores</span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="sidebar-footer ">
+                <li class="sidebar-footer-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-gear-wide-connected"></i>
+                        <span>Configuración</span>
+                    </a>
+                </li>
+                <li class="sidebar-footer-item"></li>
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-box-arrow-left"></i>
+                        <span>Cerarr Sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+    </div>
+
+    <div class="main-content">
+        <!-- Breadcumb (migas de pan) cabecera que muestra la 
+         ruta de navegación. El atributo aria-label hace que el lector 
+         de pantalla lea en voz alta la función del elemnto (accesible)-->
+        <nav class="breadcrumb-nav" aria-label="Ruta de páginas">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="#">
+                        <i class="bi bi-house-door"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+            </ol>
+        </nav>
+        <div class="main-content-header">
+            <h1 class="text-subtitle">1 de Diciembre - 7 de Diciembre</h1>
+            <div class="time-buttons">
+                <div class="time-buttons-days">
+                    <button class="btn btn-secondary active">Día</button>
+                    <button class="btn btn-secondary">Semana</button>
+                </div>
+                <div class="time-buttons-arrrows">
+                    <button class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <table id="table-confirmadas" class="table table-responsive table-striped table-borderless align-middle">
+            <thead class="table-header">
+                <tr>
+                    <!-- scope="col" da info. al navegador que todos
+                    los datos de esa columna tienen que ver con 
+                    esta celda del encabezado -->
+                    <th scope="col" class=" d-none d-md-table-cell">
+                        <h3>#</h3>
+                    </th>
+                    <th scope="col">
+                        <h3>Nombre y Apellidos</h3>
+                    </th>
+                    <th scope="col">
+                        <h3>Fecha y Hora</h3>
+                    </th>
+                    <th scope="col"> 
+                        <h3>Tipo</h3>
+                    </th>
+                    <th scope="col">
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                <tr>
+                    <th scope="row" class=" d-none d-md-table-cell">
+                        <p>1</p>
+                    </th>
+                    <td>
+                        <p>Nombre Apellido1 y Apellido2</p>
+                    </td>
+                    <td>
+                        <p>1 de Diciembre -10:00</p>
+                    </td>
+                    <td>
+                        <p>Tatuaje</p>
+                    </td>
+                    <td>
+                        <button class="btn">Confirmar</button>
+                        <button class="btn">Ver</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class=" d-none d-md-table-cell">
+                        <p>1</p>
+                    </th>
+                    <td>
+                        <p>Nombre Apellido1 y Apellido2</p>
+                    </td>
+                    <td>
+                        <p>1 de Diciembre -10:00</p>
+                    </td>
+                    <td>
+                        <p>Tatuaje</p>
+                    </td>
+                    <td>
+                        <button class="btn">Confirmar</button>
+                        <button class="btn">Ver</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class=" d-none d-md-table-cell">
+                        <p>1</p>
+                    </th>
+                    <td>
+                        <p>Nombre Apellido1 y Apellido2</p>
+                    </td>
+                    <td>
+                        <p>1 de Diciembre -10:00</p>
+                    </td>
+                    <td>
+                        <p>Tatuaje</p>
+                    </td>
+                    <td>
+                        <button class="btn">Confirmar</button>
+                        <button class="btn">Ver</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class=" d-none d-md-table-cell">
+                        <p>1</p>
+                    </th>
+                    <td>
+                        <p>Nombre Apellido1 y Apellido2</p>
+                    </td>
+                    <td>
+                        <p>1 de Diciembre -10:00</p>
+                    </td>
+                    <td>
+                        <p>Tatuaje</p>
+                    </td>
+                    <td>
+                        <button class="btn">Confirmar</button>
+                        <button class="btn">Ver</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class=" d-none d-md-table-cell">
+                        <p>1</p>
+                    </th>
+                    <td>
+                        <p>Nombre Apellido1 y Apellido2</p>
+                    </td>
+                    <td>
+                        <p>1 de Diciembre -10:00</p>
+                    </td>
+                    <td>
+                        <p>Tatuaje</p>
+                    </td>
+                    <td>
+                        <button class="btn">Confirmar</button>
+                        <button class="btn">Ver</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class=" d-none d-md-table-cell">
+                        <p>1</p>
+                    </th>
+                    <td>
+                        <p>Nombre Apellido1 y Apellido2</p>
+                    </td>
+                    <td>
+                        <p>1 de Diciembre -10:00</p>
+                    </td>
+                    <td>
+                        <p>Tatuaje</p>
+                    </td>
+                    <td>
+                        <button class="btn">Confirmar</button>
+                        <button class="btn">Ver</button>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class=" d-none d-md-table-cell">
+                        <p>1</p>
+                    </th>
+                    <td>
+                        <p>Nombre Apellido1 y Apellido2</p>
+                    </td>
+                    <td>
+                        <p>1 de Diciembre -10:00</p>
+                    </td>
+                    <td>
+                        <p>Tatuaje</p>
+                    </td>
+                    <td>
+                        <button class="btn">Confirmar</button>
+                        <button class="btn">Ver</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="footer">
+            <div class="alerts">
+                <div class="alert">
+                    <a href="#">
+                        <i class="bi bi-bell-fill"></i>
+                        <p class="text-alert">¡Tienes 3 solicitudes nuevas!</p>
+                    </a>
+                </div>
+                <div class="alert">
+                    <a href="#">
+                        <i class="bi bi-bell-fill"></i>
+                        <p class="text-alert">¡Tienes 2 solicitudes rechazadas!</p>
+                    </a>
+                </div>
+            </div>
+            <nav class="pagination-nav d-flex justify-content-end" aria-label="Paginación de la tabla">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link btn" href="#" data-page="prev">Anterior</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link active  btn" href="#" data-page="1">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn-secondary rounded-3" href="#" data-page="2">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link btn-secondary rounded-3" href="#" data-page="3">3</a>
+                    </li>
+                    <li class="page-item ">
+                        <a class="page-link btn-secondary rounded-3" href="#" data-page="next">Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- Bootstrap Bundle - esto carga el JavaScript de Bootstrap -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- SCRIPT PARA CONTROLAR VISIBILIDAD DEL SIDEBAR -->
+    <script src="js/script-sidebar.js"></script>
+
+</body>
+</html>
