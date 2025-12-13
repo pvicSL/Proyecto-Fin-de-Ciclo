@@ -30,6 +30,9 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/api/citas/**").permitAll()           // ← Ya existía
+                .requestMatchers("/presupuesto_nuevo").permitAll()      // ← AÑADIR ESTA LÍNEA
+                .requestMatchers("/api/**").permitAll()  // ← Cambiar para cubrir todo /api/
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/trabajador/**").hasAnyRole("ADMIN", "TRABAJADOR")
                 .anyRequest().authenticated()

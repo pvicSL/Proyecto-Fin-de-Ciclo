@@ -9,13 +9,18 @@ import org.springframework.stereotype.Service;
 
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
+import proyecto.modelo.entities.Cliente;
 import proyecto.modelo.repository.CitaRepository;
+import proyecto.modelo.repository.ClienteRepository;
 
 @Service
 public class CitaServiceImplJpaMy8 implements CitaService{
 	
 	@Autowired
 	private CitaRepository citaRepository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
 
 	@Override
 	public List<Cita> leerTodos() {
@@ -29,7 +34,15 @@ public class CitaServiceImplJpaMy8 implements CitaService{
 
 	@Override
 	public Cita crearCita(Cita cita) {
-		return citaRepository.save(cita);
+	    
+	    // Si viene un idCliente en el JSON, buscar y asignar el cliente
+	    if (cita.getCliente() != null && cita.getCliente().getIdCliente() != 0) {
+	        int idCliente = cita.getCliente().getIdCliente();
+	        Cliente clienteCompleto = clienteRepository.findById(idCliente).orElse(null);
+	        cita.setCliente(clienteCompleto);
+	    }
+	    
+	    return citaRepository.save(cita);
 	}
 
 	@Override

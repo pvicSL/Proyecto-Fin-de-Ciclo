@@ -31,6 +31,7 @@ import proyecto.modelo.enums.Zona;
 public class Cita implements Serializable{
 	private static final long serialVersionUID = -5431666055805619336L;
 
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_servicio")  // ← COLUMNA IGUAL
