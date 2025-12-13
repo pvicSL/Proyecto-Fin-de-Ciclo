@@ -16,6 +16,8 @@ CREATE INDEX idx_documento_upper ON clientes ((UPPER(documento_identificacion)))
 
 CREATE TABLE IF NOT EXISTS trabajadores (
 	id_trabajador INT PRIMARY KEY AUTO_INCREMENT,
+    dni varchar(15) UNIQUE NOT NULL,
+    numero_cuenta VARCHAR(30),
 	contrasenia VARCHAR (255) NOT NULL,
 	nombre VARCHAR (30) NOT NULL,
 	apellido1 VARCHAR (30) NOT NULL,
@@ -26,11 +28,13 @@ CREATE TABLE IF NOT EXISTS trabajadores (
 	funciones ENUM ('CREACION', 'ELIMINACION') NOT NULL
 );
 
+
+
 CREATE TABLE IF NOT EXISTS servicios(
 	id_servicio INT PRIMARY KEY AUTO_INCREMENT,
 	tipo ENUM ('TATUAJE', 'ELIMINACION', 'COVER', 'RETOQUE') NOT NULL,
 	zona ENUM ('BRAZO', 'ANTEBRAZO', 'CODO', 'HOMBRO', 'TÓRAX', 'ABDOMEN', 'PUBIS', 'MUSLO', 'RODILLA',
-		'PANTORILLA', 'PIE', 'MANO', 'CERVIAL', 'LUMBARES', 'NALGA', 'CABEZA') NOT NULL,
+		'PANTORILLA', 'PIE', 'MANO', 'CERVICAL', 'LUMBARES', 'NALGA', 'CABEZA') NOT NULL, /*Corregir CERVIAL por CERVICAL*/
 	tamanio ENUM ('MINI', 'PEQUEÑO', 'MEDIANO', 'GRANDE', 'MUY_GRANDE') NOT NULL,
 	detalle ENUM ('SENCILLO', 'MEDIO', 'DENSO') NOT NULL,
 	coloracion ENUM ('COLOR', 'NEGRO') NOT NULL,
@@ -52,11 +56,11 @@ CREATE TABLE IF NOT EXISTS servicios(
 
 CREATE TABLE IF NOT EXISTS precios_adicionales (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    categoria ENUM('TIPO', 'ZONA', 'TAMANIO', 'DETALLE', 'COLORACION', 'ESTILO'),
-    /*Valor: valo que le damos al enum seleccionado de las categorías(ejemplo: cattegoria detalle, valor medio)*/
-    valor VARCHAR(50),		/*Precio que la damos al valor seleccionado*/
-    precio_adicional DECIMAL(8,2),
-    activo BOOLEAN DEFAULT TRUE		/*Si se pone a false, se desactiva el servicio pero no se elimina de la bbdd*/
+    categoria ENUM('TIPO', 'ZONA', 'TAMANIO', 'DETALLE', 'COLORACION', 'ESTILO', 'BASE') NOT NULL,
+    valor VARCHAR(50) NOT NULL,
+    precio_adicional DECIMAL(10,2) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    UNIQUE KEY unique_categoria_valor (categoria, valor)
 );
 
 /*Nos aseguramos que solo se le puede dar un precio a cada servicio concreto*/
@@ -77,16 +81,9 @@ CREATE TABLE IF NOT EXISTS presupuestos (
     FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio)
 );
 
-CREATE INDEX idx_presupuesto_servicio ON presupuesto(id_servicio);	/*Indexación para mejorar rendimiento*/
+CREATE INDEX idx_presupuesto_servicio ON presupuestos(id_servicio);	/*Indexación para mejorar rendimiento*/
 
 /*TODO presupuestos: Trigger que automáticamente pone vigente=FALSE a los otros
 -- cuando insertas uno nuevo con vigente=TRUE*/
 
-
-/*Pruebas*/
-drop table clientes;
-drop table servicios;
-drop table trabajadores;
-
- select * from clientes;
 
