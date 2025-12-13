@@ -132,6 +132,12 @@ public class Trabajador implements Serializable {
 		this.email = email;
 	}
 
+	public int getIdTrabajador() {
+		return idTrabajador;
+	}
+
+
+
 	public String getTelefono() {
 		return telefono;
 	}
