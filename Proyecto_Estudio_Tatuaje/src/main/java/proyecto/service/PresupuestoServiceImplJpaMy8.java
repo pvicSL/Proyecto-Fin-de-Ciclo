@@ -66,49 +66,48 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 
 	@Override
 	public Presupuesto calcularPresupuesto(Cita cita) {
-		
-		/*Extraer valores de la cita y almacenar en variables*/
-		String tipoServicio = cita.getTipo().toString();
-		String zonaServicio = cita.getZona().toString();
-		String tamanioServicio = cita.getTamanio().toString();
-		String detalleServicio = cita.getDetalle().toString();
-		String coloracionServicio = cita.getColoracion().toString();
-		String estiloServicio = cita.getEstilo().toString();
-		
-		/*Se optiene el objeto Precio completo de la BBDD*/
-		Optional<Precio> precioTipo = precioRepository.findByCategoriaAndValor(CategoriaEnum.TIPO, tipoServicio);
-		Optional<Precio> precioZona = precioRepository.findByCategoriaAndValor(CategoriaEnum.ZONA, zonaServicio);
-		Optional<Precio> precioTamanio = precioRepository.findByCategoriaAndValor(CategoriaEnum.TAMANIO, tamanioServicio);
-		Optional<Precio> precioDetalle = precioRepository.findByCategoriaAndValor(CategoriaEnum.DETALLE, detalleServicio);
-		Optional<Precio> precioColor = precioRepository.findByCategoriaAndValor(CategoriaEnum.COLORACION, coloracionServicio);
-		Optional<Precio> precioEstilo = precioRepository.findByCategoriaAndValor(CategoriaEnum.ESTILO, estiloServicio);
 
-		/*Se extrae el "precio" (campo precioAdicional) que necesitamos para sumar*/
-		BigDecimal pTipo = precioTipo.get().getPrecioAdicional();
-		BigDecimal pZona = precioZona.get().getPrecioAdicional();
-		BigDecimal pTamanio = precioTamanio.get().getPrecioAdicional();
-		BigDecimal pDetalle = precioDetalle.get().getPrecioAdicional();
-		BigDecimal pColor = precioColor.get().getPrecioAdicional();
-		BigDecimal pEstilo = precioEstilo.get().getPrecioAdicional();
-		
-		/*Se suman todos los precios recuperados en el paso anterior*/
-		/*Se usa add() como método de suma de la clase BigDecimal*/
-		BigDecimal precioSinIva = pTipo.add(pZona).add(pTamanio).add(pDetalle).add(pColor).add(pEstilo);
-		
-		/*Añadimos el iva*/
-		BigDecimal iva = precioSinIva.multiply(IVA_PORCENTAJE);
-		BigDecimal precioConIva = precioSinIva.add(iva);
-		
-		/*Creamos objeto Presupuesto*/
-		Presupuesto presupuesto = new Presupuesto (
-			    cita.getIdCita(), precioSinIva, iva, precioConIva, LocalDateTime.now(), true,Estado.PENDIENTE, null);
+	    /*Extraer valores de la cita y almacenar en variables*/
+	    String tipoServicio = cita.getTipo().toString();
+	    String zonaServicio = cita.getZona().toString();
+	    String tamanioServicio = cita.getTamanio().toString();
+	    String detalleServicio = cita.getDetalle().toString();
+	    String coloracionServicio = cita.getColoracion().toString();
+	    String estiloServicio = cita.getEstilo().toString();
 
+	    /*Se obtiene el objeto Precio completo de la BBDD*/
+	    Optional<Precio> precioBase = precioRepository.findByCategoriaAndValor(CategoriaEnum.BASE, "SERVICIO_BASE");
+	    Optional<Precio> precioTipo = precioRepository.findByCategoriaAndValor(CategoriaEnum.TIPO, tipoServicio);
+	    Optional<Precio> precioZona = precioRepository.findByCategoriaAndValor(CategoriaEnum.ZONA, zonaServicio);
+	    Optional<Precio> precioTamanio = precioRepository.findByCategoriaAndValor(CategoriaEnum.TAMANIO, tamanioServicio);
+	    Optional<Precio> precioDetalle = precioRepository.findByCategoriaAndValor(CategoriaEnum.DETALLE, detalleServicio);
+	    Optional<Precio> precioColor = precioRepository.findByCategoriaAndValor(CategoriaEnum.COLORACION, coloracionServicio);
+	    Optional<Precio> precioEstilo = precioRepository.findByCategoriaAndValor(CategoriaEnum.ESTILO, estiloServicio);
 
-		/*Guardamos en BBDD*/
-		Presupuesto presupuestoGuardado = presupuestoRepository.save(presupuesto);
+	    /*Se extrae el "precio" (campo precioAdicional) que necesitamos para sumar*/
+	    BigDecimal pBase = precioBase.get().getPrecioAdicional();
+	    BigDecimal pTipo = precioTipo.get().getPrecioAdicional();
+	    BigDecimal pZona = precioZona.get().getPrecioAdicional();
+	    BigDecimal pTamanio = precioTamanio.get().getPrecioAdicional();
+	    BigDecimal pDetalle = precioDetalle.get().getPrecioAdicional();
+	    BigDecimal pColor = precioColor.get().getPrecioAdicional();
+	    BigDecimal pEstilo = precioEstilo.get().getPrecioAdicional();
 
-		
-		return presupuestoGuardado;
+	    /*Se suman todos los precios recuperados en el paso anterior*/
+	    BigDecimal precioSinIva = pBase.add(pTipo).add(pZona).add(pTamanio).add(pDetalle).add(pColor).add(pEstilo);
+
+	    /*Añadimos el iva*/
+	    BigDecimal iva = precioSinIva.multiply(IVA_PORCENTAJE);
+	    BigDecimal precioConIva = precioSinIva.add(iva);
+
+	    /*Creamos objeto Presupuesto*/
+	    Presupuesto presupuesto = new Presupuesto (
+	            cita.getIdCita(), precioSinIva, iva, precioConIva, LocalDateTime.now(), true, Estado.PENDIENTE, null);
+
+	    /*Guardamos en BBDD*/
+	    Presupuesto presupuestoGuardado = presupuestoRepository.save(presupuesto);
+
+	    return presupuestoGuardado;
 	}
 
 	@Override
