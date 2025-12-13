@@ -1,5 +1,6 @@
 package proyecto.modelo.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -15,11 +16,15 @@ import proyecto.modelo.enums.CategoriaEnum;
 
 @Entity
 @Table(name="precios_adicionales")
-public class Precio {
+public class Precio implements Serializable{
 	
 	/*Solo almacena datos, no hace cálculos*/
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
