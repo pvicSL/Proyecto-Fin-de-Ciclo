@@ -1,0 +1,232 @@
+<div class="text-center mt-4 cta-wrapper" id="form-anchor">
+
+    <button *ngIf="!isFormOpen" class="btn btn-reservar mb-3" type="button" (click)="toggleForm()">
+        <i class="bi bi-calendar-plus me-2"></i>PIDE CITA
+    </button>
+
+    <div class="collapse" [class.show]="isFormOpen">
+        <div class="card mx-auto booking-card" style="max-width: 95vw; width: 600px;">
+            <div class="card-body">
+                <h3 class="booking-title text-center mb-4">RESERVA TU CITA</h3>
+
+                <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" novalidate>
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre*</label>
+                            <input type="text" class="form-control" formControlName="firstName" placeholder="Nombre..."
+                                [class.is-invalid]="bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Primer apellido*</label>
+                            <input type="text" class="form-control" formControlName="lastSurname"
+                                placeholder="Apellido..."
+                                [class.is-invalid]="bookingForm.get('lastSurname')?.invalid && bookingForm.get('lastSurname')?.touched">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Segundo apellido</label>
+                            <input type="text" class="form-control" formControlName="secondSurname"
+                                placeholder="Opcional...">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email*</label>
+                            <input type="email" class="form-control" formControlName="email"
+                                placeholder="email@ejemplo.com"
+                                [class.is-invalid]="bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Confirma Email*</label>
+                            <input type="email" class="form-control" formControlName="confirmEmail"
+                                placeholder="Repite el email..."
+                                [class.is-invalid]="bookingForm.errors?.['emailsDontMatch'] && bookingForm.get('confirmEmail')?.touched">
+                            <div class="invalid-feedback">Los correos no coinciden.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono*</label>
+                            <input type="tel" class="form-control" formControlName="phone" placeholder="600..."
+                                [class.is-invalid]="bookingForm.get('phone')?.invalid && bookingForm.get('phone')?.touched">
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="needInvoice"
+                                    formControlName="needInvoice">
+                                <label class="form-check-label" for="needInvoice">¿Necesitas factura?</label>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1" *ngIf="bookingForm.get('needInvoice')?.value">
+                            <div class="col-md-6">
+                                <label class="form-label">CIF/NIF</label>
+                                <input type="text" class="form-control" formControlName="cif">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Dirección Fiscal</label>
+                                <input type="text" class="form-control" formControlName="billingAddress">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Servicio*</label>
+                            <select class="form-select" formControlName="service">
+                                <option value="" selected>¿Qué necesitas...?</option>
+                                <option value="tattoo-new">Tatuaje</option>
+                                <option value="tattoo-retouch">Eliminación</option>
+                                <option value="cover-up">Cover</option>
+                                <option value="design-only">Retoque</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Zona del cuerpo*</label>
+                            <select class="form-select" formControlName="bodyZone">
+                                <option value="" selected>¿Dónde lo quieres...?</option>
+                                <option>Brazo</option>
+                                <option>Antebrazo</option>
+                                <option>Codo</option>
+                                <option>Hombro</option>
+                                <option>Tórax</option>
+                                <option>Abdomen</option>
+                                <option>Pubis</option>
+                                <option>Muslo</option>
+                                <option>Rodilla</option>
+                                <option>Pantorrilla</option>
+                                <option>Pie</option>
+                                <option>Mano</option>
+                                <option>Cervical</option>
+                                <option>Lumbares</option>
+                                <option>Nalga</option>
+                                <option>Cabeza</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Tamaño*</label>
+                            <select class="form-select" formControlName="size">
+                                <option value="" selected>¿Grande o pequeño?...</option>
+                                <option value="mini">Mini</option>
+                                <option value="small">Pequeño</option>
+                                <option value="medium">Mediano</option>
+                                <option value="large">Grande</option>
+                                <option value="xtralarge">Muy grande</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Estilo*</label>
+                            <select class="form-select" formControlName="style">
+                                <option value="" selected>¿Clásico, minimalista...?</option>
+                                <option>Realismo</option>
+                                <option>Tradicional</option>
+                                <option>Japonés</option>
+                                <option>Lettering</option>
+                                <option>Fineline</option>
+                                <option>Black And Grey</option>
+                                <option>Anime</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Detalle*</label>
+                            <select class="form-select" formControlName="detailLevel">
+                                <option value="" selected>¿Cuánto detalle...?</option>
+                                <option>Sencillo</option>
+                                <option>Medio</option>
+                                <option>Denso</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <label class="form-label d-block">¿Color o blanco y negro?</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" value="bw" formControlName="colorMode"
+                                    id="bw">
+                                <label class="form-check-label" for="bw">Blanco y Negro</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" value="color" formControlName="colorMode"
+                                    id="col">
+                                <label class="form-check-label" for="col">Color</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Comentarios</label>
+                            <textarea class="form-control" rows="3" formControlName="comments"></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="references" class="form-label">Referencias (máx. 3 imágenes)</label>
+                            <input class="form-control" type="file" id="references" accept="image/*" multiple
+                                (change)="onFileChange($event)">
+                            <div class="form-text">Puedes subir hasta 3 imágenes.</div>
+                        </div>
+
+                        <div class="col-12 d-flex justify-content-center mt-3">
+                            <div class="slot-picker">
+                                <div class="slot-header">
+                                    <span>Diciembre - 2026</span>
+                                </div>
+
+                                <div class="slot-weekdays">
+                                    <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                                </div>
+
+                                <div class="slot-days">
+                                    <span *ngFor="let dia of mockDays; let i = index" class="day" [ngClass]="{
+                                          'day-available': dia.status === 'available',
+                                          'day-none': dia.status === 'none',
+                                          'day-closed': dia.status === 'closed',
+                                          'day-selected': i === selectedDayIndex
+                                        }" (click)="selectDay(i, dia)">
+                                        {{ dia.day }}
+                                    </span>
+                                </div>
+
+                                <div class="slot-times mt-3" *ngIf="selectedDayIndex !== null">
+                                    <button *ngFor="let time of mockDays[selectedDayIndex!].slots" type="button"
+                                        class="time-slot" [class.time-slot-selected]="selectedSlot === time"
+                                        (click)="selectSlot(time)">
+                                        {{ time }}
+                                    </button>
+                                    <p *ngIf="mockDays[selectedDayIndex!].slots.length === 0" class="text-muted small">
+                                        No hay horas este día.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 d-flex justify-content-center gap-3 mt-4">
+                            <button type="button" class="btn btn-outline-light" (click)="resetForm()">BORRAR</button>
+                            <button type="button" class="btn btn-outline-danger"
+                                (click)="toggleForm()">CANCELAR</button>
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <div class="form-check d-flex justify-content-center">
+                                <input class="form-check-input me-2" type="checkbox" formControlName="acceptTerms"
+                                    id="terms">
+                                <label class="form-check-label" for="terms">
+                                    Acepto los <a href="#" class="terms-link">Términos y Condiciones</a>.
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-center mt-3">
+                            <button class="btn btn-reservar-submit" type="submit"
+                                [disabled]="bookingForm.invalid || !selectedSlot">
+                                ENVIAR SOLICITUD
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

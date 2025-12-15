@@ -1,0 +1,61 @@
+/* Heredamos estilos básicos de la tarjeta si quieres, 
+   o los redefinimos aquí para que sea independiente */
+
+.booking-card {
+    background-color: var(--jet);
+    width: 95%;
+    max-width: 500px;
+    border-radius: 10px;
+    border: none;
+    color: var(--antiflash-white);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+.modify-title {
+    font-family: 'Figtree', sans-serif;
+    color: var(--antiflash-white);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    letter-spacing: 0.02em;
+}
+
+.appointment-box {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    padding: 1.5rem 1.2rem;
+    width: 100%;
+    color: var(--jet);
+    /* Texto oscuro dentro de caja clara */
+}
+
+/* Títulos internos */
+.appointment-label {
+    font-size: 1.2rem;
+    color: var(--jet);
+}
+
+/* Separador vertical */
+.divider {
+    width: 2px;
+    height: 60px;
+    background-color: var(--jet);
+    opacity: 0.3;
+    margin: 0 15px;
+}
+
+.appointment-day,
+.appointment-hour {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--burgundy);
+}
+
+.appointment-hour {
+    color: var(--dark-cyan);
+}
+
+/* Botones */
+button {
+    border-radius: 8px;
+    font-weight: 500;
+}

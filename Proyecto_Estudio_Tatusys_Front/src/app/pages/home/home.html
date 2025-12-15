@@ -1,0 +1,135 @@
+<!-- SECCIÓN DE PRESENTACIÓN DEL ESTUDIO Y CARRUSEL DE IMG -->
+<section id="hero" class="position-relative">
+
+    <!-- Carrusel de fondo -->
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="hero-slide" style="background-image: url('assets/hero1.jpg');"></div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-slide" style="background-image: url('assets/hero2.jpg');"></div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-slide" style="background-image: url('assets/hero3.jpg');"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Capa oscura de contraste -->
+    <div class="hero-overlay"></div>
+
+    <!-- Texto de presentación -->
+    <div class="hero-text text-white position-absolute top-50 start-50 translate-middle">
+        <p class="hero-subtitle mb-1">SOMOS</p>
+        <h1 class="hero-title mb-2">@INK<span class="highlight">&</span>CO</h1>
+        <h2 class="hero-tagline mb-3">ESTUDIO DE <span class="highlight">TATUAJE PROFESIONAL</span></h2>
+        <p class="hero-description mb-3">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse non
+            elit quis leo rhoncus aliquet. Phasellus viverra odio lectus, ut pretium ligula
+            ullamcorper eu.
+        </p>
+        <a href="#" class="hero-location d-inline-flex align-items-center gap-2">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>Dirección física con enlace para saber cómo llegar</span>
+        </a>
+    </div>
+</section>
+
+<div class="container py-5">
+
+    <div *ngIf="viewMode === 'booking'">
+        <app-booking-form></app-booking-form>
+
+        <p class="text-center mt-3 cta-text">
+            ¿Cambio de planes?
+            <span (click)="toggleMode()" class="text-primary fw-bold"
+                style="cursor: pointer; text-decoration: underline;">
+                Modifica tu cita aquí
+            </span>.
+        </p>
+    </div>
+
+    <div *ngIf="viewMode === 'modifying'">
+        <app-appointment-modifier></app-appointment-modifier>
+
+        <p class="text-center mt-3">
+            <span (click)="toggleMode()" class="text-muted" style="cursor: pointer;">
+                &larr; Volver a Pedir Cita
+            </span>
+        </p>
+    </div>
+
+</div>
+
+<!-- ---------------------------------------
+     ----- SECCIÓN DE PREGUNTAS FRECUENTES -----
+     --------------------------------------- -->
+<section class="faq text-center py-3">
+
+    <!-- Botón de mostrar/ocultar el acordeón -->
+    <button class="btn faq-toggle-btn d-flex align-items-center justify-content-between mx-auto mb-4 px-4 py-"
+        type="button" data-bs-toggle="collapse" data-bs-target="#faqSection" aria-expanded="false"
+        aria-controls="faqSection">
+        <i class="bi bi-question-circle me-2 faq-icon-left"></i>
+        <span class="flex-grow-1 m-2">PREGUNTAS FRECUENTES</span>
+        <i class="bi bi-plus faq-icon-right"></i>
+    </button>
+
+    <!-- Contenedor de acordeón de FAQs -->
+    <div class="collapse" id="faqSection">
+        <div class="accordion mx-auto" id="faqAccordion">
+
+            <!-- Pregunta 1 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading1">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#faq1" aria-expanded="false" aria-controls="faq1">
+                        ¿Duele hacerse un tatuaje?
+                    </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse" aria-labelledby="faqHeading1"
+                    data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Depende de la zona y la tolerancia personal, pero la mayoría de las personas describen
+                        la sensación como molestia más que dolor agudo.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 2 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading2">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                        ¿Qué cuidados son necesarios?
+                    </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" aria-labelledby="faqHeading2"
+                    data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Mantén la zona limpia, aplica la pomada recomendada, evita sol directo y no rasques la
+                        costra.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 3 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading3">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
+                        ¿Puedo enviar referencias?
+                    </button>
+                </h2>
+                <div id="faq3" class="accordion-collapse collapse" aria-labelledby="faqHeading3"
+                    data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Sí, puedes subir hasta 3 imágenes como referencia al solicitar la cita.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

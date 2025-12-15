@@ -1,0 +1,11 @@
+/* Estilo para color del header (usa el root de styles.css general del proyecto */
+.site-header {
+    background: linear-gradient(180deg, var(--night), var(--jet));
+}
+
+/* Estilos para tamaño de logotipo */
+.logo {
+    height: 3rem;
+    max-height: 12vh;
+    width: auto;
+}

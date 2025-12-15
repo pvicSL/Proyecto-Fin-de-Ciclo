@@ -1,0 +1,36 @@
+/* ==============================
+   VARIABLES Y ESTILOS GLOBALES
+=============================== */
+:root {
+    --burgundy: #7e1527;
+    --cardinal: #c62d49;
+    --robin-egg-blue: #11c3b9;
+    --dark-cyan: #07958b;
+    --antiflash-white: #ececec;
+    --jet: #2a2a2a;
+    --night: #151515;
+}
+
+/* ==============================
+   ESTILOS COMUNES DE TIPOGRAFIA
+=============================== */
+body {
+    font-family: 'Figtree', Arial, sans-serif;
+    font-weight: 400;
+}
+
+/* Encabezados y títulos globales */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.hero-title,
+.hero-tagline,
+.booking-title {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: inherit;
+}
