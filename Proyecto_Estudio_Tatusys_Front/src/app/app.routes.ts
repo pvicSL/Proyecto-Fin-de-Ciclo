@@ -1,22 +1,40 @@
 import { Routes } from '@angular/router';
-import { ClientLayout } from './shared/client-layout/client-layout';
-import { HomeComponent } from './pages/home/home';
+import { ClientLayoutComponent } from './shared/layouts/client-layout/client-layout';
+import { HomeComponent } from './pages/client/home/home';
 
 export const routes: Routes = [
+    // 1. RUTA CLIENTE FINAL
     {
         path: '',
-        component: ClientLayout, // 1. Carga el envoltorio primero
+        component: ClientLayoutComponent,
         children: [
-            // 2. Dentro del envoltorio, carga la Home
             { path: '', component: HomeComponent },
-            // En el futuro: { path: 'citas', component: CitasComponent }
+            // Aquí podrías añadir más rutas públicas en el futuro
         ]
     },
 
-    // --- FUTURO: ZONA ADMIN ---
-    // {
-    //    path: 'admin',
-    //    component: AdminLayoutComponent, // El envoltorio de tu compañero
-    //    loadChildren: () => import('./features/admin/admin.module').then(m => m.AdminModule)
-    // }
+    // 2. RUTA ADMIN - COMENTADA HASTA QUE ESTO ESTÉ HECHO, PARA QUE NO DÉ ERRORES DE COMPILACIÓN
+    /* 
+   {
+      path: 'admin',
+      loadComponent: () => import('./shared/layouts/admin-layout/admin-layout.component')
+        .then(m => m.AdminLayoutComponent),
+      children: [
+        {
+          path: '',
+          // Carga el dashboard por defecto al entrar en /admin
+          loadComponent: () => import('./pages/admin/dashboard-home/dashboard-home.component')
+            .then(m => m.DashboardHomeComponent)
+        },
+        // RUTAS FUTURAS DEL DASHBOARD:
+        // { 
+        //   path: 'solicitudes', 
+        //   loadComponent: () => import('./pages/admin/requests/requests.component').then(m => m.RequestsComponent) 
+        // },
+      ]
+    },
+    */
+
+    // 3. RUTA COMODÍN (Redirigir a home si la URL no existe)
+    { path: '**', redirectTo: '' }
 ];

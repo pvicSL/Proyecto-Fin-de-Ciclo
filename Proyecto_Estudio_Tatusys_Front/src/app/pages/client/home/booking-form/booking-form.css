@@ -28,18 +28,79 @@
 /* CONTENEDOR TARJETA */
 .booking-card {
     background-color: var(--jet);
-    border-radius: 0.625rem;
+    border-radius: 1rem;
     color: #fff;
     border: none;
     margin: 0 auto;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+    width: 95%;
+    /* En móvil ocupa casi todo */
+    max-width: 900px;
+    /* En escritorio se permite ser ancho */
+    margin: 0 auto;
 }
 
 .booking-title {
-    font-size: clamp(1.4rem, 2.8vw, 1.8rem);
+    font-family: var(--font-main);
+    font-size: clamp(1.5rem, 3vw, 2rem);
     color: var(--robin-egg-blue);
     font-weight: 700;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
+
+/* formatos de inputs */
+/* --- ETIQUETAS (LABELS) --- */
+.form-label {
+    /* Alineación a la IZQUIERDA */
+    text-align: left;
+    display: block;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: #e0e0e0;
+    /* Gris muy claro para leerse bien sobre fondo oscuro */
+}
+
+/* --- INPUTS Y SELECTS --- */
+/* Les damos un estilo más limpio, blanco semitransparente */
+.form-control,
+.form-select {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 2px solid transparent;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1rem;
+    color: var(--jet);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: #fff;
+    border-color: var(--robin-egg-blue);
+    box-shadow: 0 0 0 4px rgba(0, 204, 204, 0.2);
+}
+
+/* Textarea de comentarios */
+textarea.form-control {
+    resize: none;
+}
+
+/* Checkbox y Radios */
+.form-check-label {
+    color: #fff;
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: var(--robin-egg-blue);
+    border-color: var(--robin-egg-blue);
+}
+
+
+
+
 
 /* CALENDARIO (SLOT PICKER) */
 .slot-picker {
@@ -95,7 +156,7 @@
 }
 
 .day-closed {
-    background-color: var(--cardinal);
+    background-color: var(--burgundy);
     color: #fff;
     opacity: 0.5;
 }
