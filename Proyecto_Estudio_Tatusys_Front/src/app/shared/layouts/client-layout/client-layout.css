@@ -1,0 +1,12 @@
+/* Esto solo afecta a TU parte de la aplicación */
+.client-wrapper {
+    margin: 0;
+    background-color: var(--antiflash-white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex-grow: 1;
+}

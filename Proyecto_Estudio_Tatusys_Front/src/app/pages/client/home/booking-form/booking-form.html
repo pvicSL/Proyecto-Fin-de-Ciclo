@@ -1,0 +1,208 @@
+<div class="text-center mt-4 cta-wrapper" id="form-anchor">
+
+    <button *ngIf="!isFormOpen" class="btn btn-reservar mb-3" type="button" (click)="toggleForm()">
+        <i class="bi bi-calendar-plus me-2"></i>PIDE CITA
+    </button>
+
+    <div class="collapse" [class.show]="isFormOpen">
+        <div class="card mx-auto booking-card">
+            <div class="card-body p-4 p-md-5">
+                <h3 class="booking-title text-center mb-4">RESERVA TU CITA</h3>
+
+                <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" novalidate>
+                    <div class="row g-3">
+
+                        <div class="col-12">
+                            <label class="form-label">Nombre*</label>
+                            <input type="text" class="form-control" formControlName="firstName"
+                                placeholder="Tu nombre..."
+                                [class.is-invalid]="bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Primer apellido*</label>
+                            <input type="text" class="form-control" formControlName="lastSurname"
+                                placeholder="Apellido..."
+                                [class.is-invalid]="bookingForm.get('lastSurname')?.invalid && bookingForm.get('lastSurname')?.touched">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Segundo apellido</label>
+                            <input type="text" class="form-control" formControlName="secondSurname"
+                                placeholder="Opcional...">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email*</label>
+                            <input type="email" class="form-control" formControlName="email"
+                                placeholder="email@ejemplo.com"
+                                [class.is-invalid]="bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Confirma Email*</label>
+                            <input type="email" class="form-control" formControlName="confirmEmail"
+                                placeholder="Repite el email..."
+                                [class.is-invalid]="bookingForm.errors?.['emailsDontMatch'] && bookingForm.get('confirmEmail')?.touched">
+                            <div class="invalid-feedback">Los correos no coinciden.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Teléfono*</label>
+                            <input type="tel" class="form-control" formControlName="phone" placeholder="600..."
+                                [class.is-invalid]="bookingForm.get('phone')?.invalid && bookingForm.get('phone')?.touched">
+                        </div>
+
+                        <div class="col-12 text-start">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="needInvoice"
+                                    formControlName="needInvoice">
+                                <label class="form-check-label" for="needInvoice">¿Necesitas factura?</label>
+                            </div>
+                        </div>
+
+                        <ng-container *ngIf="bookingForm.get('needInvoice')?.value">
+                            <div class="col-md-6">
+                                <label class="form-label">CIF/NIF</label>
+                                <input type="text" class="form-control" formControlName="cif">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Dirección Fiscal</label>
+                                <input type="text" class="form-control" formControlName="billingAddress">
+                            </div>
+                        </ng-container>
+
+                        <div class="col-12">
+                            <hr class="border-secondary my-3">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Servicio*</label>
+                            <select class="form-select" formControlName="service">
+                                <option value="" selected>Elige servicio...</option>
+                                <option value="tattoo-new">Tatuaje</option>
+                                <option value="cover-up">Cover</option>
+                                <option value="design-only">Diseño</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Zona del cuerpo*</label>
+                            <select class="form-select" formControlName="bodyZone">
+                                <option value="" selected>Elige zona...</option>
+                                <option>Brazo</option>
+                                <option>Pierna</option>
+                                <option>Espalda</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6"> <label class="form-label">Tamaño*</label>
+                            <select class="form-select" formControlName="size">
+                                <option value="">...</option>
+                                <option value="small">Pequeño</option>
+                                <option value="medium">Mediano</option>
+                                <option value="large">Grande</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Estilo*</label>
+                            <select class="form-select" formControlName="style">
+                                <option value="">...</option>
+                                <option>Realismo</option>
+                                <option>Tradicional</option>
+                                <option>Lineal</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Detalle*</label>
+                            <select class="form-select" formControlName="detailLevel">
+                                <option value="">...</option>
+                                <option>Bajo</option>
+                                <option>Medio</option>
+                                <option>Alto</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label d-block">¿Color o BN?</label>
+                            <div class="d-flex gap-3 align-items-center mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="bw" formControlName="colorMode"
+                                        id="bw">
+                                    <label class="form-check-label" for="bw">B/N</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" value="color"
+                                        formControlName="colorMode" id="col">
+                                    <label class="form-check-label" for="col">Color</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Comentarios</label>
+                            <textarea class="form-control" rows="3" formControlName="comments"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="references" class="form-label">Referencias (máx. 3)</label>
+                            <input class="form-control" type="file" id="references" accept="image/*" multiple
+                                (change)="onFileChange($event)">
+                            <div class="form-text text-white-50">Sube hasta 3 ejemplos.</div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <div class="slot-picker">
+                                <div class="slot-header">
+                                    <span>Diciembre - 2026</span>
+                                </div>
+                                <div class="slot-weekdays">
+                                    <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                                </div>
+                                <div class="slot-days">
+                                    <span *ngFor="let dia of mockDays; let i = index" class="day" [ngClass]="{
+                                            'day-available': dia.status === 'available',
+                                            'day-none': dia.status === 'none',
+                                            'day-closed': dia.status === 'closed',
+                                            'day-selected': i === selectedDayIndex
+                                        }" (click)="selectDay(i, dia)">
+                                        {{ dia.day }}
+                                    </span>
+                                </div>
+                                <div class="slot-times mt-3" *ngIf="selectedDayIndex !== null">
+                                    <button *ngFor="let time of mockDays[selectedDayIndex!].slots" type="button"
+                                        class="time-slot" [class.time-slot-selected]="selectedSlot === time"
+                                        (click)="selectSlot(time)">
+                                        {{ time }}
+                                    </button>
+                                    <p *ngIf="mockDays[selectedDayIndex!].slots.length === 0" class="text-muted small">
+                                        No hay horas.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 d-flex justify-content-center gap-3 mt-4">
+                            <button type="button" class="btn btn-outline-light" (click)="resetForm()">BORRAR</button>
+                            <button type="button" class="btn btn-outline-danger"
+                                (click)="toggleForm()">CANCELAR</button>
+                        </div>
+
+                        <div class="col-12 text-center mt-2">
+                            <div class="form-check d-inline-block">
+                                <input class="form-check-input me-2" type="checkbox" formControlName="acceptTerms"
+                                    id="terms">
+                                <label class="form-check-label" for="terms">
+                                    Acepto los <a href="#" class="terms-link text-info">Términos y Condiciones</a>.
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-center mt-3">
+                            <button class="btn btn-reservar-submit" type="submit"
+                                [disabled]="bookingForm.invalid || !selectedSlot">
+                                ENVIAR SOLICITUD
+                            </button>
+                        </div>
+                        198
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
