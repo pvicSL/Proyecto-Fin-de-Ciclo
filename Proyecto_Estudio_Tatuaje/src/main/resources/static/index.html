@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Citas API</title>
+    <link rel="stylesheet" href="simple.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Test Sistema Citas</h1>
+        
+        <!-- MENSAJES -->
+        <div id="mensaje" class="mensaje oculto"></div>
+        
+        <!-- FORMULARIO -->
+        <form id="formCita">
+            <div class="campo">
+                <label>Servicio:</label>
+                <select name="tipo" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="TATUAJE">Tatuaje</option>
+                    <option value="ELIMINACION">Eliminación</option>
+                    <option value="COVER">Cover</option>
+                    <option value="RETOQUE">Retoque</option>
+                </select>
+            </div>
+            
+            <div class="campo">
+                <label>Zona:</label>
+                <select name="zona" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="BRAZO">Brazo</option>
+                    <option value="ANTEBRAZO">Antebrazo</option>
+                    <option value="HOMBRO">Hombro</option>
+                    <option value="TORAX">Tórax</option>
+                    <option value="CABEZA">Cabeza</option>
+                    <option value="MANO">Mano</option>
+                    <option value="PIE">Pie</option>
+                </select>
+            </div>
+            
+            <div class="campo">
+                <label>Tamaño:</label>
+                <select name="tamanio" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="MINI">Mini</option>
+                    <option value="PEQUEÑO">Pequeño</option>
+                    <option value="MEDIANO">Mediano</option>
+                    <option value="GRANDE">Grande</option>
+                    <option value="MUY_GRANDE">Muy Grande</option>
+                </select>
+            </div>
+            
+            <div class="campo">
+                <label>Detalle:</label>
+                <select name="detalle" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="SENCILLO">Sencillo</option>
+                    <option value="MEDIO">Medio</option>
+                    <option value="DENSO">Denso</option>
+                </select>
+            </div>
+            
+            <div class="campo">
+                <label>Color:</label>
+                <select name="coloracion" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="NEGRO">Blanco y Negro</option>
+                    <option value="COLOR">Color</option>
+                </select>
+            </div>
+            
+            <div class="campo">
+                <label>Estilo:</label>
+                <select name="estilo" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="REALISMO">Realismo</option>
+                    <option value="TRADICIONAL">Tradicional</option>
+                    <option value="JAPONES">Japonés</option>
+                    <option value="ANIME">Anime</option>
+                    <option value="LETERING">Lettering</option>
+                    <option value="FINELINE">Fineline</option>
+                </select>
+            </div>
+            
+            <div class="campo">
+                <label>Fecha:</label>
+                <input type="date" name="fecha" required>
+            </div>
+            
+            <div class="campo">
+                <label>Hora:</label>
+                <input type="time" name="hora" required>
+            </div>
+            
+            <div class="campo">
+                <label>Comentarios:</label>
+                <textarea name="comentarios" rows="3" placeholder="Comentarios opcionales..."></textarea>
+            </div>
+            
+            <div class="campo">
+                <label>
+                    <input type="checkbox" name="factura"> Necesito factura
+                </label>
+            </div>
+            
+            <div class="campo">
+                <label>
+                    <input type="checkbox" name="calcularPresupuesto" checked> Calcular presupuesto automático
+                </label>
+            </div>
+            
+            <div class="botones">
+                <button type="submit" id="btnEnviar">🚀 CREAR CITA</button>
+                <button type="button" id="btnLimpiar">🗑️ LIMPIAR</button>
+            </div>
+        </form>
+        
+        <!-- RESULTADO -->
+        <div id="resultado" class="resultado oculto">
+            <h3>✅ Cita Creada:</h3>
+            <div id="datosCita"></div>
+            
+            <div id="presupuestoBox" class="presupuesto oculto">
+                <h3>💰 Presupuesto:</h3>
+                <div id="datosPresupuesto"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('formCita');
+        const mensaje = document.getElementById('mensaje');
+        const resultado = document.getElementById('resultado');
+        const btnEnviar = document.getElementById('btnEnviar');
+        
+        // Establecer fecha mínima (mañana)
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.querySelector('input[name="fecha"]').value = tomorrow.toISOString().split('T')[0];
+        document.querySelector('input[name="hora"]').value = '10:00';
+        
+        // Función para mostrar mensajes
+        function mostrarMensaje(texto, tipo = 'info') {
+            mensaje.textContent = texto;
+            mensaje.className = `mensaje ${tipo}`;
+            mensaje.classList.remove('oculto');
+            
+            if (tipo === 'success' || tipo === 'error') {
+                setTimeout(() => {
+                    mensaje.classList.add('oculto');
+                }, 5000);
+            }
+        }
+        
+        // Función para crear cita
+        async function crearCita(datos) {
+            const response = await fetch('/api/citas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            
+            return response.json();
+        }
+        
+        // Función para calcular presupuesto
+        async function calcularPresupuesto(idCita) {
+            const response = await fetch('/api/presupuesto_nuevo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(idCita)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error presupuesto: ${response.status}`);
+            }
+            
+            return response.json();
+        }
+        
+        // Evento del formulario
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Deshabilitar botón
+            btnEnviar.disabled = true;
+            btnEnviar.textContent = '⏳ Creando...';
+            
+            try {
+                // Recoger datos del formulario
+                const formData = new FormData(form);
+                const datos = {
+                    tipo: formData.get('tipo'),
+                    zona: formData.get('zona'),
+                    tamanio: formData.get('tamanio'),
+                    detalle: formData.get('detalle'),
+                    coloracion: formData.get('coloracion'),
+                    estilo: formData.get('estilo'),
+                    fecha: formData.get('fecha'),
+                    hora: formData.get('hora'),
+                    comentarios: formData.get('comentarios') || '',
+                    factura: formData.get('factura') === 'on',
+                    estatus: 'PENDIENTE',
+                    cliente: {
+                        idCliente: 1  // Cliente fijo para testing
+                    }
+                };
+                
+                console.log('Enviando datos:', datos);
+                mostrarMensaje('Creando cita...', 'info');
+                
+                // 1. Crear cita
+                const citaCreada = await crearCita(datos);
+                console.log('Cita creada:', citaCreada);
+                
+                // Mostrar resultado
+                document.getElementById('datosCita').innerHTML = `
+                    <p><strong>ID:</strong> ${citaCreada.idCita}</p>
+                    <p><strong>Tipo:</strong> ${citaCreada.tipo}</p>
+                    <p><strong>Fecha:</strong> ${citaCreada.fecha} a las ${citaCreada.hora}</p>
+                    <p><strong>Cliente:</strong> ${citaCreada.clienteNombre || 'Sin datos'}</p>
+                `;
+                resultado.classList.remove('oculto');
+                
+                // 2. Calcular presupuesto si está marcado
+                const calcularPres = formData.get('calcularPresupuesto') === 'on';
+                if (calcularPres) {
+                    mostrarMensaje('Calculando presupuesto...', 'info');
+                    
+                    const presupuesto = await calcularPresupuesto(citaCreada.idCita);
+                    console.log('Presupuesto:', presupuesto);
+                    
+                    document.getElementById('datosPresupuesto').innerHTML = `
+                        <p><strong>Precio base:</strong> ${presupuesto.precioBase}€</p>
+                        <p><strong>IVA:</strong> ${presupuesto.iva}€</p>
+                        <p><strong>Total:</strong> ${presupuesto.precioFinal}€</p>
+                    `;
+                    document.getElementById('presupuestoBox').classList.remove('oculto');
+                }
+                
+                mostrarMensaje('✅ Cita creada exitosamente!', 'success');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarMensaje('❌ Error: ' + error.message, 'error');
+            } finally {
+                // Rehabilitar botón
+                btnEnviar.disabled = false;
+                btnEnviar.textContent = '🚀 CREAR CITA';
+            }
+        });
+        
+        // Botón limpiar
+        document.getElementById('btnLimpiar').addEventListener('click', function() {
+            form.reset();
+            resultado.classList.add('oculto');
+            mensaje.classList.add('oculto');
+            
+            // Restablecer fecha/hora por defecto
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.querySelector('input[name="fecha"]').value = tomorrow.toISOString().split('T')[0];
+            document.querySelector('input[name="hora"]').value = '10:00';
+            document.querySelector('input[name="calcularPresupuesto"]').checked = true;
+        });
+    </script>
+</body>
+</html>

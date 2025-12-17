@@ -9,5 +9,7 @@ import proyecto.modelo.entities.Cliente;
 public interface ClienteRepository extends JpaRepository<Cliente, Integer>{
 	
 	Optional<Cliente> findByDocumentoIdentificacionIgnoreCase(String documento);
+
+	Optional<Cliente> findByEmail(String email);
 	
 }

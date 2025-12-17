@@ -29,7 +29,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
+            		.requestMatchers("/**").permitAll()
                 .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/index.html").permitAll()
                 .requestMatchers("/api/citas/**").permitAll()           // ← Ya existía
                 .requestMatchers("/presupuesto_nuevo").permitAll()      // ← AÑADIR ESTA LÍNEA
                 .requestMatchers("/api/**").permitAll()  // ← Cambiar para cubrir todo /api/

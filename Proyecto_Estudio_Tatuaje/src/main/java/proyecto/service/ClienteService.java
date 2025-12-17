@@ -13,6 +13,8 @@ public interface ClienteService {
 	int eliminarCliente(int idCliente);
 	Cliente actualizarCliente(Cliente cliente);
 	Optional<Cliente> buscarPorDocumento(String documento);
+	Optional<Cliente> findByEmail(String email);
+	
 	
 	
 }

@@ -27,7 +27,12 @@ public class ClienteServiceImplJpaMy8 implements ClienteService {
 
 	@Override
 	public Cliente altaCliente(Cliente cliente) {
-		return clienteRepository.save(cliente);
+	    // Verificar si ya existe por email
+	    Optional<Cliente> existente = clienteRepository.findByEmail(cliente.getEmail());
+	    if (existente.isPresent()) {
+	        throw new RuntimeException("Ya existe un cliente con email: " + cliente.getEmail());
+	    }
+	    return clienteRepository.save(cliente);
 	}
 
 	@Override
@@ -44,5 +49,10 @@ public class ClienteServiceImplJpaMy8 implements ClienteService {
 	@Override
 	public Optional<Cliente> buscarPorDocumento(String documento) {
 		return clienteRepository.findByDocumentoIdentificacionIgnoreCase(documento);
+	}
+
+	@Override
+	public Optional<Cliente> findByEmail(String email) {
+		return clienteRepository.findByEmail(email);
 	}
 }

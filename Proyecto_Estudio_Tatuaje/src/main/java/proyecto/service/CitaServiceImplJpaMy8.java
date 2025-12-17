@@ -36,7 +36,7 @@ public class CitaServiceImplJpaMy8 implements CitaService{
 
 	@Override
 	public Integer calcularDuracion(Cita cita) {
-		int duracionBase = 0;
+		int duracionBase = 30;
 		switch(cita.getTamanio()) {
 		case MINI: duracionBase = 60;
 		case PEQUEÑO: duracionBase= 90;
