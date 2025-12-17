@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
+import proyecto.modelo.enums.Coloracion;
+import proyecto.modelo.enums.Detalle;
 import proyecto.modelo.repository.CitaRepository;
 import proyecto.modelo.repository.ClienteRepository;
 
@@ -33,14 +35,36 @@ public class CitaServiceImplJpaMy8 implements CitaService{
 	}
 
 	@Override
+	public Integer calcularDuracion(Cita cita) {
+		int duracionBase = 0;
+		switch(cita.getTamanio()) {
+		case MINI: duracionBase = 60;
+		case PEQUEÑO: duracionBase= 90;
+		case MEDIANO: duracionBase = 120;
+		case GRANDE: duracionBase = 180;
+		case MUY_GRANDE: duracionBase= 240;
+		}
+		
+	    
+	    if (cita.getDetalle() == Detalle.DENSO) duracionBase += 30;
+	    if (cita.getColoracion() == Coloracion.COLOR) duracionBase += 30;
+	    
+		return duracionBase;
+	}
+	
+	@Override
 	public Cita crearCita(Cita cita) {
 	    
-	    // Si viene un idCliente en el JSON, buscar y asignar el cliente
+		// 1. Buscar y asignar cliente
 	    if (cita.getCliente() != null && cita.getCliente().getIdCliente() != 0) {
 	        int idCliente = cita.getCliente().getIdCliente();
 	        Cliente clienteCompleto = clienteRepository.findById(idCliente).orElse(null);
 	        cita.setCliente(clienteCompleto);
 	    }
+	    
+	 // 2. Calcular y asignar duración automáticamente
+	    Integer duracion = calcularDuracion(cita);
+	    cita.setDuracionMinutos(duracion);
 	    
 	    return citaRepository.save(cita);
 	}
@@ -52,6 +76,7 @@ public class CitaServiceImplJpaMy8 implements CitaService{
 	}
 
 	@Override
+	
 	public Cita actualizarCita(Cita cita) {
 		// TODO Auto-generated method stub
 		return null;
@@ -82,5 +107,7 @@ public class CitaServiceImplJpaMy8 implements CitaService{
             return null;  // O lanzar excepción personalizada
         }
     }
+
+	
 
 }

@@ -72,8 +72,10 @@ public class Cita implements Serializable{
     
     @Enumerated(EnumType.STRING)
     private Estatus estatus;
+    
+    @Column(name = "duracion_minutos")
+    private Integer duracionMinutos;
 
-    // Relación con Cliente (sin cambios)
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
@@ -83,25 +85,39 @@ public class Cita implements Serializable{
         super();
     }
 
-    public Cita(Tipo tipo, Zona zona, Tamanio tamanio, Detalle detalle, Coloracion coloracion,
-            Estilo estilo, LocalDate fecha, LocalTime hora, String comentarios, Boolean factura, 
-            Estatus estatus, Cliente cliente) {
-        super();
-        this.tipo = tipo;
-        this.zona = zona;
-        this.tamanio = tamanio;
-        this.detalle = detalle;
-        this.coloracion = coloracion;
-        this.estilo = estilo;
-        this.fecha = fecha;
-        this.hora = hora;
-        this.comentarios = comentarios;
-        this.factura = factura;
-        this.estatus = estatus;
-        this.cliente = cliente;
-    }
+    
+    public Integer getDuracionMinutos() {
+		return duracionMinutos;
+	}
 
-    // GETTERS Y SETTERS
+
+	public void setDuracionMinutos(Integer duracionMinutos) {
+		this.duracionMinutos = duracionMinutos;
+	}
+
+
+	public Cita(int idCita, Tipo tipo, Zona zona, Tamanio tamanio, Detalle detalle, Coloracion coloracion,
+			Estilo estilo, LocalDate fecha, LocalTime hora, String comentarios, Boolean factura, Estatus estatus,
+			Integer duracionMinutos, Cliente cliente) {
+		super();
+		this.idCita = idCita;
+		this.tipo = tipo;
+		this.zona = zona;
+		this.tamanio = tamanio;
+		this.detalle = detalle;
+		this.coloracion = coloracion;
+		this.estilo = estilo;
+		this.fecha = fecha;
+		this.hora = hora;
+		this.comentarios = comentarios;
+		this.factura = factura;
+		this.estatus = estatus;
+		this.duracionMinutos = duracionMinutos;
+		this.cliente = cliente;
+	}
+
+
+	// GETTERS Y SETTERS
     public int getIdCita() {
         return idCita;
     }
