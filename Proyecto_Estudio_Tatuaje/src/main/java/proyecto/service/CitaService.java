@@ -16,4 +16,5 @@ public interface CitaService {
 	Optional<Cita>buscarPorCliente(String email);
 	List<CitaDTO> listarCitasDTO();
 	CitaDTO obtenerCitaDTOPorId(int idCita);
+	Integer calcularDuracion(Cita cita);
 }
