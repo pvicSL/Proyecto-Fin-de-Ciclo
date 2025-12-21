@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Log in Administrador/Trabajador estudio
-     de tatuaje">
+    <meta name="description" content="Inicio de Sesión Administrador/Trabajador">
     <meta name="author" content="SMP">
     
     <!-- CSS de Bootstrap -->
@@ -19,7 +18,7 @@
         rel="stylesheet">
 
     <!-- Link a archivo CSS -->
-    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/style.css">
     
     <title>TatuSys - Iniciar Sesión</title>
 </head>
@@ -33,7 +32,7 @@
         <p class="mb-5">Inicia Sesión para continuar.</p>
 
         <!--------------- LOGIN: formulario -------------------
-         --- inputs: email, contrseña, checkbox (recuérdame)---
+         --- inputs: email, contraseña, checkbox (recuérdame)---
          ----------- enlace (contraseña olvidada) y submit  --->
         
         <form action="#">
@@ -48,7 +47,7 @@
             <div class="mb-4">
                 <label for="password" class="form-label">Contraseña</label>
 
-                <!-- Envolvemos el input:password y el icono con input-group -->
+                <!-- Envolvemos el input: password y el icono con input-group -->
                 <div class="input-group">
                     <input type="password" class="form-control" name="password" id="passwordInput" placeholder="Contraseña" required>
                     
@@ -73,7 +72,7 @@
                 <a href="contraseña_olvidada.html">¿Contraseña olvidada?</a>
             </div>
 
-            <!-- Botón de submit que nos llevaria al HOME -->
+            <!-- Botón de submit que nos llevaría al HOME -->
             <div class="d-grid">
                 <button type="submit" class="btn" id="iniciar-sesion">Iniciar Sesión</button>
             </div>
@@ -85,7 +84,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <!-- SCRIPT PARA CONTROLAR VISIBILIDAD DE LA CONTRASEÑA -->
+    <!-- SCRIPT PARA CONTROLAR LA VISIBILIDAD DE LA CONTRASEÑA -->
     <script src="js/script-contraseña.js"></script>
 </body>
 </html>

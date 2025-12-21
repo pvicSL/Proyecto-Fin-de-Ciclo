@@ -18,13 +18,82 @@
         rel="stylesheet">
 
     <!-- Link a archivos CSS -->
-    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Home</title>
 </head>
-<body class="d-flex">
 
-    <div class="wrapper">
-        <aside id="sidebar">
+<!-- El body cambia de display block a flex en el breakpoint large -->
+<body class="d-lg-flex">
+
+    <!----- MENÚ SUPERIOR DEL MÓVIL ----->
+        <nav class="navbar d-lg-none mb-3">
+                <div class="container-fluid">
+                    <!-- Botón hamburger -->
+                    <button class="navbar-toggler border-0 " type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-mobile">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <span class="p-2 fs-3">Nombre Usuario</span>
+                </div>
+            </nav>
+
+    <!----- SIDEBAR DE MÓVIL ----->
+
+    <div id="sidebar-mobile" class="collapse d-lg-none">
+        <div class="d-flex justify-content-end pt-3 pe-3 pb-0 mb-0">
+            <button type="button" 
+                class="btn-close btn-close-white" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#sidebar-mobile" 
+                aria-label="Close">
+            </button>
+        </div>  
+        <ul class="sidebar-nav text-center pt-2 mt-0">
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link active">
+                    <span class="fs-5">Home</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <span class="fs-5">Solicitudes</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <span class="fs-5">Facturas</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <span class="fs-5">Calendario</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link">
+                    <span class="fs-5">Trabajadores</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="sidebar-footer text-center ">
+            <li class="sidebar-footer-item">
+                <a href="#" class="sidebar-link">
+                    <span class="fs-5">Configuración</span>
+                </a>
+            </li>
+            <li class="sidebar-footer-item">
+                <a href="#" class="sidebar-link">
+                    <span class="fs-5">Cerrar Sesión</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!----- SIDEBAR ESCRITORIO ----->
+
+    <!-- MIS NOTAS: Sticky-top = position: sticky; -->
+    <div class="wrapper d-none d-lg-block sticky-top">
+        
+        <aside id="sidebar" >
             <div class="d-flex">
                 <button id="toggle-btn" type="button">
                     <i class="bi bi-list"></i>
@@ -72,21 +141,24 @@
                         <span>Configuración</span>
                     </a>
                 </li>
-                <li class="sidebar-footer-item"></li>
+                <li class="sidebar-footer-item">
                     <a href="#" class="sidebar-link">
                         <i class="bi bi-box-arrow-left"></i>
-                        <span>Cerarr Sesión</span>
+                        <span>Cerrar Sesión</span>
                     </a>
                 </li>
             </ul>
         </aside>
     </div>
 
-    <div class="main-content">
-        <!-- Breadcumb (migas de pan) cabecera que muestra la 
+    <!----- CONTENEDOR DEL CUERPO DEL DASHBOARD ----->
+
+    <div class="main-content flex-grow-1 mx-3 p-3 p-lg-4">
+            
+        <!-- Breadcumb (migas de pan): cabecera que muestra la 
          ruta de navegación. El atributo aria-label hace que el lector 
-         de pantalla lea en voz alta la función del elemnto (accesible)-->
-        <nav class="breadcrumb-nav" aria-label="Ruta de páginas">
+         de pantalla lea en voz alta la función del elemnto "Ruta de páginas"-->
+        <nav class="breadcrumb-nav d-none d-lg-block" aria-label="Ruta de páginas">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
                     <a href="#">
@@ -96,39 +168,49 @@
                 </li>
             </ol>
         </nav>
-        <div class="main-content-header">
-            <h1 class="text-subtitle">1 de Diciembre - 7 de Diciembre</h1>
+
+        <div class="main-content-header d-block d-lg-flex">
+            <h1 class="text-subtitle ">1 de Diciembre - 7 de Diciembre</h1>
+
+            <!-- Botones superiores: selección cronológica -->
             <div class="time-buttons">
-                <div class="time-buttons-days">
-                    <button class="btn btn-secondary active">Día</button>
-                    <button class="btn btn-secondary">Semana</button>
+
+                <!-- Botones día y semana -->
+                <div class="time-buttons-days d-flex">
+                    <button class="btn btn-secondary mx-1 active ">Día</button>
+                    <button class="btn btn-secondary mx-1">Semana</button>
                 </div>
-                <div class="time-buttons-arrrows">
-                    <button class="btn btn-secondary">
+
+                <!-- Botones para cambiar de día o semana hacía delante o hacía atrás -->
+                <div class="time-buttons-arrrows d-flex">
+                    <button class="btn btn-secondary mx-1">
                         <i class="bi bi-arrow-left"></i>
                     </button>
-                    <button class="btn btn-secondary">
+                    <button class="btn btn-secondary mx-1">
                         <i class="bi bi-arrow-right"></i>
                     </button>
                 </div>
             </div>
         </div>
-        <table id="table-confirmadas" class="table table-responsive table-striped table-borderless align-middle">
+
+        <!----- TABLA DE LAS CITAS CONFIRMADAS ----->
+
+        <table id="table-confirmadas" class="table  table-striped table-borderless align-middle">
             <thead class="table-header">
                 <tr>
-                    <!-- scope="col" da info. al navegador que todos
+                    <!-- MIS NOTAS: scope="col" da información al navegador que todos
                     los datos de esa columna tienen que ver con 
                     esta celda del encabezado -->
-                    <th scope="col" class=" d-none d-md-table-cell">
+                    <th scope="col" class=" d-none d-lg-table-cell">
                         <h3>#</h3>
                     </th>
                     <th scope="col">
-                        <h3>Nombre y Apellidos</h3>
+                        <h3>Nombre</h3>
                     </th>
                     <th scope="col">
                         <h3>Fecha y Hora</h3>
                     </th>
-                    <th scope="col"> 
+                    <th scope="col" class=" d-none d-lg-table-cell"> 
                         <h3>Tipo</h3>
                     </th>
                     <th scope="col">
@@ -138,134 +220,138 @@
             </thead>
             <tbody class="table-body">
                 <tr>
-                    <th scope="row" class=" d-none d-md-table-cell">
+                    <th scope="row" class=" d-none d-lg-table-cell">
                         <p>1</p>
                     </th>
-                    <td>
+                    <td >
                         <p>Nombre Apellido1 y Apellido2</p>
                     </td>
                     <td>
-                        <p>1 de Diciembre -10:00</p>
+                        <p>1 de Diciembre - 10:00</p>
                     </td>
-                    <td>
+                    <td class=" d-none d-lg-table-cell">
                         <p>Tatuaje</p>
                     </td>
-                    <td>
+                    <td class=" d-flex justify-content-around align-items-center h-100">
                         <button class="btn">Confirmar</button>
                         <button class="btn">Ver</button>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" class=" d-none d-md-table-cell">
+                    <th scope="row" class=" d-none d-lg-table-cell">
                         <p>1</p>
                     </th>
                     <td>
                         <p>Nombre Apellido1 y Apellido2</p>
                     </td>
                     <td>
-                        <p>1 de Diciembre -10:00</p>
+                        <p>1 de Diciembre - 10:00</p>
                     </td>
-                    <td>
+                    <td class=" d-none d-lg-table-cell">
                         <p>Tatuaje</p>
                     </td>
-                    <td>
+                    <td class="d-flex justify-content-around">
                         <button class="btn">Confirmar</button>
                         <button class="btn">Ver</button>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" class=" d-none d-md-table-cell">
+                    <th scope="row" class=" d-none d-lg-table-cell">
                         <p>1</p>
                     </th>
                     <td>
                         <p>Nombre Apellido1 y Apellido2</p>
                     </td>
                     <td>
-                        <p>1 de Diciembre -10:00</p>
+                        <p>1 de Diciembre - 10:00</p>
                     </td>
-                    <td>
+                    <td class=" d-none d-lg-table-cell">
                         <p>Tatuaje</p>
                     </td>
-                    <td>
+                    <td class="d-flex justify-content-around">
                         <button class="btn">Confirmar</button>
                         <button class="btn">Ver</button>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" class=" d-none d-md-table-cell">
+                    <th scope="row" class=" d-none d-lg-table-cell">
                         <p>1</p>
                     </th>
                     <td>
                         <p>Nombre Apellido1 y Apellido2</p>
                     </td>
                     <td>
-                        <p>1 de Diciembre -10:00</p>
+                        <p>1 de Diciembre - 10:00</p>
                     </td>
-                    <td>
+                    <td class=" d-none d-lg-table-cell">
                         <p>Tatuaje</p>
                     </td>
-                    <td>
+                    <td class="d-flex justify-content-around">
                         <button class="btn">Confirmar</button>
                         <button class="btn">Ver</button>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" class=" d-none d-md-table-cell">
+                    <th scope="row" class=" d-none d-lg-table-cell">
                         <p>1</p>
                     </th>
                     <td>
                         <p>Nombre Apellido1 y Apellido2</p>
                     </td>
                     <td>
-                        <p>1 de Diciembre -10:00</p>
+                        <p>1 de Diciembre - 10:00</p>
                     </td>
-                    <td>
+                    <td class=" d-none d-lg-table-cell">
                         <p>Tatuaje</p>
                     </td>
-                    <td>
+                    <td class="d-flex justify-content-around">
                         <button class="btn">Confirmar</button>
                         <button class="btn">Ver</button>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" class=" d-none d-md-table-cell">
+                    <th scope="row" class=" d-none d-lg-table-cell">
                         <p>1</p>
                     </th>
                     <td>
                         <p>Nombre Apellido1 y Apellido2</p>
                     </td>
                     <td>
-                        <p>1 de Diciembre -10:00</p>
+                        <p>1 de Diciembre - 10:00</p>
                     </td>
-                    <td>
+                    <td class=" d-none d-lg-table-cell">
                         <p>Tatuaje</p>
                     </td>
-                    <td>
+                    <td class="d-flex justify-content-around">
                         <button class="btn">Confirmar</button>
                         <button class="btn">Ver</button>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row" class=" d-none d-md-table-cell">
+                    <th scope="row" class=" d-none d-lg-table-cell">
                         <p>1</p>
                     </th>
                     <td>
                         <p>Nombre Apellido1 y Apellido2</p>
                     </td>
                     <td>
-                        <p>1 de Diciembre -10:00</p>
+                        <p>1 de Diciembre - 10:00</p>
                     </td>
-                    <td>
+                    <td class=" d-none d-lg-table-cell">
                         <p>Tatuaje</p>
                     </td>
-                    <td>
+                    <td class="d-flex justify-content-around">
                         <button class="btn">Confirmar</button>
                         <button class="btn">Ver</button>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <!----- FOOTER: ALERTAS DE SOLICITUDES NUEVAS Y BOTONES PAGINATION ----->
+
         <div class="footer">
+            <!-- ALERTAS DE SOLICITUDES NUEVAS Y RECHAZADAS -->
             <div class="alerts">
                 <div class="alert">
                     <a href="#">
@@ -280,7 +366,9 @@
                     </a>
                 </div>
             </div>
-            <nav class="pagination-nav d-flex justify-content-end" aria-label="Paginación de la tabla">
+
+            <!----- BOTONES PAGINATION PARA LA TABLA ----->
+            <nav class="pagination-nav d-flex justify-content-end ms-4" aria-label="Paginación de la tabla">
                 <ul class="pagination">
                     <li class="page-item disabled">
                         <a class="page-link btn" href="#" data-page="prev">Anterior</a>
