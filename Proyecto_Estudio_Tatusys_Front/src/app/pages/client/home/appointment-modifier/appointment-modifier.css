@@ -4,58 +4,132 @@
 .booking-card {
     background-color: var(--jet);
     width: 95%;
-    max-width: 500px;
-    border-radius: 10px;
+    max-width: 40rem;
+    border-radius: 1rem;
     border: none;
     color: var(--antiflash-white);
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    padding: clamp(1.5rem, 5vw, 4rem);
 }
 
 .modify-title {
     font-family: 'Figtree', sans-serif;
     color: var(--antiflash-white);
     font-weight: 400;
-    font-size: clamp(1.6rem, 3vw, 2rem);
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
     letter-spacing: 0.02em;
 }
 
 .appointment-box {
     background-color: #f0f0f0;
-    border-radius: 10px;
-    padding: 1.5rem 1.2rem;
+    border-radius: 0.8rem;
+    padding: clamp(1rem, 3vw, 2rem);
     width: 100%;
     color: var(--jet);
-    /* Texto oscuro dentro de caja clara */
 }
 
 /* Títulos internos */
 .appointment-label {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    font-weight: 700;
     color: var(--jet);
+    text-transform: uppercase;
+}
+
+.appointment-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 /* Separador vertical */
 .divider {
-    width: 2px;
-    height: 60px;
+    width: 0.15rem;
+    align-self: stretch;
     background-color: var(--jet);
     opacity: 0.3;
-    margin: 0 15px;
+    margin: 0 clamp(0.5rem, 2vw, 1.5rem);
+    min-height: 4rem;
 }
 
-.appointment-day,
-.appointment-hour {
-    font-size: 2rem;
-    font-weight: 700;
+/* --- TIPOGRAFÍA RESPONSIVE --- */
+.weekday {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.appointment-day {
+    font-size: clamp(2rem, 10vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1;
     color: var(--burgundy);
+    margin: 0.3rem 0;
+}
+
+.year,
+.duration {
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
 }
 
 .appointment-hour {
+    font-size: clamp(2rem, 10vw, 2.5rem);
+    font-weight: 800;
     color: var(--dark-cyan);
+    line-height: 1.1;
 }
 
-/* Botones */
-button {
-    border-radius: 8px;
-    font-weight: 500;
+.contact-text {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-block: 2rem;
+}
+
+/* --- BOTONES PERSONALIZADOS --- */
+
+/* Contenedor de botones: en móvil muy pequeño se ponen uno encima de otro */
+.action-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+    /* En pantallas <300px los botones se apilan */
+}
+
+/* Botón MODIFICAR CITA */
+.btn-modify-custom {
+    color: white !important;
+    background-color: transparent;
+    border: 2px solid var(--robin-egg-blue);
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-modify-custom:hover {
+    color: black;
+    background-color: var(--dark-cyan);
+    border-color: var(--dark-cyan);
+}
+
+/* Botón CANCELAR CITA */
+.btn-cancel-custom {
+    color: white !important;
+    background-color: transparent;
+    border: 0.15rem solid var(--cardinal);
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel-custom:hover {
+    background-color: var(--cardinal);
+    color: white;
 }

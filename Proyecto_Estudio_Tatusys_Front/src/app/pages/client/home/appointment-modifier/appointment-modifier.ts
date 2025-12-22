@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Necesario para el [(ngModel)] del select
 
-type ModifierState = 'inicial' | 'modificando' | 'confirmado' | 'cancelado';
+type ModifierState = 'search' | 'inicial' | 'modificando' | 'confirmado' | 'cancelado';
 
 @Component({
   selector: 'app-appointment-modifier',
@@ -14,7 +14,9 @@ type ModifierState = 'inicial' | 'modificando' | 'confirmado' | 'cancelado';
 export class AppointmentModifierComponent {
 
   // Estado actual de la tarjeta
-  currentState: ModifierState = 'inicial';
+  currentState: ModifierState = 'search';
+
+  bookingCode: string = '';
 
   // Datos simulados de la nueva fecha seleccionada
   selectedNewDate: string = '';
@@ -28,6 +30,8 @@ export class AppointmentModifierComponent {
   };
 
   // --- MÉTODOS DE CAMBIO DE ESTADO ---
+
+
 
   changeState(newState: ModifierState) {
     this.currentState = newState;

@@ -183,6 +183,67 @@ h6,
 }
 
 /* ===============================
+   ESTILOS PARA ANIMACION SUAVE BOTON CAMBIAR CITA
+   =============================== */
+/* Animación para que el texto aparezca suavemente */
+.fade-in-text {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ANIMACIÓN DE CAMBIO DE VISTA */
+.view-transition {
+    /* La animación dura 0.6 segundos y tiene un efecto de frenado al final */
+    animation: fadeSlideUp 0.6s ease-out forwards;
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+        /* Empieza un poco más abajo */
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        /* Termina en su sitio */
+    }
+}
+
+/* ESTILOS DEL TEXTO DE CAMBIO DE CITA */
+
+.cta-text {
+    font-size: clamp(0.9rem, 3vw, 1.2rem);
+    color: var(--jet);
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+/* Estilo específico para la palabra 'AQUÍ' */
+.cta-link {
+    color: var(--cardinal);
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    margin-left: 0.3rem;
+}
+
+.cta-link:hover {
+    color: var(--burgundy);
+}
+
+/* ===============================
    ESTILOS PARA PREGUNTAS FRECUENTES (CORREGIDO)
    =============================== */
 

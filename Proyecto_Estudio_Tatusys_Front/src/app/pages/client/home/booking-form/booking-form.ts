@@ -95,26 +95,25 @@ export class BookingFormComponent implements OnInit {
   resetForm() {
     this.bookingForm.reset({ colorMode: 'bw', needInvoice: false, acceptTerms: false });
     this.selectedSlot = null;
-    this.isFormOpen = false;
   }
 
   onSubmit() {
-    // Si el formulario es válido y hay hora seleccionada
     if (this.bookingForm.valid && this.selectedSlot) {
-
-      // Preparamos los datos para enviarlos (en el futuro a Spring Boot)
+      // ... Preparación de datos ...
       const formData = {
         ...this.bookingForm.value,
-        appointmentDate: `2026-XX-${this.mockDays[this.selectedDayIndex!].day}`,
+        appointmentDate: `2026-12-${this.mockDays[this.selectedDayIndex!].day}`, // Ajustado para el ejemplo
         appointmentTime: this.selectedSlot
       };
 
       console.log('ENVIANDO AL BACKEND:', formData);
       alert('¡Solicitud enviada correctamente! (Simulación)');
+
       this.resetForm();
 
+      this.isFormOpen = false;
+
     } else {
-      // Si hay errores, marcamos todo como "tocado" para que salgan en rojo
       this.bookingForm.markAllAsTouched();
     }
   }
