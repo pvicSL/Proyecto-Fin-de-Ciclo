@@ -5,8 +5,8 @@
             <div *ngIf="currentState === 'inicial'" class="modify-state">
                 <h3 class="modify-title mb-4">¿CAMBIO DE PLANES?</h3>
 
-                <div class="appointment-box mx-auto mb-3">
-                    <p class="appointment-label mb-2 fw-normal">TU CITA ES EL:</p>
+                <div class="appointment-box mx-auto mb-4">
+                    <p class="appointment-label py-1 fw-normal">TU CITA ES EL:</p>
 
                     <div class="appointment-info d-flex align-items-center justify-content-center">
                         <div class="appointment-date text-center me-3">
@@ -16,20 +16,23 @@
                         </div>
                         <div class="divider"></div>
                         <div class="appointment-time text-center ms-3">
-                            <p class="m-0">a las</p>
+                            <p class="m-0 duration">a las</p>
                             <h2 class="m-0 appointment-hour">16:00</h2>
                             <p class="m-0 duration">(3 horas)</p>
                         </div>
                     </div>
                 </div>
 
-                <p class="mt-3 contact-text">
-                    Solo puedes cambiar la fecha. ¿Dudas? <a href="#" class="contact-link">Escríbenos</a>.
+                <p class="contact-text">
+                    Aquí solo puedes cambiar la fecha de tu cita. <br>Para cualquier otro cambio, <a href="#"
+                        class="contact-link">Escríbenos</a>.
                 </p>
 
-                <div class="d-flex justify-content-center gap-3 mt-3">
-                    <button class="btn btn-outline-info px-4" (click)="changeState('modificando')">MODIFICAR</button>
-                    <button class="btn btn-outline-danger px-4" (click)="cancelAppointment()">CANCELAR CITA</button>
+                <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+                    <button class="btn btn-modify-custom px-4 py-2" (click)="changeState('modificando')">MODIFICAR
+                        CITA</button>
+                    <button class="btn btn-cancel-custom px-4 py-2" (click)="cancelAppointment()">CANCELAR
+                        CITA</button>
                 </div>
                 <div class="text-center mt-3">
                     <button class="btn btn-outline-light px-4" (click)="closeModifier()">VOLVER</button>

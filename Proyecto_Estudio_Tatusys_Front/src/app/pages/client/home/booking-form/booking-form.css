@@ -53,19 +53,15 @@
 /* formatos de inputs */
 /* --- ETIQUETAS (LABELS) --- */
 .form-label {
-    /* Alineación a la IZQUIERDA */
     text-align: left;
     display: block;
-
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     font-weight: 500;
     margin-bottom: 0.4rem;
     color: #e0e0e0;
-    /* Gris muy claro para leerse bien sobre fondo oscuro */
 }
 
 /* --- INPUTS Y SELECTS --- */
-/* Les damos un estilo más limpio, blanco semitransparente */
 .form-control,
 .form-select {
     background-color: rgba(255, 255, 255, 0.95);
@@ -98,8 +94,27 @@ textarea.form-control {
     border-color: var(--robin-egg-blue);
 }
 
+.radio-align-fix {
+    padding-top: 0.6rem;
+    align-items: center;
+}
 
+/* Boton de referencias */
+.form-control[type="file"]::file-selector-button {
+    background-color: var(--dark-cyan);
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    margin-right: 1rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+}
 
+.form-control[type="file"]:hover::file-selector-button,
+.form-control[type="file"]::file-selector-button:hover {
+    background-color: var(--robin-egg-blue) !important;
+    color: white !important;
+}
 
 
 /* CALENDARIO (SLOT PICKER) */
@@ -197,16 +212,53 @@ textarea.form-control {
     color: #fff;
 }
 
+/* BOTONES FINAL DE FORMULARIO */
 .btn-reservar-submit {
     background-color: var(--dark-cyan);
     border: none;
     color: #fff;
     font-weight: 700;
-    padding: 0.8rem 2rem;
+    padding: 1rem 3rem;
     border-radius: 0.6rem;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    transition: all 0.3s;
 }
 
 .btn-reservar-submit:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+
+.action-btn {
+    min-width: 140px;
+    padding-block: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-width: 2px;
+}
+
+/* --- ANIMACIÓN SUAVE (Sustituye a .collapse de Bootstrap) --- */
+
+/* Contenedor externo: prepara la rejilla cerrada */
+.smooth-collapse {
+    display: grid;
+    grid-template-rows: 0fr;
+    /* Altura 0 por defecto */
+    opacity: 0;
+    transition: grid-template-rows 0.5s ease-out, opacity 0.5s ease-out;
+    overflow: hidden;
+    /* Importante para que no se vea el contenido al cerrar */
+}
+
+/* Estado Abierto: expande la rejilla a tamaño real (1fr) */
+.smooth-collapse.open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+/* Contenedor interno: necesario para que la animación funcione bien */
+.smooth-inner {
+    min-height: 0;
 }

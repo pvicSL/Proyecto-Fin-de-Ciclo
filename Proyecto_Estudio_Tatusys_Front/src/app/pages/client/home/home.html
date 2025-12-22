@@ -36,21 +36,24 @@
     </div>
 </section>
 
-<div class="container py-5">
+<div class="container py-4">
 
-    <div *ngIf="viewMode === 'booking'">
-        <app-booking-form></app-booking-form>
+    <div *ngIf="viewMode === 'booking'" class="view-transition">
 
-        <p class="text-center mt-3 cta-text">
-            ¿Cambio de planes?
-            <span (click)="toggleMode()" class="text-primary fw-bold"
-                style="cursor: pointer; text-decoration: underline;">
-                Modifica tu cita aquí
-            </span>.
-        </p>
+        <app-booking-form #booking></app-booking-form>
+
+        <div *ngIf="!booking.isFormOpen" class="fade-in-text">
+            <p class="text-center mt-2 cta-text">
+                ¿Cambio de planes? Modifica
+                <br>tu cita
+                <span (click)="toggleMode()" class="cta-link">
+                    AQUÍ
+                </span>.
+            </p>
+        </div>
     </div>
 
-    <div *ngIf="viewMode === 'modifying'">
+    <div *ngIf="viewMode === 'modifying'" class="view-transition">
         <app-appointment-modifier></app-appointment-modifier>
 
         <p class="text-center mt-3">
