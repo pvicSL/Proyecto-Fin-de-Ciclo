@@ -1,5 +1,29 @@
-/* Heredamos estilos básicos de la tarjeta si quieres, 
-   o los redefinimos aquí para que sea independiente */
+/* Input de Referencia */
+.input-reference {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    font-size: 1.5rem;
+    /* Texto grande */
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: var(--jet);
+    text-transform: uppercase;
+    padding: 0.8rem;
+    border-radius: 0.5rem;
+}
+
+.input-reference::placeholder {
+    color: #999;
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: normal;
+}
+
+.input-reference:focus {
+    background-color: #fff;
+    box-shadow: 0 0 0 4px var(--robin-egg-blue);
+}
+
 
 .booking-card {
     background-color: var(--jet);

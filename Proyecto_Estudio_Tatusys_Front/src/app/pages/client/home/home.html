@@ -54,13 +54,8 @@
     </div>
 
     <div *ngIf="viewMode === 'modifying'" class="view-transition">
-        <app-appointment-modifier></app-appointment-modifier>
-
-        <p class="text-center mt-3">
-            <span (click)="toggleMode()" class="text-muted" style="cursor: pointer;">
-                &larr; Volver a Pedir Cita
-            </span>
-        </p>
+        <app-appointment-modifier (closeRequest)="toggleMode()">
+        </app-appointment-modifier>
     </div>
 
 </div>

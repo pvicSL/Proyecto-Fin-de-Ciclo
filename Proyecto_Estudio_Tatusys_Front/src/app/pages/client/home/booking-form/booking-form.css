@@ -240,7 +240,6 @@ textarea.form-control {
 }
 
 /* --- ANIMACIÓN SUAVE (Sustituye a .collapse de Bootstrap) --- */
-
 /* Contenedor externo: prepara la rejilla cerrada */
 .smooth-collapse {
     display: grid;
