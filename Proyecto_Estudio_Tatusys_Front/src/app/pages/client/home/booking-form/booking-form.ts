@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Necesario para *ngIf y *ngFor
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { AppointmentService } from '../../../../core/services/appointment.service';
 
-// Definimos cómo es un día en nuestro calendario falso
 interface DaySlot {
   day: number;
   weekday: string;
@@ -13,21 +13,18 @@ interface DaySlot {
 @Component({
   selector: 'app-booking-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], // ¡IMPORTANTE: Importar módulos aquí!
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './booking-form.html',
   styleUrl: './booking-form.css'
 })
 export class BookingFormComponent implements OnInit {
 
-  // Variables de control visual
-  isFormOpen: boolean = false; // Controla si se ve el formulario o el botón
-  bookingForm: FormGroup;      // Aquí se guarda todo el formulario
-
-  // Variables para el calendario
+  isFormOpen: boolean = false;
+  bookingForm: FormGroup;
   selectedDayIndex: number | null = null;
   selectedSlot: string | null = null;
 
-  // Datos MOCKUP (Simulación de lo que devolvería Spring Boot)
+  // Empezamos con el mockup, pero esto se actualizará dinámicamente
   mockDays: DaySlot[] = [
     { day: 18, weekday: 'L', status: 'available', slots: ['09:00', '12:00', '16:00'] },
     { day: 19, weekday: 'M', status: 'available', slots: ['13:00', '16:00', '19:00'] },
@@ -38,42 +35,57 @@ export class BookingFormComponent implements OnInit {
     { day: 24, weekday: 'D', status: 'none', slots: [] }
   ];
 
-  constructor(private fb: FormBuilder) {
-    // Inicializamos el formulario con sus campos y validaciones
+  constructor(
+    private fb: FormBuilder,
+    private appointmentService: AppointmentService // Inyectamos tu servicio
+  ) {
     this.bookingForm = this.fb.group({
       firstName: ['', Validators.required],
       lastSurname: ['', Validators.required],
-      secondSurname: [''], // Opcional
+      secondSurname: [''],
       email: ['', [Validators.required, Validators.email]],
       confirmEmail: ['', Validators.required],
       phone: ['', Validators.required],
       needInvoice: [false],
-      // Campos condicionales de factura
       cif: [''],
       billingAddress: [''],
-      // Datos del servicio
       service: ['', Validators.required],
       bodyZone: ['', Validators.required],
       size: ['', Validators.required],
       style: ['', Validators.required],
-      detailLevel: ['', Validators.required], // "Detalle" en tu HTML
+      detailLevel: ['', Validators.required],
       colorMode: ['bw', Validators.required],
       comments: [''],
       references: [''],
-      acceptTerms: [false, Validators.requiredTrue] // Debe ser true obligatoriamente
-    }, { validators: this.emailMatchValidator }); // Añadimos validación personalizada grupal
+      acceptTerms: [false, Validators.requiredTrue]
+    }, { validators: this.emailMatchValidator });
+
+    // PASO 3: Escuchar cambios para actualizar disponibilidad
+    this.escucharCambiosParaDisponibilidad();
   }
 
   ngOnInit(): void {
-    // Al iniciar, pre-seleccionamos el primer día disponible para que quede bonito
     this.selectedDayIndex = this.mockDays.findIndex(d => d.status === 'available');
   }
 
-  // --- MÉTODOS DE ACCIÓN ---
+  // Lógica para detectar cuándo el usuario rellena lo necesario para saber la duración
+  private escucharCambiosParaDisponibilidad() {
+    this.bookingForm.valueChanges.subscribe(valores => {
+      // Si tenemos los campos que afectan a la duración, pedimos huecos
+      if (valores.service && valores.size && valores.detailLevel) {
+        console.log("Detectados cambios en parámetros del servicio. Buscando huecos...");
+
+        // Aquí llamaríamos al back. De momento usamos tu mockup del service:
+        this.appointmentService.getAvailableSlots(120).subscribe(huecos => {
+          // Aquí en el futuro procesarás los huecos reales del back
+          console.log("Huecos recibidos del servidor:", huecos);
+        });
+      }
+    });
+  }
 
   toggleForm() {
     this.isFormOpen = !this.isFormOpen;
-    // Si se abre, hacemos scroll suave hacia el formulario
     if (this.isFormOpen) {
       setTimeout(() => {
         const element = document.getElementById('form-anchor');
@@ -83,9 +95,9 @@ export class BookingFormComponent implements OnInit {
   }
 
   selectDay(index: number, day: DaySlot) {
-    if (day.status !== 'available') return; // Si está cerrado, no hace nada
+    if (day.status !== 'available') return;
     this.selectedDayIndex = index;
-    this.selectedSlot = null; // Reseteamos la hora porque hemos cambiado de día
+    this.selectedSlot = null;
   }
 
   selectSlot(time: string) {
@@ -98,43 +110,134 @@ export class BookingFormComponent implements OnInit {
   }
 
   onSubmit() {
+    // 1. Verificamos que el formulario sea válido y se haya elegido hora
     if (this.bookingForm.valid && this.selectedSlot) {
-      // ... Preparación de datos ...
-      const formData = {
-        ...this.bookingForm.value,
-        appointmentDate: `2026-12-${this.mockDays[this.selectedDayIndex!].day}`, // Ajustado para el ejemplo
-        appointmentTime: this.selectedSlot
+      const raw = this.bookingForm.value;
+
+      // 2. PREPARACIÓN DE DATOS (Esto lo tenías bien)
+      const citaParaEnviar = {
+        tipo: this.mapearServicio(raw.service),
+        zona: this.mapearZona(raw.bodyZone),
+        tamanio: this.mapearTamanio(raw.size),
+        detalle: raw.detailLevel.toUpperCase(),
+        coloracion: raw.colorMode === 'bw' ? 'NEGRO' : 'COLOR',
+        estilo: this.mapearEstilo(raw.style),
+        // OJO: Ajusta esto cuando tengas fechas reales. Ahora usa el mock.
+        fecha: `2026-12-${this.mockDays[this.selectedDayIndex!].day}`,
+        hora: this.selectedSlot + ":00",
+        comentarios: raw.comments,
+        factura: raw.needInvoice ? 1 : 0,
+        estatus: 'PENDIENTE',
+        cliente: {
+          nombre: raw.firstName,
+          apellido1: raw.lastSurname,
+          apellido2: raw.secondSurname,
+          email: raw.email,
+          telefono: raw.phone,
+          documentoIdentificacion: raw.cif
+        }
       };
 
-      console.log('ENVIANDO AL BACKEND:', formData);
-      alert('¡Solicitud enviada correctamente! (Simulación)');
+      console.log('ENVIANDO CITA A BD:', citaParaEnviar);
 
-      this.resetForm();
+      // 3. ENVÍO REAL (AQUÍ ESTÁ EL CAMBIO)
+      // Llamamos al servicio y nos suscribimos a la respuesta
+      this.appointmentService.createAppointment(citaParaEnviar).subscribe({
+        next: (respuesta) => {
+          // Si entra aquí, es que Spring Boot ha guardado la cita (HTTP 200)
+          console.log('Cita guardada:', respuesta);
+          alert('¡Solicitud enviada y guardada en base de datos!');
 
-      this.isFormOpen = false;
+          this.resetForm();
+          this.isFormOpen = false;
+        },
+        error: (error) => {
+          // Si entra aquí, algo falló (HTTP 400, 500, etc.)
+          console.error('Error al guardar:', error);
+          alert('Error al conectar con el servidor. Revisa la consola.');
+        }
+      });
 
     } else {
+      // Si el formulario no es válido, marcamos los errores en rojo
       this.bookingForm.markAllAsTouched();
     }
   }
 
-  // --- VALIDADOR PERSONALIZADO ---
-  // Comprueba que email y confirmEmail sean iguales
+  // Función para corregir las erratas del Backend en las zonas
+  private mapearZona(valor: string): string {
+    if (!valor) return 'BRAZO';
+
+    const mayusculas = valor.toUpperCase();
+
+    const mapa: any = {
+      'CERVICAL': 'CERVIAL',       // Mapeamos al error del backend
+      'PANTORRILLA': 'PANTORILLA', // Mapeamos al error del backend (falta una R)
+      'TÓRAX': 'TÓRAX',            // Aseguramos tildes
+      'TORAX': 'TÓRAX'             // Por si viene sin tilde
+    };
+
+    // Si está en el mapa, devolvemos el valor "corregido", si no, el valor en mayúsculas
+    return mapa[mayusculas] || mayusculas;
+  }
+
+  // --- FUNCIÓN DE TRADUCCIÓN PARA ESTILOS ---
+  private mapearEstilo(valor: string): string {
+    if (!valor) return 'REALISMO'; // Valor por defecto si viene vacío
+
+    // 1. Convertimos a mayúsculas: "Japonés" -> "JAPONÉS"
+    const mayusculas = valor.toUpperCase();
+
+    // 2. Mapa de traducción manual
+    const mapa: any = {
+      'JAPONÉS': 'JAPONES',       // AQUÍ QUITAMOS LA TILDE
+      'JAPONES': 'JAPONES',
+      'LETTERING': 'LETERING',    // Corregimos la doble T para que coincida con tu BBDD
+      'REALISMO': 'REALISMO',
+      'TRADICIONAL': 'TRADICIONAL',
+      'FINELINE': 'FINELINE',
+      'BLACK AND GREY': 'BLACKANDGREY', // Quitamos espacios
+      'ANIME': 'ANIME'
+    };
+
+    // 3. Devolvemos el valor traducido o el original limpio si no está en la lista
+    return mapa[mayusculas] || mayusculas.replace(/\s/g, '');
+  }
+
+  // Función auxiliar para traducir los tamaños de HTML a Java
+  private mapearTamanio(valor: string): string {
+    const mapa: any = {
+      'mini': 'MINI',
+      'small': 'PEQUEÑO',      // Traducimos small -> PEQUEÑO
+      'medium': 'MEDIANO',     // Traducimos medium -> MEDIANO
+      'large': 'GRANDE',       // Traducimos large -> GRANDE
+      'xtralarge': 'MUY_GRANDE' // Traducimos xtralarge -> MUY_GRANDE
+    };
+    return mapa[valor] || 'MEDIANO'; // Valor por defecto si falla
+  }
+
+  private mapearServicio(valor: string): string {
+    const mapeo: any = {
+      'tattoo-new': 'TATUAJE',
+      'tattoo-retouch': 'ELIMINACION',
+      'cover-up': 'COVER',
+      'design-only': 'RETOQUE'
+    };
+    return mapeo[valor] || 'TATUAJE';
+  }
+
   emailMatchValidator(form: AbstractControl): ValidationErrors | null {
     const email = form.get('email')?.value;
     const confirm = form.get('confirmEmail')?.value;
-    // Si alguno está vacío no validamos aún. Si son distintos, devolvemos error.
     if (!email || !confirm) return null;
     return email === confirm ? null : { emailsDontMatch: true };
   }
 
-  // Método simple para controlar la subida de archivos
   onFileChange(event: any) {
     const files = event.target.files;
     if (files.length > 3) {
       alert('Máximo de 3 imágenes.');
-      event.target.value = ''; // Limpiar el input
+      event.target.value = '';
     }
-    // Aquí podrías guardar los archivos en una variable para enviarlos luego
   }
 }
