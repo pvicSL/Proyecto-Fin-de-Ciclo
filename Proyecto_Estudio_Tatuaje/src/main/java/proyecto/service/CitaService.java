@@ -1,6 +1,8 @@
 package proyecto.service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import proyecto.modelo.dto.CitaDTO;
@@ -17,4 +19,6 @@ public interface CitaService {
 	List<CitaDTO> listarCitasDTO();
 	CitaDTO obtenerCitaDTOPorId(int idCita);
 	Integer calcularDuracion(Cita cita);
+    List<Cita> findByFecha(LocalDate fecha);
+    Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos);
 }
