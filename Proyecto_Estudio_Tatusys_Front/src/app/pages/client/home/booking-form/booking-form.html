@@ -174,35 +174,56 @@
                                 </div>
                             </div>
 
-                            <div class="col-12 mt-5">
-                                <div class="slot-picker">
-                                    <div class="slot-header">
-                                        <span>Diciembre - 2026</span>
+                            <div class="calendar-wrapper mt-4 fade-in" *ngIf="weekDaysToDisplay.length > 0">
+
+                                <div class="month-nav d-flex justify-content-between align-items-center mb-3 px-2">
+                                    <button class="btn btn-nav arrow-clean" (click)="prevMonth()"
+                                        type="button">&lt;</button>
+                                    <h4 class="m-0 month-title">{{ currentMonthName }}</h4>
+                                    <button class="btn btn-nav arrow-clean" (click)="nextMonth()"
+                                        type="button">&gt;</button>
+                                </div>
+
+                                <div class="week-container d-flex align-items-center">
+
+                                    <button class="btn btn-nav-week arrow-clean" (click)="prevWeek()"
+                                        type="button">&lt;</button>
+
+                                    <div class="days-grid flex-grow-1 d-flex justify-content-between mx-2">
+
+                                        <div *ngFor="let day of weekDaysToDisplay; let i = index"
+                                            class="day-card text-center" [ngClass]="{
+                    'available': day.status === 'available',
+                    'weekend': day.status === 'weekend',
+                    'disabled': day.status === 'disabled' || day.status === 'empty',
+                    'selected': i === selectedDayIndex
+                 }" (click)="selectDay(day)">
+
+                                            <span class="d-block small weekday-letter">{{ day.weekdayLetter }}</span>
+                                            <div class="day-number">{{ day.dayNumber }}</div>
+
+                                            <div *ngIf="day.status === 'available'" class="status-dot"></div>
+                                            <div *ngIf="day.status === 'weekend'" class="weekend-mark">✕</div>
+                                        </div>
+
                                     </div>
-                                    <div class="slot-weekdays">
-                                        <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
-                                    </div>
-                                    <div class="slot-days">
-                                        <span *ngFor="let dia of mockDays; let i = index" class="day" [ngClass]="{
-                                            'day-available': dia.status === 'available',
-                                            'day-none': dia.status === 'none',
-                                            'day-closed': dia.status === 'closed',
-                                            'day-selected': i === selectedDayIndex
-                                        }" (click)="selectDay(i, dia)">
-                                            {{ dia.day }}
-                                        </span>
-                                    </div>
-                                    <div class="slot-times mt-3" *ngIf="selectedDayIndex !== null">
-                                        <button *ngFor="let time of mockDays[selectedDayIndex!].slots" type="button"
-                                            class="time-slot" [class.time-slot-selected]="selectedSlot === time"
-                                            (click)="selectSlot(time)">
+
+                                    <button class="btn btn-nav-week arrow-clean" (click)="nextWeek()"
+                                        type="button">&gt;</button>
+                                </div>
+
+                                <div *ngIf="selectedDayIndex !== null && weekDaysToDisplay[selectedDayIndex]"
+                                    class="mt-4 text-center">
+                                    <h5 class="mb-3 slots-title">Horas disponibles:</h5>
+                                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                        <button *ngFor="let time of weekDaysToDisplay[selectedDayIndex].slots"
+                                            class="btn btn-slot-custom" [class.active]="selectedSlot === time"
+                                            (click)="selectSlot(time)" type="button">
                                             {{ time }}
                                         </button>
-                                        <p *ngIf="mockDays[selectedDayIndex!].slots.length === 0"
-                                            class="text-muted small">
-                                            No hay horas.</p>
                                     </div>
                                 </div>
+
                             </div>
 
                             <div class="col-12 d-flex justify-content-center gap-3 mt-4">

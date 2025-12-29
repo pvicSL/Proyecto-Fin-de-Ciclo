@@ -6,6 +6,17 @@ import { AppointmentDTO } from '../../../../core/models/appointment.model';
 
 type ModifierState = 'search' | 'inicial' | 'modificando' | 'confirmado' | 'cancelado';
 
+
+// Define esta interfaz arriba del todo, fuera de la clase
+interface DayColumn {
+  dateObj: Date;
+  dateStr: string; // "2026-12-20"
+  weekday: string; // "Lunes"
+  dayNumber: string; // "20"
+  slots: string[];
+}
+
+
 @Component({
   selector: 'app-appointment-modifier',
   standalone: true,
@@ -34,12 +45,24 @@ export class AppointmentModifierComponent {
     durationText: '' // Para mostrar "(2 horas)"
   };
 
+  // VARIABLES NUEVAS PARA EL CALENDARIO SEMANAL
+  allDays: DayColumn[] = []; // Todos los días (30 días) que devuelve el back
+  weekIndex: number = 0;     // En qué semana estamos (0, 1, 2...)
+  daysPerPage: number = 7;   // Días a mostrar por pantalla
+
   constructor(private appointmentService: AppointmentService) { }
 
   // --- MÉTODOS DE CAMBIO DE ESTADO ---
-  // Formatea la fecha ISO (2026-12-20T10:00:00) para que se vea bonita en el Select
   formatSlotDate(isoDate: string): string {
-    const date = new Date(isoDate);
+    // PROTECCIÓN: Si la fecha viene con espacio "2026-12-20 10:00", 
+    // la cambiamos a "2026-12-20T10:00" para que new Date() no falle nunca.
+    const safeDate = isoDate.replace(' ', 'T');
+
+    const date = new Date(safeDate);
+
+    // Validar que la fecha sea válida antes de formatear (por si acaso)
+    if (isNaN(date.getTime())) return isoDate;
+
     const dayFormatter = new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short' });
     const timeFormatter = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' });
 
@@ -76,12 +99,78 @@ export class AppointmentModifierComponent {
     });
   }
 
+  // --- MODIFICA ESTE MÉTODO ---
   startModification() {
-    // Pedimos huecos libres basándonos en la duración calculada
-    this.appointmentService.getAvailableSlots(this.calculatedDuration).subscribe(slots => {
-      this.availableSlots = slots;
-      this.changeState('modificando');
+    // 1. Calculamos duración
+    this.calculatedDuration = this.calculateDuration(this.currentAppointment?.tamanio || 'MEDIANO');
+
+    console.log("Buscando huecos...", this.calculatedDuration);
+
+    // 2. Llamamos al Back
+    this.appointmentService.getAvailableSlots(this.calculatedDuration).subscribe({
+      next: (dataBackend) => {
+        // TRANSFORMA LOS DATOS: De Mapa JSON a Array ordenado de objetos
+        this.allDays = this.transformarMapaADias(dataBackend);
+        this.weekIndex = 0; // Reseteamos a la primera semana
+        this.selectedNewDate = ''; // Reseteamos selección
+        this.changeState('modificando');
+      },
+      error: (err) => alert("Error cargando disponibilidad")
     });
+  }
+
+  // --- MÉTODOS DE NAVEGACIÓN Y VISUALIZACIÓN ---
+
+  // Obtiene solo los 7 días de la semana actual para pintar en el HTML
+  get visibleDays(): DayColumn[] {
+    const start = this.weekIndex * this.daysPerPage;
+    return this.allDays.slice(start, start + this.daysPerPage);
+  }
+
+  nextWeek() {
+    if ((this.weekIndex + 1) * this.daysPerPage < this.allDays.length) {
+      this.weekIndex++;
+    }
+  }
+
+  prevWeek() {
+    if (this.weekIndex > 0) {
+      this.weekIndex--;
+    }
+  }
+
+  selectSlot(day: DayColumn, slotTime: string) {
+    // Guardamos la fecha completa: "2026-12-20 10:00"
+    this.selectedNewDate = `${day.dateStr} ${slotTime}`;
+  }
+
+  // Comprueba si un hueco está seleccionado para pintarlo de otro color
+  isSlotSelected(day: DayColumn, slotTime: string): boolean {
+    return this.selectedNewDate === `${day.dateStr} ${slotTime}`;
+  }
+
+  // --- FUNCIÓN AUXILIAR DE TRANSFORMACIÓN ---
+  private transformarMapaADias(dataBackend: any): DayColumn[] {
+    const diasTemp: DayColumn[] = [];
+    const formatterDia = new Intl.DateTimeFormat('es-ES', { weekday: 'short' });
+
+    // Recorremos las claves (fechas)
+    for (const fechaStr in dataBackend) {
+      if (dataBackend.hasOwnProperty(fechaStr)) {
+        const fechaObj = new Date(fechaStr);
+
+        diasTemp.push({
+          dateObj: fechaObj,
+          dateStr: fechaStr,
+          weekday: formatterDia.format(fechaObj).toUpperCase().replace('.', ''), // "LUN", "MAR"
+          dayNumber: fechaObj.getDate().toString(),
+          slots: dataBackend[fechaStr] // La lista de horas ["10:00", "11:00"]
+        });
+      }
+    }
+
+    // Ordenamos cronológicamente
+    return diasTemp.sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
   }
 
   confirmChange() {
