@@ -59,27 +59,50 @@
             </div>
 
 
-            <div *ngIf="currentState === 'modificando'" class="modify-state">
-                <h3 class="modify-title mb-4">NUEVA FECHA</h3>
-                <div class="appointment-box mx-auto mb-3">
-                    <p class="appointment-label mb-2">Selecciona una cita disponible:</p>
+            <div *ngIf="currentState === 'modificando'" class="modify-state w-100">
+                <h3 class="modify-title mb-4">ELIGE NUEVA FECHA</h3>
 
-                    <select class="form-select w-75 mx-auto mb-3 text-dark" [(ngModel)]="selectedNewDate">
-                        <option value="">Selecciona...</option>
-                        <option *ngFor="let slot of availableSlots" [value]="slot">
-                            {{ formatSlotDate(slot) }}
-                        </option>
-                    </select>
+                <div class="d-flex justify-content-between align-items-center mb-3 w-100 px-3">
+                    <button class="btn btn-sm btn-outline-light" (click)="prevWeek()" [disabled]="weekIndex === 0">
+                        &lt; Anterior
+                    </button>
 
-                    <p *ngIf="availableSlots.length === 0" class="text-danger small">
-                        No hay huecos disponibles para esta duración.
+                    <span class="text-white small">Semana {{weekIndex + 1}}</span>
+
+                    <button class="btn btn-sm btn-outline-light" (click)="nextWeek()"
+                        [disabled]="(weekIndex + 1) * daysPerPage >= allDays.length">
+                        Siguiente &gt;
+                    </button>
+                </div>
+
+                <div class="days-container d-flex gap-2 justify-content-center mb-4 overflow-auto pb-2">
+
+                    <p *ngIf="allDays.length === 0" class="text-warning">
+                        No hay fechas disponibles próximamente.
                     </p>
 
-                    <button class="btn btn-primary" [disabled]="!selectedNewDate" (click)="confirmChange()">
+                    <div *ngFor="let day of visibleDays" class="day-column text-center">
+                        <div class="day-header mb-2">
+                            <span class="d-block small text-muted">{{day.weekday}}</span>
+                            <span class="fw-bold fs-5 text-white">{{day.dayNumber}}</span>
+                        </div>
+
+                        <div class="slots-list d-flex flex-column gap-2">
+                            <button *ngFor="let slot of day.slots" class="btn btn-sm slot-btn"
+                                [class.selected]="isSlotSelected(day, slot)" (click)="selectSlot(day, slot)">
+                                {{slot}}
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <button class="btn btn-outline-secondary" (click)="changeState('inicial')">ATRÁS</button>
+                    <button class="btn btn-primary px-4" [disabled]="!selectedNewDate" (click)="confirmChange()">
                         CONFIRMAR CAMBIO
                     </button>
                 </div>
-                <button class="btn btn-outline-secondary mt-2" (click)="changeState('inicial')">ATRÁS</button>
             </div>
 
             <div *ngIf="currentState === 'confirmado'" class="modify-state">

@@ -24,16 +24,16 @@ export class BookingFormComponent implements OnInit {
   selectedDayIndex: number | null = null;
   selectedSlot: string | null = null;
 
-  // Empezamos con el mockup, pero esto se actualizará dinámicamente
-  mockDays: DaySlot[] = [
-    { day: 18, weekday: 'L', status: 'available', slots: ['09:00', '12:00', '16:00'] },
-    { day: 19, weekday: 'M', status: 'available', slots: ['13:00', '16:00', '19:00'] },
-    { day: 20, weekday: 'X', status: 'none', slots: [] },
-    { day: 21, weekday: 'J', status: 'available', slots: ['10:00', '18:00'] },
-    { day: 22, weekday: 'V', status: 'closed', slots: [] },
-    { day: 23, weekday: 'S', status: 'available', slots: ['11:00'] },
-    { day: 24, weekday: 'D', status: 'none', slots: [] }
-  ];
+  // NUEVA: Guardaremos aquí la fecha real (ej: "2025-12-30")
+  selectedDateStr: string | null = null;
+
+  // Empieza vacío. Se rellenará automáticamente al elegir servicio y tamaño.
+  mockDays: DaySlot[] = [];
+
+  //Variables de calendario
+  currentViewDate: Date = new Date(); // La fecha base para calcular la semana visible
+  weekDaysToDisplay: any[] = [];      // Array con los 7 días visuales (Lunes-Domingo)
+  backendSlotsMap: Map<string, string[]> = new Map(); // Mapa para buscar rápido: "2026-12-30" -> ["10:00"]
 
   constructor(
     private fb: FormBuilder,
@@ -65,25 +65,180 @@ export class BookingFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.selectedDayIndex = this.mockDays.findIndex(d => d.status === 'available');
+    // No hacemos nada al iniciar. 
+    // Esperamos a que el usuario rellene el formulario para buscar huecos.
+  }
+
+  // Mes en texto (ej: "DICIEMBRE")
+  get currentMonthName(): string {
+    return new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(this.currentViewDate).toUpperCase();
   }
 
   // Lógica para detectar cuándo el usuario rellena lo necesario para saber la duración
+  // 1. EL LISTENER (Sustituye al anterior)
   private escucharCambiosParaDisponibilidad() {
     this.bookingForm.valueChanges.subscribe(valores => {
-      // Si tenemos los campos que afectan a la duración, pedimos huecos
       if (valores.service && valores.size && valores.detailLevel) {
-        console.log("Detectados cambios en parámetros del servicio. Buscando huecos...");
 
-        // Aquí llamaríamos al back. De momento usamos tu mockup del service:
-        this.appointmentService.getAvailableSlots(120).subscribe(huecos => {
-          // Aquí en el futuro procesarás los huecos reales del back
-          console.log("Huecos recibidos del servidor:", huecos);
+        // ... (cálculo duración igual que antes) ...
+        let duracionEstimada = 120; // Tu lógica de duración
+
+        this.appointmentService.getAvailableSlots(duracionEstimada).subscribe({
+          next: (respuestaBackend) => {
+            // A) Guardamos los datos en un mapa para acceso rápido
+            // respuestaBackend es { "2026-12-30": ["10:00"], ... }
+            this.backendSlotsMap = new Map(Object.entries(respuestaBackend));
+
+            // B) Reseteamos la vista a la fecha de hoy
+            this.currentViewDate = new Date();
+
+            // C) Generamos los 7 días visuales
+            this.generateWeekGrid();
+          }
         });
       }
     });
   }
 
+  // --- 2. GENERADOR DE LA REJILLA (EL CEREBRO) ---
+  generateWeekGrid() {
+    this.weekDaysToDisplay = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Borramos hora para comparar solo fechas
+
+    // 1. Encontrar el Lunes de la semana 'currentViewDate'
+    const startOfWeek = this.getMonday(this.currentViewDate);
+
+    // 2. Generar los 7 días consecutivos
+    for (let i = 0; i < 7; i++) {
+      const iterDate = new Date(startOfWeek);
+      iterDate.setDate(startOfWeek.getDate() + i); // Lunes + 0, Lunes + 1...
+
+      const iterDateString = iterDate.toISOString().split('T')[0]; // "2025-12-29"
+
+      // 3. Determinar estado del día
+      const isWeekend = (iterDate.getDay() === 0 || iterDate.getDay() === 6); // 0=Dom, 6=Sab
+      const isPast = iterDate < today; // Si es anterior a hoy
+      const isToday = iterDate.getTime() === today.getTime();
+
+      // Buscamos si el Back nos dio huecos para este día exacto
+      const slots = this.backendSlotsMap.get(iterDateString) || [];
+      const hasSlots = slots.length > 0;
+
+      // Estado final: 'disabled' (pasado), 'weekend' (finde), 'available' (con huecos), 'empty' (futuro sin huecos)
+      let status = 'empty';
+      if (isPast) status = 'disabled';
+      else if (isToday) status = 'disabled'; // Req 1: Hoy no disponible, solo a partir de mañana
+      else if (isWeekend) status = 'weekend'; // Req 5
+      else if (hasSlots) status = 'available';
+
+      this.weekDaysToDisplay.push({
+        dateObj: iterDate,
+        dateStr: iterDateString,
+        dayNumber: iterDate.getDate(),
+        weekdayLetter: this.getWeekdayLetter(iterDate), // L, M, X...
+        status: status,
+        slots: slots
+      });
+    }
+  }
+
+  // --- 3. NAVEGACIÓN ---
+  prevMonth() {
+    const newDate = new Date(this.currentViewDate);
+    newDate.setMonth(newDate.getMonth() - 1);
+
+    // Req 4: No permitir ir a meses anteriores al actual
+    const today = new Date();
+    if (newDate.getMonth() < today.getMonth() && newDate.getFullYear() <= today.getFullYear()) {
+      return; // Bloqueado
+    }
+    this.currentViewDate = newDate;
+    this.generateWeekGrid();
+  }
+
+  nextMonth() {
+    const newDate = new Date(this.currentViewDate);
+    newDate.setMonth(newDate.getMonth() + 1);
+    this.currentViewDate = newDate;
+    this.generateWeekGrid();
+  }
+
+  prevWeek() {
+    const today = new Date();
+    const prevWeekDate = new Date(this.currentViewDate);
+    prevWeekDate.setDate(prevWeekDate.getDate() - 7);
+
+    // Opcional: Bloquear ir semanas muy atrás del día actual
+    // if (this.getMonday(prevWeekDate) < this.getMonday(today)) return;
+
+    this.currentViewDate = prevWeekDate;
+    this.generateWeekGrid();
+  }
+
+  nextWeek() {
+    const nextWeekDate = new Date(this.currentViewDate);
+    nextWeekDate.setDate(nextWeekDate.getDate() + 7);
+    this.currentViewDate = nextWeekDate;
+    this.generateWeekGrid();
+  }
+
+  // --- UTILIDADES ---
+  // Obtiene el objeto fecha del Lunes de la semana dada
+  private getMonday(d: Date): Date {
+    const date = new Date(d);
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // ajustar cuando es domingo
+    return new Date(date.setDate(diff));
+  }
+
+  private getWeekdayLetter(d: Date): string {
+    const letras = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+    return letras[d.getDay()];
+  }
+
+  // Método al seleccionar un día
+  selectDay(day: any) {
+    if (day.status !== 'available') return;
+
+    // Marcamos visualmente
+    this.selectedDayIndex = this.weekDaysToDisplay.indexOf(day);
+
+    // GUARDAMOS EL DATO REAL PARA EL ENVÍO
+    this.selectedDateStr = day.dateStr; // Esto guarda "2025-12-30"
+
+    this.selectedSlot = null;
+  }
+
+  // 2. LA FUNCIÓN DE TRANSFORMACIÓN (NUEVA)
+  // Convierte { "2026-12-20": ["10:00"] }  --->  [{ day: 20, weekday: 'D'... }]
+  private transformarRespuestaACalendario(dataBackend: any): DaySlot[] {
+    const diasGenerados: DaySlot[] = [];
+    const letrasDias = ['D', 'L', 'M', 'X', 'J', 'V', 'S']; // 0=Domingo, 1=Lunes...
+
+    // Recorremos las claves del objeto (las fechas tipo "2026-12-20")
+    for (const fechaString in dataBackend) {
+      if (dataBackend.hasOwnProperty(fechaString)) {
+
+        const huecos = dataBackend[fechaString]; // Es la lista ["10:00", "10:30"]
+        const fechaObj = new Date(fechaString);  // Convertimos string a objeto Date JS
+
+        diasGenerados.push({
+          day: fechaObj.getDate(), // Sacamos el número (ej: 20)
+          weekday: letrasDias[fechaObj.getDay()], // Sacamos la letra según el día de la semana
+          status: huecos.length > 0 ? 'available' : 'none', // Si tiene huecos es 'available'
+          slots: huecos // Asignamos las horas reales
+        });
+      }
+    }
+
+    // Ordenamos por día (por si acaso el mapa viene desordenado)
+    diasGenerados.sort((a, b) => a.day - b.day);
+
+    return diasGenerados;
+  }
+
+  //Animacion suave para abrir el formulario
   toggleForm() {
     this.isFormOpen = !this.isFormOpen;
     if (this.isFormOpen) {
@@ -94,19 +249,33 @@ export class BookingFormComponent implements OnInit {
     }
   }
 
-  selectDay(index: number, day: DaySlot) {
-    if (day.status !== 'available') return;
-    this.selectedDayIndex = index;
-    this.selectedSlot = null;
-  }
 
   selectSlot(time: string) {
     this.selectedSlot = time;
   }
 
   resetForm() {
-    this.bookingForm.reset({ colorMode: 'bw', needInvoice: false, acceptTerms: false });
+    // 1. Limpiamos los campos del formulario (Angular)
+    this.bookingForm.reset({
+      colorMode: 'bw',
+      needInvoice: false,
+      acceptTerms: false
+    });
+
+    // 2. Limpiamos las variables de SELECCIÓN
     this.selectedSlot = null;
+    this.selectedDateStr = null;
+    this.selectedDayIndex = null;
+
+    // 3. Limpiamos los DATOS DEL CALENDARIO (Esto hará que desaparezca)
+    // Al vaciar este array, el *ngIf="weekDaysToDisplay.length > 0" del HTML se vuelve falso
+    // y oculta todo el bloque del calendario.
+    this.weekDaysToDisplay = [];
+
+    // 4. Limpiamos la caché del backend (opcional, pero recomendado)
+    this.backendSlotsMap.clear();
+
+    console.log("Formulario y calendario reseteados completamente.");
   }
 
   onSubmit() {
@@ -122,8 +291,7 @@ export class BookingFormComponent implements OnInit {
         detalle: raw.detailLevel.toUpperCase(),
         coloracion: raw.colorMode === 'bw' ? 'NEGRO' : 'COLOR',
         estilo: this.mapearEstilo(raw.style),
-        // OJO: Ajusta esto cuando tengas fechas reales. Ahora usa el mock.
-        fecha: `2026-12-${this.mockDays[this.selectedDayIndex!].day}`,
+        fecha: this.selectedDateStr,
         hora: this.selectedSlot + ":00",
         comentarios: raw.comments,
         factura: raw.needInvoice ? 1 : 0,
@@ -140,7 +308,7 @@ export class BookingFormComponent implements OnInit {
 
       console.log('ENVIANDO CITA A BD:', citaParaEnviar);
 
-      // 3. ENVÍO REAL (AQUÍ ESTÁ EL CAMBIO)
+      // 3. ENVÍO REAL
       // Llamamos al servicio y nos suscribimos a la respuesta
       this.appointmentService.createAppointment(citaParaEnviar).subscribe({
         next: (respuesta) => {
@@ -240,4 +408,78 @@ export class BookingFormComponent implements OnInit {
       event.target.value = '';
     }
   }
+
+  // Variable para saber si estamos editando (añádela arriba con las propiedades)
+  currentAppointmentId: number | null = null;
+
+  // Llama a esta función cuando hagas click en "Editar" en una cita
+  cargarDatosParaEditar(cita: any) {
+    this.isFormOpen = true;
+    this.currentAppointmentId = cita.idCita; // Guardamos el ID para luego hacer UPDATE en vez de CREATE
+
+    // 1. Rellenamos el formulario con los datos de la BBDD
+    // (Tendrás que ajustar los nombres de campos para que coincidan)
+    this.bookingForm.patchValue({
+      firstName: cita.cliente.nombre,
+      lastSurname: cita.cliente.apellido1,
+      email: cita.cliente.email,
+      phone: cita.cliente.telefono,
+      comments: cita.comentarios,
+      // OJO: Aquí necesitas transformar los valores de BBDD (MAYÚSCULAS) a los del Formulario (minúsculas)
+      // Por ejemplo: si cita.tamanio es 'PEQUEÑO', el form espera 'small'
+      size: this.mapearTamanioInverso(cita.tamanio),
+      service: this.mapearServicioInverso(cita.tipo),
+      detailLevel: cita.detalle ? cita.detalle.toLowerCase() : '',
+      // ... resto de campos ...
+    });
+
+    // 2. AQUÍ PEGAS EL CÓDIGO QUE TE PASÉ
+    // Forzamos la búsqueda de huecos manualmente para que aparezca el calendario
+    const duracion = this.calcularDuracionSegunTamano(cita.tamanio);
+
+    this.appointmentService.getAvailableSlots(duracion).subscribe(data => {
+      this.mockDays = this.transformarRespuestaACalendario(data);
+
+      // Opcional: Si quieres pre-seleccionar la hora que ya tenía la cita
+      // this.selectedSlot = cita.hora.substring(0, 5); 
+    });
+  }
+
+  // Calcula minutos basándose en lo que viene de la BBDD
+  private calcularDuracionSegunTamano(tamanioBBDD: string): number {
+    if (!tamanioBBDD) return 120; // Por defecto
+
+    switch (tamanioBBDD) {
+      case 'MINI': return 60;
+      case 'PEQUEÑO': return 90;
+      case 'MEDIANO': return 120;
+      case 'GRANDE': return 180;
+      case 'MUY_GRANDE': return 240;
+      default: return 120;
+    }
+  }
+
+  // Convierte de BBDD (PEQUEÑO) a Formulario (small)
+  private mapearTamanioInverso(valor: string): string {
+    const mapa: any = {
+      'MINI': 'mini',
+      'PEQUEÑO': 'small',
+      'MEDIANO': 'medium',
+      'GRANDE': 'large',
+      'MUY_GRANDE': 'xtralarge'
+    };
+    return mapa[valor] || 'medium';
+  }
+
+  // Convierte de BBDD (TATUAJE) a Formulario (tattoo-new)
+  private mapearServicioInverso(valor: string): string {
+    const mapa: any = {
+      'TATUAJE': 'tattoo-new',
+      'ELIMINACION': 'tattoo-retouch',
+      'COVER': 'cover-up',
+      'RETOQUE': 'design-only'
+    };
+    return mapa[valor] || 'tattoo-new';
+  }
+
 }

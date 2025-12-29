@@ -25,24 +25,31 @@ export class AppointmentService {
     }
 
     // 2. MODIFICAR FECHA (Solo enviamos los cambios necesarios o el DTO entero actualizado)
-    updateAppointmentDate(id: number, newDate: string, newTime: string): Observable<AppointmentDTO> {
-        // Backend espera un PUT. Puedes enviar solo fecha/hora o el objeto.
-        // Aquí simplificamos enviando un objeto parcial o usando un endpoint específico si lo creas.
-        return this.http.put<AppointmentDTO>(`${this.apiUrl}/${id}`, { fecha: newDate, hora: newTime });
+    updateAppointmentDate(id: number, fecha: string, hora: string): Observable<any> {
+
+        // 1. Verificamos por consola que el ID llega bien (IMPORTANTE)
+        console.log("Enviando actualización para ID:", id);
+
+        const payload = {
+            idCita: id,
+            fecha: fecha,
+            hora: hora
+        };
+
+        // 2. CORRECCIÓN CLAVE: Añadimos "/${id}" al final de la URL
+        // Fíjate en la barra inclinada antes del dólar
+        return this.http.put(`${this.apiUrl}/actualizar/${id}`, payload);
     }
 
     // 3. CANCELAR (Cambiar estatus a CANCELADO o RECHAZADO)
     cancelAppointment(id: number): Observable<any> {
-        // Si usas borrado lógico (cambiar estado):
-        return this.http.patch(`${this.apiUrl}/${id}/cancelar`, {});
-        // Si usas borrado físico (DELETE):
-        // return this.http.delete(`${this.apiUrl}/${id}`);
+        // Importante: responseType: 'text' porque el back devuelve un String plano, no un JSON
+        return this.http.delete(`${this.apiUrl}/eliminar/${id}`, { responseType: 'text' });
     }
 
-    // 4. BUSCAR HUECOS (Simulación inteligente basada en duración)
-    // En el futuro, esto llamará a: GET /citas/huecos-libres?duracion=120
-    getAvailableSlots(duration: number): Observable<string[]> {
-        // Mockup temporal para que no te falle la compilación
-        return of([]);
+    // 4. BUSCAR HUECOS REALES (Conectado al Back)
+    getAvailableSlots(durationMinutes: number): Observable<any> {
+        // Esto devuelve un objeto JSON tipo: { "2026-12-20": ["10:00", "10:30"], ... }
+        return this.http.get(`${this.apiUrl}/disponibilidad/${durationMinutes}`);
     }
 }

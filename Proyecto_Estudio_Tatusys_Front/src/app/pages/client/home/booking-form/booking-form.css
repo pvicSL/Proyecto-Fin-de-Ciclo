@@ -261,3 +261,175 @@ textarea.form-control {
 .smooth-inner {
     min-height: 0;
 }
+
+/* Estilos generales */
+.calendar-wrapper {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.month-title {
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #2c3e50;
+}
+
+.btn-nav,
+.btn-nav-week {
+    background: transparent;
+    border: 1px solid #555;
+    color: white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    transition: all 0.3s;
+}
+
+.btn-nav:hover,
+.btn-nav-week:hover {
+    background: white;
+    color: black;
+}
+
+/* FLECHAS LIMPIAS (Sin círculo) */
+.arrow-clean {
+    background: transparent;
+    border: none;
+    color: #555;
+    /* Gris oscuro para verse sobre blanco */
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 0 10px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Hover en ROBIN EGG BLUE */
+.arrow-clean:hover {
+    color: #00CED1;
+    /* Código aprox de Robin Egg / Turquesa */
+    background: transparent;
+    transform: scale(1.2);
+    /* Efecto zoom suave */
+}
+
+/* LA CARTA DEL DÍA */
+.day-card {
+    cursor: default;
+    padding: 10px 5px;
+    border-radius: 8px;
+    width: 13%;
+    position: relative;
+    transition: all 0.2s;
+    background-color: transparent;
+    color: #666;
+    /* Color de días normales */
+}
+
+.day-number {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.weekday-letter {
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+/* ESTADOS */
+/* 1. DISPONIBLE (Verde o blanco brillante) */
+.day-card.available {
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+}
+
+.day-card.available:hover {
+    background-color: #f0f0f0;
+    /* Gris muy clarito al pasar ratón */
+}
+
+/* PUNTO DARK CYAN */
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #008B8B;
+    /* Dark Cyan */
+    border-radius: 50%;
+    margin: 5px auto 0;
+}
+
+/* 2. SELECCIONADO (Robin Egg) */
+.day-card.selected {
+    background-color: #00CED1 !important;
+    /* Robin Egg Blue */
+    color: #ffffff !important;
+    /* Texto blanco para contraste */
+    box-shadow: 0 2px 8px rgba(0, 206, 209, 0.4);
+}
+
+/* El punto desaparece o se pone blanco al seleccionar para que se vea bien */
+.day-card.selected .status-dot {
+    background-color: white;
+}
+
+/* 3. FIN DE SEMANA (Cardinal/Rojo) */
+.day-card.weekend {
+    color: #C41E3A;
+    /* Cardinal Red aprox */
+    opacity: 0.5;
+    background-color: rgba(196, 30, 58, 0.05);
+    /* Fondo rojizo muy sutil */
+}
+
+/* 4. PASADO/DESHABILITADO */
+.day-card.disabled {
+    color: #ccc;
+    /* Gris muy claro */
+    pointer-events: none;
+}
+
+.weekend-mark {
+    font-size: 0.7rem;
+    margin-top: 2px;
+}
+
+/* 3. DESHABILITADO / PASADO (Gris) */
+.day-card.disabled {
+    color: #444;
+    pointer-events: none;
+}
+
+/* 4. SELECCIONADO */
+.day-card.selected {
+    background-color: white;
+    color: black;
+    border-color: white;
+}
+
+.day-card.selected .weekday-letter {
+    color: #333;
+}
+
+/* BOTONES DE HORA (SLOTS) */
+.slots-title {
+    color: #333;
+}
+
+.btn-slot-custom {
+    border: 1px solid #008B8B;
+    /* Borde Dark Cyan */
+    color: #008B8B;
+    background: white;
+    transition: all 0.2s;
+}
+
+.btn-slot-custom:hover,
+.btn-slot-custom.active {
+    background-color: #008B8B;
+    color: white;
+}

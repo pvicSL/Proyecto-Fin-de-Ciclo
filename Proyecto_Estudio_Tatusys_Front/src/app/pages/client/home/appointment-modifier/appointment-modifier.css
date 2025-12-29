@@ -157,3 +157,45 @@
     background-color: var(--cardinal);
     color: white;
 }
+
+
+/* Contenedor con scroll horizontal por si la pantalla es muy pequeña */
+.days-container {
+    max-width: 100%;
+    min-height: 250px;
+}
+
+/* Columna de día individual */
+.day-column {
+    min-width: 60px;
+    /* Ancho mínimo para que quepan los botones */
+    background: rgba(255, 255, 255, 0.05);
+    /* Fondo sutil */
+    border-radius: 8px;
+    padding: 10px 5px;
+}
+
+/* Botones de hora (slots) */
+.slot-btn {
+    border: 1px solid #666;
+    color: #ccc;
+    font-size: 0.8rem;
+    padding: 4px 0;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+.slot-btn:hover {
+    background-color: #444;
+    color: white;
+}
+
+/* Estado seleccionado (Verde o el color de tu marca) */
+.slot-btn.selected {
+    background-color: #28a745;
+    /* Verde Bootstrap */
+    border-color: #28a745;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+}
