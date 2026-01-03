@@ -482,4 +482,17 @@ export class BookingFormComponent implements OnInit {
     return mapa[valor] || 'tattoo-new';
   }
 
+
+  // SECCION PARA MENSAJES EMERGENTES DE AYUDA EN FORMULARIO
+  // Variable para controlar qué ayuda se muestra (ej: 'size', 'style', etc.)
+  activeHint: string | null = null;
+
+  // Función para abrir/cerrar la ayuda al hacer click en el icono
+  toggleHint(field: string) {
+    if (this.activeHint === field) {
+      this.activeHint = null; // Si ya estaba abierto, lo cerramos
+    } else {
+      this.activeHint = field; // Abrimos el nuevo
+    }
+  }
 }

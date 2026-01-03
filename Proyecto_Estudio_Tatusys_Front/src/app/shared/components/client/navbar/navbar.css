@@ -1,4 +1,4 @@
-/* Estilo para color del header (usa el root de styles.css general del proyecto */
+/* Estilo para color del header (usa el root de styles.css general del proyecto) */
 .site-header {
     background: linear-gradient(180deg, var(--night), var(--jet));
 }

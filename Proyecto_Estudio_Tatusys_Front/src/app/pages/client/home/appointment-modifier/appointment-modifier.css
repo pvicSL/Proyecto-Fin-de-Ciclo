@@ -1,10 +1,13 @@
-/* Input de Referencia */
+/* =============================================
+ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
+================================================ */
+
+/* Input de la referencia de la cita */
 .input-reference {
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
     font-size: 1.5rem;
-    /* Texto grande */
-    letter-spacing: 2px;
+    letter-spacing: 0.125rem;
     font-weight: 700;
     color: var(--jet);
     text-transform: uppercase;
@@ -12,6 +15,7 @@
     border-radius: 0.5rem;
 }
 
+/* Texto placeholder de ejemplo del input de id de cita*/
 .input-reference::placeholder {
     color: #999;
     font-size: 1.2rem;
@@ -24,7 +28,7 @@
     box-shadow: 0 0 0 4px var(--robin-egg-blue);
 }
 
-
+/* Estilo del contenedor de información de la cita */
 .booking-card {
     background-color: var(--jet);
     width: 95%;
@@ -55,7 +59,7 @@
     color: var(--jet);
 }
 
-/* Títulos internos */
+/* Títulos dentro del recuadro de inf. de cita */
 .appointment-label {
     font-size: 1.4rem;
     font-weight: 700;
@@ -71,7 +75,7 @@
     gap: 1rem;
 }
 
-/* Separador vertical */
+/* Separador vertical de los datos -> | */
 .divider {
     width: 0.15rem;
     align-self: stretch;
@@ -81,13 +85,14 @@
     min-height: 4rem;
 }
 
-/* --- TIPOGRAFÍA RESPONSIVE --- */
+/* Texto de día de la semana */
 .weekday {
     font-size: 1.2rem;
     text-transform: uppercase;
     font-weight: 600;
 }
 
+/* Texto del número de día */
 .appointment-day {
     font-size: clamp(2rem, 10vw, 2.5rem);
     font-weight: 800;
@@ -96,12 +101,14 @@
     margin: 0.3rem 0;
 }
 
+/* Textos del año y de duración en minutos de la cita */
 .year,
 .duration {
     font-size: 1.2rem;
     letter-spacing: 0.1rem;
 }
 
+/* Texto de la hora de la cita */
 .appointment-hour {
     font-size: clamp(2rem, 10vw, 2.5rem);
     font-weight: 800;
@@ -109,25 +116,24 @@
     line-height: 1.1;
 }
 
+/* Texto de ponerse en contacto para modificar otros datos */
 .contact-text {
     font-size: 1.1rem;
     line-height: 1.5;
     margin-block: 2rem;
 }
 
-/* --- BOTONES PERSONALIZADOS --- */
-
-/* Contenedor de botones: en móvil muy pequeño se ponen uno encima de otro */
+/* --- BOTONES --- */
+/* Contenedor de botones: en versión móvil se ponen uno encima de otro */
 .action-buttons-container {
     display: flex;
     justify-content: center;
     gap: 1rem;
     margin-top: 1.5rem;
     flex-wrap: wrap;
-    /* En pantallas <300px los botones se apilan */
 }
 
-/* Botón MODIFICAR CITA */
+/* Botón 'MODIFICAR CITA' */
 .btn-modify-custom {
     color: white !important;
     background-color: transparent;
@@ -143,7 +149,7 @@
     border-color: var(--dark-cyan);
 }
 
-/* Botón CANCELAR CITA */
+/* Botón 'CANCELAR CITA' */
 .btn-cancel-custom {
     color: white !important;
     background-color: transparent;
@@ -159,23 +165,22 @@
 }
 
 
+/* ===== CONTENEDOR DEL SELECTOR DE NUEVA FECHA ====== */
 /* Contenedor con scroll horizontal por si la pantalla es muy pequeña */
 .days-container {
     max-width: 100%;
     min-height: 250px;
 }
 
-/* Columna de día individual */
+/* Columna de día */
 .day-column {
-    min-width: 60px;
-    /* Ancho mínimo para que quepan los botones */
+    min-width: 3.75rem;
     background: rgba(255, 255, 255, 0.05);
-    /* Fondo sutil */
     border-radius: 8px;
-    padding: 10px 5px;
+    padding: 0.625rem 0.313rem;
 }
 
-/* Botones de hora (slots) */
+/* Botones de hora (huecos disponibles) */
 .slot-btn {
     border: 1px solid #666;
     color: #ccc;
@@ -190,12 +195,11 @@
     color: white;
 }
 
-/* Estado seleccionado (Verde o el color de tu marca) */
+/* Estado seleccionado */
 .slot-btn.selected {
-    background-color: #28a745;
-    /* Verde Bootstrap */
-    border-color: #28a745;
+    background-color: var(--robin-egg-blue);
+    border-color: var(--robin-egg-blue);
     color: white;
     font-weight: bold;
-    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+    box-shadow: 0 0 8px var(--dark-cyan);
 }

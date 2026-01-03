@@ -13,15 +13,15 @@ import { AppointmentModifierComponent } from './appointment-modifier/appointment
   styleUrl: './home.css'
 })
 export class HomeComponent {
-  // 1. Declaramos la propiedad 'viewMode' para solucionar el error TS2339.
-  // Le damos tipo literal para que solo acepte esos dos valores.
+  // 1. 'viewMode' sirve para alternar entre la solicitud de cita o la modificación.
   viewMode: 'booking' | 'modifying' = 'booking';
 
   toggleMode() {
-    // 2. Esta función alterna entre los dos estados
+    // 2. Esta función alterna entre los dos estados,
+    // de modo que podamos ocultar elementos según qué esté haciendo el usuario.
     this.viewMode = this.viewMode === 'booking' ? 'modifying' : 'booking';
 
-    // Un console.log te ayudará a verificar en la consola del navegador si el botón funciona
-    console.log('Modo actual:', this.viewMode);
+    // Verificación por consola de que esto funciona
+    console.log('Modo/estado actual:', this.viewMode);
   }
 }
