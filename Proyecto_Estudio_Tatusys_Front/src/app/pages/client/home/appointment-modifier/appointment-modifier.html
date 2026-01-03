@@ -44,8 +44,8 @@
                 </div>
 
                 <p class="contact-text">
-                    Aquí solo puedes cambiar la fecha de tu cita. <br>Para cualquier otro cambio, <a href="#"
-                        class="contact-link">Escríbenos</a>.
+                    Aquí solo puedes cambiar la fecha de tu cita. <br>Para hacer cualquier otro cambio, <a href="#"
+                        class="contact-link">escríbenos</a>.
                 </p>
 
                 <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
@@ -60,7 +60,7 @@
 
 
             <div *ngIf="currentState === 'modificando'" class="modify-state w-100">
-                <h3 class="modify-title mb-4">ELIGE NUEVA FECHA</h3>
+                <h3 class="modify-title mb-4">ELIGE UNA NUEVA FECHA</h3>
 
                 <div class="d-flex justify-content-between align-items-center mb-3 w-100 px-3">
                     <button class="btn btn-sm btn-outline-light" (click)="prevWeek()" [disabled]="weekIndex === 0">
@@ -108,7 +108,7 @@
             <div *ngIf="currentState === 'confirmado'" class="modify-state">
                 <h3 class="modify-title mb-4 text-success">¡TODO LISTO!</h3>
                 <div class="appointment-box mx-auto mb-3">
-                    <p class="appointment-label mb-2">Tu nueva cita es:</p>
+                    <p class="appointment-label mb-2">Tu nueva cita es el:</p>
                     <div class="appointment-info d-flex align-items-center justify-content-center">
                         <div class="appointment-date text-center me-3">
                             <p class="m-0 weekday">{{ viewDetails.weekday }}</p>
@@ -126,9 +126,9 @@
             </div>
 
             <div *ngIf="currentState === 'cancelado'" class="modify-state">
-                <h3 class="modify-title mb-4 text-danger">CITA CANCELADA</h3>
+                <h3 class="modify-title mb-4 text-danger">CITA CANCELADA CORRECTAMENTE</h3>
                 <div class="appointment-box mx-auto mb-3">
-                    <p class="contact-text text-dark">Lamentamos que no puedas venir.</p>
+                    <p class="contact-text text-dark">Lamentamos que no puedas venir. ¡Esperamos verte muy pronto!</p>
                 </div>
                 <button class="btn btn-outline-light mt-2" (click)="closeModifier()">CERRAR</button>
             </div>

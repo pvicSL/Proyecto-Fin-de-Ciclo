@@ -8,7 +8,9 @@
         <div class="smooth-inner">
             <div class="card mx-auto booking-card">
                 <div class="card-body p-4 p-md-5">
-                    <h3 class="booking-title text-center mb-4">RESERVA TU CITA</h3>
+                    <h3 class="booking-title text-center mb-4">SOLICITA TU CITA</h3>
+                    <P>Cuando envíes la colicitud, recibirás el presupuesto y un enlace para abonar la fianza en tu
+                        correo electrónico.</P>
 
                     <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" novalidate>
                         <div class="row g-4">
@@ -16,8 +18,13 @@
                             <div class="col-md-6">
                                 <label class="form-label">Nombre*</label>
                                 <input type="text" class="form-control" formControlName="firstName"
-                                    placeholder="Tu nombre..."
+                                    placeholder="Indica tu nombre..."
                                     [class.is-invalid]="bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched">
+                                <div class="invalid-feedback">
+                                    <span *ngIf="bookingForm.get('firstName')?.errors?.['required']">
+                                        El nombre es obligatorio.
+                                    </span>
+                                </div>
                             </div>
 
                             <div class="w-50"></div>
@@ -25,13 +32,19 @@
                             <div class="col-md-6">
                                 <label class="form-label">Primer apellido*</label>
                                 <input type="text" class="form-control" formControlName="lastSurname"
-                                    placeholder="Apellido..."
+                                    placeholder="Ej.: Gómez..."
                                     [class.is-invalid]="bookingForm.get('lastSurname')?.invalid && bookingForm.get('lastSurname')?.touched">
+
+                                <div class="invalid-feedback">
+                                    El primer apellido es obligatorio.
+                                </div>
                             </div>
+
+
                             <div class="col-md-6">
                                 <label class="form-label">Segundo apellido</label>
                                 <input type="text" class="form-control" formControlName="secondSurname"
-                                    placeholder="Opcional...">
+                                    placeholder="(Opcional) Ej.: Pérez...">
                             </div>
 
                             <div class="col-md-6">
@@ -39,19 +52,36 @@
                                 <input type="email" class="form-control" formControlName="email"
                                     placeholder="email@ejemplo.com"
                                     [class.is-invalid]="bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched">
+
+                                <div class="invalid-feedback">
+                                    <span *ngIf="bookingForm.get('email')?.errors?.['required']">El email es
+                                        obligatorio.</span>
+                                    <span *ngIf="bookingForm.get('email')?.errors?.['email']">Formato de email
+                                        incorrecto.</span>
+                                </div>
                             </div>
+
+
                             <div class="col-md-6">
                                 <label class="form-label">Confirma tu correo electrónico*</label>
                                 <input type="email" class="form-control" formControlName="confirmEmail"
-                                    placeholder="Repite el email..."
+                                    placeholder="Repite tu email..."
                                     [class.is-invalid]="bookingForm.errors?.['emailsDontMatch'] && bookingForm.get('confirmEmail')?.touched">
-                                <div class="invalid-feedback">¡Error! Los correos no coinciden.</div>
+
+                                <div class="invalid-feedback">
+                                    ¡Error! Los emails no coinciden.
+                                </div>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Teléfono*</label>
-                                <input type="tel" class="form-control" formControlName="phone" placeholder="Ej.: 600..."
+                                <input type="tel" class="form-control" formControlName="phone"
+                                    placeholder="Ej.: 600600600..."
                                     [class.is-invalid]="bookingForm.get('phone')?.invalid && bookingForm.get('phone')?.touched">
+
+                                <div class="invalid-feedback">
+                                    El teléfono es obligatorio.
+                                </div>
                             </div>
 
                             <div class="w-60"></div>
@@ -67,11 +97,13 @@
                             <ng-container *ngIf="bookingForm.get('needInvoice')?.value">
                                 <div class="col-md-6">
                                     <label class="form-label">CIF/NIF</label>
-                                    <input type="text" class="form-control" formControlName="cif">
+                                    <input type="text" class="form-control" formControlName="cif"
+                                        placeholder="Ej.: 71771771P">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Dirección fiscal</label>
-                                    <input type="text" class="form-control" formControlName="billingAddress">
+                                    <input type="text" class="form-control" formControlName="billingAddress"
+                                        placeholder="Ej.: Calle X, N12. Localidad, CP11111...">
                                 </div>
                             </ng-container>
 
@@ -82,49 +114,87 @@
                             <div class="col-md-6">
                                 <label class="form-label">Servicio*</label>
                                 <select class="form-select" formControlName="service">
-                                    <option value="" selected>Elige servicio...</option>
+                                    <option value="" selected>Elige un servicio...</option>
                                     <option value="tattoo-new">Tatuaje</option>
-                                    <option value="tattoo-retouch">Eliminación</option>
+                                    <option value="tattoo-delete">Eliminación</option>
                                     <option value="cover-up">Cover</option>
-                                    <option value="design-only">Retoque</option>
+                                    <option value="tattoo-retouch">Retoque</option>
+                                    <div class="invalid-feedback">
+                                        Debes seleccionar un servicio.
+                                    </div>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Zona del cuerpo*</label>
                                 <select class="form-select" formControlName="bodyZone">
                                     <option value="" selected>¿Dónde lo quieres...?</option>
-                                    <option>Brazo</option>
-                                    <option>Antebrazo</option>
-                                    <option>Codo</option>
-                                    <option>Hombro</option>
-                                    <option>Tórax</option>
-                                    <option>Abdomen</option>
-                                    <option>Pubis</option>
-                                    <option>Muslo</option>
-                                    <option>Rodilla</option>
-                                    <option>Pantorrilla</option>
-                                    <option>Pie</option>
-                                    <option>Mano</option>
-                                    <option>Cervical</option>
-                                    <option>Lumbares</option>
-                                    <option>Nalga</option>
-                                    <option>Cabeza</option>
+                                    <option value="body-arm">Brazo</option>
+                                    <option value="body-forearm">Antebrazo</option>
+                                    <option value="body-elbow">Codo</option>
+                                    <option value="body-shoulder">Hombro</option>
+                                    <option value="body-chest">Tórax</option>
+                                    <option value="body-abdomen">Abdomen</option>
+                                    <option value="body-pubis">Pubis</option>
+                                    <option value="body-thigh">Muslo</option>
+                                    <option value="body-knee">Rodilla</option>
+                                    <option value="body-calf">Pantorrilla</option>
+                                    <option value="body-foot">Pie</option>
+                                    <option value="body-hand">Mano</option>
+                                    <option value="body-cervical">Cervical</option>
+                                    <option value="body-lumbar">Lumbares</option>
+                                    <option value="body-buttcheek">Nalga</option>
+                                    <option value="body-head">Cabeza</option>
+                                    <div class="invalid-feedback">
+                                        Selecciona una zona del cuerpo.
+                                    </div>
                                 </select>
                             </div>
 
-                            <div class="col-md-6"> <label class="form-label">Tamaño*</label>
-                                <select class="form-select" formControlName="size">
-                                    <option value="" selected>...</option>
-                                    <option value="mini">Mini</option>
-                                    <option value="small">Pequeño</option>
-                                    <option value="medium">Mediano</option>
-                                    <option value="large">Grande</option>
-                                    <option value="xtralarge">Muy grande</option>
-                                </select>
-                            </div>
                             <div class="col-md-6">
-                                <label class="form-label">Estilo*</label>
-                                <select class="form-select" formControlName="style">
+                                <div class="d-flex align-items-center mb-2">
+                                    <label class="form-label m-0">Tamaño*</label>
+
+                                    <button type="button" class="btn-info-icon ms-2" (click)="toggleHint('size')"
+                                        [class.active]="activeHint === 'size'"
+                                        aria-label="Más información sobre el tamaño">
+                                        <i class="bi bi-info-circle"></i>
+                                    </button>
+                                </div>
+
+                                <div class="hint-box mb-2 fade-in" *ngIf="activeHint === 'size'">
+                                    <i class="bi bi-lightbulb me-2"></i>
+                                    En caso de duda entre dos tamaños, elige el más grande.
+                                </div>
+
+                                <select class="form-select" formControlName="size"
+                                    [class.is-invalid]="bookingForm.get('size')?.invalid && bookingForm.get('size')?.touched">
+                                    <option value="" selected>Elige un tamaño (aproximado)...</option>
+                                    <option value="mini">Mini (hasta 1,5 * 1,5 cm)</option>
+                                    <option value="small">Pequeño (hasta 5 * 5 cm)</option>
+                                    <option value="medium">Mediano (hasta 10 * 10 cm)</option>
+                                    <option value="large">Grande (hasta 20 * 20 cm)</option>
+                                    <option value="xtralarge">Muy grande (más de 20 * 20 cm)</option>
+                                </select>
+                                <div class="invalid-feedback">El tamaño es obligatorio para calcular la cita.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-2">
+                                    <label class="form-label m-0">Estilo*</label>
+
+                                    <button type="button" class="btn-info-icon ms-2" (click)="toggleHint('style')"
+                                        [class.active]="activeHint === 'style'" aria-label="Ayuda sobre estilos">
+                                        <i class="bi bi-info-circle"></i>
+                                    </button>
+                                </div>
+
+                                <div class="hint-box mb-2 fade-in" *ngIf="activeHint === 'style'">
+                                    <i class="bi bi-lightbulb me-2"></i>
+                                    ¿No sabes qué estilo elegir? Tienes una guía en las FAQ, al fondo de la página.
+                                </div>
+
+                                <select class="form-select" formControlName="style"
+                                    [class.is-invalid]="bookingForm.get('style')?.invalid && bookingForm.get('style')?.touched">
                                     <option value="" selected>¿Clásico, minimalista...?</option>
                                     <option>Realismo</option>
                                     <option>Tradicional</option>
@@ -134,17 +204,35 @@
                                     <option>Black And Grey</option>
                                     <option>Anime</option>
                                 </select>
+                                <div class="invalid-feedback">Selecciona un estilo.</div>
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Detalle*</label>
-                                <select class="form-select" formControlName="detailLevel">
+                                <div class="d-flex align-items-center mb-2">
+                                    <label class="form-label m-0">Detalle/densidad de tinta*</label>
+
+                                    <button type="button" class="btn-info-icon ms-2" (click)="toggleHint('detail')"
+                                        [class.active]="activeHint === 'detail'" aria-label="Ayuda sobre detalle">
+                                        <i class="bi bi-info-circle"></i>
+                                    </button>
+                                </div>
+
+                                <div class="hint-box mb-2 fade-in" *ngIf="activeHint === 'detail'">
+                                    <i class="bi bi-lightbulb me-2"></i>
+                                    Si tienes dudas sobre la densidad, tienes más información en las FAQ, al fondo de la
+                                    página.
+                                </div>
+
+                                <select class="form-select" formControlName="detailLevel"
+                                    [class.is-invalid]="bookingForm.get('detailLevel')?.invalid && bookingForm.get('detailLevel')?.touched">
                                     <option value="" selected>¿Cuánto detalle quieres...?</option>
-                                    <option>Sencillo</option>
-                                    <option>Medio</option>
-                                    <option>Denso</option>
+                                    <option>Sencillo (líneas finas o poca saturación)</option>
+                                    <option>Medio (líneas medias o más saturación)</option>
+                                    <option>Denso (líneas gruesas o mucha saturación)</option>
                                 </select>
+                                <div class="invalid-feedback">El nivel de detalle es obligatorio.</div>
                             </div>
+
                             <div class="col-md-6">
                                 <label class="form-label d-block">¿Color o B/N?</label>
                                 <div class="d-flex gap-3 mt-2 radio-align-fix">
@@ -240,6 +328,11 @@
                                     <label class="form-check-label" for="terms">
                                         Acepto los <a href="#" class="terms-link text-info">Términos y Condiciones</a>.
                                     </label>
+                                    <div class="invalid-feedback d-block"
+                                        *ngIf="bookingForm.get('acceptTerms')?.invalid && bookingForm.get('acceptTerms')?.touched">
+                                        Debes aceptar los términos para continuar.
+                                    </div>
+
                                 </div>
                             </div>
 
@@ -248,6 +341,9 @@
                                     [disabled]="bookingForm.invalid || !selectedSlot">
                                     ENVIAR SOLICITUD
                                 </button>
+                                <div *ngIf="bookingForm.invalid && bookingForm.touched" class="text-danger mt-2 small">
+                                    Por favor, rellena todos los campos obligatorios y selecciona una fecha.
+                                </div>
                             </div>
                         </div>
                     </form>

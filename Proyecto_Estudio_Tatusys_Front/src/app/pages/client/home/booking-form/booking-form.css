@@ -433,3 +433,47 @@ textarea.form-control {
     background-color: #008B8B;
     color: white;
 }
+
+/* ===========================================
+SECCIÓN DE MENSAJES DE ERROR PARA VALIDACIONES
+===============================================*/
+/* 1. MENSAJES DE ERROR (Validaciones) */
+.invalid-feedback {
+    text-align: left;
+    font-size: clamp(0.9rem, 0.85rem + 0.5vw, 1.1rem);
+    font-weight: 500;
+    margin-top: 0.313rem;
+}
+
+
+/*==========================================
+botones de info adicional para el formulario 
+============================================*/
+
+/* BOTÓN DE INFO (El icono 'i') */
+.btn-info-icon {
+    background: transparent;
+    border: none;
+    color: var(--robin-egg-blue);
+    line-height: 1;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.btn-info-icon:hover,
+.btn-info-icon.active {
+    color: #ffffff;
+}
+
+/* Recuadro del mensaje emergente */
+.hint-box {
+    background-color: var(--dark-cyan);
+    border-left: 3px solid var(--robin-egg-blue);
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: left;
+    font-size: clamp(0.7rem, 0.85rem + 0.5vw, 1rem);
+    line-height: 1.4;
+}

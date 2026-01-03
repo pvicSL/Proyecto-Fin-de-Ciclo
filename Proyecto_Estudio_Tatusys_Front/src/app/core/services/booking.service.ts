@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class BookingService {
+
+    // Aquí va la ruta que hemos configurado en el proyecto de Spring
     private apiUrl = 'http://localhost:8085/api/citas/crear-cita';
 
     constructor(private http: HttpClient) { }

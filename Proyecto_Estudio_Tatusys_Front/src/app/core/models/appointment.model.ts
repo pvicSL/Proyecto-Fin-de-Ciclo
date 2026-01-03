@@ -1,17 +1,18 @@
 export interface AppointmentDTO {
     // Datos de identificación
+    // ESTO SE DEBE CAMBIAR POR LA CLAVE MÁS SEGURA QUE GENEREMOS EN UNA COLUMNA NUEVA EN LA BBDD
     idCita: number;
 
-    // Datos temporales (Strings porque vienen así de JSON/Java)
+    // Datos de fecha y hora (son Strings porque vienen así de JSON/Java)
     fecha: string; // 'yyyy-MM-dd'
     hora: string;  // 'HH:mm:ss'
 
-    // Datos del servicio
+    // Datos del servicio (es decir, de la cita que se solicita)
     comentarios?: string;
     factura?: boolean;
     tipo: string;
     zona: string;
-    tamanio: string; // CLAVE para calcular duración
+    tamanio: string; // IMP, se usa para calcular duración
     detalle: string;
     coloracion: string;
     estilo: string;

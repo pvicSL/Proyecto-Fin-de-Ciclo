@@ -202,7 +202,6 @@ h6,
 
 /* ANIMACIÓN DE CAMBIO DE VISTA */
 .view-transition {
-    /* La animación dura 0.6 segundos y tiene un efecto de frenado al final */
     animation: fadeSlideUp 0.6s ease-out forwards;
 }
 
@@ -210,18 +209,15 @@ h6,
     from {
         opacity: 0;
         transform: translateY(20px);
-        /* Empieza un poco más abajo */
     }
 
     to {
         opacity: 1;
         transform: translateY(0);
-        /* Termina en su sitio */
     }
 }
 
 /* ESTILOS DEL TEXTO DE CAMBIO DE CITA */
-
 .cta-text {
     font-size: clamp(0.9rem, 3vw, 1.2rem);
     color: var(--jet);
@@ -244,7 +240,7 @@ h6,
 }
 
 /* ===============================
-   ESTILOS PARA PREGUNTAS FRECUENTES (CORREGIDO)
+   ESTILOS PARA PREGUNTAS FRECUENTES
    =============================== */
 
 /* Botón principal de despliegue */
@@ -265,7 +261,7 @@ h6,
     color: white;
 }
 
-/* iconos de los lados del botón FAQ*/
+/* iconos de los lados del botón FAQ */
 .faq-icon-left,
 .faq-icon-right {
     color: var(--dark-cyan);
@@ -298,13 +294,11 @@ h6,
     margin-bottom: 0.5rem;
     overflow: hidden;
     background-color: #fff !important;
-    /* FORZAMOS BLANCO AL ITEM */
 }
 
 /* estilo de las preguntas (ESTADO CERRADO) */
 .accordion-button {
     background-color: #fff !important;
-    /* FORZAMOS BLANCO AL BOTÓN */
     color: var(--jet);
     font-weight: 500;
     transition: all 0.3s ease;
@@ -341,7 +335,7 @@ h6,
 }
 
 /* ===============================
-   RESPONSIVE
+   RESPONSIVE - MÓVIL VERTICAL
    =============================== */
 @media (max-width: 480px) {
 

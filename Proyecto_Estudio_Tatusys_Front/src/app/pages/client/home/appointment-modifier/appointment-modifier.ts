@@ -4,16 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { AppointmentService } from '../../../../core/services/appointment.service';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
 
+// Estados posibles para el recuadro de modificación o cancelación de una cita
 type ModifierState = 'search' | 'inicial' | 'modificando' | 'confirmado' | 'cancelado';
 
 
-// Define esta interfaz arriba del todo, fuera de la clase
+// Interfaz para las columnas de días del selector de fechas
 interface DayColumn {
   dateObj: Date;
-  dateStr: string; // "2026-12-20"
-  weekday: string; // "Lunes"
-  dayNumber: string; // "20"
-  slots: string[];
+  dateStr: string; // Por ejemplo: "2026-12-20"
+  weekday: string; // Por ejemplo: "Lunes"
+  dayNumber: string; // Por ejemplo: "20"
+  slots: string[]; //Esto carga el array de huecos disponibles
 }
 
 
@@ -24,15 +25,18 @@ interface DayColumn {
   templateUrl: './appointment-modifier.html',
   styleUrl: './appointment-modifier.css'
 })
+
+
 export class AppointmentModifierComponent {
 
   @Output() closeRequest = new EventEmitter<void>();
 
+  // Búsqueda de la cita mediante su clave, es el estado inicial
   currentState: ModifierState = 'search';
-  bookingCode: string = ''; // El ID introducido por el usuario
+  bookingCode: string = ''; // El ID de la cita que pone el usuario
 
   currentAppointment: AppointmentDTO | null = null;
-  calculatedDuration: number = 0; // Duración en minutos calculada
+  calculatedDuration: number = 0; // Duración en minutos calculada con los parámetros
 
   selectedNewDate: string = '';
   availableSlots: string[] = [];
@@ -42,27 +46,29 @@ export class AppointmentModifierComponent {
     day: '',
     year: '',
     hour: '',
-    durationText: '' // Para mostrar "(2 horas)"
+    durationText: '' // Para mostrar "(2 horas)" en lugar de "x minutos"
   };
 
-  // VARIABLES NUEVAS PARA EL CALENDARIO SEMANAL
-  allDays: DayColumn[] = []; // Todos los días (30 días) que devuelve el back
+  // VARIABLES PARA EL CALENDARIO SEMANAL
+  allDays: DayColumn[] = []; // Todos los días que devuelve el back (Ajustar a 60)??
   weekIndex: number = 0;     // En qué semana estamos (0, 1, 2...)
-  daysPerPage: number = 7;   // Días a mostrar por pantalla
+  daysPerPage: number = 7;   // Días que se ven por pantalla (vista de semana)
 
+  // Constructor del service
   constructor(private appointmentService: AppointmentService) { }
 
   // --- MÉTODOS DE CAMBIO DE ESTADO ---
   formatSlotDate(isoDate: string): string {
-    // PROTECCIÓN: Si la fecha viene con espacio "2026-12-20 10:00", 
+    // PROTECCIÓN: si la fecha viene con espacio "2026-12-20 10:00", 
     // la cambiamos a "2026-12-20T10:00" para que new Date() no falle nunca.
     const safeDate = isoDate.replace(' ', 'T');
 
     const date = new Date(safeDate);
 
-    // Validar que la fecha sea válida antes de formatear (por si acaso)
+    // Se valida que la fecha sea válida antes de darle formato
     if (isNaN(date.getTime())) return isoDate;
 
+    //Formateo de la fecha y de la hora
     const dayFormatter = new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short' });
     const timeFormatter = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' });
 
