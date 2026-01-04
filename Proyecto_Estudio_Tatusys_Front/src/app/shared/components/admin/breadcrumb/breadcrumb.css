@@ -1,0 +1,22 @@
+/*=====================================
+----- ESTILOS PARA NAV-BREADCRUMB -----
+=====================================*/
+
+/* Ajustes ruta de navegación */
+.breadcrumb-nav{
+    margin: auto;
+    margin-top:0.5rem;
+}
+
+/* Color del texto de la ruta de navegación */
+.breadcrumb-nav .breadcrumb-item a {
+    text-decoration: none;
+    color: #000;
+    font-size: 0.8rem;
+}
+
+/* Color al hacer hover en el texto */
+.breadcrumb-nav .breadcrumb-item a:hover{
+    text-decoration: none;
+    color: var(--dark-cyan);
+}

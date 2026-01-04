@@ -1,0 +1,65 @@
+<nav class="navbar d-lg-none mb-3 text-white">
+  <div class="container-fluid">
+    <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-mobile">
+      <i class="bi bi-list fs-1"></i>
+    </button>
+    <span class="p-2 fs-3">Nombre Usuario</span>
+  </div>
+</nav>
+
+<div id="sidebar-mobile" class=" collapse d-lg-none text-white">
+  <div class="d-flex justify-content-end p-3">
+    <button type="button" class="btn-close btn-close-white" data-bs-toggle="collapse" data-bs-target="#sidebar-mobile"></button>
+  </div>
+  <ul class="nav flex-column text-center">
+    @for (item of navItems; track item.title) {
+      <li class="sidebar-item">
+        <a [routerLink]="item.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link text-white fs-5">{{ item.title }}</a>
+      </li>
+    }
+    <hr class="text-white">
+    @for (item of footerItems; track item.title) {
+      <li class="sidebar-footer-item">
+        <a [routerLink]="item.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link text-white fs-5">{{ item.title }}</a>
+      </li>
+    }
+  </ul>
+</div>
+
+<div class="wrapper d-none d-lg-block sticky-top">
+  <aside id="sidebar" [class.expand]="isExpanded">
+    <div class="d-flex align-items-center p-3">
+      <button id="toggle-btn" type="button" (click)="toggleSidebar()">
+        <i class="bi bi-list"></i>
+      </button>
+      
+      @if (isExpanded) {
+        <div class="sidebar-logo ms-2">
+          <p class="mb-0 fw-bold">Nombre usuario</p>
+        </div>
+      }
+    </div>
+
+    <ul class="sidebar-nav">
+      @for (item of navItems; track item.title) {
+        <li class="sidebar-item">
+          <a [routerLink]="item.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+            <i class="bi {{ item.icon }}"></i>
+            <span>{{ item.title }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+
+    <ul class="sidebar-footer">
+      @for (item of footerItems; track item.title) {
+        <li class="sidebar-footer-item">
+          <a [routerLink]="item.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+            <i class="bi {{ item.icon }}"></i>
+            <span>{{ item.title }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </aside>
+</div>

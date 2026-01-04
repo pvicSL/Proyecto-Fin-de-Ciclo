@@ -14,26 +14,30 @@ export const routes: Routes = [
     },
 
     // 2. RUTA ADMIN - COMENTADA HASTA QUE ESTO ESTÉ HECHO, PARA QUE NO DÉ ERRORES DE COMPILACIÓN
-    /* 
+    
    {
       path: 'admin',
-      loadComponent: () => import('./shared/layouts/admin-layout/admin-layout.component')
-        .then(m => m.AdminLayoutComponent),
+      loadComponent: () => import('./shared/layouts/admin-layout/admin-layout')
+        .then(m => m.AdminLayout),
+      
       children: [
         {
           path: '',
           // Carga el dashboard por defecto al entrar en /admin
-          loadComponent: () => import('./pages/admin/dashboard-home/dashboard-home.component')
-            .then(m => m.DashboardHomeComponent)
+          loadComponent: () => import('./pages/admin/dashboard-home/dashboard-home').then(m => m.DashboardHome),
+          data: {title: 'Home', icon: 'bi-house-door'}
         },
-        // RUTAS FUTURAS DEL DASHBOARD:
-        // { 
-        //   path: 'solicitudes', 
-        //   loadComponent: () => import('./pages/admin/requests/requests.component').then(m => m.RequestsComponent) 
-        // },
+         // RUTAS FUTURAS DEL DASHBOARD
+        { 
+          path: 'solicitudes', 
+          loadComponent: () => import('./pages/admin/requests/requests').then(m => m.Requests), 
+          data: {title: 'Solicitudes', icon: 'bi-envelope'}
+        },
       ]
+        
     },
-    */
+
+    
 
     // 3. RUTA COMODÍN (Redirigir a home si la URL no existe)
     { path: '**', redirectTo: '' }

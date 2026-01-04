@@ -1,0 +1,146 @@
+
+/*=============================
+------- SIDEBAR-MOBILE --------
+=============================*/
+
+/* ajustes sidebar-mobile */
+#sidebar-mobile{
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    z-index: 1050;
+    background-color: var(--dark-cyan); 
+    position: fixed;
+    transition: margin .25s ease-in-out;
+}
+
+/*=============================
+----------- SIDEBAR -----------
+=============================*/
+
+/* Quitar estlilo de los elemenotos de la lista (sidebar) */
+li{
+    list-style: none;
+}
+
+/* ajustes contenedor padre del sidebar */
+
+.wrapper{
+    display: flex;
+    height: 100vh;
+    width:fit-content;
+    position: sticky;
+
+}
+
+/* ajustes sidebar sin expandir */
+
+#sidebar{
+    
+    width: 80px;
+    min-width: 80px;
+    height: 100vh;
+    z-index: 1000;
+    transition: all .25s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dark-cyan);
+}
+
+/* ajustes sidebar expandido */
+
+#sidebar.expand{
+    width: 260px;
+    min-width: 260px;
+    
+}
+
+/* ajustes botón hamburger que expande el sidebar */
+#toggle-btn{
+    background-color: transparent;
+    cursor: pointer;
+    border: 0;
+    padding: 1rem 0.5rem;
+}
+
+/* Icono hamburger */
+#toggle-btn i{
+    font-size: 2rem;
+    color: white;
+}
+
+
+
+/* Texto cabecera del sidebar */
+.sidebar-logo p{
+    color:white;
+    min-width: 125px;
+}
+
+/* Ajustes de visualización en sidebar no expandido */
+#sidebar:not(.expand) .sidebar-logo,
+#sidebar:not(.expand) a.sidebar-link span{
+    display: none;
+}
+
+/* Lista de enlaces a páginas del sidebar */
+.sidebar-nav{
+    padding: 2rem 0;
+    flex: 1 1 auto;
+}
+
+/* Ajustes enlaces del footer */
+.sidebar-footer{
+    padding: 0;
+}
+
+/* Ajuste de cada enlace a las otras páginas */
+a.sidebar-link{
+text-decoration: none;
+   padding: 0.625rem 1.625rem; 
+   color: white;
+   display: block;
+   font-size: 1rem;
+   white-space: nowrap;
+   border-left: 3px solid transparent;
+}
+
+/* Iconos de cada enlace a las otras páginas */
+.sidebar-link i{
+    font-size: 1.5rem;
+    margin-top: 0.5rem;
+    margin-right: 0.75rem;
+
+}
+
+/* Color de background cuando hacemos hover en un enlace del sidebar */
+.sidebar-link:hover{
+    background-color: var(--robin-egg-blue);
+}
+
+/* Color de background cuando un enlace del sidebar está activado */
+.sidebar-item .active{
+    background-color: var(--robin-egg-blue) !important;
+    border-color: var(--robin-egg-blue) !important;
+}
+
+/*=====================================
+----- ESTILOS PARA NAVBAR-MOBILE ------
+=====================================*/
+
+/* Color de fondo del navbar mobile */
+.navbar{
+    background-color: var(--dark-cyan);
+}
+
+/* Icono del navbar mobile */
+.navbar i{
+    color: white;
+    font-size: 2rem;
+}
+
+/* Texto del navbar mobile */
+.navbar div span{
+    color: white;
+    font-size: 2rem;
+}
