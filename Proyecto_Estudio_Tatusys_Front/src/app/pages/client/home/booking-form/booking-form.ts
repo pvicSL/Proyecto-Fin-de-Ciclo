@@ -3,10 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AppointmentService } from '../../../../core/services/appointment.service';
 
-interface DaySlot {
-  day: number;
-  weekday: string;
-  status: 'available' | 'none' | 'closed';
+// Interfaz para tipar correctamente los días del calendario
+interface CalendarDay {
+  dateObj: Date;
+  dateStr: string;
+  dayNumber: number;
+  weekdayLetter: string;
+  status: 'available' | 'disabled' | 'weekend' | 'empty' | 'none';
   slots: string[];
 }
 
@@ -19,25 +22,90 @@ interface DaySlot {
 })
 export class BookingFormComponent implements OnInit {
 
+  // ==========================================
+  // 1. VARIABLES DE ESTADO Y UI
+  // ==========================================
   isFormOpen: boolean = false;
+  activeHint: string | null = null;
+  currentAppointmentId: number | null = null;
+
+  // ==========================================
+  // 2. FORMULARIO Y DATOS
+  // ==========================================
   bookingForm: FormGroup;
+  selectedFiles: File[] = [];
+
+  // ==========================================
+  // 3. VARIABLES DEL CALENDARIO
+  // ==========================================
+  currentViewDate: Date = new Date();
+  weekDaysToDisplay: CalendarDay[] = [];
+  backendSlotsMap: Map<string, string[]> = new Map();
+
   selectedDayIndex: number | null = null;
+  selectedDateStr: string | null = null;
   selectedSlot: string | null = null;
 
-  // NUEVA: Guardaremos aquí la fecha real (ej: "2025-12-30")
-  selectedDateStr: string | null = null;
+  // ==========================================
+  // 4. MAPAS DE TRADUCCIÓN (HTML -> BBDD)
+  // ==========================================
 
-  // Empieza vacío. Se rellenará automáticamente al elegir servicio y tamaño.
-  mockDays: DaySlot[] = [];
+  // Mapea los value="body-..." del HTML a los ENUM de Java
+  private readonly MAPA_ZONAS: Record<string, string> = {
+    'body-arm': 'BRAZO',
+    'body-forearm': 'ANTEBRAZO',
+    'body-elbow': 'CODO',
+    'body-shoulder': 'HOMBRO',
+    'body-chest': 'TÓRAX',      // Cuidado con la tilde, Java debe esperarla así
+    'body-abdomen': 'ABDOMEN',
+    'body-pubis': 'PUBIS',
+    'body-thigh': 'MUSLO',
+    'body-knee': 'RODILLA',
+    'body-calf': 'PANTORILLA',  // Errata conocida en tu Back
+    'body-foot': 'PIE',
+    'body-hand': 'MANO',
+    'body-cervical': 'CERVIAL', // Errata conocida en tu Back
+    'body-lumbar': 'LUMBARES',
+    'body-buttcheek': 'NALGA',
+    'body-head': 'CABEZA'
+  };
 
-  //Variables de calendario
-  currentViewDate: Date = new Date(); // La fecha base para calcular la semana visible
-  weekDaysToDisplay: any[] = [];      // Array con los 7 días visuales (Lunes-Domingo)
-  backendSlotsMap: Map<string, string[]> = new Map(); // Mapa para buscar rápido: "2026-12-30" -> ["10:00"]
+  private readonly MAPA_SERVICIOS: Record<string, string> = {
+    'tattoo-new': 'TATUAJE',
+    'tattoo-delete': 'ELIMINACION', // Ojo: en tu HTML es tattoo-delete
+    'cover-up': 'COVER',
+    'tattoo-retouch': 'RETOQUE'     // Ojo: en tu HTML es tattoo-retouch
+  };
+
+  private readonly MAPA_TAMANIOS: Record<string, string> = {
+    'mini': 'MINI',
+    'small': 'PEQUEÑO',
+    'medium': 'MEDIANO',
+    'large': 'GRANDE',
+    'xtralarge': 'MUY_GRANDE'
+  };
+
+  private readonly MAPA_ESTILOS: Record<string, string> = {
+    'Realismo': 'REALISMO',
+    'Tradicional': 'TRADICIONAL',
+    'Japonés': 'JAPONES',       // Quitamos tilde para el Back
+    'Lettering': 'LETERING',    // Tu Back tiene LETERING (una T)
+    'Fineline': 'FINELINE',
+    'Black And Grey': 'BLACKANDGREY',
+    'Anime': 'ANIME'
+  };
+
+  // Mapa especial para DETALLE (HTML Value -> Java Enum)
+  // Como tu HTML envía frases largas, mapeamos la frase completa o la primera palabra
+  private readonly MAPA_DETALLES: Record<string, string> = {
+    'Sencillo (líneas finas o poca saturación)': 'SENCILLO',
+    'Medio (líneas medias o más saturación)': 'MEDIO',
+    'Denso (líneas gruesas o mucha saturación)': 'DENSO'
+  };
 
   constructor(
     private fb: FormBuilder,
-    private appointmentService: AppointmentService // Inyectamos tu servicio
+    private appointmentService: AppointmentService
   ) {
     this.bookingForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -60,185 +128,132 @@ export class BookingFormComponent implements OnInit {
       acceptTerms: [false, Validators.requiredTrue]
     }, { validators: this.emailMatchValidator });
 
-    // PASO 3: Escuchar cambios para actualizar disponibilidad
     this.escucharCambiosParaDisponibilidad();
   }
 
-  ngOnInit(): void {
-    // No hacemos nada al iniciar. 
-    // Esperamos a que el usuario rellene el formulario para buscar huecos.
-  }
+  ngOnInit(): void { }
 
-  // Mes en texto (ej: "DICIEMBRE")
+  // ==========================================
+  // 5. LÓGICA DEL CALENDARIO
+  // ==========================================
+
   get currentMonthName(): string {
     return new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(this.currentViewDate).toUpperCase();
   }
 
-  // Lógica para detectar cuándo el usuario rellena lo necesario para saber la duración
-  // 1. EL LISTENER (Sustituye al anterior)
   private escucharCambiosParaDisponibilidad() {
     this.bookingForm.valueChanges.subscribe(valores => {
       if (valores.service && valores.size && valores.detailLevel) {
-
-        // ... (cálculo duración igual que antes) ...
-        let duracionEstimada = 120; // Tu lógica de duración
-
-        this.appointmentService.getAvailableSlots(duracionEstimada).subscribe({
-          next: (respuestaBackend) => {
-            // A) Guardamos los datos en un mapa para acceso rápido
-            // respuestaBackend es { "2026-12-30": ["10:00"], ... }
-            this.backendSlotsMap = new Map(Object.entries(respuestaBackend));
-
-            // B) Reseteamos la vista a la fecha de hoy
-            this.currentViewDate = new Date();
-
-            // C) Generamos los 7 días visuales
-            this.generateWeekGrid();
-          }
-        });
+        // Podrías ajustar esto según el tamaño real
+        const duracionEstimada = this.calcularDuracionSegunTamano(this.mapearTamanio(valores.size));
+        this.cargarHuecosBackend(duracionEstimada);
       }
     });
   }
 
-  // --- 2. GENERADOR DE LA REJILLA (EL CEREBRO) ---
+  private cargarHuecosBackend(duracion: number) {
+    this.appointmentService.getAvailableSlots(duracion).subscribe({
+      next: (respuestaBackend) => {
+        this.backendSlotsMap = new Map(Object.entries(respuestaBackend));
+        this.generateWeekGrid();
+      },
+      error: (err) => console.error('Error cargando huecos', err)
+    });
+  }
+
   generateWeekGrid() {
     this.weekDaysToDisplay = [];
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Borramos hora para comparar solo fechas
+    today.setHours(0, 0, 0, 0);
 
-    // 1. Encontrar el Lunes de la semana 'currentViewDate'
+    // NUEVO: Calculamos la fecha mínima (Hoy + 3 días de margen para fianza)
+    const minDate = new Date(today);
+    minDate.setDate(today.getDate() + 3); // Días de margen
+
     const startOfWeek = this.getMonday(this.currentViewDate);
 
-    // 2. Generar los 7 días consecutivos
     for (let i = 0; i < 7; i++) {
       const iterDate = new Date(startOfWeek);
-      iterDate.setDate(startOfWeek.getDate() + i); // Lunes + 0, Lunes + 1...
+      iterDate.setDate(startOfWeek.getDate() + i);
 
-      const iterDateString = iterDate.toISOString().split('T')[0]; // "2025-12-29"
+      const iterDateString = iterDate.toISOString().split('T')[0];
+      const isWeekend = (iterDate.getDay() === 0 || iterDate.getDay() === 6);
 
-      // 3. Determinar estado del día
-      const isWeekend = (iterDate.getDay() === 0 || iterDate.getDay() === 6); // 0=Dom, 6=Sab
-      const isPast = iterDate < today; // Si es anterior a hoy
-      const isToday = iterDate.getTime() === today.getTime();
+      // CAMBIO: Ahora 'isPast' incluye todo lo que sea anterior a la fecha mínima (+3 días)
+      // Usamos setHours(0,0,0,0) para comparar solo fechas sin horas
+      const iterDateMidnight = new Date(iterDate);
+      iterDateMidnight.setHours(0, 0, 0, 0);
 
-      // Buscamos si el Back nos dio huecos para este día exacto
+      const isLocked = iterDateMidnight < minDate; // Bloqueado por regla de fianza o pasado
+
       const slots = this.backendSlotsMap.get(iterDateString) || [];
       const hasSlots = slots.length > 0;
 
-      // Estado final: 'disabled' (pasado), 'weekend' (finde), 'available' (con huecos), 'empty' (futuro sin huecos)
-      let status = 'empty';
-      if (isPast) status = 'disabled';
-      else if (isToday) status = 'disabled'; // Req 1: Hoy no disponible, solo a partir de mañana
-      else if (isWeekend) status = 'weekend'; // Req 5
+      let status: CalendarDay['status'] = 'empty';
+
+      if (isLocked) status = 'disabled'; // Ahora esto cubre pasado y los próximos 3 días
+      else if (isWeekend) status = 'weekend';
       else if (hasSlots) status = 'available';
 
       this.weekDaysToDisplay.push({
         dateObj: iterDate,
         dateStr: iterDateString,
         dayNumber: iterDate.getDate(),
-        weekdayLetter: this.getWeekdayLetter(iterDate), // L, M, X...
+        weekdayLetter: ['D', 'L', 'M', 'X', 'J', 'V', 'S'][iterDate.getDay()],
         status: status,
         slots: slots
       });
     }
   }
 
-  // --- 3. NAVEGACIÓN ---
-  prevMonth() {
-    const newDate = new Date(this.currentViewDate);
-    newDate.setMonth(newDate.getMonth() - 1);
+  // Navegación
+  prevMonth() { this.navigateMonth(-1); }
+  nextMonth() { this.navigateMonth(1); }
 
-    // Req 4: No permitir ir a meses anteriores al actual
+  private navigateMonth(direction: number) {
+    const newDate = new Date(this.currentViewDate);
+    newDate.setMonth(newDate.getMonth() + direction);
+
     const today = new Date();
-    if (newDate.getMonth() < today.getMonth() && newDate.getFullYear() <= today.getFullYear()) {
-      return; // Bloqueado
+    if (direction < 0 && newDate.getMonth() < today.getMonth() && newDate.getFullYear() <= today.getFullYear()) {
+      return;
     }
     this.currentViewDate = newDate;
     this.generateWeekGrid();
   }
 
-  nextMonth() {
-    const newDate = new Date(this.currentViewDate);
-    newDate.setMonth(newDate.getMonth() + 1);
-    this.currentViewDate = newDate;
+  prevWeek() { this.navigateWeek(-7); }
+  nextWeek() { this.navigateWeek(7); }
+
+  private navigateWeek(days: number) {
+    const d = new Date(this.currentViewDate);
+    d.setDate(d.getDate() + days);
+    this.currentViewDate = d;
     this.generateWeekGrid();
   }
 
-  prevWeek() {
-    const today = new Date();
-    const prevWeekDate = new Date(this.currentViewDate);
-    prevWeekDate.setDate(prevWeekDate.getDate() - 7);
-
-    // Opcional: Bloquear ir semanas muy atrás del día actual
-    // if (this.getMonday(prevWeekDate) < this.getMonday(today)) return;
-
-    this.currentViewDate = prevWeekDate;
-    this.generateWeekGrid();
-  }
-
-  nextWeek() {
-    const nextWeekDate = new Date(this.currentViewDate);
-    nextWeekDate.setDate(nextWeekDate.getDate() + 7);
-    this.currentViewDate = nextWeekDate;
-    this.generateWeekGrid();
-  }
-
-  // --- UTILIDADES ---
-  // Obtiene el objeto fecha del Lunes de la semana dada
   private getMonday(d: Date): Date {
     const date = new Date(d);
     const day = date.getDay();
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // ajustar cuando es domingo
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
     return new Date(date.setDate(diff));
   }
 
-  private getWeekdayLetter(d: Date): string {
-    const letras = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
-    return letras[d.getDay()];
-  }
-
-  // Método al seleccionar un día
-  selectDay(day: any) {
+  selectDay(day: CalendarDay) {
     if (day.status !== 'available') return;
-
-    // Marcamos visualmente
     this.selectedDayIndex = this.weekDaysToDisplay.indexOf(day);
-
-    // GUARDAMOS EL DATO REAL PARA EL ENVÍO
-    this.selectedDateStr = day.dateStr; // Esto guarda "2025-12-30"
-
+    this.selectedDateStr = day.dateStr;
     this.selectedSlot = null;
   }
 
-  // 2. LA FUNCIÓN DE TRANSFORMACIÓN (NUEVA)
-  // Convierte { "2026-12-20": ["10:00"] }  --->  [{ day: 20, weekday: 'D'... }]
-  private transformarRespuestaACalendario(dataBackend: any): DaySlot[] {
-    const diasGenerados: DaySlot[] = [];
-    const letrasDias = ['D', 'L', 'M', 'X', 'J', 'V', 'S']; // 0=Domingo, 1=Lunes...
-
-    // Recorremos las claves del objeto (las fechas tipo "2026-12-20")
-    for (const fechaString in dataBackend) {
-      if (dataBackend.hasOwnProperty(fechaString)) {
-
-        const huecos = dataBackend[fechaString]; // Es la lista ["10:00", "10:30"]
-        const fechaObj = new Date(fechaString);  // Convertimos string a objeto Date JS
-
-        diasGenerados.push({
-          day: fechaObj.getDate(), // Sacamos el número (ej: 20)
-          weekday: letrasDias[fechaObj.getDay()], // Sacamos la letra según el día de la semana
-          status: huecos.length > 0 ? 'available' : 'none', // Si tiene huecos es 'available'
-          slots: huecos // Asignamos las horas reales
-        });
-      }
-    }
-
-    // Ordenamos por día (por si acaso el mapa viene desordenado)
-    diasGenerados.sort((a, b) => a.day - b.day);
-
-    return diasGenerados;
+  selectSlot(time: string) {
+    this.selectedSlot = time;
   }
 
-  //Animacion suave para abrir el formulario
+  // ==========================================
+  // 6. GESTIÓN DEL FORMULARIO Y ARCHIVOS
+  // ==========================================
+
   toggleForm() {
     this.isFormOpen = !this.isFormOpen;
     if (this.isFormOpen) {
@@ -249,46 +264,48 @@ export class BookingFormComponent implements OnInit {
     }
   }
 
+  toggleHint(field: string) {
+    this.activeHint = this.activeHint === field ? null : field;
+  }
 
-  selectSlot(time: string) {
-    this.selectedSlot = time;
+  onFileChange(event: any) {
+    const files = event.target.files;
+    if (files.length > 3) {
+      alert('Máximo de 3 imágenes.');
+      event.target.value = '';
+      this.selectedFiles = [];
+      return;
+    }
+    this.selectedFiles = Array.from(files);
   }
 
   resetForm() {
-    // 1. Limpiamos los campos del formulario (Angular)
-    this.bookingForm.reset({
-      colorMode: 'bw',
-      needInvoice: false,
-      acceptTerms: false
-    });
-
-    // 2. Limpiamos las variables de SELECCIÓN
+    this.bookingForm.reset({ colorMode: 'bw', needInvoice: false, acceptTerms: false });
     this.selectedSlot = null;
     this.selectedDateStr = null;
     this.selectedDayIndex = null;
-
-    // 3. Limpiamos los DATOS DEL CALENDARIO (Esto hará que desaparezca)
-    // Al vaciar este array, el *ngIf="weekDaysToDisplay.length > 0" del HTML se vuelve falso
-    // y oculta todo el bloque del calendario.
     this.weekDaysToDisplay = [];
-
-    // 4. Limpiamos la caché del backend (opcional, pero recomendado)
     this.backendSlotsMap.clear();
-
-    console.log("Formulario y calendario reseteados completamente.");
+    this.currentAppointmentId = null;
+    this.selectedFiles = [];
+    const fileInput = document.getElementById('references') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
   }
 
+  // ==========================================
+  // 7. ENVÍO (SUBMIT) - ¡LÓGICA BLINDADA!
+  // ==========================================
+
   onSubmit() {
-    // 1. Verificamos que el formulario sea válido y se haya elegido hora
-    if (this.bookingForm.valid && this.selectedSlot) {
+    if (this.bookingForm.valid && this.selectedSlot && this.selectedDateStr) {
       const raw = this.bookingForm.value;
 
-      // 2. PREPARACIÓN DE DATOS (Esto lo tenías bien)
-      const citaParaEnviar = {
+      // Usamos las funciones de mapeo seguras
+      const citaObjeto = {
         tipo: this.mapearServicio(raw.service),
         zona: this.mapearZona(raw.bodyZone),
         tamanio: this.mapearTamanio(raw.size),
-        detalle: raw.detailLevel.toUpperCase(),
+        detalle: this.mapearDetalle(raw.detailLevel), // Aquí usa el mapa de frases largas
         coloracion: raw.colorMode === 'bw' ? 'NEGRO' : 'COLOR',
         estilo: this.mapearEstilo(raw.style),
         fecha: this.selectedDateStr,
@@ -300,199 +317,140 @@ export class BookingFormComponent implements OnInit {
           nombre: raw.firstName,
           apellido1: raw.lastSurname,
           apellido2: raw.secondSurname,
-          email: raw.email,
+          email: raw.email.toLowerCase(), // <--- CAMBIO: Forzamos minúsculas
           telefono: raw.phone,
           documentoIdentificacion: raw.cif
-        }
+        },
+        idCita: this.currentAppointmentId ? this.currentAppointmentId : undefined
       };
 
-      console.log('ENVIANDO CITA A BD:', citaParaEnviar);
+      // Construcción del FormData
+      const formData = new FormData();
+      formData.append('cita', JSON.stringify(citaObjeto));
+      this.selectedFiles.forEach(file => formData.append('ficheros', file));
 
-      // 3. ENVÍO REAL
-      // Llamamos al servicio y nos suscribimos a la respuesta
-      this.appointmentService.createAppointment(citaParaEnviar).subscribe({
-        next: (respuesta) => {
-          // Si entra aquí, es que Spring Boot ha guardado la cita (HTTP 200)
-          console.log('Cita guardada:', respuesta);
-          alert('¡Solicitud enviada y guardada en base de datos!');
+      console.log('Enviando...', citaObjeto);
 
+      this.appointmentService.createAppointment(formData).subscribe({
+        next: (res) => {
+          alert('¡Solicitud enviada correctamente!');
           this.resetForm();
           this.isFormOpen = false;
         },
-        error: (error) => {
-          // Si entra aquí, algo falló (HTTP 400, 500, etc.)
-          console.error('Error al guardar:', error);
-          alert('Error al conectar con el servidor. Revisa la consola.');
+        error: (err) => {
+          console.error(err);
+          // Mostramos un error amigable si es 400
+          if (err.status === 400) {
+            alert('Error en los datos. Por favor revisa el formulario.');
+          } else {
+            alert('Error al conectar con el servidor.');
+          }
         }
       });
-
     } else {
-      // Si el formulario no es válido, marcamos los errores en rojo
       this.bookingForm.markAllAsTouched();
     }
   }
 
-  // Función para corregir las erratas del Backend en las zonas
-  private mapearZona(valor: string): string {
-    if (!valor) return 'BRAZO';
+  // ==========================================
+  // 8. EDICIÓN (Cargar datos) - ¡MAPEO INVERSO!
+  // ==========================================
 
-    const mayusculas = valor.toUpperCase();
-
-    const mapa: any = {
-      'CERVICAL': 'CERVIAL',       // Mapeamos al error del backend
-      'PANTORRILLA': 'PANTORILLA', // Mapeamos al error del backend (falta una R)
-      'TÓRAX': 'TÓRAX',            // Aseguramos tildes
-      'TORAX': 'TÓRAX'             // Por si viene sin tilde
-    };
-
-    // Si está en el mapa, devolvemos el valor "corregido", si no, el valor en mayúsculas
-    return mapa[mayusculas] || mayusculas;
-  }
-
-  // --- FUNCIÓN DE TRADUCCIÓN PARA ESTILOS ---
-  private mapearEstilo(valor: string): string {
-    if (!valor) return 'REALISMO'; // Valor por defecto si viene vacío
-
-    // 1. Convertimos a mayúsculas: "Japonés" -> "JAPONÉS"
-    const mayusculas = valor.toUpperCase();
-
-    // 2. Mapa de traducción manual
-    const mapa: any = {
-      'JAPONÉS': 'JAPONES',       // AQUÍ QUITAMOS LA TILDE
-      'JAPONES': 'JAPONES',
-      'LETTERING': 'LETERING',    // Corregimos la doble T para que coincida con tu BBDD
-      'REALISMO': 'REALISMO',
-      'TRADICIONAL': 'TRADICIONAL',
-      'FINELINE': 'FINELINE',
-      'BLACK AND GREY': 'BLACKANDGREY', // Quitamos espacios
-      'ANIME': 'ANIME'
-    };
-
-    // 3. Devolvemos el valor traducido o el original limpio si no está en la lista
-    return mapa[mayusculas] || mayusculas.replace(/\s/g, '');
-  }
-
-  // Función auxiliar para traducir los tamaños de HTML a Java
-  private mapearTamanio(valor: string): string {
-    const mapa: any = {
-      'mini': 'MINI',
-      'small': 'PEQUEÑO',      // Traducimos small -> PEQUEÑO
-      'medium': 'MEDIANO',     // Traducimos medium -> MEDIANO
-      'large': 'GRANDE',       // Traducimos large -> GRANDE
-      'xtralarge': 'MUY_GRANDE' // Traducimos xtralarge -> MUY_GRANDE
-    };
-    return mapa[valor] || 'MEDIANO'; // Valor por defecto si falla
-  }
-
-  private mapearServicio(valor: string): string {
-    const mapeo: any = {
-      'tattoo-new': 'TATUAJE',
-      'tattoo-retouch': 'ELIMINACION',
-      'cover-up': 'COVER',
-      'design-only': 'RETOQUE'
-    };
-    return mapeo[valor] || 'TATUAJE';
-  }
-
-  emailMatchValidator(form: AbstractControl): ValidationErrors | null {
-    const email = form.get('email')?.value;
-    const confirm = form.get('confirmEmail')?.value;
-    if (!email || !confirm) return null;
-    return email === confirm ? null : { emailsDontMatch: true };
-  }
-
-  onFileChange(event: any) {
-    const files = event.target.files;
-    if (files.length > 3) {
-      alert('Máximo de 3 imágenes.');
-      event.target.value = '';
-    }
-  }
-
-  // Variable para saber si estamos editando (añádela arriba con las propiedades)
-  currentAppointmentId: number | null = null;
-
-  // Llama a esta función cuando hagas click en "Editar" en una cita
   cargarDatosParaEditar(cita: any) {
     this.isFormOpen = true;
-    this.currentAppointmentId = cita.idCita; // Guardamos el ID para luego hacer UPDATE en vez de CREATE
+    this.currentAppointmentId = cita.idCita;
 
-    // 1. Rellenamos el formulario con los datos de la BBDD
-    // (Tendrás que ajustar los nombres de campos para que coincidan)
+    // Aquí convertimos de BBDD (Enum) a HTML (Value/Text)
     this.bookingForm.patchValue({
       firstName: cita.cliente.nombre,
       lastSurname: cita.cliente.apellido1,
+      secondSurname: cita.cliente.apellido2,
       email: cita.cliente.email,
       phone: cita.cliente.telefono,
+      cif: cita.cliente.documentoIdentificacion,
       comments: cita.comentarios,
-      // OJO: Aquí necesitas transformar los valores de BBDD (MAYÚSCULAS) a los del Formulario (minúsculas)
-      // Por ejemplo: si cita.tamanio es 'PEQUEÑO', el form espera 'small'
-      size: this.mapearTamanioInverso(cita.tamanio),
-      service: this.mapearServicioInverso(cita.tipo),
-      detailLevel: cita.detalle ? cita.detalle.toLowerCase() : '',
-      // ... resto de campos ...
+      needInvoice: cita.factura === 1,
+      acceptTerms: true,
+
+      // Búsqueda inversa: Buscamos qué clave del mapa produce el valor que tenemos
+      size: this.getKeyByValue(this.MAPA_TAMANIOS, cita.tamanio) || '',
+      service: this.getKeyByValue(this.MAPA_SERVICIOS, cita.tipo) || '',
+      bodyZone: this.getKeyByValue(this.MAPA_ZONAS, cita.zona) || '', // Ej: devuelve 'body-arm' si cita.zona es 'BRAZO'
+
+      // Estos son especiales (Textos)
+      style: this.getKeyByValue(this.MAPA_ESTILOS, cita.estilo) || 'Realismo',
+      detailLevel: this.getKeyByValue(this.MAPA_DETALLES, cita.detalle) || '', // Devuelve la frase larga
+
+      colorMode: cita.coloracion === 'COLOR' ? 'color' : 'bw'
     });
 
-    // 2. AQUÍ PEGAS EL CÓDIGO QUE TE PASÉ
-    // Forzamos la búsqueda de huecos manualmente para que aparezca el calendario
-    const duracion = this.calcularDuracionSegunTamano(cita.tamanio);
+    if (cita.fecha) {
+      this.currentViewDate = new Date(cita.fecha);
+      const duracion = this.calcularDuracionSegunTamano(cita.tamanio); // Usa valor BBDD directo
 
-    this.appointmentService.getAvailableSlots(duracion).subscribe(data => {
-      this.mockDays = this.transformarRespuestaACalendario(data);
+      this.appointmentService.getAvailableSlots(duracion).subscribe(data => {
+        this.backendSlotsMap = new Map(Object.entries(data));
+        this.generateWeekGrid();
 
-      // Opcional: Si quieres pre-seleccionar la hora que ya tenía la cita
-      // this.selectedSlot = cita.hora.substring(0, 5); 
-    });
+        this.selectedDateStr = cita.fecha.toString();
+        this.selectedSlot = cita.hora.toString().substring(0, 5);
+
+        const dayFound = this.weekDaysToDisplay.find(d => d.dateStr === this.selectedDateStr);
+        if (dayFound) {
+          this.selectedDayIndex = this.weekDaysToDisplay.indexOf(dayFound);
+        }
+      });
+    }
+    this.toggleForm();
   }
 
-  // Calcula minutos basándose en lo que viene de la BBDD
-  private calcularDuracionSegunTamano(tamanioBBDD: string): number {
-    if (!tamanioBBDD) return 120; // Por defecto
+  // ==========================================
+  // 9. HELPERS DE MAPEO (¡Clave para que no falle!)
+  // ==========================================
 
+  emailMatchValidator(form: AbstractControl): ValidationErrors | null {
+    const e = form.get('email')?.value;
+    const c = form.get('confirmEmail')?.value;
+    return (e && c && e === c) ? null : { emailsDontMatch: true };
+  }
+
+  // Mapeadores seguros: si no encuentran el valor, devuelven algo por defecto o el mismo valor
+  // Esto evita enviar 'undefined' al servidor.
+
+  private mapearZona(valorHTML: string): string {
+    return this.MAPA_ZONAS[valorHTML] || 'BRAZO';
+  }
+
+  private mapearServicio(valorHTML: string): string {
+    return this.MAPA_SERVICIOS[valorHTML] || 'TATUAJE';
+  }
+
+  private mapearTamanio(valorHTML: string): string {
+    return this.MAPA_TAMANIOS[valorHTML] || 'MEDIANO';
+  }
+
+  private mapearEstilo(valorHTML: string): string {
+    return this.MAPA_ESTILOS[valorHTML] || 'REALISMO';
+  }
+
+  private mapearDetalle(valorHTML: string): string {
+    // Si encuentra la frase entera en el mapa, devuelve el ENUM.
+    // Si no (por si acaso), coge la primera palabra y la pone en mayúsculas.
+    return this.MAPA_DETALLES[valorHTML] || valorHTML.split(' ')[0].toUpperCase();
+  }
+
+  // Helper para buscar clave por valor (Reverse Lookup para Edición)
+  private getKeyByValue(object: any, value: string): string | undefined {
+    return Object.keys(object).find(key => object[key] === value);
+  }
+
+  private calcularDuracionSegunTamano(tamanioBBDD: string): number {
     switch (tamanioBBDD) {
       case 'MINI': return 60;
       case 'PEQUEÑO': return 90;
-      case 'MEDIANO': return 120;
       case 'GRANDE': return 180;
       case 'MUY_GRANDE': return 240;
-      default: return 120;
-    }
-  }
-
-  // Convierte de BBDD (PEQUEÑO) a Formulario (small)
-  private mapearTamanioInverso(valor: string): string {
-    const mapa: any = {
-      'MINI': 'mini',
-      'PEQUEÑO': 'small',
-      'MEDIANO': 'medium',
-      'GRANDE': 'large',
-      'MUY_GRANDE': 'xtralarge'
-    };
-    return mapa[valor] || 'medium';
-  }
-
-  // Convierte de BBDD (TATUAJE) a Formulario (tattoo-new)
-  private mapearServicioInverso(valor: string): string {
-    const mapa: any = {
-      'TATUAJE': 'tattoo-new',
-      'ELIMINACION': 'tattoo-retouch',
-      'COVER': 'cover-up',
-      'RETOQUE': 'design-only'
-    };
-    return mapa[valor] || 'tattoo-new';
-  }
-
-
-  // SECCION PARA MENSAJES EMERGENTES DE AYUDA EN FORMULARIO
-  // Variable para controlar qué ayuda se muestra (ej: 'size', 'style', etc.)
-  activeHint: string | null = null;
-
-  // Función para abrir/cerrar la ayuda al hacer click en el icono
-  toggleHint(field: string) {
-    if (this.activeHint === field) {
-      this.activeHint = null; // Si ya estaba abierto, lo cerramos
-    } else {
-      this.activeHint = field; // Abrimos el nuevo
+      default: return 120; // MEDIANO
     }
   }
 }
