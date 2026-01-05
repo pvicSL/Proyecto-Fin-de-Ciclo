@@ -6,17 +6,25 @@
                 <h3 class="modify-title mb-4">GESTIONA TU CITA</h3>
 
                 <p class="contact-text mb-4">
-                    Introduce el código de referencia que recibiste en el email de confirmación.
+                    Para acceder a tu reserva, introduce el localizador y tu correo electrónico.
                 </p>
 
+                <div class="mb-3 w-75 mx-auto">
+                    <label class="text-white-50 small mb-1">Localizador (Referencia)</label>
+                    <input type="text" class="form-control text-center input-reference" placeholder="Ej: A5B6F1C2"
+                        [(ngModel)]="bookingCode">
+                </div>
+
                 <div class="mb-4 w-75 mx-auto">
-                    <input type="text" class="form-control text-center input-reference" placeholder="Ej: REF-12345"
-                        [(ngModel)]="bookingCode" (keyup.enter)="searchAppointment()">
+                    <label class="text-white-50 small mb-1">Email asociado</label>
+                    <input type="email" class="form-control text-center input-reference" placeholder="tu@email.com"
+                        [(ngModel)]="bookingEmail" (keyup.enter)="searchAppointment()">
                 </div>
 
                 <div class="d-flex justify-content-center gap-3">
                     <button class="btn btn-outline-light px-4" (click)="closeModifier()">VOLVER</button>
-                    <button class="btn btn-modify-custom px-4" [disabled]="!bookingCode" (click)="searchAppointment()">
+                    <button class="btn btn-modify-custom px-4" [disabled]="!bookingCode || !bookingEmail"
+                        (click)="searchAppointment()">
                         BUSCAR
                     </button>
                 </div>

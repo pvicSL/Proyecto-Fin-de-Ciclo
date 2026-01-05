@@ -17,14 +17,30 @@ export class AppointmentService {
     constructor(private http: HttpClient) { }
 
     // 1. MÉTODO PARA CREAR LA CITA
-    createAppointment(cita: any): Observable<any> {
-        // Apunta al endpoint exacto del Controller en Java
-        return this.http.post(`${this.apiUrl}/crear-cita`, cita);
+    createAppointment(formData: FormData): Observable<any> {
+        // Nota: NO establecemos 'Content-Type' manualmente. 
+        // Angular lo detecta y lo pone como 'multipart/form-data' automáticamente.
+        return this.http.post(`${this.apiUrl}/crear-cita`, formData);
     }
 
     // 2. OBTENER CITA POR ID (se debe cambiar por una clave más compleja, no es seguro que usemos la id numérica sin más)
     getAppointmentByRef(id: string): Observable<AppointmentDTO> {
         return this.http.get<AppointmentDTO>(`${this.apiUrl}/${id}`);
+    }
+
+
+    /**
+   * Busca una cita por su código de referencia (Localizador) y el email del cliente via Query Params.
+   * Backend espera: /api/citas/buscar?ref=XXXX&email=yyyy@mail.com
+   */
+    getAppointmentByLocator(reference: string, email: string): Observable<any> {
+        // Usamos params para codificar correctamente el email y la referencia en la URL
+        return this.http.get(`${this.apiUrl}/buscar`, {
+            params: {
+                ref: reference,
+                email: email
+            }
+        });
     }
 
     // 3. MODIFICAR FECHA (Solo enviamos los cambios necesarios: el id, que es el mismo, y la fecha y la hora)

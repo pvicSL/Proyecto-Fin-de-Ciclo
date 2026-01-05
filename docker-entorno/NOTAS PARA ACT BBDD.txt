@@ -1,0 +1,46 @@
+INSTRUCCIONES PARA CREAR UN NUEVO CONTENEDOR CON ESTE DOCKER-COMPOSE:
+
+Asegúrate de no tener otro MySQL corriendo en el puerto.
+
+Abre la terminal en la carpeta donde está el docker-compose.yml.
+
+Ejecuta: docker-compose up -d
+
+¡Listo! Espera unos 30 segundos (MySQL tarda un poco en arrancar e importar el SQL).
+
+
+IMPORTANTE: SI YA EXISTE UN CONTENEDOR ANTIGUO DE LO MISMO:
+Hay que comenzar de cero tirando el contenedor anterior
+
+# Esto borra el contenedor Y el volumen de datos antiguo
+docker-compose down -v 
+docker-compose up -d
+
+
+------------------------------------------------------------------------------------------------------------
+INSTRUCCIONES SI SOLO SE QUIERE DEJAR LA BBDD IGUAL QUE LA TENGO YO AHORA
+# si no se quiere hacer esto, sino actualizar la BBDD existente en docker, hay que ejecutar lo siguiente:
+
+-- 1. AÑADIR COLUMNAS PARA LAS IMÁGENES DE REFERENCIA
+-- Se añaden 3 columnas de tipo texto para guardar los nombres de archivo
+ALTER TABLE servicios
+ADD COLUMN imagen_ref_1 VARCHAR(255) DEFAULT NULL,
+ADD COLUMN imagen_ref_2 VARCHAR(255) DEFAULT NULL,
+ADD COLUMN imagen_ref_3 VARCHAR(255) DEFAULT NULL;
+
+-- 2. AÑADIR COLUMNA PARA EL LOCALIZADOR (REFERENCIA SEGURA)
+-- Creamos la columna 'referencia', asegurando que sea única
+ALTER TABLE servicios
+ADD COLUMN referencia VARCHAR(12) UNIQUE DEFAULT NULL;
+
+-- 3. GENERAR LOCALIZADORES PARA CITAS ANTIGUAS
+-- Este comando rellena automáticamente las citas que ya existían (que tienen referencia NULL)
+-- con un código aleatorio de 8 caracteres en mayúsculas (Ej: A1B2C3D4)
+UPDATE servicios 
+SET referencia = UPPER(SUBSTRING(UUID(), 1, 8)) 
+WHERE referencia IS NULL;
+
+-- 4. NORMALIZAR EMAILS A MINÚSCULAS
+-- Para evitar problemas de login/búsqueda si hay emails como "Ana@Gmail.com"
+UPDATE clientes 
+SET email = LOWER(email);

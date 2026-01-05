@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  mysql-tatuajes:
+    image: mysql:8.0 # Usamos la misma versión que tú (8.0)
+    container_name: mysql-proyecto
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1105 # La contraseña para conectar
+      MYSQL_DATABASE: estudio_tatuajes # Crea la BBDD vacía al arrancar
+    ports:
+      - "3307:3306" # Mapea el puerto (Host:Contenedor)
+    volumes:
+      # 1. Persistencia: Para que los datos no se borren al apagar
+      - mysql_tatuajes_data:/var/lib/mysql
+
+      # 2. Esto carga la copia de seguridad de la nueva BBDD actualizada al iniciarse por primera vez
+      - ./init-db:/docker-entrypoint-initdb.d
+
+volumes:
+  mysql_tatuajes_data:
