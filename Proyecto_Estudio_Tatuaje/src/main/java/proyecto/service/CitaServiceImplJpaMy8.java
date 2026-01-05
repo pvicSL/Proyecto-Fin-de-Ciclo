@@ -1,5 +1,6 @@
 package proyecto.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -13,13 +14,19 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import proyecto.modelo.dto.CitaAdminDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
+import proyecto.modelo.entities.Presupuesto;
+import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Coloracion;
 import proyecto.modelo.enums.Detalle;
+import proyecto.modelo.enums.Estatus;
 import proyecto.modelo.repository.CitaRepository;
 import proyecto.modelo.repository.ClienteRepository;
+import proyecto.modelo.repository.PrecioRepository;
+import proyecto.modelo.repository.PresupuestoRepository;
 
 @Service
 public class CitaServiceImplJpaMy8 implements CitaService {
@@ -29,6 +36,11 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 
 	@Autowired
 	private ClienteRepository clienteRepository;
+	
+	@Autowired
+    private PresupuestoRepository presupuestoRepository;
+    @Autowired
+    private PrecioRepository precioRepository;
 
 	@Override
 	public List<Cita> leerTodos() {
@@ -272,5 +284,91 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		}
 		return true; // El hueco está limpio
 	}
+
+	@Override
+	public List<CitaDTO> obtenerPorRango(LocalDate fecha, String vista) {
+		LocalDate inicio = fecha;
+	    LocalDate fin = vista.equals("dia") ? fecha : fecha.plusDays(6);
+	    
+	    return citaRepository.findByEstatusAndFechaBetween(Estatus.CONFIRMADO, inicio, fin)
+	                         .stream()
+	                         .map(cita -> new CitaDTO(cita)) // método de conversión
+	                         .collect(Collectors.toList());
+	}
+
+	@Override
+	public List<CitaDTO> obtenerPorEstatus(Estatus estatus) {
+		// TODO Auto-generated method stub
+		return citaRepository.findByEstatus(estatus.PENDIENTE);
+	}
+
+	@Override
+	public CitaAdminDTO obtenerDetalleCita(int idServicio) {
+		// 1. Recuperamos la Cita (Servicio)
+        Cita cita = citaRepository.findById(idServicio)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + idServicio));
+
+        // 2. Recuperamos el Cliente (asumiendo que Cita tiene un objeto Cliente o id_cliente)
+        Cliente cliente = cita.getCliente();
+
+        // 3. Recuperamos el Presupuesto ya existente vinculado a esta cita
+        Presupuesto presupuesto = presupuestoRepository.findById(idServicio)
+                .orElseThrow(() -> new RuntimeException("No existe un presupuesto para la cita: " + idServicio));
+
+        // 4. Construimos el DTO mapeando los datos de las 3 entidades
+        CitaAdminDTO dto = new CitaAdminDTO();
+        
+        // Datos Identificadores
+        dto.setIdServicio(cita.getIdCita());
+        dto.setIdPresupuesto(presupuesto.getIdPresupuesto());
+
+        // Datos Cliente
+        dto.setNombre(cliente.getNombre());
+        dto.setApellido1(cliente.getApellido1());
+        dto.setApellido1(cliente.getApellido2());
+        dto.setTelefono(cliente.getTelefono());
+        dto.setEmail(cliente.getEmail());
+        dto.setDni(cliente.getDocumentoIdentificacion());
+
+        // Datos del Servicio + Consulta de Precios (para el desglose visual en Angular)
+        // Usamos .name() para convertir el Enum a String
+        dto.setTipo(cita.getTipo().name()); 
+        dto.setPrecioTipo(obtenerMonto(CategoriaEnum.TIPO, cita.getTipo().name()));
+
+        dto.setZona(cita.getZona().name());
+        dto.setPrecioZona(obtenerMonto(CategoriaEnum.ZONA, cita.getZona().name()));
+
+        dto.setTamanio(cita.getTamanio().name());
+        dto.setPrecioTamanio(obtenerMonto(CategoriaEnum.TAMANIO, cita.getTamanio().name()));
+
+        dto.setDetalle(cita.getDetalle().name());
+        dto.setPrecioDetalle(obtenerMonto(CategoriaEnum.DETALLE, cita.getDetalle().name()));
+
+        dto.setColoracion(cita.getColoracion().name());
+        dto.setPrecioColoracion(obtenerMonto(CategoriaEnum.COLORACION, cita.getColoracion().name()));
+
+        dto.setEstilo(cita.getEstilo().name());
+        dto.setPrecioEstilo(obtenerMonto(CategoriaEnum.ESTILO, cita.getEstilo().name()));
+
+        dto.setComentariosServicio(cita.getComentarios());
+
+        // Datos del Presupuesto (cogemos los datos que YA están en la tabla presupuestos)
+        dto.setPrecioBase(presupuesto.getPrecioBase());
+        dto.setIva(presupuesto.getIva());
+        dto.setPrecioFinal(presupuesto.getPrecioFinal());
+        dto.setFechaPresupuesto(presupuesto.getFecha());
+        dto.setEstadoPresupuesto(presupuesto.getEstado().name());
+        dto.setComentariosPresupuesto(presupuesto.getComentarios());
+
+        return dto;
+	}
+
+
+	private BigDecimal obtenerMonto(CategoriaEnum cat, String valor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 
 }

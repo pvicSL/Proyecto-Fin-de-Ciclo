@@ -1,8 +1,10 @@
-<div class="d-lg-flex w-100"> <app-sidebar></app-sidebar> 
+<div class="d-flex flex-column flex-lg-row min-vh-100"> 
+    
+    <app-sidebar></app-sidebar> 
 
-    <div class="main-content flex-grow-1 mx-3 p-3 p-lg-4">
+    <div class="main-content container-xl d-flex flex-column flex-grow-1 mx-auto p-3 p-lg-4">
         <app-breadcrumb></app-breadcrumb>
-        <router-outlet></router-outlet>
+        <router-outlet class="d-none"></router-outlet>
     </div>
 
 </div>

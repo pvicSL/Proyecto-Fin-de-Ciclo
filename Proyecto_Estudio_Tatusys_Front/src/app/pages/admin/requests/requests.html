@@ -1,1 +1,92 @@
-<p>requests works!</p>
+
+<div class="filter-group">
+  <button 
+    class="btn btn-secondary me-1" 
+    [class.active]="filtroSeleccionado === 'pendientes'"
+    (click)="cambiarFiltro('pendientes')">
+    Pendientes
+  </button>
+
+  <button 
+    class="btn btn-secondary me-1" 
+    [class.active]="filtroSeleccionado === 'revisadas'"
+    (click)="cambiarFiltro('revisadas')">
+    Revisadas
+  </button>
+
+  <button 
+    class="btn btn-danger " 
+    [class.active-danger]="filtroSeleccionado === 'rechazadas'"
+    (click)="cambiarFiltro('rechazadas')">
+    Rechazadas
+  </button>
+</div>
+
+<table id="table-confirmadas" class="table table-striped table-borderless align-middle">
+    <thead class="table-header">
+        <tr>
+            <th scope="col" class="d-none d-lg-table-cell"><h3>#</h3></th>
+            <th scope="col"><h3>Nombre</h3></th>
+            <th scope="col"><h3>Fecha y Hora</h3></th>
+            <th scope="col" class="d-none d-lg-table-cell"><h3>Tipo</h3></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody class="table-body">
+        
+        @for (cita of citasPaginadas; track cita.idCita ; let i = $index) {
+            <tr>
+                <th scope="row" class="d-none d-lg-table-cell">
+                    <p>{{ cita.idCita }}</p> </th>
+                <td><p>{{ cita.clienteNombre }}</p></td>
+                <td><p>{{ cita.fecha }}</p></td>
+                <td class="d-none d-lg-table-cell"><p>{{ cita.tipo }}</p></td>
+                <td class="d-flex justify-content-around align-items-center h-100">
+                    <button class="btn" (click)="revisarPresupuesto(cita.idCita)">Revisar Presupuesto</button>
+                </td>
+            </tr>
+        } @empty {
+            <tr>
+                <td colspan="5" class="text-center p-4">
+                    <p class="text-muted">No hay solicitudes pendientes por confirmar.</p>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<div class="footer mt-auto ">
+
+    <nav class="pagination-nav d-flex justify-content-end ms-4">
+        <ul class="pagination">
+            
+            <li class="page-item me-1" [class.disabled]="paginaActual === 1">
+                <a class="page-link btn" 
+                [class.btn-secondary]="paginaActual !== 1" 
+                (click)="irAPagina('prev')">
+                Anterior
+                </a>
+            </li>
+
+            @for (p of totalPaginas; track p) {
+                <li class="page-item rounded-3 me-1" [class.active]="paginaActual === p">
+                    <a class="page-link btn" 
+                    [class.btn-secondary]="paginaActual !== p" 
+                    (click)="irAPagina(p)">
+                    {{ p }}
+                    </a>
+                </li>
+            }
+
+            <li class="page-item me-1" [class.disabled]="paginaActual === totalPaginas.length">
+                <a class="page-link btn" 
+                [class.btn-secondary]="paginaActual !== totalPaginas.length" 
+                (click)="irAPagina('next')">
+                Siguiente
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>

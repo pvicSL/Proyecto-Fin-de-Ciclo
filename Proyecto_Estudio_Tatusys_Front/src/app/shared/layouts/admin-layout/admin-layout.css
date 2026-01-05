@@ -1,0 +1,169 @@
+
+
+
+/*=============================
+--- ESTILOS PARA EL BODY ---
+=============================*/
+
+/* Estilos base para la página */
+body{
+    background-color: white;
+    font-family: var(--font-sec); /* tipgrafía del cuerpo */
+    font-weight: normal;
+    color:#000; /* color base de la tipografía */
+}
+
+.main-content {
+    max-width: 1400px;
+    max-height: 100vh;
+
+}
+
+/* Esto obliga a que cualquier componente que entre en el router-outlet 
+   se comporte como un bloque flexible y crezca */
+.main-content > *:not(app-breadcrumb) {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+
+/* ajustes y alineación del texto adicional */
+h1{
+    font-family: var(--font-main);
+}
+
+
+/* ajustes personalizados botón principal */
+.btn{
+    background-color: var(--dark-cyan);
+    color: white;
+    font-weight: bold;
+    border: 2px solid var(--dark-cyan)
+}
+
+/* cambio de color del btn principal en hover */
+.btn:hover{
+    background-color: var(--robin-egg-blue);
+}
+
+/* ajustes personalizados botón secundario */
+.btn-secondary{
+    background-color: white;
+    color: black;
+    border: 2px solid var(--dark-cyan);
+    font-weight: bold;
+}
+
+/* cambio de color del btn secundario en hover */
+.btn-secondary:hover{
+    background-color: var(--dark-cyan);
+    color: white;
+    border-color: var(--dark-cyan);
+}
+
+.btn-danger{
+    background-color: white;
+    color: black;
+    border: 2px solid var(--burgundy);
+    font-weight: bold;
+}
+
+.btn-danger:hover{
+    background-color: var(--burgundy);
+    color: white;
+    border-color: var(--burgundy);
+}
+
+/* cambio de color de los botones activados */
+.active{
+    background-color: var(--dark-cyan) !important;
+    color: white !important;
+    border: 2px solid var(--dark-cyan) !important;
+}
+
+.active-danger{
+    background-color: var(--burgundy);
+    color: white;
+    border-color: var(--burgundy);
+}
+
+.pagination .page-item.active .page-link{
+    background-color: var(--dark-cyan);
+    border-color: var(--dark-cyan);
+}
+
+/*=============================
+---- ESTILOS PARA LA TABLA ----
+=============================*/
+
+/* Tabla principal */
+#table-confirmadas{
+    margin-top: 0.5rem;
+    text-align: center;
+    border-radius: 8px;
+    overflow: hidden; /*oculta los desbordamientos de las celdas */
+    
+}
+
+/* Header de la tabla principal */
+.table-header th{
+    background-color: var(--dark-cyan);
+    color: white;
+    padding: 1rem 1rem;
+}
+
+h3{
+    font-size: 1.4rem;
+}
+
+/* Ajuste dimensiones de las celdas */
+.table-body td{
+    padding: 0.75rem 0.75rem;
+}
+
+
+/* Ajuste del margen del encabezado y botones cronológicos en pantallas de tablet y móvil */
+@media (max-width: 991.98px) {
+    h1, .time-buttons{
+        margin-bottom: 1.5rem;
+    }
+}
+
+
+
+/* Cambio para tablets y móviles (Menos de 767px) */
+@media (max-width: 991.98px){
+
+    /* Fuente más pequeña para el encabezado */
+    h1{
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Margen botones cronológicos */
+    .time-buttons{
+        margin-bottom: 1.5rem;
+    }
+
+    /* Reducción del tamaño de los botones */
+    .btn{
+        font-size: 0.9em;
+    }
+
+    /* Fuente más pequeña para el header de la tabla */
+    .table-header h3{
+        font-size: 1.2rem;
+    }
+
+    /* Fuente más pequeña y una altura mínima para las celdas de la tabla */
+    td{
+        font-size: 0.8rem;
+        min-height: 60px;
+    }
+
+    /* Fuente más pequeña para los elementos del footer (alertas y pagination) */
+    .page-link, .alert{
+        font-size: 0.8rem;
+    }
+}

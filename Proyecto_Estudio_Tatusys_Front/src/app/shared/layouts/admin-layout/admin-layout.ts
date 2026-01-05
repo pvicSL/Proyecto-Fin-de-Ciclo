@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Sidebar } from '../../components/admin/sidebar/sidebar';
 import { RouterOutlet } from '@angular/router';
 import { Breadcrumb } from "../../components/admin/breadcrumb/breadcrumb";
@@ -8,6 +8,7 @@ import { Breadcrumb } from "../../components/admin/breadcrumb/breadcrumb";
   imports: [RouterOutlet, Sidebar, Breadcrumb],
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.css',
+  encapsulation: ViewEncapsulation.None
 })
 export class AdminLayout {
 

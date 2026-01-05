@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { AppointmentDTO } from '../models/appointment.model';
 
+
+
+
 @Injectable({
     providedIn: 'root'
 })
@@ -54,4 +57,17 @@ export class AppointmentService {
         // Busca la disponibilidad por minutos.
         return this.http.get(`${this.apiUrl}/disponibilidad/${durationMinutes}`);
     }
+
+    // Petición GET al endpoint específico de confirmadas
+    getConfirmedAppointments(fecha: string, vista: string): Observable<AppointmentDTO[]> {
+  // Enviamos la fecha y la vista como parámetros: ?fecha=2026-01-05&vista=dia
+  return this.http.get<AppointmentDTO[]>(`${this.apiUrl}/buscar/confirmadas/${fecha}/${vista}`, {
+    params: { fecha, vista }
+  });
+  
+  }
+
+  getRequests(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/buscar/pendientes`);
+  }
 }

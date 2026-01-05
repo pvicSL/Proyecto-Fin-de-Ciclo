@@ -1,12 +1,16 @@
 package proyecto.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import proyecto.modelo.dto.CitaAdminDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
+import proyecto.modelo.enums.CategoriaEnum;
+import proyecto.modelo.enums.Estatus;
 
 public interface CitaService {
 	
@@ -21,4 +25,10 @@ public interface CitaService {
 	Integer calcularDuracion(Cita cita);
     List<Cita> findByFecha(LocalDate fecha);
     Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos);
+    List<CitaDTO> obtenerPorRango(LocalDate fecha, String vista);
+    List<CitaDTO> obtenerPorEstatus(Estatus estatus);
+    CitaAdminDTO obtenerDetalleCita(int idServicio);
+
+
+
 }

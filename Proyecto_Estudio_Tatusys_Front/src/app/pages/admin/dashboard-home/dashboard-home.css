@@ -1,0 +1,65 @@
+/* Ajusta la ruta según dónde esté tu archivo del padre */
+@import "../../../shared/layouts/admin-layout/admin-layout.css";
+
+
+/* Ajustes header del contenido principal */
+.main-content-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 0.5rem;
+    max-height: 100vh;
+}
+
+/* Botones cronológicos */
+.time-buttons{
+    width: 270px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Encabezado del contenido principal */
+.text-subtitle{
+    text-align: start;
+}
+
+
+/*==============================
+---- ESTILOS PARA EL FOOTER ----
+==============================*/
+
+/* Ajustes del footer */
+.footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Dimensiones del contenedor padre de las alertas */
+.alerts{
+    width: 60%;
+}
+
+/* Ajustes del contenedor de las alertas */
+.alert{
+    background-color: white;
+    border: 2px solid var(--cardinal);
+    padding: 0.75rem 0.75rem 0rem 0.75rem;
+    margin: 2px;
+}
+
+/* Enlace a las páginas de las alertas */
+.alert a{
+    text-decoration: none;
+    color: var(--cardinal);
+    display: flex;
+}
+
+/* Icono de campanita */
+.alert a i{
+    margin-right: 1rem;
+}
