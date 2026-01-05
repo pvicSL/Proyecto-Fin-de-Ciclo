@@ -1,61 +1,205 @@
-/* Heredamos estilos básicos de la tarjeta si quieres, 
-   o los redefinimos aquí para que sea independiente */
+/* =============================================
+ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
+================================================ */
 
+/* Input de la referencia de la cita */
+.input-reference {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    font-size: 1.5rem;
+    letter-spacing: 0.125rem;
+    font-weight: 700;
+    color: var(--jet);
+    text-transform: uppercase;
+    padding: 0.8rem;
+    border-radius: 0.5rem;
+}
+
+/* Texto placeholder de ejemplo del input de id de cita*/
+.input-reference::placeholder {
+    color: #999;
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: normal;
+}
+
+.input-reference:focus {
+    background-color: #fff;
+    box-shadow: 0 0 0 4px var(--robin-egg-blue);
+}
+
+/* Estilo del contenedor de información de la cita */
 .booking-card {
     background-color: var(--jet);
     width: 95%;
-    max-width: 500px;
-    border-radius: 10px;
+    max-width: 40rem;
+    border-radius: 1rem;
     border: none;
     color: var(--antiflash-white);
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    padding: clamp(1.5rem, 5vw, 4rem);
 }
 
 .modify-title {
     font-family: 'Figtree', sans-serif;
     color: var(--antiflash-white);
     font-weight: 400;
-    font-size: clamp(1.6rem, 3vw, 2rem);
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
     letter-spacing: 0.02em;
 }
 
 .appointment-box {
     background-color: #f0f0f0;
-    border-radius: 10px;
-    padding: 1.5rem 1.2rem;
+    border-radius: 0.8rem;
+    padding: clamp(1rem, 3vw, 2rem);
     width: 100%;
     color: var(--jet);
-    /* Texto oscuro dentro de caja clara */
 }
 
-/* Títulos internos */
+/* Títulos dentro del recuadro de inf. de cita */
 .appointment-label {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    font-weight: 700;
     color: var(--jet);
+    text-transform: uppercase;
 }
 
-/* Separador vertical */
+.appointment-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* Separador vertical de los datos -> | */
 .divider {
-    width: 2px;
-    height: 60px;
+    width: 0.15rem;
+    align-self: stretch;
     background-color: var(--jet);
     opacity: 0.3;
-    margin: 0 15px;
+    margin: 0 clamp(0.5rem, 2vw, 1.5rem);
+    min-height: 4rem;
 }
 
-.appointment-day,
-.appointment-hour {
-    font-size: 2rem;
-    font-weight: 700;
+/* Texto de día de la semana */
+.weekday {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* Texto del número de día */
+.appointment-day {
+    font-size: clamp(2rem, 10vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1;
     color: var(--burgundy);
+    margin: 0.3rem 0;
 }
 
+/* Textos del año y de duración en minutos de la cita */
+.year,
+.duration {
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
+}
+
+/* Texto de la hora de la cita */
 .appointment-hour {
+    font-size: clamp(2rem, 10vw, 2.5rem);
+    font-weight: 800;
     color: var(--dark-cyan);
+    line-height: 1.1;
 }
 
-/* Botones */
-button {
+/* Texto de ponerse en contacto para modificar otros datos */
+.contact-text {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-block: 2rem;
+}
+
+/* --- BOTONES --- */
+/* Contenedor de botones: en versión móvil se ponen uno encima de otro */
+.action-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+/* Botón 'MODIFICAR CITA' */
+.btn-modify-custom {
+    color: white !important;
+    background-color: transparent;
+    border: 2px solid var(--robin-egg-blue);
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-modify-custom:hover {
+    color: black;
+    background-color: var(--dark-cyan);
+    border-color: var(--dark-cyan);
+}
+
+/* Botón 'CANCELAR CITA' */
+.btn-cancel-custom {
+    color: white !important;
+    background-color: transparent;
+    border: 0.15rem solid var(--cardinal);
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel-custom:hover {
+    background-color: var(--cardinal);
+    color: white;
+}
+
+
+/* ===== CONTENEDOR DEL SELECTOR DE NUEVA FECHA ====== */
+/* Contenedor con scroll horizontal por si la pantalla es muy pequeña */
+.days-container {
+    max-width: 100%;
+    min-height: 250px;
+}
+
+/* Columna de día */
+.day-column {
+    min-width: 3.75rem;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
-    font-weight: 500;
+    padding: 0.625rem 0.313rem;
+}
+
+/* Botones de hora (huecos disponibles) */
+.slot-btn {
+    border: 1px solid #666;
+    color: #ccc;
+    font-size: 0.8rem;
+    padding: 4px 0;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+.slot-btn:hover {
+    background-color: #444;
+    color: white;
+}
+
+/* Estado seleccionado */
+.slot-btn.selected {
+    background-color: var(--robin-egg-blue);
+    border-color: var(--robin-egg-blue);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 8px var(--dark-cyan);
 }
