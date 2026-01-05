@@ -1,5 +1,9 @@
 package proyecto.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -8,10 +12,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
@@ -64,54 +70,144 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		return duracionBase;
 	}
 
+	// --- MÉTODO CREAR CITA MODIFICADO ---
+	// NOTA: Recuerda actualizar la interfaz CitaService para aceptar el 2º
+	// parámetro
 	@Override
-	public Cita crearCita(Cita cita) {
+	public Cita crearCita(Cita cita, List<MultipartFile> ficheros) {
 
-		// 1. GESTIÓN DEL CLIENTE (Lógica de Actualización / Creación)
-		// Sacamos el cliente que viene del formulario
+		// GENERAR REFERENCIA ÚNICA
+		// Generamos una parte aleatoria del UUID y la ponemos en mayúsculas (Ej:
+		// "A5B6F1C2")
+		if (cita.getReferencia() == null || cita.getReferencia().isEmpty()) {
+			String codigo = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+			cita.setReferencia(codigo);
+		}
+
+		// 1. GUARDAR LAS IMÁGENES EN DISCO (Si las hay)
+		if (ficheros != null && !ficheros.isEmpty()) {
+			try {
+				// Iteramos los ficheros (Máximo 3 según tu lógica)
+				for (int i = 0; i < ficheros.size(); i++) {
+					MultipartFile archivo = ficheros.get(i);
+					if (!archivo.isEmpty()) {
+						String nombreUnico = guardarArchivo(archivo); // Llamada al método auxiliar de abajo
+
+						// Asignamos a la columna correspondiente según el orden
+						if (i == 0)
+							cita.setImagenRef1(nombreUnico);
+						if (i == 1)
+							cita.setImagenRef2(nombreUnico);
+						if (i == 2)
+							cita.setImagenRef3(nombreUnico);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				// Podrías lanzar una excepción personalizada si falla la subida
+			}
+		}
+
+		// 2. GESTIÓN DEL CLIENTE (IGUAL QUE ANTES)
 		Cliente clienteDelFormulario = cita.getCliente();
 
 		if (clienteDelFormulario != null) {
-			// Buscamos si ya existe por email
 			Optional<Cliente> clienteExistenteOpt = clienteRepository.findByEmail(clienteDelFormulario.getEmail());
 
 			if (clienteExistenteOpt.isPresent()) {
-				// CASO A: EL CLIENTE YA EXISTE -> ACTUALIZAMOS SUS DATOS
 				Cliente clienteBD = clienteExistenteOpt.get();
-
-				// Sobreescribimos los datos antiguos con los nuevos que ha escrito el usuario
 				clienteBD.setNombre(clienteDelFormulario.getNombre());
 				clienteBD.setApellido1(clienteDelFormulario.getApellido1());
 				clienteBD.setApellido2(clienteDelFormulario.getApellido2());
 				clienteBD.setTelefono(clienteDelFormulario.getTelefono());
 				clienteBD.setDocumentoIdentificacion(clienteDelFormulario.getDocumentoIdentificacion());
-
-				// Importante: Guardamos el cliente actualizado en la BBDD
 				clienteRepository.save(clienteBD);
-
-				// Asignamos este cliente (ya actualizado) a la cita
 				cita.setCliente(clienteBD);
-
 			} else {
-				// CASO B: EL CLIENTE ES NUEVO -> LO CREAMOS DE CERO
 				Cliente nuevoCliente = clienteRepository.save(clienteDelFormulario);
 				cita.setCliente(nuevoCliente);
 			}
 		}
-		/*
-		 * // 1. Buscar y asignar cliente if (cita.getCliente() != null &&
-		 * cita.getCliente().getIdCliente() != 0) { int idCliente =
-		 * cita.getCliente().getIdCliente(); Cliente clienteCompleto =
-		 * clienteRepository.findById(idCliente).orElse(null);
-		 * cita.setCliente(clienteCompleto); }
-		 */
 
-		// 2. Calcular y asignar duración automáticamente
+		// 3. CALCULAR DURACIÓN
 		Integer duracion = calcularDuracion(cita);
 		cita.setDuracionMinutos(duracion);
 
 		return citaRepository.save(cita);
 	}
+
+	// --- MÉTODO AUXILIAR PARA GUARDAR EN DISCO ---
+	private String guardarArchivo(MultipartFile archivo) throws IOException {
+		// Nombre carpeta donde se guardan (Créala en la raíz de tu proyecto o usa ruta
+		// absoluta)
+		String carpetaUploads = "uploads";
+
+		// Creamos la carpeta si no existe
+		Path rutaCarpeta = Paths.get(carpetaUploads);
+		if (!Files.exists(rutaCarpeta)) {
+			Files.createDirectories(rutaCarpeta);
+		}
+
+		// Generamos nombre único para evitar que "foto.jpg" sobrescriba otra "foto.jpg"
+		String nombreOriginal = archivo.getOriginalFilename();
+		String extension = "";
+		if (nombreOriginal != null && nombreOriginal.contains(".")) {
+			extension = nombreOriginal.substring(nombreOriginal.lastIndexOf("."));
+		}
+		String nombreUnico = UUID.randomUUID().toString() + extension;
+
+		// Guardamos el fichero
+		Path rutaCompleta = rutaCarpeta.resolve(nombreUnico);
+		Files.copy(archivo.getInputStream(), rutaCompleta);
+
+		return nombreUnico; // Devolvemos el nombre para guardarlo en la BBDD
+	}
+	// ----------------------------------------------
+
+	/*
+	 * METODO CREAR CITA PREVIO A MODIFICACION PARA SUBIR IMAGENES
+	 * 
+	 * @Override public Cita crearCita(Cita cita) {
+	 * 
+	 * // 1. GESTIÓN DEL CLIENTE (Lógica de Actualización / Creación) // Sacamos el
+	 * cliente que viene del formulario Cliente clienteDelFormulario =
+	 * cita.getCliente();
+	 * 
+	 * if (clienteDelFormulario != null) { // Buscamos si ya existe por email
+	 * Optional<Cliente> clienteExistenteOpt =
+	 * clienteRepository.findByEmail(clienteDelFormulario.getEmail());
+	 * 
+	 * if (clienteExistenteOpt.isPresent()) { // CASO A: EL CLIENTE YA EXISTE ->
+	 * ACTUALIZAMOS SUS DATOS Cliente clienteBD = clienteExistenteOpt.get();
+	 * 
+	 * // Sobreescribimos los datos antiguos con los nuevos que ha escrito el
+	 * usuario clienteBD.setNombre(clienteDelFormulario.getNombre());
+	 * clienteBD.setApellido1(clienteDelFormulario.getApellido1());
+	 * clienteBD.setApellido2(clienteDelFormulario.getApellido2());
+	 * clienteBD.setTelefono(clienteDelFormulario.getTelefono());
+	 * clienteBD.setDocumentoIdentificacion(clienteDelFormulario.
+	 * getDocumentoIdentificacion());
+	 * 
+	 * // Importante: Guardamos el cliente actualizado en la BBDD
+	 * clienteRepository.save(clienteBD);
+	 * 
+	 * // Asignamos este cliente (ya actualizado) a la cita
+	 * cita.setCliente(clienteBD);
+	 * 
+	 * } else { // CASO B: EL CLIENTE ES NUEVO -> LO CREAMOS DE CERO Cliente
+	 * nuevoCliente = clienteRepository.save(clienteDelFormulario);
+	 * cita.setCliente(nuevoCliente); } } /* // 1. Buscar y asignar cliente if
+	 * (cita.getCliente() != null && cita.getCliente().getIdCliente() != 0) { int
+	 * idCliente = cita.getCliente().getIdCliente(); Cliente clienteCompleto =
+	 * clienteRepository.findById(idCliente).orElse(null);
+	 * cita.setCliente(clienteCompleto); }
+	 * 
+	 * 
+	 * // 2. Calcular y asignar duración automáticamente Integer duracion =
+	 * calcularDuracion(cita); cita.setDuracionMinutos(duracion);
+	 * 
+	 * return citaRepository.save(cita); }
+	 */
 
 	@Override
 	public int eliminarCita(int idCita) {
@@ -271,6 +367,22 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 			}
 		}
 		return true; // El hueco está limpio
+	}
+
+	@Override
+	public Optional<Cita> buscarPorReferenciaYEmail(String referencia, String email) {
+
+		// 1. Pequeña validación de seguridad (fail-fast)
+		if (referencia == null || email == null) {
+			return Optional.empty();
+		}
+
+		// 2. Limpieza de datos (Trim para quitar espacios accidentales al copiar/pegar)
+		String refLimpia = referencia.trim();
+		String emailLimpio = email.trim();
+
+		// 3. Llamada al repositorio
+		return citaRepository.findByReferenciaAndCliente_Email(refLimpia, emailLimpio);
 	}
 
 }

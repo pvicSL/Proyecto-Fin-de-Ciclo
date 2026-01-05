@@ -33,7 +33,10 @@ export class AppointmentModifierComponent {
 
   // Búsqueda de la cita mediante su clave, es el estado inicial
   currentState: ModifierState = 'search';
-  bookingCode: string = ''; // El ID de la cita que pone el usuario
+
+  // VARIABLES DE BÚSQUEDA
+  bookingCode: string = '';  // Referencia (A1B2...)
+  bookingEmail: string = ''; // NUEVO: Email (usuario@mail...)
 
   currentAppointment: AppointmentDTO | null = null;
   calculatedDuration: number = 0; // Duración en minutos calculada con los parámetros
@@ -77,30 +80,31 @@ export class AppointmentModifierComponent {
   }
 
   searchAppointment() {
-    if (!this.bookingCode.trim()) return;
+    // Validamos que ambos campos tengan algo
+    if (!this.bookingCode.trim() || !this.bookingEmail.trim()) return;
 
-    this.appointmentService.getAppointmentByRef(this.bookingCode).subscribe({
+    // Llamamos al método nuevo del servicio que creamos antes
+    // getAppointmentByLocator(ref, email)
+    this.appointmentService.getAppointmentByLocator(this.bookingCode, this.bookingEmail.toLowerCase()).subscribe({
       next: (data) => {
         this.currentAppointment = data;
 
-        // Validamos si ya está cancelada
         if (data.estatus === 'RECHAZADO' || data.estatus === 'CANCELADO') {
           alert('Esta cita ya figura como cancelada.');
           this.changeState('cancelado');
           return;
         }
 
-        // 1. Calculamos la duración basada en el TAMAÑO del DTO
+        // Calculamos duración y preparamos la vista
         this.calculatedDuration = this.calculateDuration(data.tamanio);
-
-        // 2. Formateamos textos para la vista
         this.formatViewDetails(data.fecha, data.hora);
 
         this.changeState('inicial');
       },
       error: (err) => {
         console.error(err);
-        alert('No se ha encontrado ninguna cita con esa referencia.');
+        // Mensaje genérico de seguridad: No decimos si falló el email o el código
+        alert('No se ha encontrado ninguna cita con esos datos. Verifica el localizador y el email.');
       }
     });
   }
@@ -160,18 +164,30 @@ export class AppointmentModifierComponent {
     const diasTemp: DayColumn[] = [];
     const formatterDia = new Intl.DateTimeFormat('es-ES', { weekday: 'short' });
 
+    // NUEVO: Fecha mínima hoy + 3 días
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const minDate = new Date(today);
+    minDate.setDate(today.getDate() + 3);
+
     // Recorremos las claves (fechas)
     for (const fechaStr in dataBackend) {
       if (dataBackend.hasOwnProperty(fechaStr)) {
         const fechaObj = new Date(fechaStr);
+        // Quitamos horas para comparar fechas puras
+        const fechaObjMidnight = new Date(fechaObj);
+        fechaObjMidnight.setHours(0, 0, 0, 0);
 
-        diasTemp.push({
-          dateObj: fechaObj,
-          dateStr: fechaStr,
-          weekday: formatterDia.format(fechaObj).toUpperCase().replace('.', ''), // "LUN", "MAR"
-          dayNumber: fechaObj.getDate().toString(),
-          slots: dataBackend[fechaStr] // La lista de horas ["10:00", "11:00"]
-        });
+        // SOLO añadimos el día si es igual o posterior a la fecha mínima
+        if (fechaObjMidnight >= minDate) {
+          diasTemp.push({
+            dateObj: fechaObj,
+            dateStr: fechaStr,
+            weekday: formatterDia.format(fechaObj).toUpperCase().replace('.', ''),
+            dayNumber: fechaObj.getDate().toString(),
+            slots: dataBackend[fechaStr]
+          });
+        }
       }
     }
 

@@ -25,76 +25,86 @@ import proyecto.modelo.enums.Tamanio;
 import proyecto.modelo.enums.Tipo;
 import proyecto.modelo.enums.Zona;
 
-
 @Entity
-@Table(name="servicios")  // ← TABLA IGUAL
-public class Cita implements Serializable{
+@Table(name = "servicios") // ← TABLA IGUAL
+public class Cita implements Serializable {
 	private static final long serialVersionUID = -5431666055805619336L;
 
-	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id_servicio")  // ← COLUMNA IGUAL
-    private int idCita;  // ← Solo variable Java cambia
-    
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Tipo tipo;
-    
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Zona zona;
-    
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Tamanio tamanio;
-    
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Detalle detalle;
-    
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Coloracion coloracion;
-    
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Estilo estilo;
-    
-    @Temporal(TemporalType.DATE)
-    private LocalDate fecha;
-    
-    @Temporal(TemporalType.TIME)
-    private LocalTime hora;
-    
-    private String comentarios;
-    private Boolean factura;
-    
-    @Enumerated(EnumType.STRING)
-    private Estatus estatus;
-    
-    @Column(name = "duracion_minutos")
-    private Integer duracionMinutos;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_servicio") // ← COLUMNA IGUAL
+	private int idCita; // ← Solo variable Java cambia
 
-    @ManyToOne
-    @JoinColumn(name = "id_cliente")
-    private Cliente cliente;
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Tipo tipo;
 
-    // CONSTRUCTORES
-    public Cita() {
-        super();
-    }
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Zona zona;
 
-    
-    public Integer getDuracionMinutos() {
-		return duracionMinutos;
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Tamanio tamanio;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Detalle detalle;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Coloracion coloracion;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Estilo estilo;
+
+	@Temporal(TemporalType.DATE)
+	private LocalDate fecha;
+
+	@Temporal(TemporalType.TIME)
+	private LocalTime hora;
+
+	private String comentarios;
+	private Boolean factura;
+
+	@Enumerated(EnumType.STRING)
+	private Estatus estatus;
+
+	@Column(name = "duracion_minutos")
+	private Integer duracionMinutos;
+
+	// --- NUEVO: CAMPOS PARA LAS IMÁGENES ---
+	@Column(name = "imagen_ref_1")
+	private String imagenRef1;
+
+	@Column(name = "imagen_ref_2")
+	private String imagenRef2;
+
+	@Column(name = "imagen_ref_3")
+	private String imagenRef3;
+	// ---------------------------------------
+
+	// Nueva columna para el localizador de la cita
+	@Column(name = "localizador", unique = true)
+	private String referencia;
+
+	@ManyToOne
+	@JoinColumn(name = "id_cliente")
+	private Cliente cliente;
+
+	// CONSTRUCTORES
+	public Cita() {
+		super();
 	}
 
+	public Integer getDuracionMinutos() {
+		return duracionMinutos;
+	}
 
 	public void setDuracionMinutos(Integer duracionMinutos) {
 		this.duracionMinutos = duracionMinutos;
 	}
-
 
 	public Cita(int idCita, Tipo tipo, Zona zona, Tamanio tamanio, Detalle detalle, Coloracion coloracion,
 			Estilo estilo, LocalDate fecha, LocalTime hora, String comentarios, Boolean factura, Estatus estatus,
@@ -116,131 +126,163 @@ public class Cita implements Serializable{
 		this.cliente = cliente;
 	}
 
-
 	// GETTERS Y SETTERS
-    public int getIdCita() {
-        return idCita;
-    }
+	public int getIdCita() {
+		return idCita;
+	}
 
-    public void setIdCita(int idCita) {
-        this.idCita = idCita;
-    }
+	public void setIdCita(int idCita) {
+		this.idCita = idCita;
+	}
 
-    public Tipo getTipo() {
-        return tipo;
-    }
+	public Tipo getTipo() {
+		return tipo;
+	}
 
-    public void setTipo(Tipo tipo) {
-        this.tipo = tipo;
-    }
+	public void setTipo(Tipo tipo) {
+		this.tipo = tipo;
+	}
 
-    public Zona getZona() {
-        return zona;
-    }
+	public Zona getZona() {
+		return zona;
+	}
 
-    public void setZona(Zona zona) {
-        this.zona = zona;
-    }
+	public void setZona(Zona zona) {
+		this.zona = zona;
+	}
 
-    public Tamanio getTamanio() {
-        return tamanio;
-    }
+	public Tamanio getTamanio() {
+		return tamanio;
+	}
 
-    public void setTamanio(Tamanio tamanio) {
-        this.tamanio = tamanio;
-    }
+	public void setTamanio(Tamanio tamanio) {
+		this.tamanio = tamanio;
+	}
 
-    public Detalle getDetalle() {
-        return detalle;
-    }
+	public Detalle getDetalle() {
+		return detalle;
+	}
 
-    public void setDetalle(Detalle detalle) {
-        this.detalle = detalle;
-    }
+	public void setDetalle(Detalle detalle) {
+		this.detalle = detalle;
+	}
 
-    public Coloracion getColoracion() {
-        return coloracion;
-    }
+	public Coloracion getColoracion() {
+		return coloracion;
+	}
 
-    public void setColoracion(Coloracion coloracion) {
-        this.coloracion = coloracion;
-    }
+	public void setColoracion(Coloracion coloracion) {
+		this.coloracion = coloracion;
+	}
 
-    public Estilo getEstilo() {
-        return estilo;
-    }
+	public Estilo getEstilo() {
+		return estilo;
+	}
 
-    public void setEstilo(Estilo estilo) {
-        this.estilo = estilo;
-    }
+	public void setEstilo(Estilo estilo) {
+		this.estilo = estilo;
+	}
 
-    public LocalDate getFecha() {
-        return fecha;
-    }
+	public LocalDate getFecha() {
+		return fecha;
+	}
 
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
+	public void setFecha(LocalDate fecha) {
+		this.fecha = fecha;
+	}
 
-    public LocalTime getHora() {
-        return hora;
-    }
+	public LocalTime getHora() {
+		return hora;
+	}
 
-    public void setHora(LocalTime hora) {
-        this.hora = hora;
-    }
+	public void setHora(LocalTime hora) {
+		this.hora = hora;
+	}
 
-    public String getComentarios() {
-        return comentarios;
-    }
+	public String getComentarios() {
+		return comentarios;
+	}
 
-    public void setComentarios(String comentarios) {
-        this.comentarios = comentarios;
-    }
+	public void setComentarios(String comentarios) {
+		this.comentarios = comentarios;
+	}
 
-    public Cliente getCliente() {
-        return cliente;
-    }
+	public Cliente getCliente() {
+		return cliente;
+	}
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
+	}
 
-    public Boolean getFactura() {
-        return factura;
-    }
+	public Boolean getFactura() {
+		return factura;
+	}
 
-    public void setFactura(Boolean factura) {
-        this.factura = factura;
-    }
+	public void setFactura(Boolean factura) {
+		this.factura = factura;
+	}
 
-    public Estatus getEstatus() {
-        return estatus;
-    }
+	public Estatus getEstatus() {
+		return estatus;
+	}
 
-    public void setEstatus(Estatus estatus) {
-        this.estatus = estatus;
-    }
+	public void setEstatus(Estatus estatus) {
+		this.estatus = estatus;
+	}
 
-    @Override
-    public String toString() {
-        return "Cita [idCita=" + idCita + ", tipo=" + tipo + ", zona=" + zona + ", tamanio=" + tamanio
-                + ", detalle=" + detalle + ", estilo=" + estilo + ", fecha=" + fecha + ", hora=" + hora 
-                + ", comentarios=" + comentarios + ", cliente=" + cliente + "]";
-    }
+	// GETTERS Y SETTERS NUEVOS (SUBIDA IMAGENES)
+	public String getImagenRef1() {
+		return imagenRef1;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(idCita);
-    }
+	public void setImagenRef1(String imagenRef1) {
+		this.imagenRef1 = imagenRef1;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof Cita))
-            return false;
-        Cita other = (Cita) obj;
-        return idCita == other.idCita;
-    }
+	public String getImagenRef2() {
+		return imagenRef2;
+	}
+
+	public void setImagenRef2(String imagenRef2) {
+		this.imagenRef2 = imagenRef2;
+	}
+
+	public String getImagenRef3() {
+		return imagenRef3;
+	}
+
+	public void setImagenRef3(String imagenRef3) {
+		this.imagenRef3 = imagenRef3;
+	}
+
+	public String getReferencia() {
+		return referencia;
+	}
+
+	public void setReferencia(String referencia) {
+		this.referencia = referencia;
+	}
+
+	@Override
+	public String toString() {
+		return "Cita [idCita=" + idCita + ", tipo=" + tipo + ", zona=" + zona + ", tamanio=" + tamanio + ", detalle="
+				+ detalle + ", estilo=" + estilo + ", fecha=" + fecha + ", hora=" + hora + ", comentarios="
+				+ comentarios + ", cliente=" + cliente + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(idCita);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Cita))
+			return false;
+		Cita other = (Cita) obj;
+		return idCita == other.idCita;
+	}
 }

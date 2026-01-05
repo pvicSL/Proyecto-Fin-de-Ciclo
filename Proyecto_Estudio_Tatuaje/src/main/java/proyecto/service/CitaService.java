@@ -5,20 +5,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
 
 public interface CitaService {
-	
-	List<Cita>leerTodos();
+
+	List<Cita> leerTodos();
+
 	Cita buscarUnaCita(int idCita);
-	Cita crearCita(Cita cita);
+
+	Cita crearCita(Cita cita, List<MultipartFile> ficheros);
+
 	int eliminarCita(int idCita);
+
 	Cita actualizarCita(Cita cita);
-	Optional<Cita>buscarPorCliente(String email);
+
+	Optional<Cita> buscarPorCliente(String email);
+
 	List<CitaDTO> listarCitasDTO();
+
 	CitaDTO obtenerCitaDTOPorId(int idCita);
+
 	Integer calcularDuracion(Cita cita);
-    List<Cita> findByFecha(LocalDate fecha);
-    Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos);
+
+	List<Cita> findByFecha(LocalDate fecha);
+
+	Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos);
+
+	Optional<Cita> buscarPorReferenciaYEmail(String referencia, String email);
 }
