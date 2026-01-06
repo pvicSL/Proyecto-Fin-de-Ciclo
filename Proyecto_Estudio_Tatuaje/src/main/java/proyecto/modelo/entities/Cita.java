@@ -86,7 +86,7 @@ public class Cita implements Serializable {
 	// ---------------------------------------
 
 	// Nueva columna para el localizador de la cita
-	@Column(name = "localizador", unique = true)
+	@Column(unique = true)
 	private String referencia;
 
 	@ManyToOne

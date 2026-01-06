@@ -83,17 +83,18 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	}
 
 	// --- MÉTODO CREAR CITA MODIFICADO ---
-	// NOTA: Recuerda actualizar la interfaz CitaService para aceptar el 2º
-	// parámetro
 	@Override
 	public Cita crearCita(Cita cita, List<MultipartFile> ficheros) {
 
 		// GENERAR REFERENCIA ÚNICA
 		// Generamos una parte aleatoria del UUID y la ponemos en mayúsculas (Ej:
-		// "A5B6F1C2")
+		// "A5B6F1C2"). Se añade comprobacion para evitar duplicados. 
 		if (cita.getReferencia() == null || cita.getReferencia().isEmpty()) {
-			String codigo = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-			cita.setReferencia(codigo);
+		    String codigo;
+		    do {
+		        codigo = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+		    } while (citaRepository.existsByReferencia(codigo));
+		    cita.setReferencia(codigo);
 		}
 
 		// 1. GUARDAR LAS IMÁGENES EN DISCO (Si las hay)

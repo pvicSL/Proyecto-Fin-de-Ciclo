@@ -22,5 +22,7 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
 	// Método: Busca por la columna 'localizador' Y por el campo 'email' de la
 	// entidad 'cliente'
 	Optional<Cita> findByReferenciaAndCliente_Email(String referencia, String email);
+	
+	boolean existsByReferencia(String referencia);
 
 }
