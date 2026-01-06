@@ -24,6 +24,7 @@ import proyecto.modelo.dto.CitaAdminDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
+import proyecto.modelo.entities.Precio;
 import proyecto.modelo.entities.Presupuesto;
 import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Coloracion;
@@ -45,8 +46,16 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	
 	@Autowired
     private PresupuestoRepository presupuestoRepository;
+	
+	// Inyectamos el otro servicio
+    @Autowired
+    private PresupuestoService presupuestoService;
+    
     @Autowired
     private PrecioRepository precioRepository;
+    
+    @Autowired
+    private PrecioService precioService;
 
 	@Override
 	public List<Cita> leerTodos() {
@@ -407,10 +416,20 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         // 2. Recuperamos el Cliente (asumiendo que Cita tiene un objeto Cliente o id_cliente)
         Cliente cliente = cita.getCliente();
 
-        // 3. Recuperamos el Presupuesto ya existente vinculado a esta cita
-        Presupuesto presupuesto = presupuestoRepository.findById(idServicio)
-                .orElseThrow(() -> new RuntimeException("No existe un presupuesto para la cita: " + idServicio));
+        // 3. Recuperamos el Presupuesto o lo calculamos si no existe
+        Presupuesto presupuesto;
+        try {
 
+            presupuesto = presupuestoService.calcularPresupuestoPorId(idServicio);
+        } catch (Exception e) {
+            // Si el "fusible" salta, al menos el resto del DTO carga
+            // Fallo total: creamos uno de emergencia con ceros
+            presupuesto = new Presupuesto();
+            presupuesto.setPrecioBase(BigDecimal.ZERO);
+            presupuesto.setIva(BigDecimal.ZERO);
+            presupuesto.setPrecioFinal(BigDecimal.ZERO);
+            presupuesto.setComentarios("Presupuesto no generado");
+        }
         // 4. Construimos el DTO mapeando los datos de las 3 entidades
         CitaAdminDTO dto = new CitaAdminDTO();
         
@@ -447,22 +466,34 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         dto.setPrecioEstilo(obtenerMonto(CategoriaEnum.ESTILO, cita.getEstilo().name()));
 
         dto.setComentariosServicio(cita.getComentarios());
+        
+        dto.setImageRef1(cita.getImagenRef1());
+        dto.setImageRef2(cita.getImagenRef2());
+        dto.setImageRef3(cita.getImagenRef3());
 
         // Datos del Presupuesto (cogemos los datos que YA están en la tabla presupuestos)
         dto.setPrecioBase(presupuesto.getPrecioBase());
         dto.setIva(presupuesto.getIva());
         dto.setPrecioFinal(presupuesto.getPrecioFinal());
         dto.setFechaPresupuesto(presupuesto.getFecha());
-        dto.setEstadoPresupuesto(presupuesto.getEstado().name());
+        dto.setEstadoPresupuesto(cita.getEstatus().name());
         dto.setComentariosPresupuesto(presupuesto.getComentarios());
 
         return dto;
 	}
 
 
-	private BigDecimal obtenerMonto(CategoriaEnum cat, String valor) {
-		// TODO Auto-generated method stub
-		return null;
+	private BigDecimal obtenerMonto(CategoriaEnum cat, String nombreValor) {
+		// 1. Llamamos al servicio que devuelve un objeto Precio directo
+	    Precio p = precioService.encontrarPorCategoriaValor(cat, nombreValor);
+	    
+	    // 2. Comprobamos si el objeto existe y si tiene un monto asignado
+	    if (p != null && p.getPrecioAdicional() != null) {
+	        return p.getPrecioAdicional();
+	    }
+	    
+	    // 3. Si no existe en la BD, devolvemos 0.00 para que el DTO no tenga nulls
+	    return BigDecimal.ZERO;
 	}
 
 	

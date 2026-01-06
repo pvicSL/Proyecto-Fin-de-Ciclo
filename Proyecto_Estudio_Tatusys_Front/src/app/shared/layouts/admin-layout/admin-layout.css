@@ -1,5 +1,17 @@
 
+/* Asegura que los componentes de Angular no bloqueen el flex */
+app-dashboard-home, 
+appointments {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
 
+.main-content {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
 /*=============================
 --- ESTILOS PARA EL BODY ---
@@ -91,6 +103,14 @@ h1{
 .pagination .page-item.active .page-link{
     background-color: var(--dark-cyan);
     border-color: var(--dark-cyan);
+}
+
+.text-success{
+    color: var(--dark-cyan)!important;
+}
+
+.badge{
+    border-color: var(--dark-cyan)!important;
 }
 
 /*=============================

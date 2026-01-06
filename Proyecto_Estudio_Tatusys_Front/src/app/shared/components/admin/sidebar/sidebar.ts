@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { RouterLink, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 
 interface NavItem {
   title: string;
@@ -17,9 +17,25 @@ interface NavItem {
 export class Sidebar {
   isExpanded = false;
 
+  constructor(private router: Router) {} // Inyectamos el router para leer la URL
+
+  isItemActive(itemLink: string): boolean {
+    const currentUrl = this.router.url;
+
+    // Lógica especial para Home/Citas y sus hijos (detalle y presupuesto)
+    if (itemLink === '/admin/citas') {
+      return currentUrl === '/admin/citas' || 
+             currentUrl.includes('/admin/citas/detalleCitaConfirmada/:id');
+    }
+
+    // Para el resto, basta con que la URL empiece por el link del item
+    return currentUrl.startsWith(itemLink);
+  }
+
+
   // Lista de navegación centralizada
   navItems: NavItem[] = [
-    { title: 'Home', link: '/admin', icon: 'bi-house-door-fill' },
+    { title: 'Home', link: '/admin/citas', icon: 'bi-house-door-fill' },
     { title: 'Solicitudes', link: '/admin/solicitudes', icon: 'bi-envelope-fill' },
     { title: 'Facturas', link: '/facturas', icon: 'bi-file-earmark-ruled-fill' },
     { title: 'Calendario', link: '/calendario', icon: 'bi-calendar2-event-fill' },

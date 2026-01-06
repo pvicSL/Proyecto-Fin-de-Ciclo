@@ -1,0 +1,49 @@
+@if (cita) {
+<div class="d-flex flex-column min-vh-100">
+  <h1 class="h3 fw-bold mb-3">Editor de Presupuesto - #{{cita.idServicio}}</h1>
+
+  <div class="contenedor-scroll flex-grow-1 p-4 rounded shadow-sm border bg-white mb-3">
+    <div class="row g-3 mb-5">
+      @for (item of ['Tipo', 'Zona', 'Tamanio', 'Detalle', 'Coloracion', 'Estilo']; track $index) {
+        <div class="col-12 col-md-4">
+          <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3">
+            <span class="text-secondary small">{{ item }}: <span class="text-dark ms-1">{{ cita[item.toLowerCase()] }}</span></span>
+            <input type="number" 
+                   class="form-control form-control-sm w-25 text-end fw-bold border-primary-subtle" 
+                   [(ngModel)]="cita['precio' + item]">
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="mb-4">
+        <label class="fw-bold small mb-1 text-uppercase text-muted">Notas del Presupuesto</label>
+        <textarea class="form-control" rows="3" [(ngModel)]="cita.comentariosPresupuesto"></textarea>
+    </div>
+  </div>
+
+  <section class="p-4 bg-light rounded shadow-sm border mt-auto">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <label class="small text-secondary">Estado:</label>
+            <select class="form-select w-50" [(ngModel)]="cita.estadoPresupuesto">
+                <option value="Pendiente">Pendiente</option>
+                <option value="Aceptado">Aceptado</option>
+            </select>
+        </div>
+        <div class="col-md-6 text-end">
+            <div class="mb-1">
+                <span class="text-secondary small">IVA (21%): </span>
+                <span class="fw-medium">{{ calcularIVA() | currency:'EUR' }}</span>
+            </div>
+            <div>
+                <span class="h4 fw-bold text-primary mb-0">Total: {{ calcularTotal() | currency:'EUR' }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-3">
+        <button class="btn btn-primary px-4" (click)="guardar()">Actualizar Presupuesto</button>
+    </div>
+  </section>
+</div>
+}

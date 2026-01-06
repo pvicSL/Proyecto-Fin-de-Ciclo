@@ -21,14 +21,31 @@ export const routes: Routes = [
         .then(m => m.AdminLayout),
       
       children: [
+        { path: '', redirectTo: 'citas', pathMatch: 'full' }, 
         {
-          path: '',
-          // Carga el dashboard por defecto al entrar en /admin
+          path: 'citas',
           loadComponent: () => import('./pages/admin/dashboard-home/dashboard-home').then(m => m.DashboardHome),
-          data: {title: 'Home', icon: 'bi-house-door'}
+          children: [
+            { 
+              path: '',
+              loadComponent: () => import('./pages/admin/dashboard-home/appointments/appointments').then(m => m.Appointments),
+              data: {title: 'Home', icon: 'bi-house-door'}
+            },
+            { 
+              path: 'detalleCitaConfirmada/:id',
+              loadComponent: () => import('./pages/admin/dashboard-home/appointment-detail/appointment-detail').then(m => m.AppointmentDetail),
+              data: {title: 'Home > Detalle Cita Confirmada'}
+            },
+            {
+              path: 'confirmarPresupuesto/:id',
+              loadComponent: () => import('./pages/admin/dashboard-home/appointment-confirm/appointment-confirm').then(m => m.AppointmentConfirm),
+              data: {title: 'Home > Confirmar Presupuesto'}
+            }
+          ]
         },
-         // RUTAS FUTURAS DEL DASHBOARD
+
         { 
+          // Carga la solicitudes en estado pendiente
           path: 'solicitudes', 
           loadComponent: () => import('./pages/admin/requests/requests').then(m => m.Requests), 
           data: {title: 'Solicitudes', icon: 'bi-envelope'}

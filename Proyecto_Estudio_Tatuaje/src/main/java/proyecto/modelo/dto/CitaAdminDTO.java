@@ -37,6 +37,12 @@ public class CitaAdminDTO {
     private BigDecimal precioEstilo;
 
     private String comentariosServicio;
+    
+    private String imageRef1;
+    
+    private String imageRef2;
+    
+    private String imageRef3;
 
     // --- DATOS DEL PRESUPUESTO ---
     private int idPresupuesto;
@@ -56,9 +62,10 @@ public class CitaAdminDTO {
             String email, String dni, String direccionPostal, String tipo, BigDecimal precioTipo, 
             String zona, BigDecimal precioZona, String tamanio, BigDecimal precioTamanio, 
             String detalle, BigDecimal precioDetalle, String coloracion, BigDecimal precioColoracion, 
-            String estilo, BigDecimal precioEstilo, String comentariosServicio, int idPresupuesto, 
-            BigDecimal precioBase, BigDecimal iva, BigDecimal precioFinal, 
-            LocalDateTime fechaPresupuesto, String estadoPresupuesto, String comentariosPresupuesto) {
+            String estilo, BigDecimal precioEstilo, String comentariosServicio, String imageRef1, 
+            String imageRef2, String imageRef3, int idPresupuesto, BigDecimal precioBase, 
+            BigDecimal iva, BigDecimal precioFinal, LocalDateTime fechaPresupuesto, 
+            String estadoPresupuesto, String comentariosPresupuesto) {
 		this.idServicio = idServicio;
 		this.nombre = nombre;
 		this.apellido1 = apellido1;
@@ -80,6 +87,9 @@ public class CitaAdminDTO {
 		this.estilo = estilo;
 		this.precioEstilo = precioEstilo;
 		this.comentariosServicio = comentariosServicio;
+		this.imageRef1 = imageRef1;
+		this.imageRef2 = imageRef2;
+		this.imageRef3 = imageRef3;
 		this.idPresupuesto = idPresupuesto;
 		this.precioBase = precioBase;
 		this.iva = iva;
@@ -87,7 +97,7 @@ public class CitaAdminDTO {
 		this.fechaPresupuesto = fechaPresupuesto;
 		this.estadoPresupuesto = estadoPresupuesto;
 		this.comentariosPresupuesto = comentariosPresupuesto;
-    }
+		}
 
 	public int getIdServicio() {
 		return idServicio;
@@ -312,7 +322,32 @@ public class CitaAdminDTO {
 	public void setComentariosPresupuesto(String comentariosPresupuesto) {
 		this.comentariosPresupuesto = comentariosPresupuesto;
 	}
+	
     
+	public String getImageRef1() {
+		return imageRef1;
+	}
+
+	public void setImageRef1(String imageRef1) {
+		this.imageRef1 = imageRef1;
+	}
+
+	public String getImageRef2() {
+		return imageRef2;
+	}
+
+	public void setImageRef2(String imageRef2) {
+		this.imageRef2 = imageRef2;
+	}
+
+	public String getImageRef3() {
+		return imageRef3;
+	}
+
+	public void setImageRef3(String imageRef3) {
+		this.imageRef3 = imageRef3;
+	}
+
 	/**
 	 * Este método no es un atributo real, pero Jackson (el conversor de JSON) 
 	 * lo detectará y enviará al frontend una propiedad llamada "apellidosCompletos"
