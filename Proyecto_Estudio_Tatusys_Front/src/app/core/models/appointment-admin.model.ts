@@ -8,6 +8,8 @@ export interface AppointmentAdminDTO {
   dni: string;
   
   // Datos del Servicio y sus precios
+  baseServicio: string;
+  precioBaseServicio: number;
   tipo: string;
   precioTipo: number;
   zona: string;
@@ -20,6 +22,7 @@ export interface AppointmentAdminDTO {
   precioColoracion: number;
   estilo: string;
   precioEstilo: number;
+  duracionMinutos: number;
   
   comentariosServicio: string;
 
@@ -29,9 +32,10 @@ export interface AppointmentAdminDTO {
 
   // Datos del Presupuesto
   precioBase: number;
+  precioExtra: number;
   iva: number;
   precioFinal: number;
   estadoPresupuesto: string;
   fechaPresupuesto: string;
-  comentariosPresupuesto: string;
+  comentarios: string;
 }

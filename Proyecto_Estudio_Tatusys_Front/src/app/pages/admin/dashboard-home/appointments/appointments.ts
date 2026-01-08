@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, HostListener } from '@angular/core';
 import { AppointmentService} from '../../../../core/services/appointment.service';
 import { Router, RouterModule } from '@angular/router';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
@@ -29,6 +29,7 @@ export class Appointments implements OnInit{
 
   ngOnInit(): void {
     this.cargarCitas();
+    this.cargarCitasPendientes();
   }
 
   // --- Lógica de navegación ---
@@ -95,11 +96,30 @@ export class Appointments implements OnInit{
 
   paginaActual: number = 1;
 
-  // Modificamos esta variable para que sea dinámica
   get citasPorPagina(): number {
-    // Si el ancho es menor a 768 (móvil/tablet pequeña), mostramos 5, si no 7
-    return window.innerWidth < 991.98 ? 5 : 6;
-  }
+  const altoVentana = window.innerHeight;
+  const anchoVentana = window.innerWidth;
+
+  // 1. Definimos el espacio que NO es tabla (Header + Breadcrumb + Footer + Margen)
+  // En móvil el header suele ser más alto, en desktop más bajo.
+  const espacioOcupado = anchoVentana < 992 ? 380 : 340;
+
+  // 2. Definimos cuánto mide cada fila (ajusta según tu CSS)
+  const altoFila = anchoVentana < 576 ? 80 : 65; 
+
+  // 3. Calculamos cuántas caben
+  const espacioDisponible = altoVentana - espacioOcupado;
+  const filasCalculadas = Math.floor(espacioDisponible / altoFila);
+
+  // 4. Ponemos límites lógicos (mínimo 4, máximo según necesites)
+  return Math.max(4, filasCalculadas);
+}
+
+  @HostListener('window:resize')
+  onResize() {
+  // Forzamos el recálculo y volvemos a la primera página para evitar errores visuales
+  this.paginaActual = 1;
+}
 
   // lógica de citasPaginadas se mantiene igual, 
   // pero ahora usará el valor dinámico del getter anterior.
@@ -125,6 +145,23 @@ irAPagina(pagina: number | string): void {
         this.paginaActual = pagina;
     }
 }
+
+citasPendientes: any[] = [];
+  numeroPendientes: number = 0; // <--- Esta es la variable clave
+
+
+
+
+  cargarCitasPendientes() {
+    this.appointmentService.getRequests().subscribe({
+      next: (data) => {
+        this.citasPendientes = data;
+        // Asignamos la longitud del array al contador
+        this.numeroPendientes = data.length; 
+      },
+      error: (err) => console.error(err)
+    });
+  }
 
 
 }

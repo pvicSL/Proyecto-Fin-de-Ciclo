@@ -7,11 +7,7 @@ appointments {
     flex-grow: 1;
 }
 
-.main-content {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+
 
 /*=============================
 --- ESTILOS PARA EL BODY ---
@@ -110,8 +106,9 @@ h1{
 }
 
 .badge{
-    border-color: var(--dark-cyan)!important;
+    background-color: var(--dark-cyan)!important;
 }
+
 
 /*=============================
 ---- ESTILOS PARA LA TABLA ----
@@ -123,6 +120,9 @@ h1{
     text-align: center;
     border-radius: 8px;
     overflow: hidden; /*oculta los desbordamientos de las celdas */
+    /* Esto asegura que la tabla ocupe el espacio aunque esté vacía */
+    min-height: calc(90vh - 280px); 
+    
     
 }
 
@@ -183,7 +183,8 @@ h3{
     }
 
     /* Fuente más pequeña para los elementos del footer (alertas y pagination) */
-    .page-link, .alert{
+    .page-link, a{
         font-size: 0.8rem;
     }
+
 }

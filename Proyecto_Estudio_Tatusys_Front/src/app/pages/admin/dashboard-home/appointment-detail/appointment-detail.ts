@@ -4,10 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { AppointmentService } from '../../../../core/services/appointment.service';
 import { CommonModule } from '@angular/common';
 import { Location } from '@angular/common'; // Importación necesaria
+import { FormatoHorasPipe } from '../../../../pipes/formato-horas-pipe';
 
 @Component({
   selector: 'app-appointment-detail',
-  imports: [CommonModule],
+  imports: [CommonModule, FormatoHorasPipe],
   templateUrl: './appointment-detail.html',
   styleUrl: './appointment-detail.css',
 })

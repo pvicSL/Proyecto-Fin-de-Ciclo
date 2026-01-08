@@ -13,13 +13,6 @@
     (click)="cambiarFiltro('revisadas')">
     Revisadas
   </button>
-
-  <button 
-    class="btn btn-danger " 
-    [class.active-danger]="filtroSeleccionado === 'rechazadas'"
-    (click)="cambiarFiltro('rechazadas')">
-    Rechazadas
-  </button>
 </div>
 
 <table id="table-confirmadas" class="table table-striped table-borderless align-middle">
@@ -42,7 +35,7 @@
                 <td><p>{{ cita.fecha }}</p></td>
                 <td class="d-none d-lg-table-cell"><p>{{ cita.tipo }}</p></td>
                 <td class="d-flex justify-content-around align-items-center h-100">
-                    <button class="btn" (click)="revisarPresupuesto(cita.idCita)">Revisar Presupuesto</button>
+                    <button class="btn" (click)="revisarPresupuesto(cita.idCita)">Revisar</button>
                 </td>
             </tr>
         } @empty {

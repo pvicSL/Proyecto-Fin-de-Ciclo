@@ -4,10 +4,15 @@ package proyecto.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import proyecto.modelo.dto.CitaAdminDTO;
+import proyecto.modelo.dto.CitaPresupuestoDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Precio;
 import proyecto.modelo.entities.Presupuesto;
@@ -57,8 +62,46 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 
 	@Override
 	public Presupuesto actualizarPresupuesto(Presupuesto presupuesto) {
-		// TODO Auto-generated method stub
-		return null;
+		// 1. Necesitamos recuperar la Cita para saber qué zona, tamaño, etc. tiene
+	    Cita cita = citaRepository.findById(presupuesto.getIdServicio())
+	            .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+
+	    /* 2. Recalcular los precios desde la tabla 'precios' usando la Cita */
+	    BigDecimal pBase = precioRepository.findByCategoriaAndValor(CategoriaEnum.BASE, "SERVICIO_BASE").get().getPrecioAdicional();
+	    BigDecimal pTipo = precioRepository.findByCategoriaAndValor(CategoriaEnum.TIPO, cita.getTipo().toString()).get().getPrecioAdicional();
+	    BigDecimal pZona = precioRepository.findByCategoriaAndValor(CategoriaEnum.ZONA, cita.getZona().toString()).get().getPrecioAdicional();
+	    BigDecimal pTamanio = precioRepository.findByCategoriaAndValor(CategoriaEnum.TAMANIO, cita.getTamanio().toString()).get().getPrecioAdicional();
+	    BigDecimal pDetalle = precioRepository.findByCategoriaAndValor(CategoriaEnum.DETALLE, cita.getDetalle().toString()).get().getPrecioAdicional();
+	    BigDecimal pColor = precioRepository.findByCategoriaAndValor(CategoriaEnum.COLORACION, cita.getColoracion().toString()).get().getPrecioAdicional();
+	    BigDecimal pEstilo = precioRepository.findByCategoriaAndValor(CategoriaEnum.ESTILO, cita.getEstilo().toString()).get().getPrecioAdicional();
+
+	    // Suma de los nuevos valores de la tabla precios
+	    BigDecimal nuevaSumaServicios = pBase.add(pTipo).add(pZona).add(pTamanio).add(pDetalle).add(pColor).add(pEstilo);
+
+	    /* 3. Lógica del Precio Extra */
+	    // Mantenemos el precioExtra que ya tiene el objeto presupuesto (si es null, 0)
+	    BigDecimal pExtraActual = (presupuesto.getPrecioExtra() != null) ? presupuesto.getPrecioExtra() : BigDecimal.ZERO;
+	    String presupuestoComentarios = (presupuesto.getComentarios() != null) ? presupuesto.getComentarios() : null;
+	    
+	    /* Recuperamos los comentarios o los cambiamos por los nuevos */
+	    
+
+	    /* 4. Cálculos Finales */
+	    BigDecimal subtotalConExtra = nuevaSumaServicios.add(pExtraActual);
+	    BigDecimal nuevoIva = subtotalConExtra.multiply(IVA_PORCENTAJE);
+	    BigDecimal nuevoPrecioFinal = subtotalConExtra.add(nuevoIva);
+
+	    /* 5. Actualizar el objeto que recibimos por argumento */
+	    presupuesto.setPrecioBase(nuevaSumaServicios);
+	    presupuesto.setPrecioExtra(pExtraActual); // Aseguramos que no sea null
+	    presupuesto.setIva(nuevoIva);
+	    presupuesto.setPrecioFinal(nuevoPrecioFinal);
+	    presupuesto.setFecha(LocalDateTime.now());
+	    presupuesto.setComentarios(presupuestoComentarios);
+	    presupuesto.setEstado(Estado.GENERADO);
+
+	    // 6. Guardar cambios
+	    return presupuestoRepository.save(presupuesto);
 	}
 
 	
@@ -92,17 +135,22 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	    BigDecimal pDetalle = precioDetalle.get().getPrecioAdicional();
 	    BigDecimal pColor = precioColor.get().getPrecioAdicional();
 	    BigDecimal pEstilo = precioEstilo.get().getPrecioAdicional();
+	    
+	    /*LÓGICA DE RECALCULO: Buscar si ya existe un presupuesto para esta cita */
+	    BigDecimal pExtra = BigDecimal.ZERO;
+	    String comentariosPresupuesto = null;
 
 	    /*Se suman todos los precios recuperados en el paso anterior*/
 	    BigDecimal precioSinIva = pBase.add(pTipo).add(pZona).add(pTamanio).add(pDetalle).add(pColor).add(pEstilo);
+	    BigDecimal subtotalConExtra = precioSinIva.add(pExtra);
 
 	    /*Añadimos el iva*/
-	    BigDecimal iva = precioSinIva.multiply(IVA_PORCENTAJE);
-	    BigDecimal precioConIva = precioSinIva.add(iva);
+	    BigDecimal iva = subtotalConExtra.multiply(IVA_PORCENTAJE);
+	    BigDecimal precioConIva = subtotalConExtra.add(iva);
 
-	    /*Creamos objeto Presupuesto*/
-	    Presupuesto presupuesto = new Presupuesto (
-	            cita.getIdCita(), precioSinIva, iva, precioConIva, LocalDateTime.now(), true, Estado.PENDIENTE, null);
+	    Presupuesto presupuesto = new Presupuesto(
+	                cita.getIdCita(), precioSinIva, pExtra, iva, precioConIva, 
+	                LocalDateTime.now(), true, Estado.PENDIENTE, comentariosPresupuesto);
 
 	    /*Guardamos en BBDD*/
 	    Presupuesto presupuestoGuardado = presupuestoRepository.save(presupuesto);
@@ -120,5 +168,40 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	    } else {
 	        throw new RuntimeException("Cita no encontrada con ID: " + idCita);
 	    }
+	}
+
+
+	@Override
+	public Presupuesto buscarUnPresupuestoPorIdCita(int idCita) {
+		// Buscamos en el repositorio. Usamos .orElse(null) o lanzamos una excepción 
+	    return presupuestoRepository.findByIdServicio(idCita)
+	            .stream() // Convertimos a stream por si hay varios
+	            .findFirst() // Tomamos solo uno para evitar el error de "11 results"
+	            .orElseThrow(() -> new NoSuchElementException("No se encontró presupuesto para la cita: " + idCita));
+	}
+
+	@Override
+	public List<CitaPresupuestoDTO> obtenerCitasPorEstadoPresupuesto(Estado estado) {
+		List<Presupuesto> presupuestos = presupuestoRepository.findByEstado(estado);
+	    
+	    List<Integer> idsCitas = presupuestos.stream()
+	                                         .map(Presupuesto::getIdServicio)
+	                                         .distinct()
+	                                         .toList();
+
+	    List<Cita> todasLasCitas = citaRepository.findAllById(idsCitas);
+
+	    return presupuestos.stream()
+	        .map(p -> {
+	            // Buscamos la cita que le corresponde a este presupuesto
+	            Cita citaMatch = todasLasCitas.stream()
+	                .filter(c -> c.getIdCita() == p.getIdServicio())
+	                .findFirst()
+	                .orElse(null);
+
+	            // Usamos el constructor de conveniencia que creamos
+	            return new CitaPresupuestoDTO(citaMatch, p);
+	        })
+	        .collect(Collectors.toList());
 	}
 }

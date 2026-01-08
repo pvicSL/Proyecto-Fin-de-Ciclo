@@ -41,6 +41,7 @@ public class CitaRestController {
 
 	@Autowired
 	private CitaService citaService;
+	
 
 	// NUEVO PARA IMG. REF.: Herramienta para convertir JSON String a Objeto Java
 	@Autowired

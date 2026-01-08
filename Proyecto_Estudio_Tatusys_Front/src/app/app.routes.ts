@@ -21,7 +21,7 @@ export const routes: Routes = [
         .then(m => m.AdminLayout),
       
       children: [
-        { path: '', redirectTo: 'citas', pathMatch: 'full' }, 
+
         {
           path: 'citas',
           loadComponent: () => import('./pages/admin/dashboard-home/dashboard-home').then(m => m.DashboardHome),
@@ -41,6 +41,7 @@ export const routes: Routes = [
               loadComponent: () => import('./pages/admin/dashboard-home/appointment-confirm/appointment-confirm').then(m => m.AppointmentConfirm),
               data: {title: 'Home > Confirmar Presupuesto'}
             }
+            
           ]
         },
 
@@ -50,6 +51,11 @@ export const routes: Routes = [
           loadComponent: () => import('./pages/admin/requests/requests').then(m => m.Requests), 
           data: {title: 'Solicitudes', icon: 'bi-envelope'}
         },
+        {
+          path: 'trabajadores', 
+          loadComponent: () => import('./pages/admin/staff/staff').then(m => m.Staff), 
+          data: {title: 'Trabajadores', icon: 'bi-people'}
+        }
       ]
         
     },

@@ -3,8 +3,11 @@ package proyecto.service;
 
 import java.util.List;
 
+import proyecto.modelo.dto.CitaAdminDTO;
+import proyecto.modelo.dto.CitaPresupuestoDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Presupuesto;
+import proyecto.modelo.enums.Estado;
 
 
 
@@ -21,5 +24,8 @@ public interface PresupuestoService {
 	
 	Presupuesto calcularPresupuesto (Cita cita);
 	Presupuesto calcularPresupuestoPorId(int idCita);
+	
+	Presupuesto buscarUnPresupuestoPorIdCita(int idCita);
+	List<CitaPresupuestoDTO> obtenerCitasPorEstadoPresupuesto(Estado estado);
 	
 }

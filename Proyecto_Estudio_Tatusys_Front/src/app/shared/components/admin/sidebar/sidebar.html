@@ -14,13 +14,13 @@
   <ul class="nav flex-column text-center">
     @for (item of navItems; track item.title) {
       <li class="sidebar-item">
-        <a [routerLink]="item.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link text-white fs-5">{{ item.title }}</a>
+        <a [routerLink]="item.link" routerLinkActive="active" (click)="cerrarSidebarMobile()" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link text-white fs-5">{{ item.title }}</a>
       </li>
     }
     <hr class="text-white">
     @for (item of footerItems; track item.title) {
       <li class="sidebar-footer-item">
-        <a [routerLink]="item.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link text-white fs-5">{{ item.title }}</a>
+        <a [routerLink]="item.link" routerLinkActive="active" (click)="cerrarSidebarMobile()" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link text-white fs-5">{{ item.title }}</a>
       </li>
     }
   </ul>

@@ -3,6 +3,10 @@ package proyecto.modelo.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import proyecto.modelo.enums.Estado;
+
 public class CitaAdminDTO {
 
 	// ID de la cita/servicio
@@ -15,9 +19,12 @@ public class CitaAdminDTO {
     private String telefono;
     private String email;
     private String dni;
-    private String direccionPostal;
 
     // --- DATOS DEL SERVICIO Y PRECIOS DESGLOSADOS ---
+    
+    private String baseServicio;
+    private BigDecimal precioBaseServicio;
+    
     private String tipo;
     private BigDecimal precioTipo;
 
@@ -35,6 +42,8 @@ public class CitaAdminDTO {
 
     private String estilo;
     private BigDecimal precioEstilo;
+    
+    private Integer duracionMinutos;
 
     private String comentariosServicio;
     
@@ -47,11 +56,13 @@ public class CitaAdminDTO {
     // --- DATOS DEL PRESUPUESTO ---
     private int idPresupuesto;
     private BigDecimal precioBase;
+    private BigDecimal precioExtra;
     private BigDecimal iva;
     private BigDecimal precioFinal;
     private LocalDateTime fechaPresupuesto;
-    private String estadoPresupuesto;
-    private String comentariosPresupuesto;
+    @Enumerated(EnumType.STRING)
+    private Estado estadoPresupuesto;
+    private String comentarios;
 
     // --- CONSTRUCTORES ---
 
@@ -59,13 +70,13 @@ public class CitaAdminDTO {
     }
 
     public CitaAdminDTO(int idServicio, String nombre, String apellido1, String apellido2, String telefono, 
-            String email, String dni, String direccionPostal, String tipo, BigDecimal precioTipo, 
+            String email, String dni, String baseServicio, BigDecimal precioBaseServicio, String tipo, BigDecimal precioTipo, 
             String zona, BigDecimal precioZona, String tamanio, BigDecimal precioTamanio, 
             String detalle, BigDecimal precioDetalle, String coloracion, BigDecimal precioColoracion, 
-            String estilo, BigDecimal precioEstilo, String comentariosServicio, String imageRef1, 
+            String estilo, BigDecimal precioEstilo, Integer duracionMinutos, String comentariosServicio, String imageRef1, 
             String imageRef2, String imageRef3, int idPresupuesto, BigDecimal precioBase, 
             BigDecimal iva, BigDecimal precioFinal, LocalDateTime fechaPresupuesto, 
-            String estadoPresupuesto, String comentariosPresupuesto) {
+            Estado estadoPresupuesto, String comentarios) {
 		this.idServicio = idServicio;
 		this.nombre = nombre;
 		this.apellido1 = apellido1;
@@ -73,7 +84,8 @@ public class CitaAdminDTO {
 		this.telefono = telefono;
 		this.email = email;
 		this.dni = dni;
-		this.direccionPostal = direccionPostal;
+		this.baseServicio = baseServicio;
+		this.precioBaseServicio = precioBaseServicio;
 		this.tipo = tipo;
 		this.precioTipo = precioTipo;
 		this.zona = zona;
@@ -86,6 +98,7 @@ public class CitaAdminDTO {
 		this.precioColoracion = precioColoracion;
 		this.estilo = estilo;
 		this.precioEstilo = precioEstilo;
+		this.duracionMinutos = duracionMinutos;
 		this.comentariosServicio = comentariosServicio;
 		this.imageRef1 = imageRef1;
 		this.imageRef2 = imageRef2;
@@ -96,7 +109,7 @@ public class CitaAdminDTO {
 		this.precioFinal = precioFinal;
 		this.fechaPresupuesto = fechaPresupuesto;
 		this.estadoPresupuesto = estadoPresupuesto;
-		this.comentariosPresupuesto = comentariosPresupuesto;
+		this.comentarios = comentarios;
 		}
 
 	public int getIdServicio() {
@@ -155,12 +168,22 @@ public class CitaAdminDTO {
 		this.dni = dni;
 	}
 
-	public String getDireccionPostal() {
-		return direccionPostal;
+	
+
+	public String getBaseServicio() {
+		return baseServicio;
 	}
 
-	public void setDireccionPostal(String direccionPostal) {
-		this.direccionPostal = direccionPostal;
+	public void setBaseServicio(String baseServicio) {
+		this.baseServicio = baseServicio;
+	}
+
+	public BigDecimal getPrecioBaseServicio() {
+		return precioBaseServicio;
+	}
+
+	public void setPrecioBaseServicio(BigDecimal precioBaseServicio) {
+		this.precioBaseServicio = precioBaseServicio;
 	}
 
 	public String getTipo() {
@@ -254,6 +277,15 @@ public class CitaAdminDTO {
 	public BigDecimal getPrecioEstilo() {
 		return precioEstilo;
 	}
+	
+
+	public Integer getDuracionMinutos() {
+		return duracionMinutos;
+	}
+
+	public void setDuracionMinutos(Integer duracionMinutos) {
+		this.duracionMinutos = duracionMinutos;
+	}
 
 	public void setPrecioEstilo(BigDecimal precioEstilo) {
 		this.precioEstilo = precioEstilo;
@@ -283,6 +315,15 @@ public class CitaAdminDTO {
 		this.precioBase = precioBase;
 	}
 
+	
+	public BigDecimal getPrecioExtra() {
+		return precioExtra;
+	}
+
+	public void setPrecioExtra(BigDecimal precioExtra) {
+		this.precioExtra = precioExtra;
+	}
+
 	public BigDecimal getIva() {
 		return iva;
 	}
@@ -307,20 +348,20 @@ public class CitaAdminDTO {
 		this.fechaPresupuesto = fechaPresupuesto;
 	}
 
-	public String getEstadoPresupuesto() {
+	public Estado getEstadoPresupuesto() {
 		return estadoPresupuesto;
 	}
 
-	public void setEstadoPresupuesto(String estadoPresupuesto) {
+	public void setEstadoPresupuesto(Estado estadoPresupuesto) {
 		this.estadoPresupuesto = estadoPresupuesto;
 	}
 
-	public String getComentariosPresupuesto() {
-		return comentariosPresupuesto;
+	public String getComentarios() {
+		return comentarios;
 	}
 
-	public void setComentariosPresupuesto(String comentariosPresupuesto) {
-		this.comentariosPresupuesto = comentariosPresupuesto;
+	public void setComentarios(String comentarios) {
+		this.comentarios = comentarios;
 	}
 	
     

@@ -1,5 +1,5 @@
-<div class="d-flex flex-column flex-grow-1">
-    <div class="main-content-header d-block d-lg-flex">
+<div class="d-flex flex-column flex-grow-1 h-100">
+    <div class="main-content-header  d-flex">
         <h1 class="text-subtitle">{{ rangoFechasTexto }}</h1>
 
         <div class="time-buttons ">
@@ -35,7 +35,7 @@
                 <th scope="col"><h3>Nombre</h3></th>
                 <th scope="col"><h3>Fecha y Hora</h3></th>
                 <th scope="col" class="d-none d-lg-table-cell"><h3>Tipo</h3></th>
-                <th scope="col"></th>
+                <th scope="col" ></th>
             </tr>
         </thead>
         <tbody class="table-body">
@@ -47,8 +47,8 @@
                     <td><p>{{ cita.clienteNombre }}</p></td>
                     <td><p>{{ cita.fecha }}</p></td>
                     <td class="d-none d-lg-table-cell"><p>{{ cita.tipo }}</p></td>
-                    <td class="d-flex justify-content-around align-items-center h-100">
-                        <button class="btn" (click)="irAConfirmar(cita.idCita)">Confirmar</button>
+                    <td class="d-block d-sm-flex justify-content-around align-items-center h-100">
+                        <button class="btn mb-1 mb-sm-0" (click)="irAConfirmar(cita.idCita)">Confirmar</button>
                         <button class="btn" (click)="verDetalles(cita.idCita)">Ver</button>
                     </td>
                 </tr>
@@ -63,17 +63,20 @@
         </tbody>
     </table>
 
-    <div class="footer mt-auto ">
+    <div class="footer mt-auto d-flex justify-content-between align-items-center w-100 mt-3">
         <div class="alerts">
-            <div class="alert">
-                <a [routerLink]="['/admin/solicitudes']"> <i class="bi bi-bell-fill"></i>
-                    <p class="text-alert">¡Tienes 3 solicitudes nuevas!</p>
+            <div class="alert-confirmadas">
+                <a [routerLink]="['/admin/citas']"> 
+                    <i class="bi bi-bell-fill"></i>
+                    <p class="text-alert d-none d-sm-block">¡Tienes 3 citas confirmadas nuevas!</p>
+                    <p class="text-alert d-sm-none fw-bold">3</p>
                 </a>
             </div>
 
-            <div class="alert">
-                <a [routerLink]="['/rechazadas']"> <i class="bi bi-bell-fill"></i>
-                    <p class="text-alert">¡Tienes 2 solicitudes rechazadas!</p>
+            <div class="alert-pendientes">
+                <a [routerLink]="['/admin/solicitudes']"> <i class="bi bi-bell-fill"></i>
+                    <p class="text-alert d-none d-sm-block" >¡Tienes {{ numeroPendientes }} {{ numeroPendientes === 1 ? 'solicitud' : 'solicitudes' }} pendientes!</p>
+                    <p class="text-alert d-sm-none fw-bold">{{ numeroPendientes }} </p>
                 </a>
             </div>
         </div>

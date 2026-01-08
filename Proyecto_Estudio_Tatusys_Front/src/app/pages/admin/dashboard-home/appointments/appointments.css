@@ -9,7 +9,7 @@
     align-items: center;
     width: 100%;
     margin-top: 0.5rem;
-    max-height: 100vh;
+    
 }
 
 /* Botones cronológicos */
@@ -30,36 +30,45 @@
 ---- ESTILOS PARA EL FOOTER ----
 ==============================*/
 
-/* Ajustes del footer */
-.footer{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-top: 1rem;
-}
-
-/* Dimensiones del contenedor padre de las alertas */
-.alerts{
-    width: 60%;
-}
 
 /* Ajustes del contenedor de las alertas */
-.alert{
+.alert-pendientes{
     background-color: white;
     border: 2px solid var(--cardinal);
     padding: 0.75rem 0.75rem 0rem 0.75rem;
     margin: 2px;
+    border-radius: 10px;
 }
 
 /* Enlace a las páginas de las alertas */
-.alert a{
+.alert-pendientes a{
     text-decoration: none;
     color: var(--cardinal);
     display: flex;
 }
 
 /* Icono de campanita */
-.alert a i{
+.alert-pendientes a i{
+    margin-right: 1rem;
+}
+
+/* Ajustes del contenedor de las alertas */
+.alert-confirmadas{
+    background-color: white;
+    border: 2px solid var(--dark-cyan);
+    padding: 0.75rem 0.75rem 0rem 0.75rem;
+    margin: 2px;
+    border-radius: 10px;
+}
+
+/* Enlace a las páginas de las alertas */
+.alert-confirmadas a{
+    text-decoration: none;
+    color: var(--dark-cyan);
+    display: flex;
+}
+
+/* Icono de campanita */
+.alert-confirmadas a i{
     margin-right: 1rem;
 }

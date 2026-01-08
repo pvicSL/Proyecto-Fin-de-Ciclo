@@ -73,7 +73,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		switch (cita.getTamanio()) {
 		case MINI:
 			duracionBase = 60;
-		case PEQUEÑO:
+		case PEQUEO:
 			duracionBase = 90;
 		case MEDIANO:
 			duracionBase = 120;
@@ -420,7 +420,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         Presupuesto presupuesto;
         try {
 
-            presupuesto = presupuestoService.calcularPresupuestoPorId(idServicio);
+            presupuesto = presupuestoService.buscarUnPresupuestoPorIdCita(idServicio);
         } catch (Exception e) {
             // Si el "fusible" salta, al menos el resto del DTO carga
             // Fallo total: creamos uno de emergencia con ceros
@@ -430,6 +430,8 @@ public class CitaServiceImplJpaMy8 implements CitaService {
             presupuesto.setPrecioFinal(BigDecimal.ZERO);
             presupuesto.setComentarios("Presupuesto no generado");
         }
+       
+        
         // 4. Construimos el DTO mapeando los datos de las 3 entidades
         CitaAdminDTO dto = new CitaAdminDTO();
         
@@ -447,6 +449,10 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 
         // Datos del Servicio + Consulta de Precios (para el desglose visual en Angular)
         // Usamos .name() para convertir el Enum a String
+        
+        dto.setBaseServicio("PRECIO SERVICIO");
+        dto.setPrecioBaseServicio(obtenerMonto(CategoriaEnum.BASE, "SERVICIO_BASE")); 
+        
         dto.setTipo(cita.getTipo().name()); 
         dto.setPrecioTipo(obtenerMonto(CategoriaEnum.TIPO, cita.getTipo().name()));
 
@@ -473,11 +479,12 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 
         // Datos del Presupuesto (cogemos los datos que YA están en la tabla presupuestos)
         dto.setPrecioBase(presupuesto.getPrecioBase());
+        dto.setPrecioExtra(presupuesto.getPrecioExtra());
         dto.setIva(presupuesto.getIva());
         dto.setPrecioFinal(presupuesto.getPrecioFinal());
         dto.setFechaPresupuesto(presupuesto.getFecha());
-        dto.setEstadoPresupuesto(cita.getEstatus().name());
-        dto.setComentariosPresupuesto(presupuesto.getComentarios());
+        dto.setEstadoPresupuesto(null);;
+        dto.setComentarios(presupuesto.getComentarios());
 
         return dto;
 	}

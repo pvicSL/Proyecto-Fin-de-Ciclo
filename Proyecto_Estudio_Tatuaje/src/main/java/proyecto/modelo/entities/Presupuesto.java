@@ -32,6 +32,8 @@ public class Presupuesto implements Serializable{
 	private int idServicio;
 	@Column(name="precio_base")
 	private BigDecimal precioBase;
+	@Column(name = "precio_extra")
+	private BigDecimal precioExtra;
 	private BigDecimal iva;
 	@Column(name="precio_final")
 	private BigDecimal precioFinal;
@@ -49,18 +51,20 @@ public class Presupuesto implements Serializable{
 
 
 
-	public Presupuesto(int idServicio, BigDecimal precioBase, BigDecimal iva, BigDecimal precioFinal, LocalDateTime fecha,
-			boolean vigente, Estado estado, String comentarios) {
+	public Presupuesto(int idServicio, BigDecimal precioBase, BigDecimal precioExtra, 
+            BigDecimal iva, BigDecimal precioFinal, LocalDateTime fecha, boolean vigente, 
+            Estado estado, String comentarios) {
 		super();
 		this.idServicio = idServicio;
 		this.precioBase = precioBase;
+		this.precioExtra = precioExtra;
 		this.iva = iva;
 		this.precioFinal = precioFinal;
 		this.fecha = fecha;
 		this.vigente = vigente;
 		this.estado = estado;
 		this.comentarios = comentarios;
-	}
+		}
 
 
 
@@ -96,6 +100,19 @@ public class Presupuesto implements Serializable{
 
 	public void setPrecioBase(BigDecimal precioBase) {
 		this.precioBase = precioBase;
+	}
+
+	
+
+
+	public BigDecimal getPrecioExtra() {
+		return precioExtra;
+	}
+
+
+
+	public void setPrecioExtra(BigDecimal precioExtra) {
+		this.precioExtra = precioExtra;
 	}
 
 
@@ -169,6 +186,8 @@ public class Presupuesto implements Serializable{
 	public void setComentarios(String comentarios) {
 		this.comentarios = comentarios;
 	}
+	
+	
 
 
 

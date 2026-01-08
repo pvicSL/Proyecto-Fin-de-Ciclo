@@ -92,4 +92,5 @@ export class AppointmentService {
     return this.http.get<AppointmentAdminDTO>(`${this.apiUrl}/detalle/${id}`);
     }
 
+    
 }

@@ -39,7 +39,7 @@ export class Sidebar {
     { title: 'Solicitudes', link: '/admin/solicitudes', icon: 'bi-envelope-fill' },
     { title: 'Facturas', link: '/facturas', icon: 'bi-file-earmark-ruled-fill' },
     { title: 'Calendario', link: '/calendario', icon: 'bi-calendar2-event-fill' },
-    { title: 'Trabajadores', link: '/trabajadores', icon: 'bi-people-fill' }
+    { title: 'Trabajadores', link: '/admin/trabajadores', icon: 'bi-people-fill' }
   ];
 
   footerItems: NavItem[] = [
@@ -50,4 +50,22 @@ export class Sidebar {
   toggleSidebar() {
     this.isExpanded = !this.isExpanded;
   }
+
+  cerrarSidebarMobile() {
+  const sidebar = document.getElementById('sidebar-mobile');
+  
+  // Verificamos si el sidebar tiene la clase 'show' (está abierto)
+  if (sidebar && sidebar.classList.contains('show')) {
+    // Buscamos el botón de cerrar que ya tienes o disparamos el toggle
+    const bootstrap = (window as any).bootstrap;
+    if (bootstrap) {
+      const bsCollapse = new bootstrap.Collapse(sidebar);
+      bsCollapse.hide();
+    } else {
+      // Opción de respaldo: forzar el click en el botón de cerrar si no tienes acceso al objeto bootstrap
+      const closeBtn = sidebar.querySelector('.btn-close') as HTMLElement;
+      closeBtn?.click();
+    }
+  }
+}
 }
