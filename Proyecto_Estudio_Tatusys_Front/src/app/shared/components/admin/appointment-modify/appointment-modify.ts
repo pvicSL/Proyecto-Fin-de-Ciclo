@@ -1,22 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Importante para pipes y directivas
-import { FormsModule } from '@angular/forms';   // Necesario para [(ngModel)]
-import { BudgetService } from '../../../../core/services/budget.service'; // Ajusta la ruta a tu servicio
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { BudgetService } from '../../../../core/services/budget.service';
 import { AppointmentService } from '../../../../core/services/appointment.service';
 import { ActivatedRoute } from '@angular/router';
 import { AppointmentAdminDTO } from '../../../../core/models/appointment-admin.model';
 import { FormatoHorasPipe } from '../../../../pipes/formato-horas-pipe';
 
-
 @Component({
-  selector: 'app-appointment-confirm',
+  selector: 'app-appointment-modify',
   imports: [CommonModule, FormsModule, FormatoHorasPipe],
-  templateUrl: './appointment-confirm.html',
-  styleUrl: './appointment-confirm.css',
+  templateUrl: './appointment-modify.html',
+  styleUrls: ['./appointment-modify.css'],
+  encapsulation: ViewEncapsulation.None
 })
-export class AppointmentConfirm implements OnInit {
+export class AppointmentModify implements OnInit {
 
-  
   cita!: AppointmentAdminDTO;
 
   constructor(
@@ -31,19 +30,12 @@ export class AppointmentConfirm implements OnInit {
 
   cargarDatos() {
     const id = this.route.snapshot.params['id'];
-    // 1. Primero obtenemos los datos del cliente/cita
     this.appointmentService.getDetalleCita(id).subscribe(datosCita => {
-      
-      // 2. Luego obtenemos el presupuesto
       this.budgetService.obtenerPresupuestoPorCita(id).subscribe(datosPresupuesto => {
-        
-        // 3. FUSIONAMOS AMBOS: 
-        // Creamos un único objeto que tenga las propiedades de la cita y del presupuesto
         this.cita = {
-          ...datosCita,        // Trae nombre, apellido, email, tipo, zona...
-          ...datosPresupuesto  // Trae idPresupuesto, precioExtra, precioBase, etc.
+          ...datosCita,
+          ...datosPresupuesto
         };
-        
         console.log('Datos unificados:', this.cita);
       });
     });
@@ -54,10 +46,8 @@ export class AppointmentConfirm implements OnInit {
       this.budgetService.actualizarPresupuestoConExtra(this.cita.idServicio, this.cita)
         .subscribe({
           next: (res) => {
-            // Reemplazamos los datos con la respuesta del servidor (que ya trae IVA y Total nuevos)
             this.cita = res; 
             alert('¡Presupuesto actualizado correctamente!');
-            //  LLAMAMOS A TU FUNCIÓN DE CERRAR
             this.cerrarDetalle();
           },
           error: (err) => {
@@ -69,7 +59,6 @@ export class AppointmentConfirm implements OnInit {
   }
 
   cerrarDetalle() {
-    // Lógica para cerrar o volver atrás
     window.history.back();
   }
-}
+} 

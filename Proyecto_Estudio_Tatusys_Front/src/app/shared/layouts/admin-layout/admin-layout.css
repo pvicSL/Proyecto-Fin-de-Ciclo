@@ -109,6 +109,13 @@ h1{
     background-color: var(--dark-cyan)!important;
 }
 
+.bg-success{
+    background-color: var(--dark-cyan)!important;
+}
+.bg-danger{
+    background-color: var(--cardinal)!important;
+}
+
 
 /*=============================
 ---- ESTILOS PARA LA TABLA ----
@@ -121,7 +128,7 @@ h1{
     border-radius: 8px;
     overflow: hidden; /*oculta los desbordamientos de las celdas */
     /* Esto asegura que la tabla ocupe el espacio aunque esté vacía */
-    min-height: calc(90vh - 280px); 
+    min-height: auto; 
     
     
 }
@@ -131,6 +138,7 @@ h1{
     background-color: var(--dark-cyan);
     color: white;
     padding: 1rem 1rem;
+
 }
 
 h3{

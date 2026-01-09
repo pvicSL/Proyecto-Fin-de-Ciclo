@@ -1,0 +1,20 @@
+/* Ajusta la ruta según dónde esté tu archivo del padre */
+@import "../../../../shared/layouts/admin-layout/admin-layout.css";
+
+
+
+.contenedor-scroll {
+/* Define cuánto espacio máximo puede ocupar la caja */
+    max-height: 78vh;    /* O usa 70vh para el 70% de la pantalla */
+    
+    /* Activa el scroll vertical solo cuando el contenido lo necesite */
+    overflow-y: auto;     
+    
+    /* Evita el scroll horizontal si no es necesario */
+    overflow-x: hidden;   
+    
+    /*Un poco de padding para que el texto no toque la barra */
+    padding-right: 15px;
+
+    background-color: var(--antiflash-white);
+} 

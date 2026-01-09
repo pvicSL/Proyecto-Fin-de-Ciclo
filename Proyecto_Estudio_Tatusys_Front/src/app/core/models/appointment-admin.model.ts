@@ -39,3 +39,15 @@ export interface AppointmentAdminDTO {
   fechaPresupuesto: string;
   comentarios: string;
 }
+
+export interface AppointmenBudgetDTO{
+  
+    idServicio: number;
+    nombre: string;
+    apellido1: string;
+    apellido2: string;
+    tipo: string;
+    fecha: string; // 'yyyy-MM-dd'
+    hora: string;  // 'HH:mm:ss'
+
+}

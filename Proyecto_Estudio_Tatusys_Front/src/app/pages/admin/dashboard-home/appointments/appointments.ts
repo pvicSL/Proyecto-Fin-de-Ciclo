@@ -3,6 +3,8 @@ import { Component, OnInit, ViewEncapsulation, HostListener } from '@angular/cor
 import { AppointmentService} from '../../../../core/services/appointment.service';
 import { Router, RouterModule } from '@angular/router';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
+import { AppointmentDetails } from '../../../../shared/components/admin/appointment-details/appointment-details';
+import { BudgetService } from '../../../../core/services/budget.service';
 
 
 @Component({
@@ -24,6 +26,7 @@ export class Appointments implements OnInit{
 
   constructor(
     private appointmentService: AppointmentService,
+    private budgetService: BudgetService,
     private router: Router
   ) {}
 
@@ -146,18 +149,15 @@ irAPagina(pagina: number | string): void {
     }
 }
 
-citasPendientes: any[] = [];
-  numeroPendientes: number = 0; // <--- Esta es la variable clave
+numeroPendientes: number = 0;
 
 
 
 
   cargarCitasPendientes() {
-    this.appointmentService.getRequests().subscribe({
+    this.budgetService.obtenerPorEstadoPresupuestoPendiente().subscribe({
       next: (data) => {
-        this.citasPendientes = data;
-        // Asignamos la longitud del array al contador
-        this.numeroPendientes = data.length; 
+        this.numeroPendientes = data.length;
       },
       error: (err) => console.error(err)
     });

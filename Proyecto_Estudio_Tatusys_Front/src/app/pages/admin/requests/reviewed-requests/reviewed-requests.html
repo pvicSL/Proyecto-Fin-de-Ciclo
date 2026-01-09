@@ -1,33 +1,4 @@
 <div class="d-flex flex-column flex-grow-1 h-100">
-    <div class="main-content-header  d-flex">
-        <h1 class="text-subtitle">{{ rangoFechasTexto }}</h1>
-
-        <div class="time-buttons ">
-            <div class="time-buttons-days d-flex">
-                <button 
-                    class="btn btn-secondary mx-1" 
-                    [class.active]="vista === 'dia'" 
-                    (click)="setVista('dia')">
-                    Día
-                </button>
-                <button 
-                    class="btn btn-secondary mx-1" 
-                    [class.active]="vista === 'semana'" 
-                    (click)="setVista('semana')">
-                    Semana
-                </button>
-            </div>
-
-            <div class="time-buttons-arrrows d-flex">
-                <button class="btn btn-secondary mx-1" (click)="navegar(-1)">
-                    <i class="bi bi-arrow-left"></i>
-                </button>
-                <button class="btn btn-secondary mx-1" (click)="navegar(1)">
-                    <i class="bi bi-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>  
     <table id="table-confirmadas" class="table table-striped table-borderless align-middle">
         <thead class="table-header">
             <tr>
@@ -35,7 +6,7 @@
                 <th scope="col"><h3>Nombre</h3></th>
                 <th scope="col"><h3>Fecha y Hora</h3></th>
                 <th scope="col" class="d-none d-lg-table-cell"><h3>Tipo</h3></th>
-                <th scope="col" ></th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody class="table-body">
@@ -47,15 +18,14 @@
                     <td><p>{{ cita.clienteNombre }}</p></td>
                     <td><p>{{ cita.fecha }}</p></td>
                     <td class="d-none d-lg-table-cell"><p>{{ cita.tipo }}</p></td>
-                    <td class="d-block d-sm-flex justify-content-around align-items-center h-100">
-                        <button class="btn mb-1 mb-sm-0" (click)="irAConfirmar(cita.idCita)">Confirmar</button>
+                    <td class="d-flex justify-content-around align-items-center h-100">
                         <button class="btn" (click)="verDetalles(cita.idCita)">Ver</button>
                     </td>
                 </tr>
             } @empty {
                 <tr>
                     <td colspan="5" class="text-center p-4">
-                        <p class="text-muted">No hay citas</p>
+                        <p class="text-muted">No hay solicitudes pendientes por confirmar.</p>
                     </td>
                 </tr>
             }
@@ -63,23 +33,7 @@
         </tbody>
     </table>
 
-    <div class="footer mt-auto d-flex justify-content-between align-items-center w-100 mt-3">
-        <div class="alerts">
-            <div class="alert-confirmadas">
-                <a [routerLink]="['/admin/citas']"> 
-                    <i class="bi bi-bell-fill"></i>
-                    <p class="text-alert d-none d-sm-block">¡Tienes 3 citas confirmadas nuevas!</p>
-                    <p class="text-alert d-sm-none fw-bold">3</p>
-                </a>
-            </div>
-
-            <div class="alert-pendientes">
-                <a [routerLink]="['/admin/solicitudes']"> <i class="bi bi-bell-fill"></i>
-                    <p class="text-alert d-none d-sm-block" >¡Tienes {{ numeroPendientes }} {{ numeroPendientes === 1 ? 'solicitud' : 'solicitudes' }} pendientes!</p>
-                    <p class="text-alert d-sm-none fw-bold">{{ numeroPendientes }} </p>
-                </a>
-            </div>
-        </div>
+    <div class="footer mt-auto">
 
         <nav class="pagination-nav d-flex justify-content-end ms-4">
             <ul class="pagination">

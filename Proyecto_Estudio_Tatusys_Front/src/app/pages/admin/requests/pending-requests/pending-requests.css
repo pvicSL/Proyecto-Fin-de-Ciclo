@@ -1,7 +1,11 @@
+/* Ajusta la ruta según dónde esté tu archivo del padre */
+@import "../../../../shared/layouts/admin-layout/admin-layout.css";
+
 /* Aseguramos que el host del componente sea un flex que ocupe el espacio disponible */
-app-pending-requests, app-reviewed-requests{
+app-pending-requests{
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     min-height: 0; /* importante para permitir que los hijos con overflow se ajusten */
 }
+

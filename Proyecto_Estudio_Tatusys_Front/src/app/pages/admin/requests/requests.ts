@@ -3,6 +3,7 @@ import { Component, OnInit, ViewEncapsulation, HostListener } from '@angular/cor
 import { AppointmentService} from '../../../core/services/appointment.service';
 import { Router, RouterModule } from '@angular/router';
 import { AppointmentDTO } from '../../../core/models/appointment.model';
+import { LayoutService } from '../../../shared/services/layout.service';
 
 @Component({
   selector: 'app-requests',
@@ -12,95 +13,20 @@ import { AppointmentDTO } from '../../../core/models/appointment.model';
   encapsulation: ViewEncapsulation.None
 })
 export class Requests {
+
+  constructor(private router: Router, public layoutService: LayoutService) {}
   // Filtro de Solicitudes
   // Estado inicial
   filtroSeleccionado: 'pendientes' | 'revisadas' = 'pendientes';
 
   cambiarFiltro(tipo: 'pendientes' | 'revisadas' ) {
     this.filtroSeleccionado = tipo;
-    
-    // Aquí puedes llamar a tu servicio para recargar la tabla
-    console.log('Filtrando por:', tipo);
-    // this.cargarCitas(tipo); 
-  }
-  
-  citasPendientes: AppointmentDTO[] = [];
-  paginaActual: number = 1;
-
-  constructor(
-    private appointmentService: AppointmentService,
-    private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    this.cargarCitas();
-  }
-
-  /**
-   * Carga la lista completa de la API sin filtros de tiempo
-   */
-  cargarCitas(): void {
-    // Usamos el método de tu servicio que trae todas las pendientes
-    this.appointmentService.getRequests().subscribe({
-      next: (data) => {
-        this.citasPendientes = data;
-        this.paginaActual = 1; // Reiniciamos a la primera página tras cargar
-      },
-      error: (error) => console.error('Error al obtener citas:', error)
-    });
-  }
-
-
-
-  get citasPorPagina(): number {
-  const altoVentana = window.innerHeight;
-  const anchoVentana = window.innerWidth;
-
-  // 1. Definimos el espacio que NO es tabla (Header + Breadcrumb + Footer + Margen)
-  // En móvil el header suele ser más alto, en desktop más bajo.
-  const espacioOcupado = anchoVentana < 992 ? 380 : 340;
-
-  // 2. Definimos cuánto mide cada fila (ajusta según tu CSS)
-  const altoFila = anchoVentana < 576 ? 80 : 65; 
-
-  // 3. Calculamos cuántas caben
-  const espacioDisponible = altoVentana - espacioOcupado;
-  const filasCalculadas = Math.floor(espacioDisponible / altoFila);
-
-  // 4. Ponemos límites lógicos (mínimo 4, máximo según necesites)
-  return Math.max(6, filasCalculadas);
-}
-
-  @HostListener('window:resize')
-  onResize() {
-  // Forzamos el recálculo y volvemos a la primera página para evitar errores visuales
-  this.paginaActual = 1;
-}
-
-  get citasPaginadas() {
-    const inicio = (this.paginaActual - 1) * this.citasPorPagina;
-    const fin = inicio + this.citasPorPagina;
-    return this.citasPendientes.slice(inicio, fin);
-  }
-
-  get totalPaginas(): number[] {
-    const total = Math.ceil(this.citasPendientes.length / this.citasPorPagina);
-    return Array.from({ length: total }, (_, i) => i + 1);
-  }
-
-  irAPagina(pagina: number | string): void {
-    if (pagina === 'prev' && this.paginaActual > 1) {
-        this.paginaActual--;
-    } else if (pagina === 'next' && this.paginaActual < this.totalPaginas.length) {
-        this.paginaActual++;
-    } else if (typeof pagina === 'number') {
-        this.paginaActual = pagina;
+    if (tipo === 'pendientes') {
+      this.router.navigate(['/admin/solicitudes']); // Cambia por tu ruta real
+    } else {
+      this.router.navigate(['/admin/solicitudes/revisadas']);  // Cambia por tu ruta real
     }
   }
 
-  // --- Navegación ---
 
-  revisarPresupuesto(id: number) {
-    this.router.navigate(['/admin/solicitudes/revisarPresupuesto', id]);
-  }
 }

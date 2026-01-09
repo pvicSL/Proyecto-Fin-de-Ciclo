@@ -73,7 +73,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		switch (cita.getTamanio()) {
 		case MINI:
 			duracionBase = 60;
-		case PEQUEO:
+		case PEQUEÑO:
 			duracionBase = 90;
 		case MEDIANO:
 			duracionBase = 120;
@@ -483,7 +483,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         dto.setIva(presupuesto.getIva());
         dto.setPrecioFinal(presupuesto.getPrecioFinal());
         dto.setFechaPresupuesto(presupuesto.getFecha());
-        dto.setEstadoPresupuesto(null);;
+        dto.setEstadoPresupuesto(presupuesto.getEstado());;
         dto.setComentarios(presupuesto.getComentarios());
 
         return dto;

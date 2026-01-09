@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class PresupuestoService {
+export class BudgetService {
 
   private apiUrl = 'http://localhost:8085/api'; // Ajusta URL
 
@@ -20,4 +20,11 @@ export class PresupuestoService {
     return this.http.put(`${this.apiUrl}/actualizar-generar/${idCita}`, presupuesto);
     }
 
+  obtenerPorEstadoPresupuestoGenerado(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/estado/GENERADO`);
+  }
+
+  obtenerPorEstadoPresupuestoPendiente(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/estado/PENDIENTE`);
+  }
 }

@@ -19,9 +19,9 @@ export const routes: Routes = [
       path: 'admin',
       loadComponent: () => import('./shared/layouts/admin-layout/admin-layout')
         .then(m => m.AdminLayout),
-      
+    
       children: [
-
+        { path: '', redirectTo: 'citas', pathMatch: 'full' },
         {
           path: 'citas',
           loadComponent: () => import('./pages/admin/dashboard-home/dashboard-home').then(m => m.DashboardHome),
@@ -49,7 +49,31 @@ export const routes: Routes = [
           // Carga la solicitudes en estado pendiente
           path: 'solicitudes', 
           loadComponent: () => import('./pages/admin/requests/requests').then(m => m.Requests), 
-          data: {title: 'Solicitudes', icon: 'bi-envelope'}
+
+          children: [
+
+            { path: '', redirectTo: 'pendientes', pathMatch: 'full' },
+            {
+              path: 'pendientes', 
+              loadComponent: () => import('./pages/admin/requests/pending-requests/pending-requests').then(m => m.PendingRequests), 
+            data: {title: 'Solicitudes > Pendientes', icon: 'bi-envelope'}
+            },
+            {
+              path: 'revisadas', 
+              loadComponent: () => import('./pages/admin/requests/reviewed-requests/reviewed-requests').then(m => m.ReviewedRequests), 
+              data: {title: 'Solicitudes > Revisadas', icon: 'bi-envelope'}
+            },
+            {
+              path: 'revisadas/detalle/:id', 
+              loadComponent: () => import('./pages/admin/requests/reviewed-requests-detail/reviewed-requests-detail').then(m => m.ReviewedRequestsDetail), 
+              data: {title: 'Solicitudes > Revisadas > Detalle', icon: 'bi-envelope'}
+            },
+            {
+              path: 'pendientes/revisar/:id', 
+              loadComponent: () => import('./pages/admin/requests/generate-budget/generate-budget').then(m => m.GenerateBudget), 
+              data: {title: 'Solicitudes > Pendientes > Revisar', icon: 'bi-envelope'}
+            }
+          ]
         },
         {
           path: 'trabajadores', 
