@@ -20,7 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import proyecto.modelo.dto.CitaAdminDTO;
+
+import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
@@ -398,7 +399,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		return citaRepository.findByEstatus(estatus);
 	}
 
-	@Override
+	/*@Override
 	public CitaAdminDTO obtenerDetalleCita(int idServicio) {
 		// 1. Recuperamos la Cita (Servicio)
         Cita cita = citaRepository.findById(idServicio)
@@ -457,8 +458,11 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         dto.setComentariosPresupuesto(presupuesto.getComentarios());
 
         return dto;
-	}
+	}*/
 
+	public CitaCompletaDTO obtenerCitaCompleta(int id) {
+	    return citaRepository.findCitaCompletaById(id);
+	}
 
 	private BigDecimal obtenerMonto(CategoriaEnum cat, String valor) {
 		// TODO Auto-generated method stub

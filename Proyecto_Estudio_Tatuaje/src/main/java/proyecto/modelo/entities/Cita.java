@@ -32,8 +32,8 @@ public class Cita implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_servicio") // ← COLUMNA IGUAL
-	private int idCita; // ← Solo variable Java cambia
+	@Column(name = "id_servicio") 
+	private int idCita; 
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)

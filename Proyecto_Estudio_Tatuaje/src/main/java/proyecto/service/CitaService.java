@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
-import proyecto.modelo.dto.CitaAdminDTO;
+import proyecto.modelo.dto.CitaCompletaDTO;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,10 +40,8 @@ public interface CitaService {
     Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos);
     List<CitaDTO> obtenerPorRango(LocalDate fecha, String vista);
     List<CitaDTO> obtenerPorEstatus(Estatus estatus);
-    CitaAdminDTO obtenerDetalleCita(int idServicio);
 
-
-
+    CitaCompletaDTO obtenerCitaCompleta(int id);
 
 	Optional<Cita> buscarPorReferenciaYEmail(String referencia, String email);
 }

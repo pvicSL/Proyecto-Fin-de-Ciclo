@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import proyecto.modelo.dto.CitaAdminDTO;
+import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.enums.Estatus;
@@ -163,23 +163,19 @@ public class CitaRestController {
         
         return ResponseEntity.ok(citas);
     }
-	
-	/**
-     * Endpoint para obtener el detalle completo de una cita para el administrador.
-     */
-    @GetMapping("/detalle/{id}")
-    public ResponseEntity<?> obtenerDetalleCita(@PathVariable("id") int idServicio) {
-        try {
-            CitaAdminDTO dto = citaService.obtenerDetalleCita(idServicio);
-            return ResponseEntity.ok(dto);
-        } catch (RuntimeException e) {
-            // Si no encuentra la cita o el presupuesto, devuelve un 404
-            return ResponseEntity.status(404).body("Error: " + e.getMessage());
-        } catch (Exception e) {
-            // Error genérico del servidor
-            return ResponseEntity.status(500).body("Error interno del servidor");
+    
+    @GetMapping("/detalles-completos/{id}")
+    public ResponseEntity<?> obtenerDetallesCita(@PathVariable int id) {
+        CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+        
+        if (citaCompleta != null) {
+            return ResponseEntity.ok(citaCompleta);
+        } else {
+            return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
         }
     }
+	
+	
 
 	// Endpoint seguro para recuperar una cita
 	// Recibe: ?ref=A5B6F1C2&email=patricia@email.com
