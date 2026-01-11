@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import proyecto.modelo.dto.CitaDTO;
+import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Estado;
@@ -48,5 +49,7 @@ public interface CitaService {
 	CitaCompletaDTO actualizarCitaCompleta(int id, CitaCompletaDTO citaEditada);
 
 	List<CitaDTO> obtenerPorEstadoPresupuesto(Estado generado);
+
+	PreciosIndividualesDTO obtenerPreciosIndividualesPorCita(int idCita);
 	
 }

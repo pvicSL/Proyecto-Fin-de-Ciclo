@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
+import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
 import proyecto.modelo.entities.Presupuesto;
@@ -473,6 +474,10 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		return citaRepository.findByReferenciaAndClienteEmail(refLimpia, emailLimpio);
 	}
 
+	@Override
+	public PreciosIndividualesDTO obtenerPreciosIndividualesPorCita(int idCita) {
+	    return presupuestoService.obtenerPreciosCompletosConIva(idCita);
+	}
 
 
 }

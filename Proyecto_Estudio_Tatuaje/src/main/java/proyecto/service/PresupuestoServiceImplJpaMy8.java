@@ -10,6 +10,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Precio;
 import proyecto.modelo.entities.Presupuesto;
@@ -33,7 +35,7 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	private PrecioRepository precioRepository;
 	
 	@Autowired
-	CitaRepository citaRepository;
+	private CitaRepository citaRepository;
 
 	@Override
 	public List<Presupuesto> leerTodos() {
@@ -64,8 +66,7 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	}
 
 	
-	
-
+		//TODO: refactorizar calcularPresupuesto aprovechando el método obtenerPreciosIndividuales(Cita cita)
 	@Override
 	public Presupuesto calcularPresupuesto(Cita cita) {
 
@@ -155,6 +156,37 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	    precios.put("ESTILO", precioEstilo.get().getPrecioAdicional());
 	    
 	    return precios;
+	}
+	
+	@Override
+	public PreciosIndividualesDTO obtenerPreciosCompletosConIva(int idCita) {
+	    // 1. Buscar cita
+	    Cita cita = citaRepository.findById(idCita).orElse(null);
+	    if (cita == null) return null;
+	    
+	    // 2. Usar método existente
+	    Map<String, BigDecimal> precios = obtenerPreciosIndividuales(cita);
+	    
+	    // 3. Calcular subtotal, IVA y total
+	    BigDecimal subtotal = precios.values().stream()
+	                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+	    BigDecimal iva = subtotal.multiply(IVA_PORCENTAJE);
+	    BigDecimal total = subtotal.add(iva);
+	    
+	    // 4. Crear y devolver DTO
+	    PreciosIndividualesDTO resultado = new PreciosIndividualesDTO();
+	    resultado.setPrecioBase(precios.get("BASE"));
+	    resultado.setPrecioTipo(precios.get("TIPO"));
+	    resultado.setPrecioZona(precios.get("ZONA"));
+	    resultado.setPrecioTamanio(precios.get("TAMANIO"));
+	    resultado.setPrecioDetalle(precios.get("DETALLE"));
+	    resultado.setPrecioColoracion(precios.get("COLORACION"));
+	    resultado.setPrecioEstilo(precios.get("ESTILO"));
+	    resultado.setSubtotal(subtotal);
+	    resultado.setIva(iva);
+	    resultado.setTotal(total);
+	    
+	    return resultado;
 	}
 	
 	
