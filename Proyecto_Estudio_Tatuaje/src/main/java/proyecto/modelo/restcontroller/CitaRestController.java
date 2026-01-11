@@ -142,19 +142,27 @@ public class CitaRestController {
 	    return ResponseEntity.ok(citaService.obtenerPorRango(fecha, vista));
 	}
 	
-	@GetMapping("/buscar/pendientes")
-	public ResponseEntity<List<CitaDTO>> getCitasPendientes() {
-	    // Llamamos al servicio para obtener la lista
-	    List<CitaDTO> pendientes = citaService.obtenerPorEstatus(Estatus.PENDIENTE);
-
-	    if (pendientes.isEmpty()) {
-	        // Retornamos 204 No Content si la lista está vacía (opcional, también puedes devolver 200 con lista vacía)
-	        return ResponseEntity.noContent().build();
-	    }
-
-	    // Retornamos 200 OK con la lista de citas
-	    return ResponseEntity.ok(pendientes);
-	}
+    @GetMapping("/buscar/confirmadas")
+    public ResponseEntity<?> obtenerCitasConfirmadas() {
+        List<CitaDTO> citas = citaService.obtenerPorEstatus(Estatus.CONFIRMADO);
+        
+        if (citas.isEmpty()) {
+            return ResponseEntity.ok(Map.of("mensaje", "No hay citas confirmadas"));
+        }
+        
+        return ResponseEntity.ok(citas);
+    }
+    
+    @GetMapping("/buscar/pendientes")
+    public ResponseEntity<?> obtenerCitasPendientes() {
+        List<CitaDTO> citas = citaService.obtenerPorEstatus(Estatus.PENDIENTE);
+        
+        if (citas.isEmpty()) {
+            return ResponseEntity.ok(Map.of("mensaje", "No hay citas pendientes"));
+        }
+        
+        return ResponseEntity.ok(citas);
+    }
 	
 	/**
      * Endpoint para obtener el detalle completo de una cita para el administrador.

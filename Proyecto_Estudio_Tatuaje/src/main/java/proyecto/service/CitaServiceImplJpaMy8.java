@@ -395,8 +395,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 
 	@Override
 	public List<CitaDTO> obtenerPorEstatus(Estatus estatus) {
-		// TODO Auto-generated method stub
-		return citaRepository.findByEstatus(estatus.PENDIENTE);
+		return citaRepository.findByEstatus(estatus);
 	}
 
 	@Override
@@ -481,7 +480,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		String emailLimpio = email.trim();
 
 		// 3. Llamada al repositorio
-		return citaRepository.findByReferenciaAndCliente_Email(refLimpia, emailLimpio);
+		return citaRepository.findByReferenciaAndClienteEmail(refLimpia, emailLimpio);
 	}
 
 }
