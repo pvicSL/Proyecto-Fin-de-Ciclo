@@ -29,7 +29,12 @@ import proyecto.modelo.entities.Presupuesto;
 import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Coloracion;
 import proyecto.modelo.enums.Detalle;
+import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
+import proyecto.modelo.enums.Estilo;
+import proyecto.modelo.enums.Tamanio;
+import proyecto.modelo.enums.Tipo;
+import proyecto.modelo.enums.Zona;
 import proyecto.modelo.repository.CitaRepository;
 import proyecto.modelo.repository.ClienteRepository;
 import proyecto.modelo.repository.PrecioRepository;
@@ -46,8 +51,10 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	
 	@Autowired
     private PresupuestoRepository presupuestoRepository;
+ 
     @Autowired
-    private PrecioRepository precioRepository;
+    private PresupuestoService presupuestoService;
+    
 
 	@Override
 	public List<Cita> leerTodos() {
@@ -385,82 +392,62 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 
 	@Override
 	public List<CitaDTO> obtenerPorRango(LocalDate fecha, String vista) {
-		LocalDate inicio = fecha;
+	    LocalDate inicio = fecha;
 	    LocalDate fin = vista.equals("dia") ? fecha : fecha.plusDays(6);
+
+	    // Obtener las citas de la base de datos
+	    List<Cita> citas = citaRepository.findByEstatusAndFechaBetween(Estatus.CONFIRMADO, inicio, fin);
 	    
-	    return citaRepository.findByEstatusAndFechaBetween(Estatus.CONFIRMADO, inicio, fin)
-	                         .stream()
-	                         .map(cita -> new CitaDTO(cita)) // método de conversión
-	                         .collect(Collectors.toList());
+	    // Crear lista para los DTOs
+	    List<CitaDTO> citasDTO = new ArrayList<>();
+	    
+	    // Convertir cada Cita a CitaDTO usando bucle 
+	    for (Cita cita : citas) {
+	        CitaDTO citaDTO = new CitaDTO(cita);
+	        citasDTO.add(citaDTO);
+	    }
+	    
+	    return citasDTO;
 	}
 
 	@Override
 	public List<CitaDTO> obtenerPorEstatus(Estatus estatus) {
 		return citaRepository.findByEstatus(estatus);
 	}
-
-	/*@Override
-	public CitaAdminDTO obtenerDetalleCita(int idServicio) {
-		// 1. Recuperamos la Cita (Servicio)
-        Cita cita = citaRepository.findById(idServicio)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + idServicio));
-
-        // 2. Recuperamos el Cliente (asumiendo que Cita tiene un objeto Cliente o id_cliente)
-        Cliente cliente = cita.getCliente();
-
-        // 3. Recuperamos el Presupuesto ya existente vinculado a esta cita
-        Presupuesto presupuesto = presupuestoRepository.findById(idServicio)
-                .orElseThrow(() -> new RuntimeException("No existe un presupuesto para la cita: " + idServicio));
-
-        // 4. Construimos el DTO mapeando los datos de las 3 entidades
-        CitaAdminDTO dto = new CitaAdminDTO();
-        
-        // Datos Identificadores
-        dto.setIdServicio(cita.getIdCita());
-        dto.setIdPresupuesto(presupuesto.getIdPresupuesto());
-
-        // Datos Cliente
-        dto.setNombre(cliente.getNombre());
-        dto.setApellido1(cliente.getApellido1());
-        dto.setApellido1(cliente.getApellido2());
-        dto.setTelefono(cliente.getTelefono());
-        dto.setEmail(cliente.getEmail());
-        dto.setDni(cliente.getDocumentoIdentificacion());
-
-        // Datos del Servicio + Consulta de Precios (para el desglose visual en Angular)
-        // Usamos .name() para convertir el Enum a String
-        dto.setTipo(cita.getTipo().name()); 
-        dto.setPrecioTipo(obtenerMonto(CategoriaEnum.TIPO, cita.getTipo().name()));
-
-        dto.setZona(cita.getZona().name());
-        dto.setPrecioZona(obtenerMonto(CategoriaEnum.ZONA, cita.getZona().name()));
-
-        dto.setTamanio(cita.getTamanio().name());
-        dto.setPrecioTamanio(obtenerMonto(CategoriaEnum.TAMANIO, cita.getTamanio().name()));
-
-        dto.setDetalle(cita.getDetalle().name());
-        dto.setPrecioDetalle(obtenerMonto(CategoriaEnum.DETALLE, cita.getDetalle().name()));
-
-        dto.setColoracion(cita.getColoracion().name());
-        dto.setPrecioColoracion(obtenerMonto(CategoriaEnum.COLORACION, cita.getColoracion().name()));
-
-        dto.setEstilo(cita.getEstilo().name());
-        dto.setPrecioEstilo(obtenerMonto(CategoriaEnum.ESTILO, cita.getEstilo().name()));
-
-        dto.setComentariosServicio(cita.getComentarios());
-
-        // Datos del Presupuesto (cogemos los datos que YA están en la tabla presupuestos)
-        dto.setPrecioBase(presupuesto.getPrecioBase());
-        dto.setIva(presupuesto.getIva());
-        dto.setPrecioFinal(presupuesto.getPrecioFinal());
-        dto.setFechaPresupuesto(presupuesto.getFecha());
-        dto.setEstadoPresupuesto(presupuesto.getEstado().name());
-        dto.setComentariosPresupuesto(presupuesto.getComentarios());
-
-        return dto;
-	}*/
+	
+	public List<CitaDTO> obtenerPorEstadoPresupuesto(Estado estadoPresupuesto) {
+	    return citaRepository.obtenerPorEstadoPresupuesto(estadoPresupuesto);
+	}
+	
 
 	public CitaCompletaDTO obtenerCitaCompleta(int id) {
+	    return citaRepository.findCitaCompletaById(id);
+	}
+	
+	public CitaCompletaDTO actualizarCitaCompleta(int id, CitaCompletaDTO citaEditada) {
+	    // 1. Buscar la cita existente
+	    Cita cita = citaRepository.findById(id).orElse(null);
+	    if (cita == null) return null;
+	    
+	    // 2. Actualizar campos de la cita con valores editados
+	    cita.setTipo(Tipo.valueOf(citaEditada.getTipo()));
+	    cita.setZona(Zona.valueOf(citaEditada.getZona()));
+	    cita.setTamanio(Tamanio.valueOf(citaEditada.getTamanio()));
+	    cita.setDetalle(Detalle.valueOf(citaEditada.getDetalle()));
+	    cita.setColoracion(Coloracion.valueOf(citaEditada.getColoracion()));
+	    cita.setEstilo(Estilo.valueOf(citaEditada.getEstilo()));
+	    cita.setComentarios(citaEditada.getComentarios());
+	    
+	    // 3. Guardar cita actualizada
+	    citaRepository.save(cita);
+	    
+	    // 4. Recalcular presupuesto
+	    Presupuesto nuevoPresupuesto = presupuestoService.calcularPresupuesto(cita);
+	    nuevoPresupuesto.setEstado(Estado.GENERADO);
+	    nuevoPresupuesto.setComentarios(citaEditada.getPresupuestoComentarios());
+	    presupuestoRepository.save(nuevoPresupuesto);
+	    
+	    // 5. Devolver datos actualizados
 	    return citaRepository.findCitaCompletaById(id);
 	}
 
@@ -470,7 +457,6 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	}
 
 	
-
 
 	public Optional<Cita> buscarPorReferenciaYEmail(String referencia, String email) {
 
@@ -486,5 +472,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		// 3. Llamada al repositorio
 		return citaRepository.findByReferenciaAndClienteEmail(refLimpia, emailLimpio);
 	}
+
+
 
 }

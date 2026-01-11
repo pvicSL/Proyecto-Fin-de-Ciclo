@@ -1,9 +1,20 @@
 package proyecto.modelo.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Presupuesto;
+import proyecto.modelo.enums.Estado;
 
 public interface PresupuestoRepository extends JpaRepository<Presupuesto, Integer>{
+
+	@Query("SELECT c FROM Cita c " +
+		       "JOIN Presupuesto p ON p.idServicio = c.idCita " +
+		       "WHERE p.estado = :estadoPresupuesto")
+		List<CitaDTO> findByEstadoPresupuesto(@Param("estadoPresupuesto") Estado estadoPresupuesto);
 
 }

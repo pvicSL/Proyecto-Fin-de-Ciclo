@@ -1,6 +1,7 @@
 package proyecto.modelo.restcontroller;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
+import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
 import proyecto.service.CitaService;
 
@@ -67,7 +69,7 @@ public class CitaRestController {
 
 	@PutMapping("/actualizar/{id}")
 	public ResponseEntity<CitaDTO> actualizarCita(@PathVariable int id, @RequestBody Cita cita) {
-		// Nos aseguramos de que el ID del objeto coincida con el de la URL
+		
 		cita.setIdCita(id);
 
 		Cita citaActualizada = citaService.actualizarCita(cita);
@@ -175,6 +177,52 @@ public class CitaRestController {
         }
     }
 	
+    @PutMapping("/detalles-completos-modificar/{id}")
+    public ResponseEntity<?> actualizarCitaCompleta(@PathVariable int id, @RequestBody CitaCompletaDTO citaEditada) {
+        CitaCompletaDTO citaActualizada = citaService.actualizarCitaCompleta(id, citaEditada);
+        
+        if (citaActualizada != null) {
+            Map<String, Object> respuesta = new HashMap<>();
+            respuesta.put("mensaje", "Cita actualizada correctamente y presupuesto recalculado");
+            respuesta.put("cita", citaActualizada);
+            return ResponseEntity.ok(respuesta);
+        } else {
+            return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+        }
+    }
+    
+    @GetMapping("/buscar/presupuesto-pendientes")
+    public ResponseEntity<?> obtenerCitasPresupuestoPendiente() {
+        List<CitaDTO> citas = citaService.obtenerPorEstadoPresupuesto(Estado.PENDIENTE);
+        
+        if (citas.isEmpty()) {
+            return ResponseEntity.ok(Map.of("mensaje", "No hay citas con presupuesto pendiente"));
+        }
+        
+        return ResponseEntity.ok(citas);
+    }
+
+    @GetMapping("/buscar/presupuesto-generados")
+    public ResponseEntity<?> obtenerCitasPresupuestoGenerado() {
+        List<CitaDTO> citas = citaService.obtenerPorEstadoPresupuesto(Estado.GENERADO);
+        
+        if (citas.isEmpty()) {
+            return ResponseEntity.ok(Map.of("mensaje", "No hay citas con presupuesto generado"));
+        }
+        
+        return ResponseEntity.ok(citas);
+    }
+
+    @GetMapping("/buscar/presupuesto-aceptados")
+    public ResponseEntity<?> obtenerCitasPresupuestoAceptado() {
+        List<CitaDTO> citas = citaService.obtenerPorEstadoPresupuesto(Estado.ACEPTADO);
+        
+        if (citas.isEmpty()) {
+            return ResponseEntity.ok(Map.of("mensaje", "No hay citas con presupuesto aceptado"));
+        }
+        
+        return ResponseEntity.ok(citas);
+    }
 	
 
 	// Endpoint seguro para recuperar una cita

@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.enums.CategoriaEnum;
+import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
 
 public interface CitaService {
@@ -44,4 +45,8 @@ public interface CitaService {
     CitaCompletaDTO obtenerCitaCompleta(int id);
 
 	Optional<Cita> buscarPorReferenciaYEmail(String referencia, String email);
+	CitaCompletaDTO actualizarCitaCompleta(int id, CitaCompletaDTO citaEditada);
+
+	List<CitaDTO> obtenerPorEstadoPresupuesto(Estado generado);
+	
 }

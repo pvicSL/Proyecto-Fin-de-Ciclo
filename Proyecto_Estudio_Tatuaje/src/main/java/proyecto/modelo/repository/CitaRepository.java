@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
+import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
 
 public interface CitaRepository extends JpaRepository<Cita, Integer> {
@@ -39,5 +40,15 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
 		       "JOIN Presupuesto p ON p.idServicio = c.idCita " +
 		       "WHERE c.idCita = :id")
 		CitaCompletaDTO findCitaCompletaById(@Param("id") int id);
+
+	@Query("SELECT c FROM Cita c " +
+		       "JOIN c.cliente cl " +
+		       "JOIN Presupuesto p ON p.idServicio = c.idCita " +
+		       "WHERE p.estado = :estadoPresupuesto")
+		List<CitaDTO> obtenerPorEstadoPresupuesto(@Param("estadoPresupuesto") Estado estadoPresupuesto);
+
+	
+
+
 
 }
