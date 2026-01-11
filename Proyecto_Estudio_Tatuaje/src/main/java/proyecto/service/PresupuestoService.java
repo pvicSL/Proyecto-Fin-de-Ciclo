@@ -1,7 +1,9 @@
 package proyecto.service;
 
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Presupuesto;
@@ -21,6 +23,6 @@ public interface PresupuestoService {
 	
 	Presupuesto calcularPresupuesto (Cita cita);
 	Presupuesto calcularPresupuestoPorId(int idCita);
-	
+	Map<String, BigDecimal> obtenerPreciosIndividuales(Cita cita);
 	
 }

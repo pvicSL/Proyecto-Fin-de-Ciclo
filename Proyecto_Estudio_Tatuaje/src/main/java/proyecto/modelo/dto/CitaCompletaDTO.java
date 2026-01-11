@@ -7,24 +7,33 @@ import java.time.LocalTime;
 import java.util.Objects;
 
 public class CitaCompletaDTO {
-    // Datos Cita
+	// Datos Cita
     private int idCita;
     private String tipo, zona, tamanio, detalle, coloracion, estilo;
     private LocalDate fecha;
     private LocalTime hora;
     private String comentarios;
     private String imagenRef1, imagenRef2, imagenRef3;
-    
-    // Datos Cliente  
+
+    // Datos Cliente
     private String clienteNombre, clienteApellido1, clienteApellido2;
     private String clienteEmail, clienteTelefono, clienteDocumentoIdentificacion;
-    
+
     // Datos Presupuesto
     private BigDecimal precioBase, iva, precioFinal;
     private LocalDateTime presupuestoFecha;
     private String estadoPresupuesto;
     private boolean vigente;
     private String presupuestoComentarios;
+    
+    // NUEVOS: Desglose de precios individuales
+    private BigDecimal precioTipo;
+    private BigDecimal precioZona;
+    private BigDecimal precioTamanio;
+    private BigDecimal precioDetalle;
+    private BigDecimal precioColoracion;
+    private BigDecimal precioEstilo;
+    
     
 	public CitaCompletaDTO() {
 		super();

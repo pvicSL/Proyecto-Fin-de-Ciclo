@@ -3,7 +3,9 @@ package proyecto.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +122,39 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	    } else {
 	        throw new RuntimeException("Cita no encontrada con ID: " + idCita);
 	    }
+	}
+
+	@Override
+	public Map<String, BigDecimal> obtenerPreciosIndividuales(Cita cita) {
+	    
+	    // Reutilizar la misma lógica que ya tienes
+	    String tipoServicio = cita.getTipo().toString();
+	    String zonaServicio = cita.getZona().toString();
+	    String tamanioServicio = cita.getTamanio().toString();
+	    String detalleServicio = cita.getDetalle().toString();
+	    String coloracionServicio = cita.getColoracion().toString();
+	    String estiloServicio = cita.getEstilo().toString();
+
+	    // Obtener precios (mismo código que ya tienes)
+	    Optional<Precio> precioBase = precioRepository.findByCategoriaAndValor(CategoriaEnum.BASE, "SERVICIO_BASE");
+	    Optional<Precio> precioTipo = precioRepository.findByCategoriaAndValor(CategoriaEnum.TIPO, tipoServicio);
+	    Optional<Precio> precioZona = precioRepository.findByCategoriaAndValor(CategoriaEnum.ZONA, zonaServicio);
+	    Optional<Precio> precioTamanio = precioRepository.findByCategoriaAndValor(CategoriaEnum.TAMANIO, tamanioServicio);
+	    Optional<Precio> precioDetalle = precioRepository.findByCategoriaAndValor(CategoriaEnum.DETALLE, detalleServicio);
+	    Optional<Precio> precioColor = precioRepository.findByCategoriaAndValor(CategoriaEnum.COLORACION, coloracionServicio);
+	    Optional<Precio> precioEstilo = precioRepository.findByCategoriaAndValor(CategoriaEnum.ESTILO, estiloServicio);
+
+	    // Crear mapa con los precios
+	    Map<String, BigDecimal> precios = new HashMap<>();
+	    precios.put("BASE", precioBase.get().getPrecioAdicional());
+	    precios.put("TIPO", precioTipo.get().getPrecioAdicional());
+	    precios.put("ZONA", precioZona.get().getPrecioAdicional());
+	    precios.put("TAMANIO", precioTamanio.get().getPrecioAdicional());
+	    precios.put("DETALLE", precioDetalle.get().getPrecioAdicional());
+	    precios.put("COLORACION", precioColor.get().getPrecioAdicional());
+	    precios.put("ESTILO", precioEstilo.get().getPrecioAdicional());
+	    
+	    return precios;
 	}
 	
 	
