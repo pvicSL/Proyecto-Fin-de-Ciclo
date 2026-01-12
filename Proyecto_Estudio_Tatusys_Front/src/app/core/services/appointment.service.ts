@@ -1,89 +1,126 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { AppointmentDTO } from '../models/appointment.model';
-
-
-
 
 @Injectable({
     providedIn: 'root'
 })
 export class AppointmentService {
 
-    // URL correspondiente a las citas
+    // URL base de la API
     private apiUrl = 'http://localhost:8085/api/citas';
 
-    constructor(private http: HttpClient) { }
+    // Inyección moderna de dependencias (opcional, pero recomendada)
+    private http = inject(HttpClient);
 
-    // 1. MÉTODO PARA CREAR LA CITA
+    // ==========================================
+    // 1. CREACIÓN Y CONSULTA DE DURACIÓN
+    // ==========================================
+
     createAppointment(formData: FormData): Observable<any> {
-        // Nota: NO establecemos 'Content-Type' manualmente. 
-        // Angular lo detecta y lo pone como 'multipart/form-data' automáticamente.
         return this.http.post(`${this.apiUrl}/crear-cita`, formData);
     }
 
-    // 2. OBTENER CITA POR ID (se debe cambiar por una clave más compleja, no es seguro que usemos la id numérica sin más)
-    getAppointmentByRef(id: string): Observable<AppointmentDTO> {
-        return this.http.get<AppointmentDTO>(`${this.apiUrl}/${id}`);
+    calculateDuration(criteria: { tamanio: string, detalle: string, coloracion: string }): Observable<number> {
+        return this.http.post<number>(`${this.apiUrl}/calcular-duracion`, criteria);
     }
 
+    // ==========================================
+    // 2. BÚSQUEDA SEGURA (Por Referencia + Email)
+    // ==========================================
+
+    // NOTA: He eliminado 'getAppointmentByRef(id)' porque no es seguro usar IDs directos.
 
     /**
-   * Busca una cita por su código de referencia (Localizador) y el email del cliente via Query Params.
-   * Backend espera: /api/citas/buscar?ref=XXXX&email=yyyy@mail.com
-   */
+     * Busca una cita para mostrarla en el modificador.
+     * Requiere Referencia y Email para validar la propiedad.
+     */
     getAppointmentByLocator(reference: string, email: string): Observable<any> {
-        // Usamos params para codificar correctamente el email y la referencia en la URL
-        return this.http.get(`${this.apiUrl}/buscar`, {
-            params: {
-                ref: reference,
-                email: email
-            }
-        });
+        const params = new HttpParams()
+            .set('ref', reference)
+            .set('email', email);
+
+        return this.http.get(`${this.apiUrl}/buscar`, { params });
     }
 
-    // 3. MODIFICAR FECHA (Solo enviamos los cambios necesarios: el id, que es el mismo, y la fecha y la hora)
-    updateAppointmentDate(id: number, fecha: string, hora: string): Observable<any> {
+    // ==========================================
+    // 3. MODIFICACIÓN Y CANCELACIÓN (¡CAMBIO IMPORTANTE!)
+    // ==========================================
 
-        // 1. Verificamos por consola que el ID llega bien (IMPORTANTE)
-        console.log("Enviando modificación de horario para cita con ID:", id);
+    /**
+     * Modifica la fecha de una cita usando la REFERENCIA como llave.
+     * OJO: Tu Backend debe tener un endpoint que acepte esto.
+     */
+    updateAppointmentDate(referencia: string, email: string, fecha: string, hora: string): Observable<any> {
+        console.log("Enviando modificación para cita:", referencia);
 
         const payload = {
-            idCita: id,
+            referencia: referencia, // Enviamos ref en lugar de ID
+            email: email,          // Enviamos email por seguridad extra
             fecha: fecha,
             hora: hora
         };
 
-        // 2. Usa el PUT y la ruta con el id de la cita
-        // (PUEDE QUE SEA NECESARIO MODIFICAR ESTO CUANDO SE CAMBIE LA CLAVE PARA RECUPERAR UNA CITA)
-        return this.http.put(`${this.apiUrl}/actualizar/${id}`, payload);
+        // CAMBIO: La ruta ya no es /actualizar/{id}, ahora debería ser segura.
+        // Sugerencia para backend: PUT /api/citas/actualizar-seguro
+        return this.http.put(`${this.apiUrl}/modificar-conreferencia`, payload);
     }
 
-    // 3. MÉTODO DE CANCELAR UNA CITA (Cambia el estatus en la BBDD)
-    cancelAppointment(id: number): Observable<any> {
-        // Importante: se usa responseType: 'text' porque el back devuelve un String plano
-        return this.http.delete(`${this.apiUrl}/eliminar/${id}`, { responseType: 'text' });
+    /**
+     * Cancela una cita usando REFERENCIA y EMAIL.
+     * Ya no usamos el ID numérico en la URL para evitar borrados accidentales/maliciosos.
+     */
+    cancelAppointment(referencia: string, email: string): Observable<any> {
+        const params = new HttpParams()
+            .set('ref', referencia)
+            .set('email', email);
+
+        // CAMBIO: Delete ahora envía parámetros, no un ID en el path.
+        // Sugerencia para backend: DELETE /api/citas/eliminar-seguro?ref=...&email=...
+        return this.http.delete(`${this.apiUrl}/cancelar-conreferencia`, { params, responseType: 'text' });
     }
 
-    // 4. BÚSQUEDA DE HUECOS EN LA AGENDA DEL ESTUDIO
-    // se deberá añadir la id de empleado para la búsqueda, no solo los minutos.
-    getAvailableSlots(durationMinutes: number): Observable<any> {
-        // Devuelve un objeto JSON tipo: { "2026-12-20": ["10:00", "10:30"], ... }
-        // Busca la disponibilidad por minutos.
-        return this.http.get(`${this.apiUrl}/disponibilidad/${durationMinutes}`);
+    // ==========================================
+    // 4. DISPONIBILIDAD (Con Filtros de Empleado)
+    // ==========================================
+
+    /**
+     * Busca huecos libres.
+     * Acepta 'filtros' opcionales para futura implementación de empleados.
+     */
+    getAvailableSlots(durationMinutes: number, filtros?: { tipo: string, estilo: string }): Observable<any> {
+
+        // 1. Configuración básica (LO QUE FUNCIONA HOY)
+        let url = `${this.apiUrl}/disponibilidad/${durationMinutes}`;
+        let params = new HttpParams();
+
+        // 2. Lógica preparada para el futuro (Descomentar cuando Backend esté listo)
+        /* if (filtros) {
+           // Si hay filtros, cambiamos la estrategia a Query Params
+           // url = `${this.apiUrl}/disponibilidad`; 
+           // params = params.set('duracion', durationMinutes);
+           // params = params.set('tipo', filtros.tipo);
+           // params = params.set('estilo', filtros.estilo);
+        }
+        */
+
+        // Por ahora, si descomentas lo de arriba, pasaría los params.
+        // Hoy por hoy, 'params' va vacío y la URL lleva la duración en el path.
+        return this.http.get(url, { params });
     }
 
-    // Petición GET al endpoint específico de confirmadas
+    // ==========================================
+    // 5. MÉTODOS AUXILIARES / ADMIN
+    // ==========================================
+
     getConfirmedAppointments(fecha: string, vista: string): Observable<AppointmentDTO[]> {
-  // Enviamos la fecha y la vista como parámetros: ?fecha=2026-01-05&vista=dia
-  return this.http.get<AppointmentDTO[]>(`${this.apiUrl}/buscar/confirmadas/${fecha}/${vista}`, {
-    params: { fecha, vista }
-  });
-  
-  }
+        return this.http.get<AppointmentDTO[]>(`${this.apiUrl}/buscar/confirmadas/${fecha}/${vista}`, {
+            params: { fecha, vista }
+        });
+    }
 
-  getRequests(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/buscar/pendientes`);
-  }
+    getRequests(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/buscar/pendientes`);
+    }
 }
