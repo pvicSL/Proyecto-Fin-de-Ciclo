@@ -48,7 +48,7 @@ public class CitaRestController {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@GetMapping
+	@GetMapping("/listarCitas")
 	public ResponseEntity<List<CitaDTO>> listarCitas() {
 		// Service ya devuelve DTOs directamente
 		List<CitaDTO> citasDTO = citaService.listarCitasDTO();
