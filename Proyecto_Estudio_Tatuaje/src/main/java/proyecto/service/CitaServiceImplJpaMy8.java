@@ -313,13 +313,13 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	}
 
 	// CRUD básico con DTOs
+	
 	@Override
 	public List<CitaDTO> listarCitasDTO() {
 		List<Cita> citas = citaRepository.findAll();
 		return citas.stream().map(cita -> new CitaDTO(cita)) // ← Constructor DTO hace la conversión
 				.collect(Collectors.toList());
 	}
-
 	@Override
 	public CitaDTO obtenerCitaDTOPorId(int idCita) {
 		Optional<Cita> citaOpt = citaRepository.findById(idCita);
@@ -327,7 +327,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		if (citaOpt.isPresent()) {
 			return new CitaDTO(citaOpt.get()); // ← Convertir entidad → DTO
 		} else {
-			return null; // O lanzar excepción personalizada
+			return null;
 		}
 	}
 
