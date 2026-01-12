@@ -69,27 +69,42 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 
 	@Override
 	public Integer calcularDuracion(Cita cita) {
-		int duracionBase = 30;
-		switch (cita.getTamanio()) {
-		case MINI:
-			duracionBase = 60;
-		case PEQUEÑO:
-			duracionBase = 90;
-		case MEDIANO:
-			duracionBase = 120;
-		case GRANDE:
-			duracionBase = 180;
-		case MUY_GRANDE:
-			duracionBase = 240;
-		}
+	    int duracionBase = 120; 
 
-		if (cita.getDetalle() == Detalle.DENSO)
-			duracionBase += 30;
-		if (cita.getColoracion() == Coloracion.COLOR)
-			duracionBase += 30;
+	    if (cita.getTamanio() != null) {
+	        switch (cita.getTamanio()) {
+	            case MINI:
+	                duracionBase = 60;
+	                break; 
+	            case PEQUEÑO:
+	                duracionBase = 90;
+	                break; 
+	            case MEDIANO:
+	                duracionBase = 120;
+	                break; 
+	            case GRANDE:
+	                duracionBase = 180;
+	                break; 
+	            case MUY_GRANDE:
+	                duracionBase = 240;
+	                break; 
+	            default:
+	                duracionBase = 120;
+	        }
+	    }
 
-		return duracionBase;
+	    if (cita.getDetalle() == proyecto.modelo.enums.Detalle.DENSO) {
+	        duracionBase += 30;
+	    }
+	    
+	    if (cita.getColoracion() == proyecto.modelo.enums.Coloracion.COLOR) {
+	        duracionBase += 30;
+	    }
+
+	    return duracionBase;
 	}
+
+
 
 	// --- MÉTODO CREAR CITA MODIFICADO ---
 	@Override
