@@ -227,26 +227,58 @@ public class CitaRestController {
 
 	// Endpoint seguro para recuperar una cita
 	// Recibe: ?ref=A5B6F1C2&email=patricia@email.com
-	@GetMapping("/buscar")
-	public ResponseEntity<?> buscarPorReferencia(@RequestParam String ref, @RequestParam String email) {
+    @GetMapping("/buscar")
+    public ResponseEntity<?> buscarPorReferencia(@RequestParam String ref, @RequestParam String email) {
 
-		// Buscamos usando el método seguro del repositorio
-		// Nota: Tendrás que añadir este método en tu Servicio e Interfaz primero para
-		// que sea limpio,
-		// o llamar al repositorio directamente si estás prototipando rápido.
-		// Lo ideal es: citaService.buscarPorReferenciaYEmail(ref, email);
+        Optional<Cita> citaOpt = citaService.buscarPorReferenciaYEmail(ref, email);
 
-		// Asumamos que has creado el método en el servicio que llama al repo:
-		Optional<Cita> citaOpt = citaService.buscarPorReferenciaYEmail(ref, email);
+        if (citaOpt.isPresent()) {
+            Cita citaEncontrada = citaOpt.get();
+            CitaDTO dto = new CitaDTO(citaEncontrada);
+            
+            // AQUI ESTA LA CLAVE: Calculamos la duración y la metemos en el DTO
+            Integer duracion = citaService.calcularDuracion(citaEncontrada);
+            dto.setDuracionEstimada(duracion);
+            
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró ninguna cita con esa referencia y email.");
+        }
+    }
 
-		if (citaOpt.isPresent()) {
-			// Se ha encontrado, así que la devolvemos.
-			return ResponseEntity.ok(new CitaDTO(citaOpt.get()));
-		} else {
-			// NO se ha encontrado, devuelve un error 404
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("No se encontró ninguna cita con esa referencia y email.");
-		}
-	}
+	
+    // Calcular duración sin guardar (Para el Formulario)
+    @PostMapping("/calcular-duracion")
+    public ResponseEntity<Integer> calcularDuracionEstimada(@RequestBody CitaDTO datos) {
+        try {
+            // Creamos una entidad temporal solo con los datos necesarios para el cálculo
+            Cita citaSimulada = new Cita();
+            
+            // Convertimos los Strings del DTO a los Enums de la Entidad
+            // Es vital usar los mismos nombres de ENUM que en Java (Mayúsculas)
+            if (datos.getTamanio() != null) 
+                citaSimulada.setTamanio(proyecto.modelo.enums.Tamanio.valueOf(datos.getTamanio()));
+            
+            if (datos.getDetalle() != null) 
+                citaSimulada.setDetalle(proyecto.modelo.enums.Detalle.valueOf(datos.getDetalle())); // Ojo al mapa del front
+            
+            if (datos.getColoracion() != null) 
+                citaSimulada.setColoracion(proyecto.modelo.enums.Coloracion.valueOf(datos.getColoracion()));
+
+            // Usamos la lógica centralizada del servicio
+            Integer minutos = citaService.calcularDuracion(citaSimulada);
+            
+            return ResponseEntity.ok(minutos);
+            
+        } catch (IllegalArgumentException e) {
+            // Si el front manda un texto que no coincide con el Enum
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 
 }
