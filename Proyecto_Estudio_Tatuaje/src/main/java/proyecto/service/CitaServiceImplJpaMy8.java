@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
+import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
@@ -493,6 +494,48 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	public PreciosIndividualesDTO obtenerPreciosIndividualesPorCita(int idCita) {
 	    return presupuestoService.obtenerPreciosCompletosConIva(idCita);
 	}
+
+    @Override
+    public boolean modificarFechaCita(CitaModificacionDTO datos) {
+        // Buscamos la cita asegurándonos de que el email coincide (seguridad)
+        Optional<Cita> citaOpt = citaRepository.findByReferenciaAndClienteEmail(
+            datos.getReferencia(), 
+            datos.getEmail().toLowerCase() // Normalizamos el email por si acaso
+        );
+
+        if (citaOpt.isPresent()) {
+            Cita cita = citaOpt.get();
+            cita.setFecha(datos.getFecha());
+            cita.setHora(datos.getHora());
+            // Si quieres resetear el estatus a PENDIENTE al cambiar fecha, hazlo aquí:
+            // cita.setEstatus(Estatus.PENDIENTE); 
+            
+            citaRepository.save(cita);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean cancelarCitaPorReferencia(String referencia, String email) {
+        Optional<Cita> citaOpt = citaRepository.findByReferenciaAndClienteEmail(
+            referencia, 
+            email.toLowerCase()
+        );
+
+        if (citaOpt.isPresent()) {
+            // OPCIÓN A: Borrado físico (DELETE) - Tal como lo tienes ahora
+            citaRepository.delete(citaOpt.get());
+            
+            // OPCIÓN B (Recomendada a futuro): Borrado lógico
+            // Cita cita = citaOpt.get();
+            // cita.setEstatus(Estatus.CANCELADO); // Requiere añadir CANCELADO al Enum
+            // citaRepository.save(cita);
+
+            return true;
+        }
+        return false;
+    }
 
 
 }

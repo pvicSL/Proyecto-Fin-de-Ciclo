@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
+import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
@@ -56,9 +57,9 @@ public class CitaRestController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<CitaDTO> obtenerCita(@PathVariable int id) {
+	public ResponseEntity<CitaDTO> obtenerCita(@PathVariable int idCita) {
 		// Service maneja la conversión y validación
-		CitaDTO citaDTO = citaService.obtenerCitaDTOPorId(id);
+		CitaDTO citaDTO = citaService.obtenerCitaDTOPorId(idCita);
 
 		if (citaDTO != null) {
 			return ResponseEntity.ok(citaDTO);
@@ -68,9 +69,9 @@ public class CitaRestController {
 	}
 
 	@PutMapping("/actualizar/{id}")
-	public ResponseEntity<CitaDTO> actualizarCita(@PathVariable int id, @RequestBody Cita cita) {
+	public ResponseEntity<CitaDTO> actualizarCita(@PathVariable int idCita, @RequestBody Cita cita) {
 		
-		cita.setIdCita(id);
+		cita.setIdCita(idCita);
 
 		Cita citaActualizada = citaService.actualizarCita(cita);
 
@@ -279,6 +280,34 @@ public class CitaRestController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    
+    @PutMapping("/modificar-conreferencia")
+    public ResponseEntity<?> modificarCitaSegura(@RequestBody CitaModificacionDTO solicitud) {
+        boolean exito = citaService.modificarFechaCita(solicitud);
+
+        if (exito) {
+            return ResponseEntity.ok(Map.of("mensaje", "Cita modificada correctamente."));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "No se encontró la cita o el email no coincide."));
+        }
+    }
+
+    @DeleteMapping("/cancelar-conreferencia")
+    public ResponseEntity<?> cancelarCitaSegura(
+            @RequestParam String ref, 
+            @RequestParam String email) {
+        
+        boolean exito = citaService.cancelarCitaPorReferencia(ref, email);
+
+        if (exito) {
+            return ResponseEntity.ok("Cita cancelada correctamente.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("No se pudo cancelar: Cita no encontrada o credenciales inválidas.");
+        }
+    }
+
 
 
 }

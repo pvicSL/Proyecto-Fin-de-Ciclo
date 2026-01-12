@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import proyecto.modelo.dto.CitaDTO;
+import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.enums.CategoriaEnum;
@@ -52,4 +53,11 @@ public interface CitaService {
 
 	PreciosIndividualesDTO obtenerPreciosIndividualesPorCita(int idCita);
 	
+    // Devuelve true si se modificó, false si no encontró la cita
+    boolean modificarFechaCita(CitaModificacionDTO datos);
+
+    // Devuelve true si se borró, false si no encontró la cita
+    boolean cancelarCitaPorReferencia(String referencia, String email);
+
+
 }
