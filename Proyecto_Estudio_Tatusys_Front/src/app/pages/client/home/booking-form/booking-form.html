@@ -266,7 +266,7 @@
 
                                 <div class="month-nav d-flex justify-content-between align-items-center mb-3 px-2">
                                     <button class="btn btn-nav arrow-clean" (click)="prevMonth()"
-                                        type="button">&lt;</button>
+                                        [disabled]="isPrevMonthDisabled" type="button">&lt;</button>
                                     <h4 class="m-0 month-title">{{ currentMonthName }}</h4>
                                     <button class="btn btn-nav arrow-clean" (click)="nextMonth()"
                                         type="button">&gt;</button>
@@ -275,7 +275,7 @@
                                 <div class="week-container d-flex align-items-center">
 
                                     <button class="btn btn-nav-week arrow-clean" (click)="prevWeek()"
-                                        type="button">&lt;</button>
+                                        [disabled]="isPrevWeekDisabled" type="button">&lt;</button>
 
                                     <div class="days-grid flex-grow-1 d-flex justify-content-between mx-2">
 

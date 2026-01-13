@@ -2,15 +2,25 @@
 ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
 ================================================ */
 
-/* Input de la referencia de la cita */
+/* Input de la referencia de la cita y email */
 .input-reference {
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
-    font-size: 1.5rem;
-    letter-spacing: 0.125rem;
+
+    /* CAMBIO 1: Reducimos tamaño de 1.5rem a 1.1rem */
+    font-size: 1.1rem;
+
+    /* CAMBIO 2: Reducimos el espaciado entre letras (antes 0.125rem) 
+       para que el email quepa mejor */
+    letter-spacing: 0.03rem;
+
     font-weight: 700;
     color: var(--jet);
+
+    /* Nota: Mantenemos mayúsculas visuales, pero recuerda que el email 
+       lo conviertes a minúsculas en el TS antes de enviar */
     text-transform: uppercase;
+
     padding: 0.8rem;
     border-radius: 0.5rem;
 }
@@ -37,6 +47,17 @@ ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
     border: none;
     color: var(--antiflash-white);
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+    transition: max-width 0.3s ease-in-out;
+}
+
+.booking-card.card-wide {
+    max-width: 65rem;
+    /* Mucho más ancha para ver la semana completa */
+}
+
+.card-wide .day-column {
+    /* En pantallas grandes, les damos aún más presencia */
+    min-width: 6.5rem;
 }
 
 .card-body {
@@ -47,8 +68,24 @@ ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
     font-family: 'Figtree', sans-serif;
     color: var(--antiflash-white);
     font-weight: 400;
-    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    /* Mínimo 1.2rem (móvil), ideal 3vw, máximo 1.8rem (escritorio) */
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
     letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+    /* Ajuste de espaciado */
+}
+
+/* Nuevo estilo para el Mes y Semana */
+.calendar-header-text {
+    color: var(--antiflash-white);
+    /* Mínimo 1rem, escala rápido con 4vw, tope en 1.5rem */
+    font-size: clamp(1rem, 4vw, 1.5rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    text-align: center;
+    /* Aseguramos que tenga espacio y no se pegue a las flechas */
+    margin: 0 0.5rem;
 }
 
 .appointment-box {
@@ -134,19 +171,29 @@ ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
 }
 
 /* Botón 'MODIFICAR CITA' */
-.btn-modify-custom {
-    color: white !important;
-    background-color: transparent;
-    border: 2px solid var(--robin-egg-blue);
+.btn-confirm-custom {
+    background-color: var(--dark-cyan);
+    border: 1px solid var(--dark-cyan);
+    color: var(--antiflash-white);
     font-weight: 600;
     padding: 0.6rem 1.5rem;
     transition: all 0.3s ease;
 }
 
-.btn-modify-custom:hover {
-    color: black;
-    background-color: var(--dark-cyan);
-    border-color: var(--dark-cyan);
+.btn-confirm-custom:hover {
+    background-color: var(--robin-egg-blue);
+    /* Un tono más claro al pasar el ratón */
+    border-color: var(--robin-egg-blue);
+    color: var(--night);
+    /* Texto oscuro para contraste */
+    box-shadow: 0 0 10px rgba(17, 195, 185, 0.4);
+}
+
+.btn-confirm-custom:disabled {
+    background-color: #444;
+    border-color: #444;
+    color: #888;
+    box-shadow: none;
 }
 
 /* Botón 'CANCELAR CITA' */
@@ -168,38 +215,171 @@ ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
 /* ===== CONTENEDOR DEL SELECTOR DE NUEVA FECHA ====== */
 /* Contenedor con scroll horizontal por si la pantalla es muy pequeña */
 .days-container {
-    max-width: 100%;
-    min-height: 250px;
+    width: 100%;
+    /* Asegura que el contenedor ocupe todo el ancho disponible */
+    min-height: 0.625rem;
+    padding-bottom: 1rem;
+    /* Un poco de espacio para la barra de scroll si aparece */
 }
 
 /* Columna de día */
 .day-column {
-    min-width: 3.75rem;
+    flex: 1;
+    min-width: 5.5rem;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     padding: 0.625rem 0.313rem;
+    box-sizing: border-box;
+}
+
+/* Estilo visual para días deshabilitados en el calendario */
+.day-column.disabled-day {
+    opacity: 0.5;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.02);
 }
 
 /* Botones de hora (huecos disponibles) */
 .slot-btn {
     border: 1px solid #666;
     color: #ccc;
-    font-size: 0.8rem;
-    padding: 4px 0;
+    font-size: 0.85rem;
+    /* Un pelín más grande para leer mejor */
+    padding: 6px 0;
+    /* Un poco más alto para facilitar el clic */
     width: 100%;
     transition: all 0.2s;
+    border-radius: 4px;
+    /* Un toque estético */
 }
 
 .slot-btn:hover {
     background-color: #444;
     color: white;
+    border-color: #999;
 }
 
 /* Estado seleccionado */
 .slot-btn.selected {
     background-color: var(--robin-egg-blue);
     border-color: var(--robin-egg-blue);
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 0 8px var(--dark-cyan);
+    color: var(--night);
+    font-weight: 700;
+}
+
+/* --- ESTILOS CALENDARIO (DÍAS Y NAVEGACIÓN) --- */
+/* Título del día de la semana (LUN, MAR...) */
+.weekday-label {
+    color: var(--robin-egg-blue);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+/* Botones de navegación (Ant. / Sig.) */
+.nav-btn {
+    font-size: 1.1rem !important;
+    font-weight: 500;
+    padding-inline: 1rem;
+}
+
+/* Botón 'ATRÁS' personalizado */
+.btn-back-custom {
+    color: #ccc !important;
+    border: 1px solid #666;
+    background-color: transparent;
+    font-weight: 600;
+    padding: 0.6rem 0;
+    min-width: 8rem;
+    transition: all 0.3s ease;
+}
+
+.btn-back-custom:hover {
+    background-color: #444;
+    border-color: #999;
+    color: white !important;
+}
+
+/* --- ESTILOS PANTALLA CONFIRMACIÓN --- */
+
+/* Título ¡TODO LISTO! */
+.confirm-title {
+    color: var(--robin-egg-blue) !important;
+    font-weight: 800;
+    letter-spacing: 0.05rem;
+}
+
+/* Texto conector 'a las' */
+.time-connector {
+    font-size: 1.3rem;
+    color: var(--jet);
+    margin-bottom: 0.2rem;
+}
+
+/* Botón CERRAR personalizado */
+.btn-close-custom {
+    color: var(--antiflash-white);
+    border: 1px solid var(--robin-egg-blue);
+    background-color: transparent;
+    font-size: 1.1rem;
+    padding: 0.7rem 3rem;
+    min-width: 12rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-close-custom:hover {
+    background-color: var(--robin-egg-blue);
+    color: var(--night);
+}
+
+/* Botón 'BUSCAR' y 'MODIFICAR CITA' */
+.btn-modify-custom {
+    background-color: transparent;
+    border: 2px solid var(--robin-egg-blue);
+    color: var(--robin-egg-blue) !important;
+    /* Texto en color robin egg */
+    font-weight: 700;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+/* Estado Hover (al pasar el ratón) */
+.btn-modify-custom:hover:not(:disabled) {
+    background-color: var(--robin-egg-blue);
+    /* Fondo se vuelve cyan */
+    border-color: var(--robin-egg-blue);
+    color: var(--night) !important;
+    /* Texto se vuelve negro (u oscuro) */
+}
+
+/* Estado Deshabilitado (cuando no hay datos escritos) */
+.btn-modify-custom:disabled {
+    border-color: #555;
+    /* Borde gris apagado */
+    color: #555 !important;
+    /* Texto gris apagado */
+    background-color: transparent;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Etiquetas de los campos de búsqueda (Localizador y Email) */
+.search-label {
+    color: var(--cardinal);
+    /* Color Cardinal */
+    font-size: 1.1rem;
+    /* Aumentamos el tamaño (antes era 'small' ~0.8rem) */
+    font-weight: 600;
+    /* Un poco más de peso para que se lea mejor */
+    letter-spacing: 0.03rem;
+}
+
+/* Texto de advertencia (irreversible) */
+.text-warning-custom {
+    color: var(--cardinal);
+    /* Rojo cardinal */
+    font-weight: 700;
+    /* Negrita */
+    letter-spacing: 0.03rem;
 }

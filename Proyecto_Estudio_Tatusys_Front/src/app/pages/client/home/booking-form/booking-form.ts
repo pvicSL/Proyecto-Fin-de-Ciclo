@@ -234,6 +234,35 @@ export class BookingFormComponent implements OnInit {
     }
   }
 
+  // --- GETTERS PARA CONTROLAR LA NAVEGACIÓN (NO IR AL PASADO) ---
+
+  // Devuelve true si el mes que estamos viendo es el actual (o anterior), para bloquear el botón "<"
+  get isPrevMonthDisabled(): boolean {
+    const today = new Date();
+    // Normalizamos al día 1 para comparar solo año y mes
+    const currentView = new Date(this.currentViewDate.getFullYear(), this.currentViewDate.getMonth(), 1);
+    const realToday = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    // Si la vista es igual o anterior al mes real, deshabilitamos
+    return currentView <= realToday;
+  }
+
+  // Devuelve true si la semana que estamos viendo es la actual (o anterior), para bloquear el botón "<"
+  get isPrevWeekDisabled(): boolean {
+    const today = new Date();
+
+    // Obtenemos el lunes de la semana que se está viendo
+    const viewMonday = this.getMonday(this.currentViewDate);
+    viewMonday.setHours(0, 0, 0, 0);
+
+    // Obtenemos el lunes de la semana real actual
+    const realMonday = this.getMonday(today);
+    realMonday.setHours(0, 0, 0, 0);
+
+    // Si el lunes de la vista es igual o anterior al lunes real, deshabilitamos
+    return viewMonday <= realMonday;
+  }
+
   // Navegación Calendario
   prevMonth() { this.navigateMonth(-1); }
   nextMonth() { this.navigateMonth(1); }
