@@ -3,6 +3,7 @@ package proyecto.service;
 import java.util.List;
 import java.util.Optional;
 
+import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Trabajador;
 
 public interface TrabajadorService {
@@ -13,5 +14,6 @@ public interface TrabajadorService {
 	int eliminarTrabajador(int idTrabajador);
 	Trabajador actualizarTrabajador(Trabajador trabajador);
 	Optional<Trabajador>buscarPorDocumento(String documento);
+	List<CitaDTO> obtenerCitasDelTrabajador(int trabajadorId);
 	
 }
