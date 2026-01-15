@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -112,6 +113,27 @@ public class TrabajadorRestController {
 	                Map.of("error", "No se puede eliminar el trabajador. Tiene " + resultado + 
 	                       " citas asignadas. Desasígnalas primero."), 
 	                HttpStatusCode.valueOf(400));
+	    }
+	}
+	
+	@PutMapping("/trabajadores/{trabajadorId}")
+	public ResponseEntity<?> actualizarTrabajador(@PathVariable int trabajadorId, @RequestBody Trabajador trabajador) {
+	    try {
+	        // Asegurar que el ID del path coincida con el del objeto
+	        trabajador.setIdTrabajador(trabajadorId);
+	        
+	        // Verificar que el trabajador existe antes de actualizar
+	        if (trabajadorService.buscarUnTrabajador(trabajadorId) == null) {
+	            return new ResponseEntity<>("No se encontró ningún trabajador con ID: " + trabajadorId, 
+	                                      HttpStatusCode.valueOf(404));
+	        }
+	        
+	        Trabajador trabajadorActualizado = trabajadorService.actualizarTrabajador(trabajador);
+	        return new ResponseEntity<>(trabajadorActualizado, HttpStatusCode.valueOf(200));
+	        
+	    } catch (Exception e) {
+	        return new ResponseEntity<>("Error al actualizar el trabajador: " + e.getMessage(), 
+	                                  HttpStatusCode.valueOf(500));
 	    }
 	}
 	
