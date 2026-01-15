@@ -444,7 +444,25 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	
 
 	public CitaCompletaDTO obtenerCitaCompleta(int id) {
-	    return citaRepository.findCitaCompletaById(id);
+	    // 1. Obtener los datos básicos (sin precios individuales)
+	    CitaCompletaDTO cita = citaRepository.findCitaCompletaById(id);
+	    
+	    if (cita != null) {
+	        // 2. Obtener los precios individuales usando el método existente
+	        PreciosIndividualesDTO precios = presupuestoService.obtenerPreciosCompletosConIva(id);
+	        
+	        if (precios != null) {
+	            // 3. Rellenar los precios individuales en el DTO
+	            cita.setPrecioTipo(precios.getPrecioTipo());
+	            cita.setPrecioZona(precios.getPrecioZona());
+	            cita.setPrecioTamanio(precios.getPrecioTamanio());
+	            cita.setPrecioDetalle(precios.getPrecioDetalle());
+	            cita.setPrecioColoracion(precios.getPrecioColoracion());
+	            cita.setPrecioEstilo(precios.getPrecioEstilo());
+	        }
+	    }
+	    
+	    return cita;
 	}
 	
 	public CitaCompletaDTO actualizarCitaCompleta(int id, CitaCompletaDTO citaEditada) {
