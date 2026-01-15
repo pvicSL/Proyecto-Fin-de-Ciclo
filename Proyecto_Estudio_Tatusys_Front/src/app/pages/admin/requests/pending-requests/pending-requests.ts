@@ -3,7 +3,6 @@ import { Component, OnInit, ViewEncapsulation, HostListener } from '@angular/cor
 import { AppointmentService} from '../../../../core/services/appointment.service';
 import { Router, RouterModule } from '@angular/router';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
-import { BudgetService } from '../../../../core/services/budget.service';
 @Component({
   selector: 'app-pending-requests',
   imports: [],
@@ -18,7 +17,6 @@ export class PendingRequests {
 
   constructor(
     private appointmentService: AppointmentService,
-    private budgetService: BudgetService,
     private router: Router
   ) {}
 
@@ -31,7 +29,7 @@ export class PendingRequests {
    */
   cargarCitas(): void {
     // Usamos el método de tu servicio que trae todas las pendientes
-    this.budgetService.obtenerPorEstadoPresupuestoPendiente().subscribe({
+    this.appointmentService.getRequests().subscribe({
       next: (data) => {
         this.citasPendientes = data;
         this.paginaActual = 1; // Reiniciamos a la primera página tras cargar

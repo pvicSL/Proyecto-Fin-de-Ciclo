@@ -4,7 +4,7 @@ import { AppointmentService} from '../../../../core/services/appointment.service
 import { Router, RouterModule } from '@angular/router';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
 import { AppointmentDetails } from '../../../../shared/components/admin/appointment-details/appointment-details';
-import { BudgetService } from '../../../../core/services/budget.service';
+import { PricesService } from '../../../../core/services/prices.service';
 
 
 @Component({
@@ -26,8 +26,7 @@ export class Appointments implements OnInit{
 
   constructor(
     private appointmentService: AppointmentService,
-    private budgetService: BudgetService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -155,7 +154,7 @@ numeroPendientes: number = 0;
 
 
   cargarCitasPendientes() {
-    this.budgetService.obtenerPorEstadoPresupuestoPendiente().subscribe({
+    this.appointmentService.getRequests().subscribe({
       next: (data) => {
         this.numeroPendientes = data.length;
       },

@@ -1,30 +1,24 @@
 export interface AppointmentAdminDTO {
-  idServicio: number;
-  nombre: string;
-  apellido1: string;
-  apellido2: string;
-  email: string;
-  telefono: string;
-  dni: string;
+
+  //Datos Cliente
+  clienteNombre: string;
+  clienteApellido1: string;
+  clienteApellido2: string;
+  clienteEmail: string;
+  clienteTelefono: string;
+  clienteDocumentoIdentificacion: string;
   
-  // Datos del Servicio y sus precios
-  baseServicio: string;
-  precioBaseServicio: number;
+  // Datos del Servicio
+  idCita: number;
   tipo: string;
-  precioTipo: number;
   zona: string;
-  precioZona: number;
   tamanio: string;
-  precioTamanio: number;
   detalle: string;
-  precioDetalle: number;
   coloracion: string;
-  precioColoracion: number;
   estilo: string;
-  precioEstilo: number;
-  duracionMinutos: number;
-  
   comentariosServicio: string;
+  fecha: string;
+  hora: string;
 
   imagenRef1: string;
   imagenRef2: string;
@@ -32,22 +26,19 @@ export interface AppointmentAdminDTO {
 
   // Datos del Presupuesto
   precioBase: number;
-  precioExtra: number;
   iva: number;
   precioFinal: number;
   estadoPresupuesto: string;
   fechaPresupuesto: string;
   comentarios: string;
-}
-
-export interface AppointmenBudgetDTO{
+  vigente: boolean;
   
-    idServicio: number;
-    nombre: string;
-    apellido1: string;
-    apellido2: string;
-    tipo: string;
-    fecha: string; // 'yyyy-MM-dd'
-    hora: string;  // 'HH:mm:ss'
-
+  // NUEVOS: Desglose de precios individuales
+  precioTipo: number;
+  precioZona: number;
+  precioTamanio: number;
+  precioDetalle: number;
+  precioColoracion: number;
+  precioEstilo: number;
 }
+

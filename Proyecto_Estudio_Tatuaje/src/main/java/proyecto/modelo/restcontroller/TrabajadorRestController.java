@@ -2,6 +2,7 @@ package proyecto.modelo.restcontroller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import proyecto.modelo.dto.TrabajadorDTO;
 import proyecto.modelo.entities.Trabajador;
 import proyecto.service.TrabajadorService;
 
@@ -31,6 +33,8 @@ public class TrabajadorRestController {
 		return trabajadorService.leerTodos();
 	}
 	
+	
+	
 	@GetMapping("/trabajadores/{idTrabajador}")
 	public ResponseEntity<?>buscarTrabajador(@PathVariable int idTrabajador) {
 		if (trabajadorService.buscarUnTrabajador(idTrabajador) == null) {
@@ -38,6 +42,15 @@ public class TrabajadorRestController {
 		} else {
 			return new ResponseEntity<Trabajador>(trabajadorService.buscarUnTrabajador(idTrabajador), HttpStatusCode.valueOf(200));
 		}
+	}
+	
+	//Version para TrabajadorDTO
+	@GetMapping("/trabajadores/todos")
+	public List<TrabajadorDTO> leerTodosDTO(){
+	    List<Trabajador> trabajadores = trabajadorService.leerTodos();
+	    return trabajadores.stream()
+	            .map(TrabajadorDTO::new)
+	            .collect(Collectors.toList());
 	}
 	
 	@PostMapping("/trabajador-alta")

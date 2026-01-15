@@ -3,16 +3,15 @@ package proyecto.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import proyecto.modelo.dto.CitaAdminDTO;
-import proyecto.modelo.dto.CitaPresupuestoDTO;
+import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Precio;
 import proyecto.modelo.entities.Presupuesto;
@@ -36,7 +35,7 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	private PrecioRepository precioRepository;
 	
 	@Autowired
-	CitaRepository citaRepository;
+	private CitaRepository citaRepository;
 
 	@Override
 	public List<Presupuesto> leerTodos() {
@@ -62,51 +61,12 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 
 	@Override
 	public Presupuesto actualizarPresupuesto(Presupuesto presupuesto) {
-		// 1. Necesitamos recuperar la Cita para saber qué zona, tamaño, etc. tiene
-	    Cita cita = citaRepository.findById(presupuesto.getIdServicio())
-	            .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
-
-	    /* 2. Recalcular los precios desde la tabla 'precios' usando la Cita */
-	    BigDecimal pBase = precioRepository.findByCategoriaAndValor(CategoriaEnum.BASE, "SERVICIO_BASE").get().getPrecioAdicional();
-	    BigDecimal pTipo = precioRepository.findByCategoriaAndValor(CategoriaEnum.TIPO, cita.getTipo().toString()).get().getPrecioAdicional();
-	    BigDecimal pZona = precioRepository.findByCategoriaAndValor(CategoriaEnum.ZONA, cita.getZona().toString()).get().getPrecioAdicional();
-	    BigDecimal pTamanio = precioRepository.findByCategoriaAndValor(CategoriaEnum.TAMANIO, cita.getTamanio().toString()).get().getPrecioAdicional();
-	    BigDecimal pDetalle = precioRepository.findByCategoriaAndValor(CategoriaEnum.DETALLE, cita.getDetalle().toString()).get().getPrecioAdicional();
-	    BigDecimal pColor = precioRepository.findByCategoriaAndValor(CategoriaEnum.COLORACION, cita.getColoracion().toString()).get().getPrecioAdicional();
-	    BigDecimal pEstilo = precioRepository.findByCategoriaAndValor(CategoriaEnum.ESTILO, cita.getEstilo().toString()).get().getPrecioAdicional();
-
-	    // Suma de los nuevos valores de la tabla precios
-	    BigDecimal nuevaSumaServicios = pBase.add(pTipo).add(pZona).add(pTamanio).add(pDetalle).add(pColor).add(pEstilo);
-
-	    /* 3. Lógica del Precio Extra */
-	    // Mantenemos el precioExtra que ya tiene el objeto presupuesto (si es null, 0)
-	    BigDecimal pExtraActual = (presupuesto.getPrecioExtra() != null) ? presupuesto.getPrecioExtra() : BigDecimal.ZERO;
-	    String presupuestoComentarios = (presupuesto.getComentarios() != null) ? presupuesto.getComentarios() : null;
-	    
-	    /* Recuperamos los comentarios o los cambiamos por los nuevos */
-	    
-
-	    /* 4. Cálculos Finales */
-	    BigDecimal subtotalConExtra = nuevaSumaServicios.add(pExtraActual);
-	    BigDecimal nuevoIva = subtotalConExtra.multiply(IVA_PORCENTAJE);
-	    BigDecimal nuevoPrecioFinal = subtotalConExtra.add(nuevoIva);
-
-	    /* 5. Actualizar el objeto que recibimos por argumento */
-	    presupuesto.setPrecioBase(nuevaSumaServicios);
-	    presupuesto.setPrecioExtra(pExtraActual); // Aseguramos que no sea null
-	    presupuesto.setIva(nuevoIva);
-	    presupuesto.setPrecioFinal(nuevoPrecioFinal);
-	    presupuesto.setFecha(LocalDateTime.now());
-	    presupuesto.setComentarios(presupuestoComentarios);
-	    presupuesto.setEstado(Estado.GENERADO);
-
-	    // 6. Guardar cambios
-	    return presupuestoRepository.save(presupuesto);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	
-	
-
+		//TODO: refactorizar calcularPresupuesto aprovechando el método obtenerPreciosIndividuales(Cita cita)
 	@Override
 	public Presupuesto calcularPresupuesto(Cita cita) {
 
@@ -135,22 +95,17 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	    BigDecimal pDetalle = precioDetalle.get().getPrecioAdicional();
 	    BigDecimal pColor = precioColor.get().getPrecioAdicional();
 	    BigDecimal pEstilo = precioEstilo.get().getPrecioAdicional();
-	    
-	    /*LÓGICA DE RECALCULO: Buscar si ya existe un presupuesto para esta cita */
-	    BigDecimal pExtra = BigDecimal.ZERO;
-	    String comentariosPresupuesto = null;
 
 	    /*Se suman todos los precios recuperados en el paso anterior*/
 	    BigDecimal precioSinIva = pBase.add(pTipo).add(pZona).add(pTamanio).add(pDetalle).add(pColor).add(pEstilo);
-	    BigDecimal subtotalConExtra = precioSinIva.add(pExtra);
 
 	    /*Añadimos el iva*/
-	    BigDecimal iva = subtotalConExtra.multiply(IVA_PORCENTAJE);
-	    BigDecimal precioConIva = subtotalConExtra.add(iva);
+	    BigDecimal iva = precioSinIva.multiply(IVA_PORCENTAJE);
+	    BigDecimal precioConIva = precioSinIva.add(iva);
 
-	    Presupuesto presupuesto = new Presupuesto(
-	                cita.getIdCita(), precioSinIva, pExtra, iva, precioConIva, 
-	                LocalDateTime.now(), true, Estado.PENDIENTE, comentariosPresupuesto);
+	    /*Creamos objeto Presupuesto*/
+	    Presupuesto presupuesto = new Presupuesto (
+	            cita.getIdCita(), precioSinIva, iva, precioConIva, LocalDateTime.now(), true, Estado.PENDIENTE, null);
 
 	    /*Guardamos en BBDD*/
 	    Presupuesto presupuestoGuardado = presupuestoRepository.save(presupuesto);
@@ -170,38 +125,69 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	    }
 	}
 
-
 	@Override
-	public Presupuesto buscarUnPresupuestoPorIdCita(int idCita) {
-		// Buscamos en el repositorio. Usamos .orElse(null) o lanzamos una excepción 
-	    return presupuestoRepository.findByIdServicio(idCita)
-	            .stream() // Convertimos a stream por si hay varios
-	            .findFirst() // Tomamos solo uno para evitar el error de "11 results"
-	            .orElseThrow(() -> new NoSuchElementException("No se encontró presupuesto para la cita: " + idCita));
-	}
-
-	@Override
-	public List<CitaPresupuestoDTO> obtenerCitasPorEstadoPresupuesto(Estado estado) {
-		List<Presupuesto> presupuestos = presupuestoRepository.findByEstado(estado);
+	public Map<String, BigDecimal> obtenerPreciosIndividuales(Cita cita) {
 	    
-	    List<Integer> idsCitas = presupuestos.stream()
-	                                         .map(Presupuesto::getIdServicio)
-	                                         .distinct()
-	                                         .toList();
+	    // Reutilizar la misma lógica que ya tienes
+	    String tipoServicio = cita.getTipo().toString();
+	    String zonaServicio = cita.getZona().toString();
+	    String tamanioServicio = cita.getTamanio().toString();
+	    String detalleServicio = cita.getDetalle().toString();
+	    String coloracionServicio = cita.getColoracion().toString();
+	    String estiloServicio = cita.getEstilo().toString();
 
-	    List<Cita> todasLasCitas = citaRepository.findAllById(idsCitas);
+	    // Obtener precios (mismo código que ya tienes)
+	    Optional<Precio> precioBase = precioRepository.findByCategoriaAndValor(CategoriaEnum.BASE, "SERVICIO_BASE");
+	    Optional<Precio> precioTipo = precioRepository.findByCategoriaAndValor(CategoriaEnum.TIPO, tipoServicio);
+	    Optional<Precio> precioZona = precioRepository.findByCategoriaAndValor(CategoriaEnum.ZONA, zonaServicio);
+	    Optional<Precio> precioTamanio = precioRepository.findByCategoriaAndValor(CategoriaEnum.TAMANIO, tamanioServicio);
+	    Optional<Precio> precioDetalle = precioRepository.findByCategoriaAndValor(CategoriaEnum.DETALLE, detalleServicio);
+	    Optional<Precio> precioColor = precioRepository.findByCategoriaAndValor(CategoriaEnum.COLORACION, coloracionServicio);
+	    Optional<Precio> precioEstilo = precioRepository.findByCategoriaAndValor(CategoriaEnum.ESTILO, estiloServicio);
 
-	    return presupuestos.stream()
-	        .map(p -> {
-	            // Buscamos la cita que le corresponde a este presupuesto
-	            Cita citaMatch = todasLasCitas.stream()
-	                .filter(c -> c.getIdCita() == p.getIdServicio())
-	                .findFirst()
-	                .orElse(null);
-
-	            // Usamos el constructor de conveniencia que creamos
-	            return new CitaPresupuestoDTO(citaMatch, p);
-	        })
-	        .collect(Collectors.toList());
+	    // Crear mapa con los precios
+	    Map<String, BigDecimal> precios = new HashMap<>();
+	    precios.put("BASE", precioBase.get().getPrecioAdicional());
+	    precios.put("TIPO", precioTipo.get().getPrecioAdicional());
+	    precios.put("ZONA", precioZona.get().getPrecioAdicional());
+	    precios.put("TAMANIO", precioTamanio.get().getPrecioAdicional());
+	    precios.put("DETALLE", precioDetalle.get().getPrecioAdicional());
+	    precios.put("COLORACION", precioColor.get().getPrecioAdicional());
+	    precios.put("ESTILO", precioEstilo.get().getPrecioAdicional());
+	    
+	    return precios;
 	}
+	
+	@Override
+	public PreciosIndividualesDTO obtenerPreciosCompletosConIva(int idCita) {
+	    // 1. Buscar cita
+	    Cita cita = citaRepository.findById(idCita).orElse(null);
+	    if (cita == null) return null;
+	    
+	    // 2. Usar método existente
+	    Map<String, BigDecimal> precios = obtenerPreciosIndividuales(cita);
+	    
+	    // 3. Calcular subtotal, IVA y total
+	    BigDecimal subtotal = precios.values().stream()
+	                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+	    BigDecimal iva = subtotal.multiply(IVA_PORCENTAJE);
+	    BigDecimal total = subtotal.add(iva);
+	    
+	    // 4. Crear y devolver DTO
+	    PreciosIndividualesDTO resultado = new PreciosIndividualesDTO();
+	    resultado.setPrecioBase(precios.get("BASE"));
+	    resultado.setPrecioTipo(precios.get("TIPO"));
+	    resultado.setPrecioZona(precios.get("ZONA"));
+	    resultado.setPrecioTamanio(precios.get("TAMANIO"));
+	    resultado.setPrecioDetalle(precios.get("DETALLE"));
+	    resultado.setPrecioColoracion(precios.get("COLORACION"));
+	    resultado.setPrecioEstilo(precios.get("ESTILO"));
+	    resultado.setSubtotal(subtotal);
+	    resultado.setIva(iva);
+	    resultado.setTotal(total);
+	    
+	    return resultado;
+	}
+	
+	
 }

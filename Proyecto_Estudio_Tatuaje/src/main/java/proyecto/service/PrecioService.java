@@ -2,6 +2,8 @@ package proyecto.service;
 
 
 import java.util.List;
+
+import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Precio;
 import proyecto.modelo.enums.CategoriaEnum;
 
@@ -15,4 +17,5 @@ public interface PrecioService {
 	Precio actualizarPrecio(Precio precio);
 	
 	Precio encontrarPorCategoriaValor (CategoriaEnum categoria, String valor);
+
 }

@@ -11,8 +11,7 @@ public class TrabajadorDTO {
     private String apellido2;
     private String email;
     private String telefono;
-    private String rol;        // Enum → String
-    private String funciones;  // Enum → String
+    
     
     // SIN: dni, numeroCuenta, contrasenia (DATOS SENSIBLES)
 
@@ -27,9 +26,7 @@ public class TrabajadorDTO {
         this.email = trabajador.getEmail();
         this.telefono = trabajador.getTelefono();
         
-        // Enums → String
-        this.rol = trabajador.getRol().toString();
-        this.funciones = trabajador.getFunciones().toString();
+
     }
 
     // GETTERS Y SETTERS
@@ -81,26 +78,11 @@ public class TrabajadorDTO {
         this.telefono = telefono;
     }
 
-    public String getRol() {
-        return rol;
-    }
-
-    public void setRol(String rol) {
-        this.rol = rol;
-    }
-
-    public String getFunciones() {
-        return funciones;
-    }
-
-    public void setFunciones(String funciones) {
-        this.funciones = funciones;
-    }
+  
 
     @Override
     public String toString() {
         return "TrabajadorDTO [idTrabajador=" + idTrabajador + ", nombre=" + nombre + ", apellido1=" + apellido1
-                + ", apellido2=" + apellido2 + ", email=" + email + ", telefono=" + telefono + ", rol=" + rol
-                + ", funciones=" + funciones + "]";
+                + ", apellido2=" + apellido2 + ", email=" + email + ", telefono=" + telefono + "]";
     }
 }

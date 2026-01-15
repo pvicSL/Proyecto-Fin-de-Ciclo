@@ -13,6 +13,7 @@ public class CitaDTO {
     private LocalTime hora;
     private String comentarios;
     private Boolean factura;
+    private String referencia;
     
     // Datos del servicio (como String para el frontend)
     private String tipo;
@@ -22,8 +23,9 @@ public class CitaDTO {
     private String coloracion;
     private String estilo;
     private String estatus;
+    private Integer duracionEstimada; 
     
-    // Datos del cliente (SIN idCliente, SIN dni)
+    // Datos del cliente
     private String clienteNombre;
     private String clienteApellido1;
     private String clienteApellido2;
@@ -31,33 +33,72 @@ public class CitaDTO {
     private String clienteTelefono;
 
     // CONSTRUCTORES
-    public CitaDTO() {}
-
-    public CitaDTO(Cita cita) {
-        this.idCita = cita.getIdCita();
-        this.fecha = cita.getFecha();
-        this.hora = cita.getHora();
-        this.comentarios = cita.getComentarios();
-        this.factura = cita.getFactura();
-        
-        // Enums → String
-        this.tipo = cita.getTipo().toString();
-        this.zona = cita.getZona().toString();
-        this.tamanio = cita.getTamanio().toString();
-        this.detalle = cita.getDetalle().toString();
-        this.coloracion = cita.getColoracion().toString();
-        this.estilo = cita.getEstilo().toString();
-        this.estatus = cita.getEstatus().toString();
-        
-        // Datos del cliente (sin ID, sin DNI)
-        this.clienteNombre = cita.getCliente().getNombre();
-        this.clienteApellido1 = cita.getCliente().getApellido1();
-        this.clienteApellido2 = cita.getCliente().getApellido2();
-        this.clienteEmail = cita.getCliente().getEmail();
-        this.clienteTelefono = cita.getCliente().getTelefono();
+    
+    public CitaDTO() {
     }
 
-    // GETTERS Y SETTERS
+    
+
+	public CitaDTO(int idCita, LocalDate fecha, LocalTime hora, String comentarios, Boolean factura, String referencia,
+			String tipo, String zona, String tamanio, String detalle, String coloracion, String estilo, String estatus,
+			Integer duracionEstimada, String clienteNombre, String clienteApellido1, String clienteApellido2,
+			String clienteEmail, String clienteTelefono) {
+		super();
+		this.idCita = idCita;
+		this.fecha = fecha;
+		this.hora = hora;
+		this.comentarios = comentarios;
+		this.factura = factura;
+		this.setReferencia(referencia);
+		this.tipo = tipo;
+		this.zona = zona;
+		this.tamanio = tamanio;
+		this.detalle = detalle;
+		this.coloracion = coloracion;
+		this.estilo = estilo;
+		this.estatus = estatus;
+		this.duracionEstimada = duracionEstimada;
+		this.clienteNombre = clienteNombre;
+		this.clienteApellido1 = clienteApellido1;
+		this.clienteApellido2 = clienteApellido2;
+		this.clienteEmail = clienteEmail;
+		this.clienteTelefono = clienteTelefono;
+	}
+
+	public CitaDTO(Cita cita) {
+	    this.idCita = cita.getIdCita();
+	    this.fecha = cita.getFecha();
+	    this.hora = cita.getHora();
+	    this.comentarios = cita.getComentarios();
+	    this.factura = cita.getFactura();
+	    this.referencia = cita.getReferencia();
+	    
+	    // Convertir enums a String
+	    this.tipo = cita.getTipo() != null ? cita.getTipo().name() : null;
+	    this.zona = cita.getZona() != null ? cita.getZona().name() : null;
+	    this.tamanio = cita.getTamanio() != null ? cita.getTamanio().name() : null;
+	    this.detalle = cita.getDetalle() != null ? cita.getDetalle().name() : null;
+	    this.coloracion = cita.getColoracion() != null ? cita.getColoracion().name() : null;
+	    this.estilo = cita.getEstilo() != null ? cita.getEstilo().name() : null;
+	    this.estatus = cita.getEstatus() != null ? cita.getEstatus().name() : null;
+	    
+	    // Mapear duracionMinutos a duracionEstimada
+	    this.duracionEstimada = cita.getDuracionMinutos();
+	    
+	    // Mapear datos del cliente
+	    if (cita.getCliente() != null) {
+	        this.clienteNombre = cita.getCliente().getNombre();
+	        this.clienteApellido1 = cita.getCliente().getApellido1();
+	        this.clienteApellido2 = cita.getCliente().getApellido2();
+	        this.clienteEmail = cita.getCliente().getEmail();
+	        this.clienteTelefono = cita.getCliente().getTelefono();
+	    }
+	}
+
+
+
+
+	// GETTERS Y SETTERS
     public int getIdCita() { return idCita; }
     public void setIdCita(int idCita) { this.idCita = idCita; }
 
@@ -108,4 +149,24 @@ public class CitaDTO {
 
     public String getClienteTelefono() { return clienteTelefono; }
     public void setClienteTelefono(String clienteTelefono) { this.clienteTelefono = clienteTelefono; }
+
+	public Integer getDuracionEstimada() {
+		return duracionEstimada;
+	}
+
+	public void setDuracionEstimada(Integer duracionEstimada) {
+		this.duracionEstimada = duracionEstimada;
+	}
+
+
+
+	public String getReferencia() {
+		return referencia;
+	}
+
+
+
+	public void setReferencia(String referencia) {
+		this.referencia = referencia;
+	}
 }

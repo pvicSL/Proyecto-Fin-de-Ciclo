@@ -6,15 +6,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
-import proyecto.modelo.dto.CitaAdminDTO;
+import proyecto.modelo.dto.CitaCompletaDTO;
 
 import org.springframework.web.multipart.MultipartFile;
 
 
 import proyecto.modelo.dto.CitaDTO;
+import proyecto.modelo.dto.CitaModificacionDTO;
+import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.enums.CategoriaEnum;
+import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
 
 public interface CitaService {
@@ -41,10 +43,23 @@ public interface CitaService {
     Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos);
     List<CitaDTO> obtenerPorRango(LocalDate fecha, String vista);
     List<CitaDTO> obtenerPorEstatus(Estatus estatus);
-    CitaAdminDTO obtenerDetalleCita(int idServicio);
 
-
-
+    CitaCompletaDTO obtenerCitaCompleta(int id);
 
 	Optional<Cita> buscarPorReferenciaYEmail(String referencia, String email);
+	CitaCompletaDTO actualizarCitaCompleta(int id, CitaCompletaDTO citaEditada);
+
+	List<CitaDTO> obtenerPorEstadoPresupuesto(Estado generado);
+
+	PreciosIndividualesDTO obtenerPreciosIndividualesPorCita(int idCita);
+	
+    // Devuelve true si se modificó, false si no encontró la cita
+    boolean modificarFechaCita(CitaModificacionDTO datos);
+
+    // Devuelve true si se borró, false si no encontró la cita
+    boolean cancelarCitaPorReferencia(String referencia, String email);
+    
+    CitaCompletaDTO simularCitaCompleta(CitaCompletaDTO citaEditada);
+
+
 }

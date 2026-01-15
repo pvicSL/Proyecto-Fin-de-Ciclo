@@ -40,12 +40,14 @@ public class CitaCompletaDTO {
 		
 	}
 
+
 	public CitaCompletaDTO(int idCita, String tipo, String zona, String tamanio, String detalle, String coloracion,
 			String estilo, LocalDate fecha, LocalTime hora, String comentarios, String imagenRef1, String imagenRef2,
 			String imagenRef3, String clienteNombre, String clienteApellido1, String clienteApellido2,
 			String clienteEmail, String clienteTelefono, String clienteDocumentoIdentificacion, BigDecimal precioBase,
 			BigDecimal iva, BigDecimal precioFinal, LocalDateTime presupuestoFecha, String estadoPresupuesto,
-			boolean vigente, String presupuestoComentarios) {
+			boolean vigente, String presupuestoComentarios, BigDecimal precioTipo, BigDecimal precioZona,
+			BigDecimal precioTamanio, BigDecimal precioDetalle, BigDecimal precioColoracion, BigDecimal precioEstilo) {
 		super();
 		this.idCita = idCita;
 		this.tipo = tipo;
@@ -73,27 +75,84 @@ public class CitaCompletaDTO {
 		this.estadoPresupuesto = estadoPresupuesto;
 		this.vigente = vigente;
 		this.presupuestoComentarios = presupuestoComentarios;
+		this.precioTipo = precioTipo;
+		this.precioZona = precioZona;
+		this.precioTamanio = precioTamanio;
+		this.precioDetalle = precioDetalle;
+		this.precioColoracion = precioColoracion;
+		this.precioEstilo = precioEstilo;
 	}
+	
+	// Constructor SIN precios individuales (para findCitaCompletaById)
+	public CitaCompletaDTO(int idCita, String tipo, String zona, String tamanio, String detalle, String coloracion,
+	        String estilo, LocalDate fecha, LocalTime hora, String comentarios, String imagenRef1, String imagenRef2,
+	        String imagenRef3, String clienteNombre, String clienteApellido1, String clienteApellido2,
+	        String clienteEmail, String clienteTelefono, String clienteDocumentoIdentificacion, BigDecimal precioBase,
+	        BigDecimal iva, BigDecimal precioFinal, LocalDateTime presupuestoFecha, String estadoPresupuesto,
+	        boolean vigente, String presupuestoComentarios) {
+	    super();
+	    this.idCita = idCita;
+	    this.tipo = tipo;
+	    this.zona = zona;
+	    this.tamanio = tamanio;
+	    this.detalle = detalle;
+	    this.coloracion = coloracion;
+	    this.estilo = estilo;
+	    this.fecha = fecha;
+	    this.hora = hora;
+	    this.comentarios = comentarios;
+	    this.imagenRef1 = imagenRef1;
+	    this.imagenRef2 = imagenRef2;
+	    this.imagenRef3 = imagenRef3;
+	    this.clienteNombre = clienteNombre;
+	    this.clienteApellido1 = clienteApellido1;
+	    this.clienteApellido2 = clienteApellido2;
+	    this.clienteEmail = clienteEmail;
+	    this.clienteTelefono = clienteTelefono;
+	    this.clienteDocumentoIdentificacion = clienteDocumentoIdentificacion;
+	    this.precioBase = precioBase;
+	    this.iva = iva;
+	    this.precioFinal = precioFinal;
+	    this.presupuestoFecha = presupuestoFecha;
+	    this.estadoPresupuesto = estadoPresupuesto;
+	    this.vigente = vigente;
+	    this.presupuestoComentarios = presupuestoComentarios;
+	    
+	    // Los precios individuales quedan en null para este constructor
+	    this.precioTipo = null;
+	    this.precioZona = null;
+	    this.precioTamanio = null;
+	    this.precioDetalle = null;
+	    this.precioColoracion = null;
+	    this.precioEstilo = null;
+	}
+
 
 	public int getIdCita() {
 		return idCita;
 	}
 
+
+
 	public void setIdCita(int idCita) {
 		this.idCita = idCita;
 	}
+
 
 	public String getTipo() {
 		return tipo;
 	}
 
+
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
 
+
 	public String getZona() {
 		return zona;
 	}
+
 
 	public void setZona(String zona) {
 		this.zona = zona;
@@ -107,9 +166,11 @@ public class CitaCompletaDTO {
 		this.tamanio = tamanio;
 	}
 
+
 	public String getDetalle() {
 		return detalle;
 	}
+
 
 	public void setDetalle(String detalle) {
 		this.detalle = detalle;
@@ -123,9 +184,11 @@ public class CitaCompletaDTO {
 		this.coloracion = coloracion;
 	}
 
+
 	public String getEstilo() {
 		return estilo;
 	}
+
 
 	public void setEstilo(String estilo) {
 		this.estilo = estilo;
@@ -143,6 +206,7 @@ public class CitaCompletaDTO {
 		return hora;
 	}
 
+
 	public void setHora(LocalTime hora) {
 		this.hora = hora;
 	}
@@ -151,29 +215,38 @@ public class CitaCompletaDTO {
 		return comentarios;
 	}
 
+
+
 	public void setComentarios(String comentarios) {
 		this.comentarios = comentarios;
 	}
+
 
 	public String getImagenRef1() {
 		return imagenRef1;
 	}
 
+
 	public void setImagenRef1(String imagenRef1) {
 		this.imagenRef1 = imagenRef1;
 	}
+
 
 	public String getImagenRef2() {
 		return imagenRef2;
 	}
 
+
 	public void setImagenRef2(String imagenRef2) {
 		this.imagenRef2 = imagenRef2;
 	}
 
+
+
 	public String getImagenRef3() {
 		return imagenRef3;
 	}
+
 
 	public void setImagenRef3(String imagenRef3) {
 		this.imagenRef3 = imagenRef3;
@@ -183,21 +256,27 @@ public class CitaCompletaDTO {
 		return clienteNombre;
 	}
 
+
 	public void setClienteNombre(String clienteNombre) {
 		this.clienteNombre = clienteNombre;
 	}
+
+
 
 	public String getClienteApellido1() {
 		return clienteApellido1;
 	}
 
+
 	public void setClienteApellido1(String clienteApellido1) {
 		this.clienteApellido1 = clienteApellido1;
 	}
 
+
 	public String getClienteApellido2() {
 		return clienteApellido2;
 	}
+
 
 	public void setClienteApellido2(String clienteApellido2) {
 		this.clienteApellido2 = clienteApellido2;
@@ -207,37 +286,46 @@ public class CitaCompletaDTO {
 		return clienteEmail;
 	}
 
+
 	public void setClienteEmail(String clienteEmail) {
 		this.clienteEmail = clienteEmail;
 	}
+
 
 	public String getClienteTelefono() {
 		return clienteTelefono;
 	}
 
+
 	public void setClienteTelefono(String clienteTelefono) {
 		this.clienteTelefono = clienteTelefono;
 	}
+
 
 	public String getClienteDocumentoIdentificacion() {
 		return clienteDocumentoIdentificacion;
 	}
 
+
 	public void setClienteDocumentoIdentificacion(String clienteDocumentoIdentificacion) {
 		this.clienteDocumentoIdentificacion = clienteDocumentoIdentificacion;
 	}
+
 
 	public BigDecimal getPrecioBase() {
 		return precioBase;
 	}
 
+
 	public void setPrecioBase(BigDecimal precioBase) {
 		this.precioBase = precioBase;
 	}
 
+
 	public BigDecimal getIva() {
 		return iva;
 	}
+
 
 	public void setIva(BigDecimal iva) {
 		this.iva = iva;
@@ -247,6 +335,8 @@ public class CitaCompletaDTO {
 		return precioFinal;
 	}
 
+
+
 	public void setPrecioFinal(BigDecimal precioFinal) {
 		this.precioFinal = precioFinal;
 	}
@@ -255,9 +345,12 @@ public class CitaCompletaDTO {
 		return presupuestoFecha;
 	}
 
+
 	public void setPresupuestoFecha(LocalDateTime presupuestoFecha) {
 		this.presupuestoFecha = presupuestoFecha;
 	}
+
+
 
 	public String getEstadoPresupuesto() {
 		return estadoPresupuesto;
@@ -275,6 +368,7 @@ public class CitaCompletaDTO {
 		this.vigente = vigente;
 	}
 
+
 	public String getPresupuestoComentarios() {
 		return presupuestoComentarios;
 	}
@@ -283,13 +377,65 @@ public class CitaCompletaDTO {
 		this.presupuestoComentarios = presupuestoComentarios;
 	}
 
+	public BigDecimal getPrecioTipo() {
+		return precioTipo;
+	}
+
+	public void setPrecioTipo(BigDecimal precioTipo) {
+		this.precioTipo = precioTipo;
+	}
+
+
+	public BigDecimal getPrecioZona() {
+		return precioZona;
+	}
+
+
+	public void setPrecioZona(BigDecimal precioZona) {
+		this.precioZona = precioZona;
+	}
+
+
+	public BigDecimal getPrecioTamanio() {
+		return precioTamanio;
+	}
+
+	public void setPrecioTamanio(BigDecimal precioTamanio) {
+		this.precioTamanio = precioTamanio;
+	}
+
+
+	public BigDecimal getPrecioDetalle() {
+		return precioDetalle;
+	}
+
+
+	public void setPrecioDetalle(BigDecimal precioDetalle) {
+		this.precioDetalle = precioDetalle;
+	}
+
+	public BigDecimal getPrecioColoracion() {
+		return precioColoracion;
+	}
+
+	public void setPrecioColoracion(BigDecimal precioColoracion) {
+		this.precioColoracion = precioColoracion;
+	}
+
+	public BigDecimal getPrecioEstilo() {
+		return precioEstilo;
+	}
+
+	public void setPrecioEstilo(BigDecimal precioEstilo) {
+		this.precioEstilo = precioEstilo;
+	}
+
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(clienteApellido1, clienteApellido2, clienteDocumentoIdentificacion, clienteEmail,
-				clienteNombre, clienteTelefono, coloracion, comentarios, detalle, estadoPresupuesto, estilo, fecha,
-				hora, idCita, imagenRef1, imagenRef2, imagenRef3, iva, precioBase, precioFinal, presupuestoComentarios,
-				presupuestoFecha, tamanio, tipo, vigente, zona);
+		return Objects.hash(clienteDocumentoIdentificacion);
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -298,24 +444,10 @@ public class CitaCompletaDTO {
 		if (!(obj instanceof CitaCompletaDTO))
 			return false;
 		CitaCompletaDTO other = (CitaCompletaDTO) obj;
-		return Objects.equals(clienteApellido1, other.clienteApellido1)
-				&& Objects.equals(clienteApellido2, other.clienteApellido2)
-				&& Objects.equals(clienteDocumentoIdentificacion, other.clienteDocumentoIdentificacion)
-				&& Objects.equals(clienteEmail, other.clienteEmail)
-				&& Objects.equals(clienteNombre, other.clienteNombre)
-				&& Objects.equals(clienteTelefono, other.clienteTelefono)
-				&& Objects.equals(coloracion, other.coloracion) && Objects.equals(comentarios, other.comentarios)
-				&& Objects.equals(detalle, other.detalle) && Objects.equals(estadoPresupuesto, other.estadoPresupuesto)
-				&& Objects.equals(estilo, other.estilo) && Objects.equals(fecha, other.fecha)
-				&& Objects.equals(hora, other.hora) && idCita == other.idCita
-				&& Objects.equals(imagenRef1, other.imagenRef1) && Objects.equals(imagenRef2, other.imagenRef2)
-				&& Objects.equals(imagenRef3, other.imagenRef3) && Objects.equals(iva, other.iva)
-				&& Objects.equals(precioBase, other.precioBase) && Objects.equals(precioFinal, other.precioFinal)
-				&& Objects.equals(presupuestoComentarios, other.presupuestoComentarios)
-				&& Objects.equals(presupuestoFecha, other.presupuestoFecha) && Objects.equals(tamanio, other.tamanio)
-				&& Objects.equals(tipo, other.tipo) && vigente == other.vigente && Objects.equals(zona, other.zona);
+		return Objects.equals(clienteDocumentoIdentificacion, other.clienteDocumentoIdentificacion);
 	}
-	
+
+
 	/**
 	 * Este método no es un atributo real, pero Jackson (el conversor de JSON)
 	 * lo detectará y enviará al frontend una propiedad llamada "apellidosCompletos"

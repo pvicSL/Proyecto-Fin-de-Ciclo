@@ -5,9 +5,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
+import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
 
 public interface CitaRepository extends JpaRepository<Cita, Integer> {
@@ -19,8 +23,32 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
     
     List<CitaDTO> findByEstatus(Estatus estatus);
 
-	// Método: Busca por la columna 'localizador' Y por el campo 'email' de la
-	// entidad 'cliente'
-	Optional<Cita> findByReferenciaAndCliente_Email(String referencia, String email);
+	
+	Optional<Cita> findByReferenciaAndClienteEmail(String referencia, String email);
+	
+	boolean existsByReferencia(String referencia);
+	
+	@Query("SELECT new proyecto.modelo.dto.CitaCompletaDTO(" +
+		       "c.idCita, " +
+		       "CAST(c.tipo AS string), CAST(c.zona AS string), CAST(c.tamanio AS string), " +
+		       "CAST(c.detalle AS string), CAST(c.coloracion AS string), CAST(c.estilo AS string), " +
+		       "c.fecha, c.hora, c.comentarios, c.imagenRef1, c.imagenRef2, c.imagenRef3, " +
+		       "cl.nombre, cl.apellido1, cl.apellido2, cl.email, cl.telefono, cl.documentoIdentificacion, " +
+		       "p.precioBase, p.iva, p.precioFinal, p.fecha, CAST(p.estado AS string), p.vigente, p.comentarios) " +
+		       "FROM Cita c " +
+		       "JOIN c.cliente cl " +
+		       "JOIN Presupuesto p ON p.idServicio = c.idCita " +
+		       "WHERE c.idCita = :id")
+		CitaCompletaDTO findCitaCompletaById(@Param("id") int id);
+
+	@Query("SELECT c FROM Cita c " +
+		       "JOIN c.cliente cl " +
+		       "JOIN Presupuesto p ON p.idServicio = c.idCita " +
+		       "WHERE p.estado = :estadoPresupuesto")
+		List<CitaDTO> obtenerPorEstadoPresupuesto(@Param("estadoPresupuesto") Estado estadoPresupuesto);
+
+	
+
+
 
 }

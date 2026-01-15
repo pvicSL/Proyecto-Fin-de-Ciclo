@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AppointmentService } from '../../../../core/services/appointment.service';
+import { debounceTime, filter, switchMap, map } from 'rxjs/operators'; // <--- Añadido 'map'
 
 // Interfaz para tipar correctamente los días del calendario
 interface CalendarDay {
@@ -27,7 +28,6 @@ export class BookingFormComponent implements OnInit {
   // ==========================================
   isFormOpen: boolean = false;
   activeHint: string | null = null;
-  currentAppointmentId: number | null = null;
 
   // ==========================================
   // 2. FORMULARIO Y DATOS
@@ -50,21 +50,20 @@ export class BookingFormComponent implements OnInit {
   // 4. MAPAS DE TRADUCCIÓN (HTML -> BBDD)
   // ==========================================
 
-  // Mapea los value="body-..." del HTML a los ENUM de Java
   private readonly MAPA_ZONAS: Record<string, string> = {
     'body-arm': 'BRAZO',
     'body-forearm': 'ANTEBRAZO',
     'body-elbow': 'CODO',
     'body-shoulder': 'HOMBRO',
-    'body-chest': 'TÓRAX',      // Cuidado con la tilde, Java debe esperarla así
+    'body-chest': 'TÓRAX',
     'body-abdomen': 'ABDOMEN',
     'body-pubis': 'PUBIS',
     'body-thigh': 'MUSLO',
     'body-knee': 'RODILLA',
-    'body-calf': 'PANTORILLA',  // Errata conocida en tu Back
+    'body-calf': 'PANTORILLA',
     'body-foot': 'PIE',
     'body-hand': 'MANO',
-    'body-cervical': 'CERVIAL', // Errata conocida en tu Back
+    'body-cervical': 'CERVICAL',
     'body-lumbar': 'LUMBARES',
     'body-buttcheek': 'NALGA',
     'body-head': 'CABEZA'
@@ -72,9 +71,9 @@ export class BookingFormComponent implements OnInit {
 
   private readonly MAPA_SERVICIOS: Record<string, string> = {
     'tattoo-new': 'TATUAJE',
-    'tattoo-delete': 'ELIMINACION', // Ojo: en tu HTML es tattoo-delete
+    'tattoo-delete': 'ELIMINACION',
     'cover-up': 'COVER',
-    'tattoo-retouch': 'RETOQUE'     // Ojo: en tu HTML es tattoo-retouch
+    'tattoo-retouch': 'RETOQUE'
   };
 
   private readonly MAPA_TAMANIOS: Record<string, string> = {
@@ -88,15 +87,13 @@ export class BookingFormComponent implements OnInit {
   private readonly MAPA_ESTILOS: Record<string, string> = {
     'Realismo': 'REALISMO',
     'Tradicional': 'TRADICIONAL',
-    'Japonés': 'JAPONES',       // Quitamos tilde para el Back
-    'Lettering': 'LETERING',    // Tu Back tiene LETERING (una T)
+    'Japonés': 'JAPONES',
+    'Lettering': 'LETERING',
     'Fineline': 'FINELINE',
     'Black And Grey': 'BLACKANDGREY',
     'Anime': 'ANIME'
   };
 
-  // Mapa especial para DETALLE (HTML Value -> Java Enum)
-  // Como tu HTML envía frases largas, mapeamos la frase completa o la primera palabra
   private readonly MAPA_DETALLES: Record<string, string> = {
     'Sencillo (líneas finas o poca saturación)': 'SENCILLO',
     'Medio (líneas medias o más saturación)': 'MEDIO',
@@ -134,25 +131,59 @@ export class BookingFormComponent implements OnInit {
   ngOnInit(): void { }
 
   // ==========================================
-  // 5. LÓGICA DEL CALENDARIO
+  // 5. LÓGICA DEL CALENDARIO Y DISPONIBILIDAD
   // ==========================================
 
   get currentMonthName(): string {
     return new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(this.currentViewDate).toUpperCase();
   }
 
+  // Escucha cambios en el formulario para preguntar al Back la duración
   private escucharCambiosParaDisponibilidad() {
-    this.bookingForm.valueChanges.subscribe(valores => {
-      if (valores.service && valores.size && valores.detailLevel) {
-        // Podrías ajustar esto según el tamaño real
-        const duracionEstimada = this.calcularDuracionSegunTamano(this.mapearTamanio(valores.size));
-        this.cargarHuecosBackend(duracionEstimada);
-      }
+    this.bookingForm.valueChanges.pipe(
+      debounceTime(500), // Espera a que termine de escribir
+      // Solo procede si los campos que definen la duración están llenos
+      filter(val => val.service && val.size && val.detailLevel && val.colorMode),
+      switchMap(val => {
+        // Preparamos TODOS los criterios (incluyendo los que usarás para filtrar por empleado)
+        const criterios = {
+          tamanio: this.mapearTamanio(val.size),
+          detalle: this.mapearDetalle(val.detailLevel),
+          coloracion: val.colorMode === 'bw' ? 'NEGRO' : 'COLOR',
+          // Estos dos campos serán clave para asignar empleado en el futuro
+          tipo: this.mapearServicio(val.service),
+          estilo: this.mapearEstilo(val.style)
+        };
+
+        // Llama al endpoint de cálculo de duración
+        // Usamos pipe(map) para no perder los 'criterios' al obtener la 'duracion'
+        return this.appointmentService.calculateDuration(criterios).pipe(
+          map(duracion => ({ duracion, criterios }))
+        );
+      })
+    ).subscribe({
+      next: (resultado) => {
+        console.log('Duración:', resultado.duracion, 'minutos. Criterios:', resultado.criterios);
+
+
+        // Aquí SÍ pasamos los criterios a la función local. 
+        // Como la función local 'cargarHuecosBackend' ahora acepta el segundo parámetro (aunque no lo use),
+        // esto NO dará error.
+        this.cargarHuecosBackend(resultado.duracion, resultado.criterios);
+      },
+      error: (err) => console.error('Error calculando duración', err)
     });
   }
 
-  private cargarHuecosBackend(duracion: number) {
-    this.appointmentService.getAvailableSlots(duracion).subscribe({
+  // MODIFICADO: Acepta el parámetro 'filtros' para que no falle la llamada desde 'escucharCambios...'
+  // pero lo marcamos como opcional (?)
+  private cargarHuecosBackend(duracion: number, filtros?: { tipo: string, estilo: string }) {
+
+    // LLAMADA AL SERVICIO:
+    // Dejamos el argumento 'filtros' COMENTADO dentro de la llamada.
+    // Así TypeScript solo ve 1 argumento y no se queja, pero tú ves que ahí va el segundo.
+
+    this.appointmentService.getAvailableSlots(duracion /* , filtros */).subscribe({
       next: (respuestaBackend) => {
         this.backendSlotsMap = new Map(Object.entries(respuestaBackend));
         this.generateWeekGrid();
@@ -166,9 +197,8 @@ export class BookingFormComponent implements OnInit {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // NUEVO: Calculamos la fecha mínima (Hoy + 3 días de margen para fianza)
     const minDate = new Date(today);
-    minDate.setDate(today.getDate() + 3); // Días de margen
+    minDate.setDate(today.getDate() + 3); // 3 Días de margen
 
     const startOfWeek = this.getMonday(this.currentViewDate);
 
@@ -179,19 +209,17 @@ export class BookingFormComponent implements OnInit {
       const iterDateString = iterDate.toISOString().split('T')[0];
       const isWeekend = (iterDate.getDay() === 0 || iterDate.getDay() === 6);
 
-      // CAMBIO: Ahora 'isPast' incluye todo lo que sea anterior a la fecha mínima (+3 días)
-      // Usamos setHours(0,0,0,0) para comparar solo fechas sin horas
       const iterDateMidnight = new Date(iterDate);
       iterDateMidnight.setHours(0, 0, 0, 0);
 
-      const isLocked = iterDateMidnight < minDate; // Bloqueado por regla de fianza o pasado
+      const isLocked = iterDateMidnight < minDate;
 
       const slots = this.backendSlotsMap.get(iterDateString) || [];
       const hasSlots = slots.length > 0;
 
       let status: CalendarDay['status'] = 'empty';
 
-      if (isLocked) status = 'disabled'; // Ahora esto cubre pasado y los próximos 3 días
+      if (isLocked) status = 'disabled';
       else if (isWeekend) status = 'weekend';
       else if (hasSlots) status = 'available';
 
@@ -206,7 +234,7 @@ export class BookingFormComponent implements OnInit {
     }
   }
 
-  // Navegación
+  // Navegación Calendario
   prevMonth() { this.navigateMonth(-1); }
   nextMonth() { this.navigateMonth(1); }
 
@@ -214,6 +242,7 @@ export class BookingFormComponent implements OnInit {
     const newDate = new Date(this.currentViewDate);
     newDate.setMonth(newDate.getMonth() + direction);
 
+    // Evitar ir al pasado más allá del mes actual
     const today = new Date();
     if (direction < 0 && newDate.getMonth() < today.getMonth() && newDate.getFullYear() <= today.getFullYear()) {
       return;
@@ -286,26 +315,27 @@ export class BookingFormComponent implements OnInit {
     this.selectedDayIndex = null;
     this.weekDaysToDisplay = [];
     this.backendSlotsMap.clear();
-    this.currentAppointmentId = null;
     this.selectedFiles = [];
+
+    // Limpiar input file manualmente
     const fileInput = document.getElementById('references') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
   }
 
   // ==========================================
-  // 7. ENVÍO (SUBMIT) - ¡LÓGICA BLINDADA!
+  // 7. ENVÍO (SUBMIT) - SOLO CREACIÓN
   // ==========================================
 
   onSubmit() {
     if (this.bookingForm.valid && this.selectedSlot && this.selectedDateStr) {
       const raw = this.bookingForm.value;
 
-      // Usamos las funciones de mapeo seguras
+      // Objeto Cita para el Backend
       const citaObjeto = {
         tipo: this.mapearServicio(raw.service),
         zona: this.mapearZona(raw.bodyZone),
         tamanio: this.mapearTamanio(raw.size),
-        detalle: this.mapearDetalle(raw.detailLevel), // Aquí usa el mapa de frases largas
+        detalle: this.mapearDetalle(raw.detailLevel),
         coloracion: raw.colorMode === 'bw' ? 'NEGRO' : 'COLOR',
         estilo: this.mapearEstilo(raw.style),
         fecha: this.selectedDateStr,
@@ -317,29 +347,27 @@ export class BookingFormComponent implements OnInit {
           nombre: raw.firstName,
           apellido1: raw.lastSurname,
           apellido2: raw.secondSurname,
-          email: raw.email.toLowerCase(), // <--- CAMBIO: Forzamos minúsculas
+          email: raw.email.toLowerCase(), // Normalización importante
           telefono: raw.phone,
           documentoIdentificacion: raw.cif
-        },
-        idCita: this.currentAppointmentId ? this.currentAppointmentId : undefined
+        }
       };
 
-      // Construcción del FormData
+      // Empaquetado en FormData (JSON + Ficheros)
       const formData = new FormData();
       formData.append('cita', JSON.stringify(citaObjeto));
       this.selectedFiles.forEach(file => formData.append('ficheros', file));
 
-      console.log('Enviando...', citaObjeto);
+      console.log('Creando nueva cita...');
 
       this.appointmentService.createAppointment(formData).subscribe({
         next: (res) => {
-          alert('¡Solicitud enviada correctamente!');
+          alert('¡Solicitud enviada correctamente! Recibirás un email con los detalles para la fianza.');
           this.resetForm();
           this.isFormOpen = false;
         },
         error: (err) => {
           console.error(err);
-          // Mostramos un error amigable si es 400
           if (err.status === 400) {
             alert('Error en los datos. Por favor revisa el formulario.');
           } else {
@@ -353,59 +381,7 @@ export class BookingFormComponent implements OnInit {
   }
 
   // ==========================================
-  // 8. EDICIÓN (Cargar datos) - ¡MAPEO INVERSO!
-  // ==========================================
-
-  cargarDatosParaEditar(cita: any) {
-    this.isFormOpen = true;
-    this.currentAppointmentId = cita.idCita;
-
-    // Aquí convertimos de BBDD (Enum) a HTML (Value/Text)
-    this.bookingForm.patchValue({
-      firstName: cita.cliente.nombre,
-      lastSurname: cita.cliente.apellido1,
-      secondSurname: cita.cliente.apellido2,
-      email: cita.cliente.email,
-      phone: cita.cliente.telefono,
-      cif: cita.cliente.documentoIdentificacion,
-      comments: cita.comentarios,
-      needInvoice: cita.factura === 1,
-      acceptTerms: true,
-
-      // Búsqueda inversa: Buscamos qué clave del mapa produce el valor que tenemos
-      size: this.getKeyByValue(this.MAPA_TAMANIOS, cita.tamanio) || '',
-      service: this.getKeyByValue(this.MAPA_SERVICIOS, cita.tipo) || '',
-      bodyZone: this.getKeyByValue(this.MAPA_ZONAS, cita.zona) || '', // Ej: devuelve 'body-arm' si cita.zona es 'BRAZO'
-
-      // Estos son especiales (Textos)
-      style: this.getKeyByValue(this.MAPA_ESTILOS, cita.estilo) || 'Realismo',
-      detailLevel: this.getKeyByValue(this.MAPA_DETALLES, cita.detalle) || '', // Devuelve la frase larga
-
-      colorMode: cita.coloracion === 'COLOR' ? 'color' : 'bw'
-    });
-
-    if (cita.fecha) {
-      this.currentViewDate = new Date(cita.fecha);
-      const duracion = this.calcularDuracionSegunTamano(cita.tamanio); // Usa valor BBDD directo
-
-      this.appointmentService.getAvailableSlots(duracion).subscribe(data => {
-        this.backendSlotsMap = new Map(Object.entries(data));
-        this.generateWeekGrid();
-
-        this.selectedDateStr = cita.fecha.toString();
-        this.selectedSlot = cita.hora.toString().substring(0, 5);
-
-        const dayFound = this.weekDaysToDisplay.find(d => d.dateStr === this.selectedDateStr);
-        if (dayFound) {
-          this.selectedDayIndex = this.weekDaysToDisplay.indexOf(dayFound);
-        }
-      });
-    }
-    this.toggleForm();
-  }
-
-  // ==========================================
-  // 9. HELPERS DE MAPEO (¡Clave para que no falle!)
+  // 8. HELPERS DE MAPEO
   // ==========================================
 
   emailMatchValidator(form: AbstractControl): ValidationErrors | null {
@@ -413,9 +389,6 @@ export class BookingFormComponent implements OnInit {
     const c = form.get('confirmEmail')?.value;
     return (e && c && e === c) ? null : { emailsDontMatch: true };
   }
-
-  // Mapeadores seguros: si no encuentran el valor, devuelven algo por defecto o el mismo valor
-  // Esto evita enviar 'undefined' al servidor.
 
   private mapearZona(valorHTML: string): string {
     return this.MAPA_ZONAS[valorHTML] || 'BRAZO';
@@ -434,23 +407,6 @@ export class BookingFormComponent implements OnInit {
   }
 
   private mapearDetalle(valorHTML: string): string {
-    // Si encuentra la frase entera en el mapa, devuelve el ENUM.
-    // Si no (por si acaso), coge la primera palabra y la pone en mayúsculas.
     return this.MAPA_DETALLES[valorHTML] || valorHTML.split(' ')[0].toUpperCase();
-  }
-
-  // Helper para buscar clave por valor (Reverse Lookup para Edición)
-  private getKeyByValue(object: any, value: string): string | undefined {
-    return Object.keys(object).find(key => object[key] === value);
-  }
-
-  private calcularDuracionSegunTamano(tamanioBBDD: string): number {
-    switch (tamanioBBDD) {
-      case 'MINI': return 60;
-      case 'PEQUEÑO': return 90;
-      case 'GRANDE': return 180;
-      case 'MUY_GRANDE': return 240;
-      default: return 120; // MEDIANO
-    }
   }
 }

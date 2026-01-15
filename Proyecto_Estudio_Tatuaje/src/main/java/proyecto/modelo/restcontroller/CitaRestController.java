@@ -1,6 +1,7 @@
 package proyecto.modelo.restcontroller;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,9 +29,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import proyecto.modelo.dto.CitaAdminDTO;
+import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
+import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.entities.Cita;
+import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
 import proyecto.service.CitaService;
 
@@ -41,23 +44,22 @@ public class CitaRestController {
 
 	@Autowired
 	private CitaService citaService;
-	
 
 	// NUEVO PARA IMG. REF.: Herramienta para convertir JSON String a Objeto Java
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@GetMapping
+	@GetMapping("/listarCitas")
 	public ResponseEntity<List<CitaDTO>> listarCitas() {
 		// Service ya devuelve DTOs directamente
 		List<CitaDTO> citasDTO = citaService.listarCitasDTO();
 		return ResponseEntity.ok(citasDTO);
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<CitaDTO> obtenerCita(@PathVariable int id) {
+	@GetMapping("/{idCita}")
+	public ResponseEntity<CitaDTO> obtenerCita(@PathVariable int idCita) {
 		// Service maneja la conversión y validación
-		CitaDTO citaDTO = citaService.obtenerCitaDTOPorId(id);
+		CitaDTO citaDTO = citaService.obtenerCitaDTOPorId(idCita);
 
 		if (citaDTO != null) {
 			return ResponseEntity.ok(citaDTO);
@@ -67,9 +69,9 @@ public class CitaRestController {
 	}
 
 	@PutMapping("/actualizar/{id}")
-	public ResponseEntity<CitaDTO> actualizarCita(@PathVariable int id, @RequestBody Cita cita) {
-		// Nos aseguramos de que el ID del objeto coincida con el de la URL
-		cita.setIdCita(id);
+	public ResponseEntity<CitaDTO> actualizarCita(@PathVariable int idCita, @RequestBody Cita cita) {
+		
+		cita.setIdCita(idCita);
 
 		Cita citaActualizada = citaService.actualizarCita(cita);
 
@@ -143,59 +145,174 @@ public class CitaRestController {
 	    return ResponseEntity.ok(citaService.obtenerPorRango(fecha, vista));
 	}
 	
-	@GetMapping("/buscar/pendientes")
-	public ResponseEntity<List<CitaDTO>> getCitasPendientes() {
-	    // Llamamos al servicio para obtener la lista
-	    List<CitaDTO> pendientes = citaService.obtenerPorEstatus(Estatus.PENDIENTE);
-
-	    if (pendientes.isEmpty()) {
-	        // Retornamos 204 No Content si la lista está vacía (opcional, también puedes devolver 200 con lista vacía)
-	        return ResponseEntity.noContent().build();
-	    }
-
-	    // Retornamos 200 OK con la lista de citas
-	    return ResponseEntity.ok(pendientes);
-	}
-	
-	/**
-     * Endpoint para obtener el detalle completo de una cita para el administrador.
-     */
-    @GetMapping("/detalle/{id}")
-    public ResponseEntity<?> obtenerDetalleCita(@PathVariable("id") int idServicio) {
-        try {
-            CitaAdminDTO dto = citaService.obtenerDetalleCita(idServicio);
-            return ResponseEntity.ok(dto);
-        } catch (RuntimeException e) {
-            // Si no encuentra la cita o el presupuesto, devuelve un 404
-            return ResponseEntity.status(404).body("Error: " + e.getMessage());
-        } catch (Exception e) {
-            // Error genérico del servidor
-            return ResponseEntity.status(500).body("Error interno del servidor");
+    @GetMapping("/buscar/confirmadas")
+    public ResponseEntity<?> obtenerCitasConfirmadas() {
+        List<CitaDTO> citas = citaService.obtenerPorEstatus(Estatus.CONFIRMADO);
+        
+        if (citas.isEmpty()) {
+            return ResponseEntity.ok(Map.of("mensaje", "No hay citas confirmadas"));
+        }
+        
+        return ResponseEntity.ok(citas);
+    }
+    
+    @GetMapping("/buscar/pendientes")
+    public ResponseEntity<?> obtenerCitasPendientes() {
+        List<CitaDTO> citas = citaService.obtenerPorEstatus(Estatus.PENDIENTE);
+        
+        if (citas.isEmpty()) {
+            return ResponseEntity.ok(Map.of("mensaje", "No hay citas pendientes"));
+        }
+        
+        return ResponseEntity.ok(citas);
+    }
+    
+    @GetMapping("/detalles-completos/{id}")
+    public ResponseEntity<?> obtenerDetallesCita(@PathVariable int id) {
+        CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+        
+        if (citaCompleta != null) {
+            return ResponseEntity.ok(citaCompleta);
+        } else {
+            return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
         }
     }
+	
+    @PutMapping("/detalles-completos-modificar/{id}")
+    public ResponseEntity<?> actualizarCitaCompleta(@PathVariable int id, @RequestBody CitaCompletaDTO citaEditada) {
+        CitaCompletaDTO citaActualizada = citaService.actualizarCitaCompleta(id, citaEditada);
+        
+        if (citaActualizada != null) {
+            Map<String, Object> respuesta = new HashMap<>();
+            respuesta.put("mensaje", "Cita actualizada correctamente y presupuesto recalculado");
+            respuesta.put("cita", citaActualizada);
+            return ResponseEntity.ok(respuesta);
+        } else {
+            return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+        }
+    }
+    
+    @GetMapping("/buscar/presupuesto-pendientes")
+    public ResponseEntity<?> obtenerCitasPresupuestoPendiente() {
+        List<CitaDTO> citas = citaService.obtenerPorEstadoPresupuesto(Estado.PENDIENTE);
+        
+        if (citas.isEmpty()) {
+            return ResponseEntity.ok(Map.of("mensaje", "No hay citas con presupuesto pendiente"));
+        }
+        
+        return ResponseEntity.ok(citas);
+    }
+
+    @GetMapping("/buscar/presupuesto-generados")
+    public ResponseEntity<?> obtenerCitasPresupuestoGenerado() {
+        List<CitaDTO> citas = citaService.obtenerPorEstadoPresupuesto(Estado.GENERADO);
+        
+        if (citas.isEmpty()) {
+            return ResponseEntity.ok(Map.of("mensaje", "No hay citas con presupuesto generado"));
+        }
+        
+        return ResponseEntity.ok(citas);
+    }
+
+    @GetMapping("/buscar/presupuesto-aceptados")
+    public ResponseEntity<?> obtenerCitasPresupuestoAceptado() {
+        List<CitaDTO> citas = citaService.obtenerPorEstadoPresupuesto(Estado.ACEPTADO);
+        
+        if (citas.isEmpty()) {
+            return ResponseEntity.ok(Map.of("mensaje", "No hay citas con presupuesto aceptado"));
+        }
+        
+        return ResponseEntity.ok(citas);
+    }
+	
 
 	// Endpoint seguro para recuperar una cita
 	// Recibe: ?ref=A5B6F1C2&email=patricia@email.com
-	@GetMapping("/buscar")
-	public ResponseEntity<?> buscarPorReferencia(@RequestParam String ref, @RequestParam String email) {
+    @GetMapping("/buscar")
+    public ResponseEntity<?> buscarPorReferencia(@RequestParam String ref, @RequestParam String email) {
 
-		// Buscamos usando el método seguro del repositorio
-		// Nota: Tendrás que añadir este método en tu Servicio e Interfaz primero para
-		// que sea limpio,
-		// o llamar al repositorio directamente si estás prototipando rápido.
-		// Lo ideal es: citaService.buscarPorReferenciaYEmail(ref, email);
+        Optional<Cita> citaOpt = citaService.buscarPorReferenciaYEmail(ref, email);
 
-		// Asumamos que has creado el método en el servicio que llama al repo:
-		Optional<Cita> citaOpt = citaService.buscarPorReferenciaYEmail(ref, email);
+        if (citaOpt.isPresent()) {
+            Cita citaEncontrada = citaOpt.get();
+            CitaDTO dto = new CitaDTO(citaEncontrada);
+            
+            // AQUI ESTA LA CLAVE: Calculamos la duración y la metemos en el DTO
+            Integer duracion = citaService.calcularDuracion(citaEncontrada);
+            dto.setDuracionEstimada(duracion);
+            
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró ninguna cita con esa referencia y email.");
+        }
+    }
 
-		if (citaOpt.isPresent()) {
-			// Se ha encontrado, así que la devolvemos.
-			return ResponseEntity.ok(new CitaDTO(citaOpt.get()));
-		} else {
-			// NO se ha encontrado, devuelve un error 404
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("No se encontró ninguna cita con esa referencia y email.");
-		}
-	}
+	
+    // Calcular duración sin guardar (Para el Formulario)
+    @PostMapping("/calcular-duracion")
+    public ResponseEntity<Integer> calcularDuracionEstimada(@RequestBody CitaDTO datos) {
+        try {
+            // Creamos una entidad temporal solo con los datos necesarios para el cálculo
+            Cita citaSimulada = new Cita();
+            
+            // Convertimos los Strings del DTO a los Enums de la Entidad
+            // Es vital usar los mismos nombres de ENUM que en Java (Mayúsculas)
+            if (datos.getTamanio() != null) 
+                citaSimulada.setTamanio(proyecto.modelo.enums.Tamanio.valueOf(datos.getTamanio()));
+            
+            if (datos.getDetalle() != null) 
+                citaSimulada.setDetalle(proyecto.modelo.enums.Detalle.valueOf(datos.getDetalle())); // Ojo al mapa del front
+            
+            if (datos.getColoracion() != null) 
+                citaSimulada.setColoracion(proyecto.modelo.enums.Coloracion.valueOf(datos.getColoracion()));
+
+            // Usamos la lógica centralizada del servicio
+            Integer minutos = citaService.calcularDuracion(citaSimulada);
+            
+            return ResponseEntity.ok(minutos);
+            
+        } catch (IllegalArgumentException e) {
+            // Si el front manda un texto que no coincide con el Enum
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    @PutMapping("/modificar-conreferencia")
+    public ResponseEntity<?> modificarCitaSegura(@RequestBody CitaModificacionDTO solicitud) {
+        boolean exito = citaService.modificarFechaCita(solicitud);
+
+        if (exito) {
+            return ResponseEntity.ok(Map.of("mensaje", "Cita modificada correctamente."));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "No se encontró la cita o el email no coincide."));
+        }
+    }
+
+    @DeleteMapping("/cancelar-conreferencia")
+    public ResponseEntity<?> cancelarCitaSegura(
+            @RequestParam String ref, 
+            @RequestParam String email) {
+        
+        boolean exito = citaService.cancelarCitaPorReferencia(ref, email);
+
+        if (exito) {
+            return ResponseEntity.ok("Cita cancelada correctamente.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("No se pudo cancelar: Cita no encontrada o credenciales inválidas.");
+        }
+    }
+    
+    @PostMapping("/simular")
+    public ResponseEntity<CitaCompletaDTO> simular(@RequestBody CitaCompletaDTO dto) {
+        return ResponseEntity.ok(citaService.simularCitaCompleta(dto));
+    }
+
+
 
 }

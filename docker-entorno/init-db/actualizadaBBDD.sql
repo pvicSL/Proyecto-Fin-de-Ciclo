@@ -2,7 +2,6 @@
 -- TatuSys - Sistema de Gestión de Estudio de Tatuajes
 -- Script de creación de base de datos organizado por dependencias
 -- =====================================================
-
 CREATE DATABASE IF NOT EXISTS estudio_tatuajes;
 USE estudio_tatuajes;
 
@@ -84,7 +83,7 @@ CREATE TABLE servicios (
 -- NIVEL 2: Tablas que dependen de nivel 1
 -- =====================================================
 
--- Tabla de presupuestos (depende de servicios)
+-- Tabla de presupuestos (depende de servicios) - CON CASCADE
 CREATE TABLE presupuestos (
     id_presupuesto INT PRIMARY KEY AUTO_INCREMENT,
     id_servicio INT NOT NULL,
@@ -95,7 +94,7 @@ CREATE TABLE presupuestos (
     vigente BOOLEAN NOT NULL,
     estado ENUM('PENDIENTE', 'GENERADO', 'ACEPTADO', 'RECHAZADO') NOT NULL,
     comentarios VARCHAR(200),
-    FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio)
+    FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio) ON DELETE CASCADE
 );
 
 -- =====================================================

@@ -26,14 +26,14 @@ import proyecto.modelo.enums.Tipo;
 import proyecto.modelo.enums.Zona;
 
 @Entity
-@Table(name = "servicios") // ← TABLA IGUAL
+@Table(name = "servicios")
 public class Cita implements Serializable {
 	private static final long serialVersionUID = -5431666055805619336L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_servicio") // ← COLUMNA IGUAL
-	private int idCita; // ← Solo variable Java cambia
+	@Column(name = "id_servicio") 
+	private int idCita; 
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -74,7 +74,6 @@ public class Cita implements Serializable {
 	@Column(name = "duracion_minutos")
 	private Integer duracionMinutos;
 
-	// --- NUEVO: CAMPOS PARA LAS IMÁGENES ---
 	@Column(name = "imagen_ref_1")
 	private String imagenRef1;
 
@@ -83,10 +82,8 @@ public class Cita implements Serializable {
 
 	@Column(name = "imagen_ref_3")
 	private String imagenRef3;
-	// ---------------------------------------
 
-	// Nueva columna para el localizador de la cita
-	@Column(name = "localizador", unique = true)
+	@Column(unique = true)
 	private String referencia;
 
 	@ManyToOne

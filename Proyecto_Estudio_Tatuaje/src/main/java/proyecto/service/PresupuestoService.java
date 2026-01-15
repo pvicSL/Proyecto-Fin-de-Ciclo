@@ -1,13 +1,13 @@
 package proyecto.service;
 
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
-import proyecto.modelo.dto.CitaAdminDTO;
-import proyecto.modelo.dto.CitaPresupuestoDTO;
+import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Presupuesto;
-import proyecto.modelo.enums.Estado;
 
 
 
@@ -24,8 +24,7 @@ public interface PresupuestoService {
 	
 	Presupuesto calcularPresupuesto (Cita cita);
 	Presupuesto calcularPresupuestoPorId(int idCita);
-	
-	Presupuesto buscarUnPresupuestoPorIdCita(int idCita);
-	List<CitaPresupuestoDTO> obtenerCitasPorEstadoPresupuesto(Estado estado);
+	Map<String, BigDecimal> obtenerPreciosIndividuales(Cita cita);
+	PreciosIndividualesDTO obtenerPreciosCompletosConIva(int idCita);
 	
 }

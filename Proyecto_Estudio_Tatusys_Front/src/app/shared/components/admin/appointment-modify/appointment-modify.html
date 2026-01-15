@@ -1,5 +1,5 @@
 @if (cita) {
-<h1 class="text-subtitle">Confirmar Servicio - #{{cita.idServicio}}</h1>
+<h1 class="text-subtitle">Confirmar Servicio - #{{cita.idCita}}</h1>
 
 <div class="contenedor-scroll container-fluid p-4 rounded shadow-sm border">
       
@@ -12,85 +12,125 @@
     <div class="row g-3 ">
       <div class="col-md-4">
         <span class="text-secondary d-block small">Nombre:</span>
-        <span class="text-dark">{{cita.nombre}}</span>
+        <span class="text-dark">{{cita.clienteNombre}}</span>
         
       </div>
       <div class="col-md-8">
         <span class="text-secondary d-block small">Apellidos:</span>
-        <span class="text-dark">{{cita.apellido1}} {{cita.apellido2}}</span>
+        <span class="text-dark">{{cita.clienteApellido1}} {{cita.clienteApellido2}}</span>
       </div>
       <div class="col-md-4">
         <span class="text-secondary d-block small">Teléfono:</span>
-        <span class="text-dark">{{cita.telefono}}</span>
+        <span class="text-dark">{{cita.clienteTelefono}}</span>
       </div>
       <div class="col-md-4">
         <span class="text-secondary d-block small">Email:</span>
-        <span class="text-dark">{{cita.email}}</span>
+        <span class="text-dark">{{cita.clienteEmail}}</span>
       </div>
       <div class="col-md-4">
         <span class="text-secondary d-block small">DNI/NIF:</span>
-        <span class="text-dark">{{cita.dni}}</span>
+        <span class="text-dark">{{cita.clienteDocumentoIdentificacion}}</span>
       </div>
     </div>
   </section>
 
   <section class="mb-5">
-    <h2 class="h5 fw-bold mb-3">Servicio</h2>
-    <div class="row g-3 mb-3 pb-4">
-      <div class="col-12 col-md-4">
-        <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
-          <span class="text-secondary small">Precio Base:</span>
-          <span class="fw-bold small text-nowrap">{{ (cita.precioBaseServicio || 0) | currency:'EUR':'symbol' }}</span>
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
-          <span class="text-secondary small">Tipo: <span class="text-dark ms-1">{{ cita.tipo }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (cita.precioTipo || 0) | currency:'EUR':'symbol' }}</span>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-4">
-        <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
-          <span class="text-secondary small">Zona: <span class="text-dark ms-1">{{ cita.zona }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (cita.precioZona || 0) | currency:'EUR':'symbol' }}</span>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-4">
-        <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
-          <span class="text-secondary small">Tamaño: <span class="text-dark ms-1">{{ cita.tamanio }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (cita.precioTamanio || 0) | currency:'EUR':'symbol' }}</span>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-4">
-        <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
-          <span class="text-secondary small">Detalle: <span class="text-dark ms-1">{{ cita.detalle }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (cita.precioDetalle || 0) | currency:'EUR':'symbol' }}</span>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-4">
-        <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
-          <span class="text-secondary small">Coloración: <span class="text-dark ms-1">{{ cita.coloracion }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (cita.precioColoracion || 0) | currency:'EUR':'symbol' }}</span>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-4">
-        <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
-          <span class="text-secondary small">Estilo: <span class="text-dark ms-1">{{ cita.estilo }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (cita.precioEstilo || 0) | currency:'EUR':'symbol' }}</span>
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
-          <span class="text-secondary small">Duración del Servicio: </span>
-          <span class="text-dark fw-bold">{{ cita.duracionMinutos | formatoHoras }}</span>
-        </div>
+  <h2 class="h5 fw-bold mb-3">Servicio</h2>
+  <div class="row g-3 mb-3 pb-4">
+    
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
+        <span class="text-secondary small">Precio Base:</span>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioBase) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
+        <span class="text-secondary small">Tipo:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.tipo" (change)="recalcularTodo()">
+          <option value="TATUAJE">Tatuaje</option>
+          <option value="PIERCING">Piercing</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioTipo) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
+        <span class="text-secondary small">Zona:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.zona" (change)="recalcularTodo()">
+          <option value="BRAZO">Brazo</option>
+          <option value="PIERNA">Pierna</option>
+          <option value="ESPALDA">Espalda</option>
+          <option value="PECHO">Pecho</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioZona || 0) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
+        <span class="text-secondary small">Tamaño:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.tamanio" (change)="recalcularTodo()">
+          <option value="PEQUENO">Pequeño</option>
+          <option value="MEDIANO">Mediano</option>
+          <option value="GRANDE">Grande</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioTamanio || 0) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
+        <span class="text-secondary small">Detalle:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.detalle" (change)="recalcularTodo()">
+          <option value="SENCILLO">Sencillo</option>
+          <option value="MEDIO">Medio</option>
+          <option value="DENSO">Denso</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioDetalle || 0) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
+        <span class="text-secondary small">Coloración:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.coloracion" (change)="recalcularTodo()">
+          <option value="NEGRO">Negro/Gris</option>
+          <option value="COLOR">Color</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioColoracion || 0) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
+        <span class="text-secondary small">Estilo:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.estilo" (change)="recalcularTodo()">
+          <option value="REALISMO">Realismo</option>
+          <option value="TRADICIONAL">Tradicional</option>
+          <option value="FINE_LINE">Fine Line</option>
+          <option value="BLACKWORK">Blackwork</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioEstilo || 0) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
+        <span class="text-secondary small">Duración del Servicio: </span>
+        <span class="text-dark fw-bold">{{ citaDTO.duracionEstimada | formatoHoras }}</span>
+      </div>
+    </div>
+  </div>
+
     <div class="mb-3">
       <p class="fw-bold small mb-1 text-uppercase text-muted" style="letter-spacing: 0.5px;">Comentarios:</p>
       <p class="text-dark small lh-base bg-light p-2 rounded">{{cita.comentariosServicio || 'Sin comentarios adicionales.'}}</p>
@@ -151,17 +191,8 @@
         <div class="col-md-5">
             <div class=" p-3 rounded shadow-inner">
                 <div class="d-flex justify-content-between mb-2">
-                    <span class="text-secondary small">Suma Base:</span>
+                    <span class="text-secondary small">Precio Base:</span>
                     <span class="fw-bold">{{ (cita.precioBase || 0) | currency:'EUR' }}</span>
-                </div>
-                
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-warning fw-bold small">PRECIO EXTRA:</span>
-                    <div class="input-group input-group-sm" style="width: 120px;">
-                        <input type="number" class="form-control fw-bold text-dark" 
-                               [(ngModel)]="cita.precioExtra">
-                        <span class="input-group-text">€</span>
-                    </div>
                 </div>
 
                 <div class="d-flex justify-content-between mb-1 small text-secondary">

@@ -1,7 +1,7 @@
 export interface AppointmentDTO {
     // Datos de identificación
-    // ESTO SE DEBE CAMBIAR POR LA CLAVE MÁS SEGURA QUE GENEREMOS EN UNA COLUMNA NUEVA EN LA BBDD
     idCita: number;
+    referencia?: string;
 
     // Datos de fecha y hora (son Strings porque vienen así de JSON/Java)
     fecha: string; // 'yyyy-MM-dd'
@@ -16,7 +16,9 @@ export interface AppointmentDTO {
     detalle: string;
     coloracion: string;
     estilo: string;
-    estatus: string; // 'PENDIENTE', 'CONFIRMADO', etc.
+    estatus: string; // 'PENDIENTE', 'CONFIRMADA', etc.
+    //NUEVO - DURACIÓN DE LA CITA
+    duracionEstimada?: number;
 
     // Datos del cliente
     clienteNombre: string;
