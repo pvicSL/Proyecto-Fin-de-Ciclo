@@ -470,34 +470,66 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    Cita cita = citaRepository.findById(id).orElse(null);
 	    if (cita == null) return null;
 	    
-	    // 2. Actualizar campos de la cita con valores editados
+	    // 2. ACTUALIZAR CAMPOS DE LA CITA
 	    cita.setTipo(Tipo.valueOf(citaEditada.getTipo()));
 	    cita.setZona(Zona.valueOf(citaEditada.getZona()));
 	    cita.setTamanio(Tamanio.valueOf(citaEditada.getTamanio()));
 	    cita.setDetalle(Detalle.valueOf(citaEditada.getDetalle()));
 	    cita.setColoracion(Coloracion.valueOf(citaEditada.getColoracion()));
 	    cita.setEstilo(Estilo.valueOf(citaEditada.getEstilo()));
+	    cita.setFecha(citaEditada.getFecha());
+	    cita.setHora(citaEditada.getHora());
 	    cita.setComentarios(citaEditada.getComentarios());
+	    cita.setImagenRef1(citaEditada.getImagenRef1());
+	    cita.setImagenRef2(citaEditada.getImagenRef2());
+	    cita.setImagenRef3(citaEditada.getImagenRef3());
 	    
-	    // 3. Guardar cita actualizada
+	    // 3. ACTUALIZAR CAMPOS DEL CLIENTE
+	    Cliente cliente = cita.getCliente();
+	    cliente.setNombre(citaEditada.getClienteNombre());
+	    cliente.setApellido1(citaEditada.getClienteApellido1());
+	    cliente.setApellido2(citaEditada.getClienteApellido2());
+	    cliente.setEmail(citaEditada.getClienteEmail());
+	    cliente.setTelefono(citaEditada.getClienteTelefono());
+	    cliente.setDocumentoIdentificacion(citaEditada.getClienteDocumentoIdentificacion());
+	    
+	    // 4. GUARDAR CAMBIOS
+	    clienteRepository.save(cliente);
 	    citaRepository.save(cita);
 	    
-	    // 4. Recalcular presupuesto
-	    Presupuesto nuevoPresupuesto = presupuestoService.calcularPresupuesto(cita);
-	    nuevoPresupuesto.setEstado(Estado.GENERADO);
-	    nuevoPresupuesto.setComentarios(citaEditada.getPresupuestoComentarios());
-	    presupuestoRepository.save(nuevoPresupuesto);
+	    // 5. Calcular nuevos valores del presupuesto
+	    BigDecimal[] valores = presupuestoService.calcularSoloValores(cita);
 	    
-	    // 5. Devolver datos actualizados
-	    return citaRepository.findCitaCompletaById(id);
+	    // 6. Actualizar presupuesto existente
+	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(id);
+	    if (presupuestoOpt.isPresent()) {
+	        Presupuesto presupuestoExistente = presupuestoOpt.get();
+	        presupuestoExistente.setPrecioBase(valores[0]);
+	        presupuestoExistente.setIva(valores[1]);
+	        presupuestoExistente.setPrecioFinal(valores[2]);
+	        presupuestoExistente.setEstado(Estado.GENERADO);
+	        presupuestoExistente.setComentarios(citaEditada.getPresupuestoComentarios());
+	        presupuestoRepository.save(presupuestoExistente);
+	    } else {
+	        Presupuesto nuevoPresupuesto = presupuestoService.calcularPresupuesto(cita);
+	        nuevoPresupuesto.setComentarios(citaEditada.getPresupuestoComentarios());
+	    }
+	    
+	    // 7. Devolver datos actualizados CON precios individuales
+	    CitaCompletaDTO resultado = citaRepository.findCitaCompletaById(id);
+	    if (resultado != null) {
+	        PreciosIndividualesDTO precios = presupuestoService.obtenerPreciosCompletosConIva(id);
+	        if (precios != null) {
+	            resultado.setPrecioTipo(precios.getPrecioTipo());
+	            resultado.setPrecioZona(precios.getPrecioZona());
+	            resultado.setPrecioTamanio(precios.getPrecioTamanio());
+	            resultado.setPrecioDetalle(precios.getPrecioDetalle());
+	            resultado.setPrecioColoracion(precios.getPrecioColoracion());
+	            resultado.setPrecioEstilo(precios.getPrecioEstilo());
+	        }
+	    }
+	    return resultado;
 	}
-
-	private BigDecimal obtenerMonto(CategoriaEnum cat, String valor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
 
 	public Optional<Cita> buscarPorReferenciaYEmail(String referencia, String email) {
 
