@@ -1,26 +1,24 @@
 <div class="collapse show mt-3" id="modifyAppointment">
-    <div class="card mx-auto booking-card" id="modifier-card">
+    <div class="card mx-auto booking-card" id="modifier-card" [class.card-wide]="currentState === 'modificando'">
+
         <div class="card-body text-center">
 
             <div *ngIf="currentState === 'search'" class="modify-state fade-in">
                 <h3 class="modify-title mb-4">GESTIONA TU CITA</h3>
-
                 <p class="contact-text mb-4">
                     Para acceder a tu reserva, introduce el localizador y tu correo electrónico.
                 </p>
-
                 <div class="mb-3 w-75 mx-auto">
-                    <label class="text-white-50 small mb-1">Localizador (Referencia)</label>
+                    <label class="search-label mb-2">Localizador (Referencia)</label>
                     <input type="text" class="form-control text-center input-reference" placeholder="Ej: A5B6F1C2"
                         [(ngModel)]="bookingCode">
                 </div>
 
                 <div class="mb-4 w-75 mx-auto">
-                    <label class="text-white-50 small mb-1">Email asociado</label>
+                    <label class="search-label mb-2">Email asociado</label>
                     <input type="email" class="form-control text-center input-reference" placeholder="tu@email.com"
                         [(ngModel)]="bookingEmail" (keyup.enter)="searchAppointment()">
                 </div>
-
                 <div class="d-flex justify-content-center gap-3">
                     <button class="btn btn-outline-light px-4" (click)="closeModifier()">VOLVER</button>
                     <button class="btn btn-modify-custom px-4" [disabled]="!bookingCode || !bookingEmail"
@@ -33,9 +31,15 @@
             <div *ngIf="currentState === 'inicial'" class="modify-state fade-in">
                 <h3 class="modify-title mb-4">¿CAMBIO DE PLANES?</h3>
 
+                <p class="contact-text mb-4">
+                    Ten en cuenta que <span class="text-warning-custom">modificar o cancelar una cita
+                        es irreversible</span> y no se puede deshacer.
+                </p>
                 <div class="appointment-box mx-auto mb-4">
-                    <p class="appointment-label py-1 fw-normal">TU CITA ES EL:</p>
-
+                    <p class="appointment-label py-1 fw-normal">
+                        TU CITA, CON REF.: <span style="color: var(--burgundy);" class="fw-bold">{{ bookingCode
+                            }}</span>, ES EL:
+                    </p>
                     <div class="appointment-info d-flex align-items-center justify-content-center">
                         <div class="appointment-date text-center me-3">
                             <p class="m-0 weekday">{{ viewDetails.weekday }}</p>
@@ -50,12 +54,10 @@
                         </div>
                     </div>
                 </div>
-
                 <p class="contact-text">
                     Aquí solo puedes cambiar la fecha de tu cita. <br>Para hacer cualquier otro cambio, <a href="#"
                         class="contact-link">escríbenos</a>.
                 </p>
-
                 <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
                     <button class="btn btn-modify-custom px-4 py-2" (click)="startModification()">MODIFICAR
                         CITA</button>
@@ -66,57 +68,69 @@
                 </div>
             </div>
 
-
             <div *ngIf="currentState === 'modificando'" class="modify-state w-100">
+
                 <h3 class="modify-title mb-4">ELIGE UNA NUEVA FECHA</h3>
 
                 <div class="d-flex justify-content-between align-items-center mb-3 w-100 px-3">
-                    <button class="btn btn-sm btn-outline-light" (click)="prevWeek()" [disabled]="weekIndex === 0">
-                        &lt; Anterior
+                    <button class="btn btn-outline-light nav-btn" (click)="prevWeek()" [disabled]="weekIndex === 0">
+                        &lt; Ant.
                     </button>
 
-                    <span class="text-white small">Semana {{weekIndex + 1}}</span>
+                    <span class="calendar-header-text">{{ currentWeekHeader }}</span>
 
-                    <button class="btn btn-sm btn-outline-light" (click)="nextWeek()"
+                    <button class="btn btn-outline-light nav-btn" (click)="nextWeek()"
                         [disabled]="(weekIndex + 1) * daysPerPage >= allDays.length">
-                        Siguiente &gt;
+                        Sig. &gt;
                     </button>
                 </div>
 
                 <div class="days-container d-flex gap-2 justify-content-center mb-4 overflow-auto pb-2">
 
-                    <p *ngIf="allDays.length === 0" class="text-warning">
-                        No hay fechas disponibles próximamente.
-                    </p>
+                    <div *ngFor="let day of visibleDays" class="day-column text-center"
+                        [class.disabled-day]="day.status === 'disabled' || day.status === 'empty'">
 
-                    <div *ngFor="let day of visibleDays" class="day-column text-center">
                         <div class="day-header mb-2">
-                            <span class="d-block small text-muted">{{day.weekday}}</span>
+                            <span class="d-block weekday-label">{{day.weekday}}</span>
                             <span class="fw-bold fs-5 text-white">{{day.dayNumber}}</span>
                         </div>
 
-                        <div class="slots-list d-flex flex-column gap-2">
+                        <div *ngIf="day.status === 'weekend'" class="text-white-50 small mt-2">
+                            <i class="bi bi-slash-circle"></i>
+                        </div>
+                        <div *ngIf="day.status === 'disabled'" class="text-white-50 small mt-2">
+                            <i class="bi bi-lock-fill"></i>
+                        </div>
+                        <div *ngIf="day.status === 'empty'" class="text-white-50 small mt-2">
+                            -
+                        </div>
+
+                        <div class="slots-list d-flex flex-column gap-2" *ngIf="day.status === 'available'">
                             <button *ngFor="let slot of day.slots" class="btn btn-sm slot-btn"
                                 [class.selected]="isSlotSelected(day, slot)" (click)="selectSlot(day, slot)">
                                 {{slot}}
                             </button>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="d-flex justify-content-center gap-3">
-                    <button class="btn btn-outline-secondary" (click)="changeState('inicial')">ATRÁS</button>
-                    <button class="btn btn-primary px-4" [disabled]="!selectedNewDate" (click)="confirmChange()">
+                    <button class="btn btn-back-custom" (click)="changeState('inicial')">
+                        ATRÁS
+                    </button>
+                    <button class="btn btn-confirm-custom px-4" [disabled]="!selectedNewDate" (click)="confirmChange()">
                         CONFIRMAR CAMBIO
                     </button>
                 </div>
             </div>
 
             <div *ngIf="currentState === 'confirmado'" class="modify-state">
-                <h3 class="modify-title mb-4 text-success">¡TODO LISTO!</h3>
+                <h3 class="modify-title mb-4 confirm-title">¡TODO LISTO!</h3>
                 <div class="appointment-box mx-auto mb-3">
-                    <p class="appointment-label mb-2">Tu nueva cita es el:</p>
+                    <p class="appointment-label mb-2">
+                        Modificación registrada para <br> REF.: <span class="text-dark">{{ bookingCode }}</span>. <br>Tu
+                        nueva cita es el:
+                    </p>
                     <div class="appointment-info d-flex align-items-center justify-content-center">
                         <div class="appointment-date text-center me-3">
                             <p class="m-0 weekday">{{ viewDetails.weekday }}</p>
@@ -125,12 +139,13 @@
                         </div>
                         <div class="divider"></div>
                         <div class="appointment-time text-center ms-3">
-                            <p class="m-0">a las</p>
+                            <p class="m-0 time-connector">a las</p>
                             <h2 class="m-0 appointment-hour">{{ viewDetails.hour }}</h2>
+                            <p class="m-0 duration">{{ viewDetails.durationText }}</p>
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-outline-info mt-2" (click)="closeModifier()">CERRAR</button>
+                <button class="btn btn-close-custom mt-2" (click)="closeModifier()">CERRAR</button>
             </div>
 
             <div *ngIf="currentState === 'cancelado'" class="modify-state">

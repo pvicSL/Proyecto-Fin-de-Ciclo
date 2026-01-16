@@ -86,7 +86,17 @@ export const routes: Routes = [
       {
         path: 'trabajadores', 
         loadComponent: () => import('./pages/admin/staff/staff').then(m => m.Staff), 
-        data: {title: 'Trabajadores', icon: 'bi-people'}
+        data: {title: 'Trabajadores', icon: 'bi-people'},
+
+        children: [
+          { path: '', redirectTo: 'list', pathMatch: 'full' },
+
+          {
+            path: 'list', 
+            loadComponent: () => import('./pages/admin/staff/list-staff/list-staff').then(m => m.ListStaff), 
+            data: {title: 'Staff', icon: 'bi-people'}
+          }
+        ]
       },
 
       // Comodín Específico de ADMIN -> lleva a /admin/citas

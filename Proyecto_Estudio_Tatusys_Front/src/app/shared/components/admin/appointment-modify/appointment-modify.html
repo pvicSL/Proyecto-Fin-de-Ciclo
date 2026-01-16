@@ -49,7 +49,7 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
         <span class="text-secondary small">Tipo:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.tipo" (change)="recalcularTodo()">
+                [(ngModel)]="cita.tipo" >
           <option value="TATUAJE">Tatuaje</option>
           <option value="PIERCING">Piercing</option>
         </select>
@@ -61,7 +61,7 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
         <span class="text-secondary small">Zona:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.zona" (change)="recalcularTodo()">
+                [(ngModel)]="cita.zona" >
           <option value="BRAZO">Brazo</option>
           <option value="PIERNA">Pierna</option>
           <option value="ESPALDA">Espalda</option>
@@ -75,7 +75,7 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
         <span class="text-secondary small">Tamaño:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.tamanio" (change)="recalcularTodo()">
+                [(ngModel)]="cita.tamanio">
           <option value="PEQUENO">Pequeño</option>
           <option value="MEDIANO">Mediano</option>
           <option value="GRANDE">Grande</option>
@@ -88,7 +88,7 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
         <span class="text-secondary small">Detalle:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.detalle" (change)="recalcularTodo()">
+                [(ngModel)]="cita.detalle" >
           <option value="SENCILLO">Sencillo</option>
           <option value="MEDIO">Medio</option>
           <option value="DENSO">Denso</option>
@@ -101,7 +101,7 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
         <span class="text-secondary small">Coloración:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.coloracion" (change)="recalcularTodo()">
+                [(ngModel)]="cita.coloracion" >
           <option value="NEGRO">Negro/Gris</option>
           <option value="COLOR">Color</option>
         </select>
@@ -113,7 +113,7 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
         <span class="text-secondary small">Estilo:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.estilo" (change)="recalcularTodo()">
+                [(ngModel)]="cita.estilo" >
           <option value="REALISMO">Realismo</option>
           <option value="TRADICIONAL">Tradicional</option>
           <option value="FINE_LINE">Fine Line</option>

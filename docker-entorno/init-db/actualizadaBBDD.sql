@@ -73,9 +73,11 @@ CREATE TABLE servicios (
     imagen_ref_3 VARCHAR(255) DEFAULT NULL,
     referencia VARCHAR(12) UNIQUE DEFAULT NULL,
     id_cliente INTEGER NOT NULL,
+    id_trabajador INT DEFAULT NULL,
     factura BOOLEAN NOT NULL,
     estatus ENUM('PENDIENTE', 'CONFIRMADO'),
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+    FOREIGN KEY (id_trabajador) REFERENCES trabajadores(id_trabajador),
     UNIQUE INDEX ID_UNIQUE_SERVICIO (id_cliente, id_servicio)
 );
 

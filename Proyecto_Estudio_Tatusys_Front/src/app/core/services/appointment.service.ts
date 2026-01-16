@@ -147,9 +147,6 @@ export class AppointmentService {
         return this.http.get<AppointmentDTO>(`${this.apiUrl}/${id}`);
     }
 
-    simularPresupuesto(appointment: AppointmentAdminDTO): Observable<AppointmentAdminDTO> {
-    // Eliminamos la barra final si tu @PostMapping no la tiene (es mejor ser exactos)
-    return this.http.post<AppointmentAdminDTO>(`${this.apiUrl}/simular`, appointment);
-}
+    
     
 }

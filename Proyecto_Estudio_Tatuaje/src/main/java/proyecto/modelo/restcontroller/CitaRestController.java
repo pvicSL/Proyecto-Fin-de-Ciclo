@@ -68,7 +68,7 @@ public class CitaRestController {
 		}
 	}
 
-	@PutMapping("/actualizar/{id}")
+	@PutMapping("/actualizar/{idCita}")
 	public ResponseEntity<CitaDTO> actualizarCita(@PathVariable int idCita, @RequestBody Cita cita) {
 		
 		cita.setIdCita(idCita);
@@ -126,14 +126,14 @@ public class CitaRestController {
 		return ResponseEntity.ok(huecos);
 	}
 
-	@DeleteMapping("/eliminar/{id}")
-	public ResponseEntity<String> eliminarCita(@PathVariable int id) {
-		int resultado = citaService.eliminarCita(id);
+	@DeleteMapping("/eliminar/{idCita}")
+	public ResponseEntity<String> eliminarCita(@PathVariable int idCita) {
+		int resultado = citaService.eliminarCita(idCita);
 
 		if (resultado == 1) {
 			return ResponseEntity.ok("Cita eliminada correctamente");
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la cita con ID: " + id);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la cita con ID: " + idCita);
 		}
 	}
 	
@@ -308,10 +308,40 @@ public class CitaRestController {
         }
     }
     
-    @PostMapping("/simular")
-    public ResponseEntity<CitaCompletaDTO> simular(@RequestBody CitaCompletaDTO dto) {
-        return ResponseEntity.ok(citaService.simularCitaCompleta(dto));
+
+    
+ 
+
+ // Asignar trabajador a una cita
+    @PostMapping("/{citaId}/asignar-trabajador/{trabajadorId}")
+    public ResponseEntity<?> asignarTrabajador(@PathVariable int citaId, @PathVariable int trabajadorId) {
+        String resultado = citaService.asignarTrabajador(citaId, trabajadorId);
+        
+        // Si el resultado empieza con "Error:", devolvemos status de error
+        if (resultado.startsWith("Error:")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", resultado));
+        } else {
+            return ResponseEntity.ok(Map.of("mensaje", resultado));
+        }
     }
+
+    // Desasignar trabajador de una cita  
+    @DeleteMapping("/{citaId}/desasignar-trabajador")
+    public ResponseEntity<?> desasignarTrabajador(@PathVariable int citaId) {
+        String resultado = citaService.desasignarTrabajador(citaId);
+        
+        // Si el resultado empieza con "Error:", devolvemos status de error
+        if (resultado.startsWith("Error:")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", resultado));
+        } else {
+            return ResponseEntity.ok(Map.of("mensaje", resultado));
+        }
+    }
+    
+    
+
 
 
 

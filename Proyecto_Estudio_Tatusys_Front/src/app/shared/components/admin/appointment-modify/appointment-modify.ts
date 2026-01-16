@@ -63,45 +63,24 @@ export class AppointmentModify implements OnInit {
     window.history.back();
   }
 
-  guardarPresupuesto(){
-    if (this.cita && this.cita.idCita) {
-      this.appointmentService.updateAppointmentDetails(this.cita.idCita, this.cita)
-        .subscribe({
-          next: (res) => {
-            // Actualizamos el respaldo porque ahora la base de datos ya tiene estos datos
-            this.citaOriginal = JSON.parse(JSON.stringify(this.cita));
-            alert('¡Presupuesto actualizado correctamente!');
-            window.history.back();
-          },
-          error: (err) => alert('No se pudo guardar.')
-        });
-    }
+  guardarPresupuesto() {
+  if (this.cita && this.cita.idCita) {
+    // Asegúrate de que los comentarios del textarea se guarden en el campo correcto
+    console.log("Datos a enviar:", this.cita);
+
+    this.appointmentService.updateAppointmentDetails(this.cita.idCita, this.cita)
+      .subscribe({
+        next: (res) => {
+          alert('¡Presupuesto actualizado correctamente!');
+          window.history.back();
+        },
+        error: (err) => {
+          console.error("Error del servidor:", err);
+          alert('Error al guardar: ' + (err.error?.message || 'Revisa la consola'));
+        }
+      });
   }
-
-  recalcularTodo(): void {
-  this.appointmentService.simularPresupuesto(this.cita).subscribe({
-    next: (res) => {
-      // 1. Actualizamos los totales en el objeto 'cita'
-      this.cita.precioBase = res.precioBase;
-      this.cita.iva = res.iva;
-      this.cita.precioFinal = res.precioFinal;
-
-      // 2. IMPORTANTE: Actualizamos el objeto 'precio' 
-      // para que los numeritos de los selects cambien
-      this.precio = {
-        ...this.precio, // mantenemos lo que no cambie
-        precioBase: res.precioBase,
-        precioZona: res.precioZona,
-        precioTamanio: res.precioTamanio,
-        precioDetalle: res.precioDetalle,
-        precioColoracion: res.precioColoracion,
-        precioEstilo: res.precioEstilo,
-        precioTipo: res.precioTipo
-      };
-      
-      console.log('Vista refrescada con nuevos precios');
-    }
-  });
 }
+
   
 } 

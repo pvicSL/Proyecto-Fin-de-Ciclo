@@ -34,32 +34,31 @@ public class PrecioServiceImplJpaMy8 implements PrecioService {
 	
 	@Override
 	public List<Precio> leerTodos() {
-		// TODO Auto-generated method stub
-		return null;
+		return precioRepository.findAll();
 	}
 
 	@Override
 	public Precio buscarUnPrecio(int idPrecio) {
-		// TODO Auto-generated method stub
-		return null;
+		return precioRepository.findById(idPrecio).orElse(null);
 	}
 
 	@Override
 	public Precio altaPrecio(Precio precio) {
-		// TODO Auto-generated method stub
-		return null;
+	    return precioRepository.save(precio);
 	}
 
 	@Override
 	public int eliminarPrecio(int idPrecio) {
-		// TODO Auto-generated method stub
-		return 0;
+	    if (precioRepository.existsById(idPrecio)) {
+	        precioRepository.deleteById(idPrecio);
+	        return 1; // Éxito
+	    }
+	    return 0; // No se encontró el precio
 	}
 
 	@Override
 	public Precio actualizarPrecio(Precio precio) {
-		// TODO Auto-generated method stub
-		return null;
+		return precioRepository.save(precio);
 	}
 
 	@Override

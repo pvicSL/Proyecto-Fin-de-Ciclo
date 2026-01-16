@@ -59,7 +59,8 @@ public interface CitaService {
     // Devuelve true si se borró, false si no encontró la cita
     boolean cancelarCitaPorReferencia(String referencia, String email);
     
-    CitaCompletaDTO simularCitaCompleta(CitaCompletaDTO citaEditada);
 
+    String asignarTrabajador(int citaId, int trabajadorId);
+    String desasignarTrabajador(int citaId);
 
 }
