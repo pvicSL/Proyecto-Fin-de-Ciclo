@@ -1,6 +1,7 @@
 package proyecto.modelo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,5 @@ public interface PresupuestoRepository extends JpaRepository<Presupuesto, Intege
 		       "WHERE p.estado = :estadoPresupuesto")
 		List<CitaDTO> findByEstadoPresupuesto(@Param("estadoPresupuesto") Estado estadoPresupuesto);
 
+	Optional<Presupuesto> findByIdServicio(int idServicio);
 }
