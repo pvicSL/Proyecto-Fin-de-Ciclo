@@ -1,10 +1,12 @@
 package proyecto.modelo.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import proyecto.modelo.entities.Trabajador;
+import proyecto.modelo.enums.Funciones;
 
 public interface TrabajadorRepository extends JpaRepository<Trabajador, Integer>{
 
@@ -12,4 +14,6 @@ public interface TrabajadorRepository extends JpaRepository<Trabajador, Integer>
 	Optional<Trabajador> findByEmail(String email);
 	
 	Optional<Trabajador> findByDniIgnoreCase(String documento);
+
+	List<Trabajador> findByFunciones(Funciones funcionRequerida);
 }

@@ -33,8 +33,14 @@ import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.entities.Cita;
+import proyecto.modelo.entities.Trabajador;
+import proyecto.modelo.enums.Coloracion;
+import proyecto.modelo.enums.Detalle;
 import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
+import proyecto.modelo.enums.Estilo;
+import proyecto.modelo.enums.Tamanio;
+import proyecto.modelo.enums.Tipo;
 import proyecto.modelo.repository.CitaRepository;
 import proyecto.service.CitaService;
 
@@ -122,12 +128,13 @@ public class CitaRestController {
 	}
 	// ------------------------------------------------------------
 
-	@GetMapping("/disponibilidad/{duracion}")
-	public ResponseEntity<Map<String, List<String>>> obtenerDisponibilidad(@PathVariable int duracion) {
-		// Llama al servicio que acabamos de crear
-		Map<String, List<String>> huecos = citaService.buscarHuecosDisponibles(duracion);
-
-		return ResponseEntity.ok(huecos);
+	@GetMapping("/disponibilidad/{duracion}/{idTrabajador}")
+	public ResponseEntity<Map<String, List<String>>> obtenerDisponibilidad(
+	    @PathVariable int duracion, 
+	    @PathVariable int idTrabajador) {
+	    
+	    Map<String, List<String>> huecos = citaService.buscarHuecosDisponibles(duracion, idTrabajador);
+	    return ResponseEntity.ok(huecos);
 	}
 
 	@DeleteMapping("/eliminar/{idCita}")
@@ -412,6 +419,47 @@ public class CitaRestController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
+    
+ // Endpoint intermedio: Recibe los datos del formulario y devuelve:
+    // 1. Duración exacta.
+    // 2. ID del Trabajador más adecuado.
+    @PostMapping("/calculo-previo")
+    public ResponseEntity<?> calcularDatosPrevios(@RequestBody CitaDTO criterios) {
+        try {
+            // 1. Calcular duración
+            // Usamos una entidad temporal para aprovechar tu método 'calcularDuracion'
+            Cita citaTemp = new Cita();
+            // Mapeamos los Enums desde los Strings del DTO
+            if(criterios.getTamanio() != null) citaTemp.setTamanio(Tamanio.valueOf(criterios.getTamanio()));
+            if(criterios.getDetalle() != null) citaTemp.setDetalle(Detalle.valueOf(criterios.getDetalle()));
+            if(criterios.getColoracion() != null) citaTemp.setColoracion(Coloracion.valueOf(criterios.getColoracion()));
+            
+            Integer duracion = citaService.calcularDuracion(citaTemp);
+
+            // 2. Seleccionar trabajador
+            Tipo tipoServicio = Tipo.valueOf(criterios.getTipo());
+            Estilo estiloServicio = Estilo.valueOf(criterios.getEstilo());
+            
+            Trabajador trabajador = citaService.seleccionarTrabajadorAutomatico(tipoServicio, estiloServicio);
+
+            // 3. Devolver respuesta combinada
+            Map<String, Object> respuesta = new HashMap<>();
+            respuesta.put("duracion", duracion);
+            respuesta.put("idTrabajador", trabajador.getIdTrabajador());
+            
+            return ResponseEntity.ok(respuesta);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error calculando datos previos: " + e.getMessage());
+        }
+    }
+    
+    	@GetMapping("/huecos-disponibles")
+    	public ResponseEntity<?> getHuecos(@RequestParam int duracion, @RequestParam int idTrabajador) {
+    		return ResponseEntity.ok(citaService.buscarHuecosDisponibles(duracion, idTrabajador));
+    }
+
+
     
 
 
