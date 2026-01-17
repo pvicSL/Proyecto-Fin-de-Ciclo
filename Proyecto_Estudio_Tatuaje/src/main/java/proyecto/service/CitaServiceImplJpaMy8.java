@@ -28,12 +28,14 @@ import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
 import proyecto.modelo.entities.Presupuesto;
+import proyecto.modelo.entities.Trabajador;
 import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Coloracion;
 import proyecto.modelo.enums.Detalle;
 import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
 import proyecto.modelo.enums.Estilo;
+import proyecto.modelo.enums.Funciones;
 import proyecto.modelo.enums.Tamanio;
 import proyecto.modelo.enums.Tipo;
 import proyecto.modelo.enums.Zona;
@@ -41,6 +43,7 @@ import proyecto.modelo.repository.CitaRepository;
 import proyecto.modelo.repository.ClienteRepository;
 import proyecto.modelo.repository.PrecioRepository;
 import proyecto.modelo.repository.PresupuestoRepository;
+import proyecto.modelo.repository.TrabajadorRepository;
 
 @Service
 public class CitaServiceImplJpaMy8 implements CitaService {
@@ -56,6 +59,9 @@ public class CitaServiceImplJpaMy8 implements CitaService {
  
     @Autowired
     private PresupuestoService presupuestoService;
+    
+    @Autowired  
+    private TrabajadorRepository trabajadorRepository;
     
 
 	@Override
@@ -438,7 +444,25 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	
 
 	public CitaCompletaDTO obtenerCitaCompleta(int id) {
-	    return citaRepository.findCitaCompletaById(id);
+	    // 1. Obtener los datos básicos (sin precios individuales)
+	    CitaCompletaDTO cita = citaRepository.findCitaCompletaById(id);
+	    
+	    if (cita != null) {
+	        // 2. Obtener los precios individuales usando el método existente
+	        PreciosIndividualesDTO precios = presupuestoService.obtenerPreciosCompletosConIva(id);
+	        
+	        if (precios != null) {
+	            // 3. Rellenar los precios individuales en el DTO
+	            cita.setPrecioTipo(precios.getPrecioTipo());
+	            cita.setPrecioZona(precios.getPrecioZona());
+	            cita.setPrecioTamanio(precios.getPrecioTamanio());
+	            cita.setPrecioDetalle(precios.getPrecioDetalle());
+	            cita.setPrecioColoracion(precios.getPrecioColoracion());
+	            cita.setPrecioEstilo(precios.getPrecioEstilo());
+	        }
+	    }
+	    
+	    return cita;
 	}
 	
 	public CitaCompletaDTO actualizarCitaCompleta(int id, CitaCompletaDTO citaEditada) {
@@ -446,34 +470,66 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    Cita cita = citaRepository.findById(id).orElse(null);
 	    if (cita == null) return null;
 	    
-	    // 2. Actualizar campos de la cita con valores editados
+	    // 2. ACTUALIZAR CAMPOS DE LA CITA
 	    cita.setTipo(Tipo.valueOf(citaEditada.getTipo()));
 	    cita.setZona(Zona.valueOf(citaEditada.getZona()));
 	    cita.setTamanio(Tamanio.valueOf(citaEditada.getTamanio()));
 	    cita.setDetalle(Detalle.valueOf(citaEditada.getDetalle()));
 	    cita.setColoracion(Coloracion.valueOf(citaEditada.getColoracion()));
 	    cita.setEstilo(Estilo.valueOf(citaEditada.getEstilo()));
+	    cita.setFecha(citaEditada.getFecha());
+	    cita.setHora(citaEditada.getHora());
 	    cita.setComentarios(citaEditada.getComentarios());
+	    cita.setImagenRef1(citaEditada.getImagenRef1());
+	    cita.setImagenRef2(citaEditada.getImagenRef2());
+	    cita.setImagenRef3(citaEditada.getImagenRef3());
 	    
-	    // 3. Guardar cita actualizada
+	    // 3. ACTUALIZAR CAMPOS DEL CLIENTE
+	    Cliente cliente = cita.getCliente();
+	    cliente.setNombre(citaEditada.getClienteNombre());
+	    cliente.setApellido1(citaEditada.getClienteApellido1());
+	    cliente.setApellido2(citaEditada.getClienteApellido2());
+	    cliente.setEmail(citaEditada.getClienteEmail());
+	    cliente.setTelefono(citaEditada.getClienteTelefono());
+	    cliente.setDocumentoIdentificacion(citaEditada.getClienteDocumentoIdentificacion());
+	    
+	    // 4. GUARDAR CAMBIOS
+	    clienteRepository.save(cliente);
 	    citaRepository.save(cita);
 	    
-	    // 4. Recalcular presupuesto
-	    Presupuesto nuevoPresupuesto = presupuestoService.calcularPresupuesto(cita);
-	    nuevoPresupuesto.setEstado(Estado.GENERADO);
-	    nuevoPresupuesto.setComentarios(citaEditada.getPresupuestoComentarios());
-	    presupuestoRepository.save(nuevoPresupuesto);
+	    // 5. Calcular nuevos valores del presupuesto
+	    BigDecimal[] valores = presupuestoService.calcularSoloValores(cita);
 	    
-	    // 5. Devolver datos actualizados
-	    return citaRepository.findCitaCompletaById(id);
+	    // 6. Actualizar presupuesto existente
+	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(id);
+	    if (presupuestoOpt.isPresent()) {
+	        Presupuesto presupuestoExistente = presupuestoOpt.get();
+	        presupuestoExistente.setPrecioBase(valores[0]);
+	        presupuestoExistente.setIva(valores[1]);
+	        presupuestoExistente.setPrecioFinal(valores[2]);
+	        presupuestoExistente.setEstado(Estado.GENERADO);
+	        presupuestoExistente.setComentarios(citaEditada.getPresupuestoComentarios());
+	        presupuestoRepository.save(presupuestoExistente);
+	    } else {
+	        Presupuesto nuevoPresupuesto = presupuestoService.calcularPresupuesto(cita);
+	        nuevoPresupuesto.setComentarios(citaEditada.getPresupuestoComentarios());
+	    }
+	    
+	    // 7. Devolver datos actualizados CON precios individuales
+	    CitaCompletaDTO resultado = citaRepository.findCitaCompletaById(id);
+	    if (resultado != null) {
+	        PreciosIndividualesDTO precios = presupuestoService.obtenerPreciosCompletosConIva(id);
+	        if (precios != null) {
+	            resultado.setPrecioTipo(precios.getPrecioTipo());
+	            resultado.setPrecioZona(precios.getPrecioZona());
+	            resultado.setPrecioTamanio(precios.getPrecioTamanio());
+	            resultado.setPrecioDetalle(precios.getPrecioDetalle());
+	            resultado.setPrecioColoracion(precios.getPrecioColoracion());
+	            resultado.setPrecioEstilo(precios.getPrecioEstilo());
+	        }
+	    }
+	    return resultado;
 	}
-
-	private BigDecimal obtenerMonto(CategoriaEnum cat, String valor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
 
 	public Optional<Cita> buscarPorReferenciaYEmail(String referencia, String email) {
 
@@ -535,6 +591,113 @@ public class CitaServiceImplJpaMy8 implements CitaService {
             return true;
         }
         return false;
+    }
+    
+    @Override
+    public String asignarTrabajador(int citaId, int trabajadorId) {
+        // 1. Buscar la cita
+        Optional<Cita> citaOpt = citaRepository.findById(citaId);
+        if (!citaOpt.isPresent()) {
+            return "Error: No se encontró la cita con ID " + citaId;
+        }
+        Cita cita = citaOpt.get();
+        
+        // 2. Buscar el trabajador
+        Optional<Trabajador> trabajadorOpt = trabajadorRepository.findById(trabajadorId);
+        if (!trabajadorOpt.isPresent()) {
+            return "Error: No se encontró el trabajador con ID " + trabajadorId;
+        }
+        Trabajador trabajador = trabajadorOpt.get();
+        
+        // 3. Verificar que la cita no esté ya asignada
+        if (cita.getTrabajador() != null) {
+            return "Error: La cita ya está asignada al trabajador " + cita.getTrabajador().getNombre();
+        }
+        
+        // 4. Validar funciones del trabajador
+        if (!validarFuncionTrabajador(cita.getTipo(), trabajador.getFunciones())) {
+            return "Error: El trabajador " + trabajador.getNombre() + " no puede realizar servicios de tipo " + cita.getTipo();
+        }
+        
+        // 5. Verificar disponibilidad horaria
+        if (!verificarDisponibilidad(trabajador, cita)) {
+            return "Error: El trabajador " + trabajador.getNombre() + " no está disponible en esa fecha y hora";
+        }
+        
+        // 6. Asignar trabajador (bidireccional)
+        cita.setTrabajador(trabajador);
+        trabajador.getCitas().add(cita);
+        
+        // 7. Guardar cambios
+        citaRepository.save(cita);
+        trabajadorRepository.save(trabajador);
+        
+        // 8. Mensaje de éxito
+        return "Cita con referencia " + cita.getReferencia() + " asignada correctamente al trabajador " + trabajador.getNombre() + " " + trabajador.getApellido1();
+    }
+
+    @Override
+    public String desasignarTrabajador(int citaId) {
+        // 1. Buscar la cita
+        Optional<Cita> citaOpt = citaRepository.findById(citaId);
+        if (!citaOpt.isPresent()) {
+            return "Error: No se encontró la cita con ID " + citaId;
+        }
+        Cita cita = citaOpt.get();
+        
+        // 2. Verificar que la cita esté asignada
+        if (cita.getTrabajador() == null) {
+            return "Error: La cita no tiene ningún trabajador asignado";
+        }
+        
+        // 3. Guardar info del trabajador para el mensaje
+        Trabajador trabajador = cita.getTrabajador();
+        String nombreTrabajador = trabajador.getNombre() + " " + trabajador.getApellido1();
+        
+        // 4. Desasignar (bidireccional)
+        trabajador.getCitas().remove(cita);
+        cita.setTrabajador(null);
+        
+        // 5. Guardar cambios
+        trabajadorRepository.save(trabajador);
+        citaRepository.save(cita);
+        
+        // 6. Mensaje de éxito
+        return "Cita con referencia " + cita.getReferencia() + " desasignada correctamente del trabajador " + nombreTrabajador;
+    }
+
+    // Métodos auxiliares privados
+    private boolean validarFuncionTrabajador(Tipo tipoServicio, Funciones funcionTrabajador) {
+        if (funcionTrabajador == Funciones.ELIMINACION) {
+            return tipoServicio == Tipo.ELIMINACION;
+        } else if (funcionTrabajador == Funciones.CREACION) {
+            return tipoServicio == Tipo.TATUAJE || tipoServicio == Tipo.COVER || tipoServicio == Tipo.RETOQUE;
+        }
+        return false;
+    }
+
+    private boolean verificarDisponibilidad(Trabajador trabajador, Cita citaAAsignar) {
+        LocalDate fecha = citaAAsignar.getFecha();
+        LocalTime horaInicio = citaAAsignar.getHora();
+        LocalTime horaFin = horaInicio.plusMinutes(citaAAsignar.getDuracionMinutos());
+        
+        // Buscar citas del trabajador en la misma fecha
+        List<Cita> citasDelTrabajador = trabajador.getCitas().stream()
+            .filter(cita -> fecha.equals(cita.getFecha()))
+            .collect(Collectors.toList());
+        
+        // Verificar solapamientos
+        for (Cita cita : citasDelTrabajador) {
+            LocalTime inicioCitaExistente = cita.getHora();
+            LocalTime finCitaExistente = inicioCitaExistente.plusMinutes(cita.getDuracionMinutos());
+            
+            // Verificar solapamiento
+            if (horaInicio.isBefore(finCitaExistente) && horaFin.isAfter(inicioCitaExistente)) {
+                return false; // Hay solapamiento
+            }
+        }
+        
+        return true; // No hay conflictos
     }
 
 

@@ -26,5 +26,6 @@ public interface PresupuestoService {
 	Presupuesto calcularPresupuestoPorId(int idCita);
 	Map<String, BigDecimal> obtenerPreciosIndividuales(Cita cita);
 	PreciosIndividualesDTO obtenerPreciosCompletosConIva(int idCita);
+	 BigDecimal[] calcularSoloValores(Cita cita);
 	
 }

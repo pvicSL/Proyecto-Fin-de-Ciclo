@@ -89,6 +89,10 @@ public class Cita implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "id_cliente")
 	private Cliente cliente;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_trabajador")
+	private Trabajador trabajador;
 
 	// CONSTRUCTORES
 	public Cita() {
@@ -259,6 +263,14 @@ public class Cita implements Serializable {
 
 	public void setReferencia(String referencia) {
 		this.referencia = referencia;
+	}
+	
+	public Trabajador getTrabajador() {
+	    return trabajador;
+	}
+
+	public void setTrabajador(Trabajador trabajador) {
+	    this.trabajador = trabajador;
 	}
 
 	@Override
