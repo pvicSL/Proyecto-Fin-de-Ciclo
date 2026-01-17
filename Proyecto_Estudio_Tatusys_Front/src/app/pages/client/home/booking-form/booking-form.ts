@@ -28,6 +28,9 @@ export class BookingFormComponent implements OnInit {
   // ==========================================
   isFormOpen: boolean = false;
   activeHint: string | null = null;
+  // NUEVA VARIABLE DE ESTADO: ID del trabajador asignado automáticamente
+  assignedWorkerId: number | null = null;
+
 
   // ==========================================
   // 2. FORMULARIO Y DATOS
@@ -138,52 +141,46 @@ export class BookingFormComponent implements OnInit {
     return new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(this.currentViewDate).toUpperCase();
   }
 
-  // Escucha cambios en el formulario para preguntar al Back la duración
+  // --- MODIFICADO: Escucha cambios para calcular duración y trabajador ---
   private escucharCambiosParaDisponibilidad() {
     this.bookingForm.valueChanges.pipe(
-      debounceTime(500), // Espera a que termine de escribir
-      // Solo procede si los campos que definen la duración están llenos
+      debounceTime(500),
+      // Solo procede si los campos que definen la cita están llenos
       filter(val => val.service && val.size && val.detailLevel && val.colorMode),
       switchMap(val => {
-        // Preparamos TODOS los criterios (incluyendo los que usarás para filtrar por empleado)
+        // Preparamos TODOS los criterios para el cálculo previo
         const criterios = {
           tamanio: this.mapearTamanio(val.size),
           detalle: this.mapearDetalle(val.detailLevel),
           coloracion: val.colorMode === 'bw' ? 'NEGRO' : 'COLOR',
-          // Estos dos campos serán clave para asignar empleado en el futuro
           tipo: this.mapearServicio(val.service),
-          estilo: this.mapearEstilo(val.style)
+          estilo: this.mapearEstilo(val.style),
+          zona: this.mapearZona(val.bodyZone) // Añadido zona por si acaso
         };
 
-        // Llama al endpoint de cálculo de duración
-        // Usamos pipe(map) para no perder los 'criterios' al obtener la 'duracion'
-        return this.appointmentService.calculateDuration(criterios).pipe(
-          map(duracion => ({ duracion, criterios }))
-        );
+        // Llama al NUEVO endpoint intermedio
+        // Este endpoint debe devolver { duracion: X, idTrabajador: Y }
+        return this.appointmentService.calculatePreBookingData(criterios);
       })
     ).subscribe({
-      next: (resultado) => {
-        console.log('Duración:', resultado.duracion, 'minutos. Criterios:', resultado.criterios);
+      next: (resultado: any) => {
+        console.log('Cálculo previo recibido:', resultado);
 
+        const duracion = resultado.duracion;
+        this.assignedWorkerId = resultado.idTrabajador; // Guardamos el ID del trabajador
 
-        // Aquí SÍ pasamos los criterios a la función local. 
-        // Como la función local 'cargarHuecosBackend' ahora acepta el segundo parámetro (aunque no lo use),
-        // esto NO dará error.
-        this.cargarHuecosBackend(resultado.duracion, resultado.criterios);
+        // Cargamos huecos con duración Y trabajador específico
+        if (this.assignedWorkerId) {
+          this.cargarHuecosBackend(duracion, this.assignedWorkerId);
+        }
       },
-      error: (err) => console.error('Error calculando duración', err)
+      error: (err) => console.error('Error calculando datos previos', err)
     });
   }
 
-  // MODIFICADO: Acepta el parámetro 'filtros' para que no falle la llamada desde 'escucharCambios...'
-  // pero lo marcamos como opcional (?)
-  private cargarHuecosBackend(duracion: number, filtros?: { tipo: string, estilo: string }) {
-
-    // LLAMADA AL SERVICIO:
-    // Dejamos el argumento 'filtros' COMENTADO dentro de la llamada.
-    // Así TypeScript solo ve 1 argumento y no se queja, pero tú ves que ahí va el segundo.
-
-    this.appointmentService.getAvailableSlots(duracion /* , filtros */).subscribe({
+  // --- MODIFICADO: Recibe workerId ---
+  private cargarHuecosBackend(duracion: number, workerId: number) {
+    this.appointmentService.getAvailableSlots(duracion, workerId).subscribe({
       next: (respuestaBackend) => {
         this.backendSlotsMap = new Map(Object.entries(respuestaBackend));
         this.generateWeekGrid();
@@ -234,7 +231,7 @@ export class BookingFormComponent implements OnInit {
     }
   }
 
-  // --- GETTERS PARA CONTROLAR LA NAVEGACIÓN (NO IR AL PASADO) ---
+  // --- GETTERS PARA CONTROLAR LA NAVEGACIÓN (NO DEBE DEJAR IR AL PASADO) ---
 
   // Devuelve true si el mes que estamos viendo es el actual (o anterior), para bloquear el botón "<"
   get isPrevMonthDisabled(): boolean {
@@ -351,12 +348,13 @@ export class BookingFormComponent implements OnInit {
     if (fileInput) fileInput.value = '';
   }
 
-  // ==========================================
-  // 7. ENVÍO (SUBMIT) - SOLO CREACIÓN
-  // ==========================================
+  // =====================================
+  // 7. ENVÍO (SUBMIT) - CREACIÓN FINAL
+  // =====================================
 
   onSubmit() {
-    if (this.bookingForm.valid && this.selectedSlot && this.selectedDateStr) {
+    // Validamos form, fecha, hora Y trabajador asignado
+    if (this.bookingForm.valid && this.selectedSlot && this.selectedDateStr && this.assignedWorkerId) {
       const raw = this.bookingForm.value;
 
       // Objeto Cita para el Backend
@@ -372,6 +370,10 @@ export class BookingFormComponent implements OnInit {
         comentarios: raw.comments,
         factura: raw.needInvoice ? 1 : 0,
         estatus: 'PENDIENTE',
+        // --- CAMBIO: Incluimos el trabajador asignado ---
+        trabajador: {
+          idTrabajador: this.assignedWorkerId
+        },
         cliente: {
           nombre: raw.firstName,
           apellido1: raw.lastSurname,
@@ -387,7 +389,7 @@ export class BookingFormComponent implements OnInit {
       formData.append('cita', JSON.stringify(citaObjeto));
       this.selectedFiles.forEach(file => formData.append('ficheros', file));
 
-      console.log('Creando nueva cita...');
+      console.log('Creando nueva cita con trabajador:', this.assignedWorkerId);
 
       this.appointmentService.createAppointment(formData).subscribe({
         next: (res) => {
@@ -406,6 +408,10 @@ export class BookingFormComponent implements OnInit {
       });
     } else {
       this.bookingForm.markAllAsTouched();
+      // Feedback si falta algo interno
+      if (!this.assignedWorkerId) {
+        console.error("Error: No se ha asignado trabajador automáticamente.");
+      }
     }
   }
 

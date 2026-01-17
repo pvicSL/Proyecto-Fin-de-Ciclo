@@ -86,30 +86,68 @@ export class AppointmentService {
     // 4. DISPONIBILIDAD (Con Filtros de Empleado)
     // ==========================================
 
-    /**
-     * Busca huecos libres.
-     * Acepta 'filtros' opcionales para futura implementación de empleados.
-     */
-    getAvailableSlots(durationMinutes: number, filtros?: { tipo: string, estilo: string }): Observable<any> {
-
-        // 1. Configuración básica (LO QUE FUNCIONA HOY)
-        let url = `${this.apiUrl}/disponibilidad/${durationMinutes}`;
-        let params = new HttpParams();
-
-        // 2. Lógica preparada para el futuro (Descomentar cuando Backend esté listo)
-        /* if (filtros) {
-           // Si hay filtros, cambiamos la estrategia a Query Params
-           // url = `${this.apiUrl}/disponibilidad`; 
-           // params = params.set('duracion', durationMinutes);
-           // params = params.set('tipo', filtros.tipo);
-           // params = params.set('estilo', filtros.estilo);
-        }
-        */
-
-        // Por ahora, si descomentas lo de arriba, pasaría los params.
-        // Hoy por hoy, 'params' va vacío y la URL lleva la duración en el path.
-        return this.http.get(url, { params });
+    // Nuevo método para obtener duración y trabajador
+    calculatePreBookingData(criterios: any): Observable<any> {
+        return this.http.post(`${this.apiUrl}/citas/calculo-previo`, criterios);
     }
+
+    /**
+   * Busca huecos libres para una duración específica y un trabajador concreto.
+   * Se llama DESPUÉS de haber calculado la duración y asignado el trabajador.
+   * * @param durationMinutes Duración en minutos (ej: 120)
+   * @param workerId ID del trabajador asignado (ej: 3)
+   */
+    /**
+   * Busca huecos libres.
+   * workerId es opcional (?) para mantener compatibilidad con el modificador de citas antiguo.
+   */
+    getAvailableSlots(durationMinutes: number, workerId?: number): Observable<any> {
+
+        // CASO A: Tenemos trabajador asignado (Formulario Nuevo)
+        if (workerId) {
+            const url = `${this.apiUrl}/citas/huecos-disponibles`;
+            let params = new HttpParams()
+                .set('duracion', durationMinutes)
+                .set('idTrabajador', workerId);
+
+            return this.http.get(url, { params });
+        }
+
+        // CASO B: No tenemos trabajador (Modificador de citas antiguo)
+        // Usamos el endpoint antiguo para que no explote la aplicación.
+        else {
+            // Asegúrate de que en tu Backend Java (Controller) sigues teniendo 
+            // el endpoint antiguo @GetMapping("/disponibilidad/{duracion}")
+            // Si lo borraste, avísame y arreglamos el Modificador también.
+            const url = `${this.apiUrl}/disponibilidad/${durationMinutes}`;
+            return this.http.get(url);
+        }
+    }
+
+    /*
+      METODO ANTERIOR COMENTADO
+       * Busca huecos libres.
+       * Acepta 'filtros' opcionales para futura implementación de empleados.
+      getAvailableSlots(durationMinutes: number, filtros?: { tipo: string, estilo: string }): Observable<any> {
+  
+          // 1. Configuración básica (LO QUE FUNCIONA HOY)
+          let url = `${this.apiUrl}/disponibilidad/${durationMinutes}`;
+          let params = new HttpParams();
+  
+          // 2. Lógica preparada para el futuro (Descomentar cuando Backend esté listo)
+           if (filtros) {
+             // Si hay filtros, cambiamos la estrategia a Query Params
+             // url = `${this.apiUrl}/disponibilidad`; 
+             // params = params.set('duracion', durationMinutes);
+             // params = params.set('tipo', filtros.tipo);
+             // params = params.set('estilo', filtros.estilo);
+          }
+          
+          // Por ahora, si descomentas lo de arriba, pasaría los params.
+          // Hoy por hoy, 'params' va vacío y la URL lleva la duración en el path.
+          return this.http.get(url, { params });
+      }
+      */
 
     // ==========================================
     // 5. MÉTODOS AUXILIARES / ADMIN
@@ -138,15 +176,15 @@ export class AppointmentService {
         return this.http.put<AppointmentAdminDTO>(url, appointment);
     }
 
-    
+
     calcularDuracion(datos: AppointmentDTO): Observable<number> {
-    return this.http.post<number>(`${this.apiUrl}/calcular-duracion/`, datos);
+        return this.http.post<number>(`${this.apiUrl}/calcular-duracion/`, datos);
     }
 
     getAppointment(id: number): Observable<AppointmentDTO> {
         return this.http.get<AppointmentDTO>(`${this.apiUrl}/${id}`);
     }
 
-    
-    
+
+
 }
