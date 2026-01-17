@@ -49,6 +49,8 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
 		       "WHERE p.estado = :estadoPresupuesto")
 		List<CitaDTO> obtenerPorEstadoPresupuesto(@Param("estadoPresupuesto") Estado estadoPresupuesto);
 
+	List<Cita> findByTrabajadorIdTrabajadorAndFecha(int idTrabajador, LocalDate fechaRevision);
+
 	
 
 
