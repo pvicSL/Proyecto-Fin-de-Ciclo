@@ -15,8 +15,4 @@
     font-size: 0.8rem;
 }
 
-/* Color al hacer hover en el texto */
-.breadcrumb-nav .breadcrumb-item a:hover{
-    text-decoration: none;
-    color: var(--dark-cyan);
-}
+

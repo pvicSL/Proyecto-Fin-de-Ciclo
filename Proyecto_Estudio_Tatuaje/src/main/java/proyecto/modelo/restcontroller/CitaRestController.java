@@ -33,8 +33,15 @@ import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.entities.Cita;
+import proyecto.modelo.entities.Trabajador;
+import proyecto.modelo.enums.Coloracion;
+import proyecto.modelo.enums.Detalle;
 import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
+import proyecto.modelo.enums.Estilo;
+import proyecto.modelo.enums.Tamanio;
+import proyecto.modelo.enums.Tipo;
+import proyecto.modelo.repository.CitaRepository;
 import proyecto.service.CitaService;
 
 @RestController
@@ -44,6 +51,9 @@ public class CitaRestController {
 
 	@Autowired
 	private CitaService citaService;
+	
+	@Autowired
+	private CitaRepository citaRepository;
 
 	// NUEVO PARA IMG. REF.: Herramienta para convertir JSON String a Objeto Java
 	@Autowired
@@ -118,12 +128,13 @@ public class CitaRestController {
 	}
 	// ------------------------------------------------------------
 
-	@GetMapping("/disponibilidad/{duracion}")
-	public ResponseEntity<Map<String, List<String>>> obtenerDisponibilidad(@PathVariable int duracion) {
-		// Llama al servicio que acabamos de crear
-		Map<String, List<String>> huecos = citaService.buscarHuecosDisponibles(duracion);
-
-		return ResponseEntity.ok(huecos);
+	@GetMapping("/disponibilidad/{duracion}/{idTrabajador}")
+	public ResponseEntity<Map<String, List<String>>> obtenerDisponibilidad(
+	    @PathVariable int duracion, 
+	    @PathVariable int idTrabajador) {
+	    
+	    Map<String, List<String>> huecos = citaService.buscarHuecosDisponibles(duracion, idTrabajador);
+	    return ResponseEntity.ok(huecos);
 	}
 
 	@DeleteMapping("/eliminar/{idCita}")
@@ -308,6 +319,10 @@ public class CitaRestController {
         }
     }
     
+
+    
+ 
+
  // Asignar trabajador a una cita
     @PostMapping("/{citaId}/asignar-trabajador/{trabajadorId}")
     public ResponseEntity<?> asignarTrabajador(@PathVariable int citaId, @PathVariable int trabajadorId) {
@@ -336,7 +351,117 @@ public class CitaRestController {
         }
     }
     
+    @PutMapping("/{id}/presupuesto/aceptar")
+    public ResponseEntity<?> aceptarPresupuesto(@PathVariable int id) {
+        try {
+            // 1. Buscar la cita
+            Cita cita = citaRepository.findById(id).orElse(null);
+            if (cita == null) {
+                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+            }
+            
+            // 2. Aceptar presupuesto
+            citaService.aceptarPresupuesto(cita);
+            
+            // 3. Obtener cita completa actualizada
+            CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+            
+            if (citaCompleta != null) {
+                return ResponseEntity.ok(citaCompleta);
+            } else {
+                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+            }
+            
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/{id}/presupuesto/rechazar")
+    public ResponseEntity<?> rechazarPresupuesto(@PathVariable int id) {
+        try {
+            // 1. Buscar la cita
+            Cita cita = citaRepository.findById(id).orElse(null);
+            if (cita == null) {
+                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+            }
+            
+            // 2. Rechazar presupuesto
+            citaService.rechazarPresupuesto(cita);
+            
+            // 3. Desasignar trabajador
+            String resultadoDesasignacion = citaService.desasignarTrabajador(id);
+            
+            // Si hay error en la desasignación, devolver error
+            if (resultadoDesasignacion.startsWith("Error:")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", resultadoDesasignacion));
+            }
+            
+            // 4. Obtener cita completa actualizada
+            CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+            
+            if (citaCompleta != null) {
+                return ResponseEntity.ok(citaCompleta);
+            } else {
+                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+            }
+            
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
     
+ // Endpoint intermedio: Recibe los datos del formulario y devuelve:
+    // 1. Duración exacta.
+    // 2. ID del Trabajador más adecuado.
+    @PostMapping("/calculo-previo")
+    public ResponseEntity<?> calcularDatosPrevios(@RequestBody CitaDTO criterios) {
+        try {
+            // 1. Calcular duración
+            // Usamos una entidad temporal para aprovechar tu método 'calcularDuracion'
+            Cita citaTemp = new Cita();
+            // Mapeamos los Enums desde los Strings del DTO
+            if(criterios.getTamanio() != null) citaTemp.setTamanio(Tamanio.valueOf(criterios.getTamanio()));
+            if(criterios.getDetalle() != null) citaTemp.setDetalle(Detalle.valueOf(criterios.getDetalle()));
+            if(criterios.getColoracion() != null) citaTemp.setColoracion(Coloracion.valueOf(criterios.getColoracion()));
+            
+            Integer duracion = citaService.calcularDuracion(citaTemp);
+
+            // 2. Seleccionar trabajador
+            Tipo tipoServicio = Tipo.valueOf(criterios.getTipo());
+            Estilo estiloServicio = Estilo.valueOf(criterios.getEstilo());
+            
+            Trabajador trabajador = citaService.seleccionarTrabajadorAutomatico(tipoServicio, estiloServicio);
+
+            // 3. Devolver respuesta combinada
+            Map<String, Object> respuesta = new HashMap<>();
+            respuesta.put("duracion", duracion);
+            respuesta.put("idTrabajador", trabajador.getIdTrabajador());
+            
+            return ResponseEntity.ok(respuesta);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error calculando datos previos: " + e.getMessage());
+        }
+    }
+    
+    	@GetMapping("/huecos-disponibles")
+    	public ResponseEntity<?> getHuecos(@RequestParam int duracion, @RequestParam int idTrabajador) {
+    		return ResponseEntity.ok(citaService.buscarHuecosDisponibles(duracion, idTrabajador));
+    }
+
+
+    
+
 
 
 

@@ -1,0 +1,74 @@
+/* Ajusta la ruta según dónde esté tu archivo del padre */
+@import "../../../../shared/layouts/admin-layout/admin-layout.css";
+
+
+/* Ajustes header del contenido principal */
+.main-content-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 0.5rem;
+    
+}
+
+/* Botones cronológicos */
+.time-buttons{
+    width: 270px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Encabezado del contenido principal */
+.text-subtitle{
+    text-align: start;
+}
+
+
+/*==============================
+---- ESTILOS PARA EL FOOTER ----
+==============================*/
+
+
+/* Ajustes del contenedor de las alertas */
+.alert-pendientes{
+    background-color: white;
+    border: 2px solid var(--cardinal);
+    padding: 0.75rem 0.75rem 0rem 0.75rem;
+    margin: 2px;
+    border-radius: 10px;
+}
+
+/* Enlace a las páginas de las alertas */
+.alert-pendientes a{
+    text-decoration: none;
+    color: var(--cardinal);
+    display: flex;
+}
+
+/* Icono de campanita */
+.alert-pendientes a i{
+    margin-right: 1rem;
+}
+
+/* Ajustes del contenedor de las alertas */
+.alert-confirmadas{
+    background-color: white;
+    border: 2px solid var(--dark-cyan);
+    padding: 0.75rem 0.75rem 0rem 0.75rem;
+    margin: 2px;
+    border-radius: 10px;
+}
+
+/* Enlace a las páginas de las alertas */
+.alert-confirmadas a{
+    text-decoration: none;
+    color: var(--dark-cyan);
+    display: flex;
+}
+
+/* Icono de campanita */
+.alert-confirmadas a i{
+    margin-right: 1rem;
+}

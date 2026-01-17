@@ -15,9 +15,12 @@ import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
+import proyecto.modelo.entities.Trabajador;
 import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
+import proyecto.modelo.enums.Estilo;
+import proyecto.modelo.enums.Tipo;
 
 public interface CitaService {
 
@@ -40,7 +43,7 @@ public interface CitaService {
 	Integer calcularDuracion(Cita cita);
 
     List<Cita> findByFecha(LocalDate fecha);
-    Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos);
+
     List<CitaDTO> obtenerPorRango(LocalDate fecha, String vista);
     List<CitaDTO> obtenerPorEstatus(Estatus estatus);
 
@@ -58,8 +61,17 @@ public interface CitaService {
 
     // Devuelve true si se borró, false si no encontró la cita
     boolean cancelarCitaPorReferencia(String referencia, String email);
+    
 
     String asignarTrabajador(int citaId, int trabajadorId);
     String desasignarTrabajador(int citaId);
+
+	void aceptarPresupuesto(Cita cita);
+
+	void rechazarPresupuesto(Cita cita);
+
+	Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos, int idTrabajador);
+
+	Trabajador seleccionarTrabajadorAutomatico(Tipo tipoServicio, Estilo estiloServicio);
 
 }

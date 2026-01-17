@@ -1,0 +1,36 @@
+@if (staff) {
+  <h1 class="text-subtitle">Eliminar Trabajador</h1>
+
+  <div class="container-fluid contenedor p-5 rounded shadow-sm border text-center">
+    <div class="mb-4">
+      <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+    </div>
+    
+    <h2 class="h4 fw-bold mb-3">¿Estás seguro de que quieres eliminar a este trabajador?</h2>
+    
+    <div class="p-4 bg-light rounded-3 mb-4 border">
+      <p class="mb-1 text-muted small text-uppercase fw-bold">ID Trabajador:</p>
+      <p class="h5 mb-3">#{{ staff.idTrabajador }}</p>
+      
+      <p class="mb-1 text-muted small text-uppercase fw-bold">Nombre Completo:</p>
+      <p class="h5">{{ staff.nombre }} {{ staff.apellido1 }} {{ staff.apellido2 }}</p>
+    </div>
+
+    <p class="text-secondary mb-5">Esta acción no se puede deshacer y el trabajador perderá el acceso al sistema.</p>
+
+    <div class="d-flex justify-content-center gap-3">
+      <button class="btn px-5 py-2 fw-bold" (click)="cancelar()">
+        CANCELAR
+      </button>
+      
+      <button class="btn btn-danger px-5 py-2 fw-bold" (click)="confirmarBorrado()">
+        SÍ, ELIMINAR TRABAJADOR
+      </button>
+    </div>
+  </div>
+} @else {
+  <div class="d-flex justify-content-center align-items-center p-5">
+    <div class="spinner-border text-danger me-3" role="status"></div>
+    <span class="text-muted fw-medium">Cargando datos del trabajador...</span>
+  </div>
+}

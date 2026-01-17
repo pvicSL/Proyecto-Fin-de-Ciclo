@@ -1,0 +1,81 @@
+<div class="d-flex flex-column flex-grow-1 h-100">
+    <div class="main-content-header d-flex justify-content-between align-items-center">
+        <h1 class="text-subtitle">Gestión del Equipo (Staff)</h1>
+        
+        <div class="header-actions">
+            <button class="btn btn-secondary" (click)="irANuevoMiembro()">
+                <i class="bi bi-person-plus-fill me-2"></i>Añadir Staff
+            </button>
+        </div>
+    </div>  
+
+    <table id="table-confirmadas" class="table table-striped table-borderless align-middle">
+        <thead class="table-header">
+            <tr>
+                <th scope="col" class="d-none d-lg-table-cell"><h3>ID</h3></th>
+                <th scope="col"><h3>Nombre</h3></th>
+                <th scope="col"><h3>Email</h3></th>
+                <th scope="col" class="d-none d-lg-table-cell"><h3>Tel.</h3></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+            @for (miembro of staffPaginado; track miembro.idTrabajador) {
+                <tr>
+                    <th scope="row" class="d-none d-lg-table-cell">
+                        <p>{{ miembro.idTrabajador }}</p> 
+                    </th>
+                    <td><p>{{ miembro.nombre }} {{ miembro.apellido1 }}</p></td>
+                    <td><p>{{ miembro.email }}</p></td>
+                    <td><p>{{ miembro.telefono }}</p></td>
+                    <td class="d-block d-sm-flex justify-content-around align-items-center h-100">
+                        <button class="btn mb-1 mb-sm-0" (click)="editarStaff(miembro.idTrabajador)">Editar</button>
+                        <button class="btn btn-danger" (click)="EliminarStaff(miembro.idTrabajador)">Eliminar</button>
+                    </td>
+                </tr>
+            
+            } @empty {
+                <tr>
+                    <td colspan="5" class="text-center p-4">
+                        <p class="text-muted">No hay personal registrado</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="footer mt-auto d-flex justify-content-between align-items-center w-100 mt-3">
+
+        <nav class="pagination-nav d-flex justify-content-end ms-4">
+            <ul class="pagination">
+                
+                <li class="page-item me-1" [class.disabled]="paginaActual === 1 || totalPaginas.length === 0">
+                    <a class="page-link btn" 
+                    [class.btn-secondary]="paginaActual !== 1 && totalPaginas.length > 0" 
+                    (click)="totalPaginas.length && irAPagina('prev')">
+                    Anterior
+                    </a>
+                </li>
+
+                @for (p of totalPaginas; track p) {
+                    <li class="page-item rounded-3 me-1" [class.active]="paginaActual === p">
+                        <a class="page-link btn" 
+                        [class.btn-secondary]="paginaActual !== p" 
+                        (click)="irAPagina(p)">
+                        {{ p }}
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item me-1" [class.disabled]="paginaActual === totalPaginas.length || totalPaginas.length === 0">
+                    <a class="page-link btn" 
+                    [class.btn-secondary]="paginaActual !== totalPaginas.length && totalPaginas.length > 0" 
+                    (click)="totalPaginas.length && irAPagina('next')">
+                    Siguiente
+                    </a>
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</div>

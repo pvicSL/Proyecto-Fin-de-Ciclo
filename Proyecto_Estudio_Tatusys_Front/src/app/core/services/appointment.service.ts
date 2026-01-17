@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AppointmentDTO } from '../models/appointment.model';
+import { AppointmentAdminDTO } from '../models/appointment-admin.model';
 
 @Injectable({
     providedIn: 'root'
@@ -123,4 +124,29 @@ export class AppointmentService {
     getRequests(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/buscar/pendientes`);
     }
+
+    getGeneratedBudgets(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/buscar/presupuesto-generados`);
+    }
+
+    getAppointmentDetails(id: number): Observable<AppointmentAdminDTO> {
+        return this.http.get<AppointmentAdminDTO>(`${this.apiUrl}/detalles-completos/${id}`);
+    }
+
+    updateAppointmentDetails(id: number, appointment: AppointmentAdminDTO): Observable<any> {
+        const url = `${this.apiUrl}/detalles-completos-modificar/${id}`;
+        return this.http.put<AppointmentAdminDTO>(url, appointment);
+    }
+
+    
+    calcularDuracion(datos: AppointmentDTO): Observable<number> {
+    return this.http.post<number>(`${this.apiUrl}/calcular-duracion/`, datos);
+    }
+
+    getAppointment(id: number): Observable<AppointmentDTO> {
+        return this.http.get<AppointmentDTO>(`${this.apiUrl}/${id}`);
+    }
+
+    
+    
 }

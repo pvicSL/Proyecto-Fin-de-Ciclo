@@ -1,4 +1,12 @@
 
+/* Asegura que los componentes de Angular no bloqueen el flex */
+app-dashboard-home, 
+appointments {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
 
 
 /*=============================
@@ -93,6 +101,22 @@ h1{
     border-color: var(--dark-cyan);
 }
 
+.text-success{
+    color: var(--dark-cyan)!important;
+}
+
+.badge{
+    background-color: var(--dark-cyan)!important;
+}
+
+.bg-success{
+    background-color: var(--dark-cyan)!important;
+}
+.bg-danger{
+    background-color: var(--cardinal)!important;
+}
+
+
 /*=============================
 ---- ESTILOS PARA LA TABLA ----
 =============================*/
@@ -103,6 +127,9 @@ h1{
     text-align: center;
     border-radius: 8px;
     overflow: hidden; /*oculta los desbordamientos de las celdas */
+    /* Esto asegura que la tabla ocupe el espacio aunque esté vacía */
+    min-height: auto; 
+    
     
 }
 
@@ -111,6 +138,7 @@ h1{
     background-color: var(--dark-cyan);
     color: white;
     padding: 1rem 1rem;
+
 }
 
 h3{
@@ -163,7 +191,8 @@ h3{
     }
 
     /* Fuente más pequeña para los elementos del footer (alertas y pagination) */
-    .page-link, .alert{
+    .page-link, a{
         font-size: 0.8rem;
     }
+
 }

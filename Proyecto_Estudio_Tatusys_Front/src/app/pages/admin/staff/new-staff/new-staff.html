@@ -1,0 +1,97 @@
+
+    <h1 class="text-subtitle">
+        Crear un trabajador
+    </h1>
+
+    <div class="contenedor-scroll container-fluid p-4 rounded shadow-sm border ">
+        <div class="d-flex mb-2">
+            <button type="button" class="btn-close ms-auto" (click)="cancelar()"></button>
+        </div>
+
+        <section class="mb-4">
+            <h2 class="h5 fw-bold mb-4">Datos del Trabajador</h2>
+            
+            <form #staffForm="ngForm">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <label class="fw-bold small mb-1 text-uppercase text-muted">Nombre:</label>
+                        <input type="text" class="form-control" name="nombre" 
+                            [(ngModel)]="staff.nombre" required placeholder="Nombre..." required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="fw-bold small mb-1 text-uppercase text-muted">Apellido 1:</label>
+                        <input type="text" class="form-control" name="apellido1" 
+                            [(ngModel)]="staff.apellido1" placeholder="Apellido1..." required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="fw-bold small mb-1 text-uppercase text-muted">Apellido 2:</label>
+                        <input type="text" class="form-control" name="apellido2" 
+                            [(ngModel)]="staff.apellido2" placeholder="Apellido2..." required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="fw-bold small mb-1 text-uppercase text-muted">DNI:</label>
+                        <input type="text" class="form-control" name="dni" 
+                            [(ngModel)]="staff.dni" placeholder="200983451A" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="fw-bold small mb-1 text-uppercase text-muted">Email:</label>
+                        <input type="text" class="form-control" name="email" 
+                            [(ngModel)]="staff.email" placeholder="tatuador@gmail.com..." required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="fw-bold small mb-1 text-uppercase text-muted">Teléfono:</label>
+                        <input type="email" class="form-control" name="telefono" 
+                            [(ngModel)]="staff.telefono" placeholder="621053948..." required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="fw-bold small mb-1 text-uppercase text-muted">Nº Cuenta:</label>
+                        <input type="text" class="form-control" name="numeroCuenta" 
+                            [(ngModel)]="staff.numeroCuenta" placeholder="ES6001820200123456789012" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="fw-bold small mb-1 text-uppercase text-muted">Funciones:</label>
+                        <select class="form-select" name="rol" [(ngModel)]="staff.funciones" required>
+                            <option value="CREACION">Creación</option>
+                            <option value="ELIMINACION">Eliminación</option>
+                        </select>
+                    </div>
+                    
+
+                    <div class="col-md-4">
+                        <label class="fw-bold small mb-1 text-uppercase text-muted">Rol:</label>
+                        <select class="form-select" name="rol" [(ngModel)]="staff.rol">
+                            <option value="TRABAJADOR">Trabajador</option>
+                        </select>
+                    </div>
+                
+
+                    <div class="col-md-4">
+                        <label class="fw-bold small mb-1 text-uppercase text-muted mt-5">Contraseña:</label>
+                        <input type="text" class="form-control" name="contraseña" 
+                            [(ngModel)]="staff.contrasenia" required>
+                    </div>
+                
+                </div>
+
+                <div class="d-flex justify-content-end mt-5">
+                    <button class="btn btn-confirmar py-2 px-5 fw-bold" 
+                            (click)="guardarStaff()" 
+                            [disabled]="!staffForm.valid">
+                                CREAR TRABAJADOR
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center p-5">
+    <div class="spinner-border text-primary me-3" role="status"></div>
+    <span class="text-muted fw-medium">Preparando editor de presupuesto...</span>
+  </div>

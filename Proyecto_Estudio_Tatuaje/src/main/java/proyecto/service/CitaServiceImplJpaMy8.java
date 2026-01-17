@@ -27,6 +27,7 @@ import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
+import proyecto.modelo.entities.Precio;
 import proyecto.modelo.entities.Presupuesto;
 import proyecto.modelo.entities.Trabajador;
 import proyecto.modelo.enums.CategoriaEnum;
@@ -62,6 +63,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
     
     @Autowired  
     private TrabajadorRepository trabajadorRepository;
+    
     
 
 	@Override
@@ -177,8 +179,71 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		Integer duracion = calcularDuracion(cita);
 		cita.setDuracionMinutos(duracion);
 
-		return citaRepository.save(cita);
-	}
+		//4. NUEVO: ASIGNACIÓN DE TRABAJADOR (Si no viene del front, lo calculamos aquí por seguridad)
+        if (cita.getTrabajador() == null) {
+             Trabajador trabajadorAsignado = seleccionarTrabajadorAutomatico(cita.getTipo(), cita.getEstilo());
+             cita.setTrabajador(trabajadorAsignado);
+        }
+
+        // 5. GUARDAR CITA
+        Cita citaGuardada = citaRepository.save(cita);
+
+        // 6. NUEVO: GENERAR PRESUPUESTO AUTOMÁTICO
+        // Esto creará una fila en la tabla 'presupuestos' vinculada a esta cita
+        presupuestoService.calcularPresupuesto(citaGuardada);
+
+        return citaGuardada;
+    }
+	
+    public Trabajador seleccionarTrabajadorAutomatico(Tipo tipoServicio, Estilo estilo) {
+        Funciones funcionRequerida = null;
+
+        // ---------------------------------------------------------------
+        // ZONA PREPARADA PARA FUTURA ESPECIFICIDAD (ESTILOS Y TIPOS)
+        // ---------------------------------------------------------------
+        /* // TODO: DESCOMENTAR CUANDO EL ENUM 'Funciones' TENGA MÁS VALORES
+        
+        // 1. Prioridad por Estilo (Ejemplo)
+        if (estilo == Estilo.JAPONES) {
+             // funcionRequerida = Funciones.ESPECIALISTA_JAPONES;
+        } 
+        else if (estilo == Estilo.FINELINE) {
+             // funcionRequerida = Funciones.ESPECIALISTA_FINELINE;
+        }
+        else if (tipoServicio == Tipo.COVER) {
+             // funcionRequerida = Funciones.ESPECIALISTA_COVERS;
+        }
+        */
+     // ---------------------------------------------------------------
+        // LÓGICA ACTUAL (GENÉRICA: CREACIÓN vs ELIMINACIÓN)
+        // ---------------------------------------------------------------
+        // Si no se ha asignado una función específica arriba, usamos la genérica
+        if (funcionRequerida == null) {
+            if (tipoServicio == Tipo.ELIMINACION) {
+                funcionRequerida = Funciones.ELIMINACION;
+            } else {
+                // Tatuaje, Cover, Retoque -> Todos van a CREACION por ahora
+                funcionRequerida = Funciones.CREACION;
+            }
+        }
+
+        // 2. Buscar en BBDD trabajadores con esa función
+        List<Trabajador> candidatos = trabajadorRepository.findByFunciones(funcionRequerida);
+
+        if (candidatos.isEmpty()) {
+            // Manejo de error si no hay nadie (puedes lanzar excepción o devolver null)
+            throw new RuntimeException("No hay trabajadores disponibles para la función: " + funcionRequerida);
+        }
+
+        // 3. ASIGNACIÓN (Round Robin simplificado / Aleatorio)
+        // Aquí podrías mejorar buscando el que tenga menos citas ese día.
+        int indiceAleatorio = (int) (Math.random() * candidatos.size());
+        return candidatos.get(indiceAleatorio);
+    }
+
+
+
+
 
 	// --- MÉTODO AUXILIAR PARA GUARDAR EN DISCO ---
 	private String guardarArchivo(MultipartFile archivo) throws IOException {
@@ -206,52 +271,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 
 		return nombreUnico; // Devolvemos el nombre para guardarlo en la BBDD
 	}
-	// ----------------------------------------------
 
-	/*
-	 * METODO CREAR CITA PREVIO A MODIFICACION PARA SUBIR IMAGENES
-	 * 
-	 * @Override public Cita crearCita(Cita cita) {
-	 * 
-	 * // 1. GESTIÓN DEL CLIENTE (Lógica de Actualización / Creación) // Sacamos el
-	 * cliente que viene del formulario Cliente clienteDelFormulario =
-	 * cita.getCliente();
-	 * 
-	 * if (clienteDelFormulario != null) { // Buscamos si ya existe por email
-	 * Optional<Cliente> clienteExistenteOpt =
-	 * clienteRepository.findByEmail(clienteDelFormulario.getEmail());
-	 * 
-	 * if (clienteExistenteOpt.isPresent()) { // CASO A: EL CLIENTE YA EXISTE ->
-	 * ACTUALIZAMOS SUS DATOS Cliente clienteBD = clienteExistenteOpt.get();
-	 * 
-	 * // Sobreescribimos los datos antiguos con los nuevos que ha escrito el
-	 * usuario clienteBD.setNombre(clienteDelFormulario.getNombre());
-	 * clienteBD.setApellido1(clienteDelFormulario.getApellido1());
-	 * clienteBD.setApellido2(clienteDelFormulario.getApellido2());
-	 * clienteBD.setTelefono(clienteDelFormulario.getTelefono());
-	 * clienteBD.setDocumentoIdentificacion(clienteDelFormulario.
-	 * getDocumentoIdentificacion());
-	 * 
-	 * // Importante: Guardamos el cliente actualizado en la BBDD
-	 * clienteRepository.save(clienteBD);
-	 * 
-	 * // Asignamos este cliente (ya actualizado) a la cita
-	 * cita.setCliente(clienteBD);
-	 * 
-	 * } else { // CASO B: EL CLIENTE ES NUEVO -> LO CREAMOS DE CERO Cliente
-	 * nuevoCliente = clienteRepository.save(clienteDelFormulario);
-	 * cita.setCliente(nuevoCliente); } } /* // 1. Buscar y asignar cliente if
-	 * (cita.getCliente() != null && cita.getCliente().getIdCliente() != 0) { int
-	 * idCliente = cita.getCliente().getIdCliente(); Cliente clienteCompleto =
-	 * clienteRepository.findById(idCliente).orElse(null);
-	 * cita.setCliente(clienteCompleto); }
-	 * 
-	 * 
-	 * // 2. Calcular y asignar duración automáticamente Integer duracion =
-	 * calcularDuracion(cita); cita.setDuracionMinutos(duracion);
-	 * 
-	 * return citaRepository.save(cita); }
-	 */
 
 	@Override
 	public int eliminarCita(int idCita) {
@@ -290,28 +310,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 			return null;
 		}
 	}
-	/*
-	 * METODO QUE TENÍAS ANTES; EXPLOTABA AL MODIFICAR UNA FECHA DE CITA DESDE EL
-	 * FRONT // 1. Verificamos si la cita existe Cita citaExistente =
-	 * citaRepository.findById(cita.getIdCita()).orElse(null);
-	 * 
-	 * if (citaExistente != null) { // 2. Actualizamos los campos que el usuario
-	 * puede cambiar (fecha y hora) citaExistente.setFecha(cita.getFecha());
-	 * citaExistente.setHora(cita.getHora());
-	 * 
-	 * // También podrías actualizar otros campos si fuera necesario
-	 * citaExistente.setEstatus(cita.getEstatus());
-	 * citaExistente.setComentarios(cita.getComentarios());
-	 * 
-	 * // 3. Importante: si cambian parámetros del tatuaje, podría recalcular la //
-	 * duración // Aunque por ahora, para el mockup de fechas, solo necesitamos
-	 * fecha y hora.
-	 * citaExistente.setDuracionMinutos(calcularDuracion(citaExistente));
-	 * 
-	 * // 4. Guardamos los cambios return citaRepository.save(citaExistente); }
-	 * 
-	 * return null; }
-	 */
+
 
 	@Override
 	public Optional<Cita> buscarPorCliente(String email) {
@@ -344,7 +343,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		return null;
 	}
 
-	@Override
+	/*@Override
 	public Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos) {
 		Map<String, List<String>> calendario = new LinkedHashMap<>();
 
@@ -388,7 +387,45 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		}
 
 		return calendario;
-	}
+	}*/
+	
+	@Override
+    public Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos, int idTrabajador) {
+        Map<String, List<String>> calendario = new LinkedHashMap<>();
+
+        // ... (Tu configuración de horas apertura/cierre sigue igual) ...
+        LocalTime horaApertura = LocalTime.of(10, 0);
+        LocalTime horaCierre = LocalTime.of(20, 0);
+        int intervaloMinutos = 30;
+        LocalDate diaActual = LocalDate.now().plusDays(1);
+
+        for (int i = 0; i < 30; i++) {
+            LocalDate fechaRevision = diaActual.plusDays(i);
+            List<String> huecosDia = new ArrayList<>();
+
+            // CAMBIO CRÍTICO: Buscar citas SOLO de ese trabajador
+            // Necesitas crear este método en CitaRepository si no existe:
+            // List<Cita> findByTrabajadorIdTrabajadorAndFecha(int idTrabajador, LocalDate fecha);
+            List<Cita> citasOcupadas = citaRepository.findByTrabajadorIdTrabajadorAndFecha(idTrabajador, fechaRevision);
+
+            LocalTime horaIteracion = horaApertura;
+
+            while (horaIteracion.plusMinutes(duracionMinutos).isBefore(horaCierre)
+                    || horaIteracion.plusMinutes(duracionMinutos).equals(horaCierre)) {
+
+                if (esHuecoLibre(horaIteracion, duracionMinutos, citasOcupadas)) {
+                    huecosDia.add(horaIteracion.format(DateTimeFormatter.ofPattern("HH:mm")));
+                }
+                horaIteracion = horaIteracion.plusMinutes(intervaloMinutos);
+            }
+
+            if (!huecosDia.isEmpty()) {
+                calendario.put(fechaRevision.toString(), huecosDia);
+            }
+        }
+        return calendario;
+    }
+
 
 	// MÉTODO AUXILIAR PRIVADO PARA COMPROBAR COLISIONES
 	private boolean esHuecoLibre(LocalTime horaInicio, int duracion, List<Cita> citasOcupadas) {
@@ -530,6 +567,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    }
 	    return resultado;
 	}
+	
 
 	public Optional<Cita> buscarPorReferenciaYEmail(String referencia, String email) {
 
@@ -593,7 +631,13 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         return false;
     }
     
-    @Override
+
+    private Precio encontrarPorCategoriaValor(CategoriaEnum categoria, String valor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
     public String asignarTrabajador(int citaId, int trabajadorId) {
         // 1. Buscar la cita
         Optional<Cita> citaOpt = citaRepository.findById(citaId);
@@ -699,6 +743,53 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         
         return true; // No hay conflictos
     }
+
+	
+	@Override
+	public void aceptarPresupuesto(Cita cita) {
+	    // Buscar presupuesto por ID de cita
+	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(cita.getIdCita());
+	    
+	    // Si no existe, lanzar excepción
+	    if (!presupuestoOpt.isPresent()) {
+	        throw new IllegalArgumentException("No se encontró presupuesto para la cita con ID: " + cita.getIdCita());
+	    }
+	    
+	    Presupuesto presupuesto = presupuestoOpt.get();
+	    
+	    // Validar que esté en estado GENERADO
+	    if (presupuesto.getEstado() != Estado.GENERADO) {
+	        throw new IllegalStateException("El presupuesto debe estar en estado GENERADO para poder ser aceptado. Estado actual: " + presupuesto.getEstado());
+	    }
+	    
+	    // Cambiar estado y guardar
+	    presupuesto.setEstado(Estado.ACEPTADO);
+	    presupuestoRepository.save(presupuesto);
+	}
+
+	@Override
+	public void rechazarPresupuesto(Cita cita) {
+	    // Buscar presupuesto por ID de cita
+	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(cita.getIdCita());
+	    
+	    // Si no existe, lanzar excepción
+	    if (!presupuestoOpt.isPresent()) {
+	        throw new IllegalArgumentException("No se encontró presupuesto para la cita con ID: " + cita.getIdCita());
+	    }
+	    
+	    Presupuesto presupuesto = presupuestoOpt.get();
+	    
+	    // Validar que esté en estado GENERADO
+	    if (presupuesto.getEstado() != Estado.GENERADO) {
+	        throw new IllegalStateException("El presupuesto debe estar en estado GENERADO para poder ser rechazado. Estado actual: " + presupuesto.getEstado());
+	    }
+	    
+	    // Cambiar estado y guardar
+	    presupuesto.setEstado(Estado.RECHAZADO);
+	    presupuestoRepository.save(presupuesto);
+	}
+
+
 
 
 }

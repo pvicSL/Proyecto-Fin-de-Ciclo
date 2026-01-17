@@ -1,0 +1,240 @@
+@if (cita) {
+<h1 class="text-subtitle">Confirmar Servicio - #{{cita.idCita}}</h1>
+
+<div class="contenedor-scroll container-fluid p-4 rounded shadow-sm border">
+      
+  <div class="d-flex mb-2">
+      <button type="button" class="btn-close ms-auto" (click)="cerrarDetalle()"></button>
+  </div>
+
+  <section class="mb-5">
+    <h2 class="h5 fw-bold mb-3">Datos del cliente</h2>
+    <div class="row g-3 ">
+      <div class="col-md-4">
+        <span class="text-secondary d-block small">Nombre:</span>
+        <span class="text-dark">{{cita.clienteNombre}}</span>
+        
+      </div>
+      <div class="col-md-8">
+        <span class="text-secondary d-block small">Apellidos:</span>
+        <span class="text-dark">{{cita.clienteApellido1}} {{cita.clienteApellido2}}</span>
+      </div>
+      <div class="col-md-4">
+        <span class="text-secondary d-block small">Teléfono:</span>
+        <span class="text-dark">{{cita.clienteTelefono}}</span>
+      </div>
+      <div class="col-md-4">
+        <span class="text-secondary d-block small">Email:</span>
+        <span class="text-dark">{{cita.clienteEmail}}</span>
+      </div>
+      <div class="col-md-4">
+        <span class="text-secondary d-block small">DNI/NIF:</span>
+        <span class="text-dark">{{cita.clienteDocumentoIdentificacion}}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-5">
+  <h2 class="h5 fw-bold mb-3">Servicio</h2>
+  <div class="row g-3 mb-3 pb-4">
+    
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
+        <span class="text-secondary small">Precio Base:</span>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioBase) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
+        <span class="text-secondary small">Tipo:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.tipo" >
+          <option value="TATUAJE">Tatuaje</option>
+          <option value="ELIMINACION">Eliminación</option>
+          <option value="RETOQUE">Retoque</option>
+          <option value="COVER">Cover</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioTipo) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
+        <span class="text-secondary small">Zona:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.zona" >
+          <option value="BRAZO">Brazo</option>
+          <option value="ANTEBRAZO">Antebrazo</option>
+          <option value="CODO">Codo</option>
+          <option value="HOMBRO">Hombro</option>
+          <option value="TÓRAX">Tórax</option>
+          <option value="ABDOMEN">Abdomen</option>
+          <option value="PUBIS">Pubis</option>
+          <option value="MUSLO">Muslo</option>
+          <option value="RODILLA">Rodilla</option>
+          <option value="PANTORILLA">Pantorilla</option>
+          <option value="PIE">Pie</option>
+          <option value="MANO">Mano</option>
+          <option value="CERVICAL">Cervical</option>
+          <option value="LUMBARES">Lumbares</option>
+          <option value="NALGA">Nalga</option>
+          <option value="CABEZA">Cabeza</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioZona || 0) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
+        <span class="text-secondary small">Tamaño:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.tamanio">
+          <option value="MINI">Mini</option>
+          <option value="PEQUEÑO">Pequeño</option>
+          <option value="MEDIANO">Mediano</option>
+          <option value="GRANDE">Grande</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioTamanio || 0) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
+        <span class="text-secondary small">Detalle:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.detalle" >
+          <option value="SENCILLO">Sencillo</option>
+          <option value="MEDIO">Medio</option>
+          <option value="DENSO">Denso</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioDetalle || 0) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
+        <span class="text-secondary small">Coloración:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.coloracion" >
+          <option value="NEGRO">Negro</option>
+          <option value="COLOR">Color</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioColoracion || 0) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
+        <span class="text-secondary small">Estilo:</span>
+        <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
+                [(ngModel)]="cita.estilo" >
+          <option value="REALISMO">Realismo</option>
+          <option value="TRADICIONAL">Tradicional</option>
+          <option value="FINELINE">Fine Line</option>
+          <option value="BLACKANDGREY">Black and Grey</option>
+          <option value="ANIME">Anime</option>
+          <option value="LETERING">Letering</option>
+          <option value="JAPONES">Japones</option>
+        </select>
+        <span class="fw-bold small text-nowrap">{{ (precio.precioEstilo || 0) | currency:'EUR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
+        <span class="text-secondary small">Duración del Servicio: </span>
+        <span class="text-dark fw-bold">{{ citaDTO.duracionEstimada | formatoHoras }}</span>
+      </div>
+    </div>
+  </div>
+
+    <div class="mb-3">
+      <p class="fw-bold small mb-1 text-uppercase text-muted" style="letter-spacing: 0.5px;">Comentarios:</p>
+      <p class="text-dark small lh-base bg-light p-2 rounded">{{cita.comentarios || 'Sin comentarios adicionales.'}}</p>
+    </div>
+        <div class="row g-3">
+            @if (cita.imagenRef1){
+                <div class="col-md-4 mb-3">
+                    <a [href]="cita.imagenRef1" target="_blank" 
+                    class="btn btn-secondary border shadow-sm d-flex align-items-center py-2 px-3 rounded-3 text-decoration-none text-dark">
+                        <i class="bi bi-file-earmark-image-fill  me-2 fs-5"></i>
+                        <span class="small fw-medium">Imagen 1<span class="small fw-medium">{{ cita.imagenRef1.split('/').pop() || 'Referencia 1' }}</span></span>
+                    </a>
+                </div>
+            }
+            @if (cita.imagenRef1){
+                <div class="col-md-4 mb-3">
+                    <a [href]="cita.imagenRef2" target="_blank" 
+                    class="btn btn-secondary border shadow-sm d-flex align-items-center py-2 px-3 rounded-3 text-decoration-none text-dark">
+                        <i class="bi bi-file-earmark-image-fill  me-2 fs-5"></i>
+                        <span class="small fw-medium">Imagen 2<span class="small fw-medium">{{ cita.imagenRef2.split('/').pop() || 'Referencia 1' }}</span></span>
+                    </a>
+                </div>
+            }
+            @if (cita.imagenRef1){
+                <div class="col-md-4 mb-3">
+                    <a [href]="cita.imagenRef3" target="_blank" 
+                    class="btn btn-secondary border shadow-sm d-flex align-items-center py-2 px-3 rounded-3 text-decoration-none text-dark">
+                        <i class="bi bi-file-earmark-image-fill  me-2 fs-5"></i>
+                        <span class="small fw-medium">Imagen 3<span class="small fw-medium">{{ cita.imagenRef3.split('/').pop() || 'Referencia 1' }}</span></span>
+                    </a>
+                </div>
+            }
+        </div>
+  </section>
+
+  <section class="p-4 bg-light rounded shadow-sm border">
+    <h2 class="h5 fw-bold">Presupuesto</h2>
+    <div class="row g-4 align-items-center">
+        <div class="col-md-7">
+            <div class="mb-3">
+                <label class="fw-bold small mb-1 text-uppercase text-muted">Comentarios:</label>
+                <textarea class="form-control bg text-mutted border-1" name="comentariosPresupuesto" 
+                          [(ngModel)]="cita.presupuestoComentarios" rows="3">
+                </textarea>
+            </div>
+            <div class="d-flex gap-3">
+              <div>
+                <span class="text-secondary d-block small">Estado:</span>
+                <span class="badge bg-primary">{{cita.estadoPresupuesto}}</span>
+              </div>
+              <div>
+                <span class="text-secondary d-block small">Fecha Presupuesto:</span>
+                <span>{{cita.fechaPresupuesto | date:'dd/MM/yyyy'}}</span>
+              </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class=" p-3 rounded shadow-inner">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary small">Precio Base:</span>
+                    <span class="fw-bold">{{ (cita.precioBase || 0) | currency:'EUR' }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-1 small text-secondary">
+                    <span>IVA (21%):</span>
+                    <span>{{ (cita.iva || 0) | currency:'EUR' }}</span>
+                </div>
+                <hr class="border-secondary">
+                <div class="d-flex justify-content-between align-items-end">
+                    <span class="h6 mb-0">TOTAL ESTIMADO:</span>
+                    <span class="h3 fw-bold mb-0 text-success">{{ (cita.precioFinal || 0) | currency:'EUR' }}</span>
+                </div>
+            </div>
+            
+            <button class="btn border-0 w-100 mt-3 fw-bold py-2 " (click)="guardarPresupuesto()">
+                <i class="bi bi-check-circle-fill me-2"></i> ACTUALIZAR PRESUPUESTO
+            </button>
+        </div>
+    </div>
+  </section>
+</div>
+
+} @else {
+  <div class="d-flex justify-content-center align-items-center p-5">
+    <div class="spinner-border text-primary me-3" role="status"></div>
+    <span class="text-muted fw-medium">Preparando editor de presupuesto...</span>
+  </div>
+}
