@@ -160,7 +160,7 @@ export class AppointmentService {
     }
 
     getRequests(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/buscar/pendientes`);
+        return this.http.get<any[]>(`${this.apiUrl}/buscar/presupuesto-pendientes`);
     }
 
     getGeneratedBudgets(): Observable<any[]> {

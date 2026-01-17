@@ -1,4 +1,4 @@
-
+@if(staff){
     <h1 class="text-subtitle">
         Editar Trabajador - # {{staff.idTrabajador}}
     </h1>
@@ -90,8 +90,9 @@
             </form>
         </section>
     </div>
-
+}@else{
     <div class="d-flex justify-content-center align-items-center p-5">
     <div class="spinner-border text-primary me-3" role="status"></div>
-    <span class="text-muted fw-medium">Preparando editor de presupuesto...</span>
+    <span class="text-muted fw-medium">Preparando editor de trabajador...</span>
   </div>
+}
