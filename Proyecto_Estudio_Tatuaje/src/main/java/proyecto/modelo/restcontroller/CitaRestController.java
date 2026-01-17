@@ -35,6 +35,7 @@ import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
+import proyecto.modelo.repository.CitaRepository;
 import proyecto.service.CitaService;
 
 @RestController
@@ -44,6 +45,9 @@ public class CitaRestController {
 
 	@Autowired
 	private CitaService citaService;
+	
+	@Autowired
+	private CitaRepository citaRepository;
 
 	// NUEVO PARA IMG. REF.: Herramienta para convertir JSON String a Objeto Java
 	@Autowired
@@ -340,6 +344,74 @@ public class CitaRestController {
         }
     }
     
+    @PutMapping("/{id}/presupuesto/aceptar")
+    public ResponseEntity<?> aceptarPresupuesto(@PathVariable int id) {
+        try {
+            // 1. Buscar la cita
+            Cita cita = citaRepository.findById(id).orElse(null);
+            if (cita == null) {
+                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+            }
+            
+            // 2. Aceptar presupuesto
+            citaService.aceptarPresupuesto(cita);
+            
+            // 3. Obtener cita completa actualizada
+            CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+            
+            if (citaCompleta != null) {
+                return ResponseEntity.ok(citaCompleta);
+            } else {
+                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+            }
+            
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/{id}/presupuesto/rechazar")
+    public ResponseEntity<?> rechazarPresupuesto(@PathVariable int id) {
+        try {
+            // 1. Buscar la cita
+            Cita cita = citaRepository.findById(id).orElse(null);
+            if (cita == null) {
+                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+            }
+            
+            // 2. Rechazar presupuesto
+            citaService.rechazarPresupuesto(cita);
+            
+            // 3. Desasignar trabajador
+            String resultadoDesasignacion = citaService.desasignarTrabajador(id);
+            
+            // Si hay error en la desasignación, devolver error
+            if (resultadoDesasignacion.startsWith("Error:")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", resultadoDesasignacion));
+            }
+            
+            // 4. Obtener cita completa actualizada
+            CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+            
+            if (citaCompleta != null) {
+                return ResponseEntity.ok(citaCompleta);
+            } else {
+                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+            }
+            
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
     
 
 

@@ -710,6 +710,50 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         return true; // No hay conflictos
     }
 
+	
+	@Override
+	public void aceptarPresupuesto(Cita cita) {
+	    // Buscar presupuesto por ID de cita
+	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(cita.getIdCita());
+	    
+	    // Si no existe, lanzar excepción
+	    if (!presupuestoOpt.isPresent()) {
+	        throw new IllegalArgumentException("No se encontró presupuesto para la cita con ID: " + cita.getIdCita());
+	    }
+	    
+	    Presupuesto presupuesto = presupuestoOpt.get();
+	    
+	    // Validar que esté en estado GENERADO
+	    if (presupuesto.getEstado() != Estado.GENERADO) {
+	        throw new IllegalStateException("El presupuesto debe estar en estado GENERADO para poder ser aceptado. Estado actual: " + presupuesto.getEstado());
+	    }
+	    
+	    // Cambiar estado y guardar
+	    presupuesto.setEstado(Estado.ACEPTADO);
+	    presupuestoRepository.save(presupuesto);
+	}
+
+	@Override
+	public void rechazarPresupuesto(Cita cita) {
+	    // Buscar presupuesto por ID de cita
+	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(cita.getIdCita());
+	    
+	    // Si no existe, lanzar excepción
+	    if (!presupuestoOpt.isPresent()) {
+	        throw new IllegalArgumentException("No se encontró presupuesto para la cita con ID: " + cita.getIdCita());
+	    }
+	    
+	    Presupuesto presupuesto = presupuestoOpt.get();
+	    
+	    // Validar que esté en estado GENERADO
+	    if (presupuesto.getEstado() != Estado.GENERADO) {
+	        throw new IllegalStateException("El presupuesto debe estar en estado GENERADO para poder ser rechazado. Estado actual: " + presupuesto.getEstado());
+	    }
+	    
+	    // Cambiar estado y guardar
+	    presupuesto.setEstado(Estado.RECHAZADO);
+	    presupuestoRepository.save(presupuesto);
+	}
 
 
 }
