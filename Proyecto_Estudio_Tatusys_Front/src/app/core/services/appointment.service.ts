@@ -122,11 +122,11 @@ export class AppointmentService {
     }
 
     getRequests(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/buscar/presupuesto-pendientes`);
+        return this.http.get<any[]>(`${this.apiUrl}/buscar/pendientes`);
     }
 
     getGeneratedBudgets(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/buscar/presupuestos-generados`);
+        return this.http.get<any[]>(`${this.apiUrl}/buscar/presupuesto-generados`);
     }
 
     getAppointmentDetails(id: number): Observable<AppointmentAdminDTO> {

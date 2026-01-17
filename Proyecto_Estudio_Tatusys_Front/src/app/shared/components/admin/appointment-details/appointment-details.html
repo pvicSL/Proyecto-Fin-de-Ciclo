@@ -100,7 +100,7 @@
 
     <div class="mb-3">
       <p class="fw-bold small mb-1 text-uppercase text-muted" style="letter-spacing: 0.5px;">Comentarios:</p>
-      <p class="text-dark small lh-base bg-light p-2 rounded">{{cita.comentariosServicio || 'Sin comentarios adicionales.'}}</p>
+      <p class="text-dark small lh-base bg-light p-2 rounded">{{cita.comentarios || 'Sin comentarios adicionales.'}}</p>
     </div>
         <div class="row g-3">
             @if (cita.imagenRef1){
@@ -139,7 +139,7 @@
         <div class="col-md-7">
           <div class="mb-3">
               <p class="fw-bold small mb-1 text-uppercase text-muted">Comentarios:</p>
-              <p class="text-dark small lh-base bg-light p-2 rounded">{{cita.comentarios || 'Sin comentarios adicionales.'}}</p>
+              <p class="text-dark small lh-base bg-light p-2 rounded">{{cita.presupuestoComentarios || 'Sin comentarios adicionales.'}}</p>
           </div>
           <div class="d-flex gap-3">
             <div>

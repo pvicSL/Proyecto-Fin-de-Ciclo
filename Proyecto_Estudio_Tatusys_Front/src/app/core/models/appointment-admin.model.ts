@@ -16,7 +16,7 @@ export interface AppointmentAdminDTO {
   detalle: string;
   coloracion: string;
   estilo: string;
-  comentariosServicio: string;
+  comentarios: string;
   fecha: string;
   hora: string;
 
@@ -30,7 +30,7 @@ export interface AppointmentAdminDTO {
   precioFinal: number;
   estadoPresupuesto: string;
   fechaPresupuesto: string;
-  comentarios: string;
+  presupuestoComentarios: string;
   vigente: boolean;
   
   // NUEVOS: Desglose de precios individuales

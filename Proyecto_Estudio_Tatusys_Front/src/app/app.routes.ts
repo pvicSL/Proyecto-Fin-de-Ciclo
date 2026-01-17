@@ -89,12 +89,27 @@ export const routes: Routes = [
         data: {title: 'Trabajadores', icon: 'bi-people'},
 
         children: [
-          { path: '', redirectTo: 'list', pathMatch: 'full' },
+          { path: '', redirectTo: 'lista', pathMatch: 'full' },
 
           {
-            path: 'list', 
+            path: 'lista', 
             loadComponent: () => import('./pages/admin/staff/list-staff/list-staff').then(m => m.ListStaff), 
-            data: {title: 'Staff', icon: 'bi-people'}
+            data: {title: 'Trabajadores', icon: 'bi-people'}
+          },
+          {
+            path: 'editar/:id', 
+            loadComponent: () => import('./pages/admin/staff/edit-staff/edit-staff').then(m => m.EditStaff), 
+            data: {title: 'Trabajadores > Editar', icon: 'bi-people'}
+          },
+          {
+            path: 'eliminar/:id', 
+            loadComponent: () => import('./pages/admin/staff/delete-staff/delete-staff').then(m => m.DeleteStaff), 
+            data: {title: 'Trabajadores > Eliminar', icon: 'bi-people'}
+          },
+          {
+            path: 'alta', 
+            loadComponent: () => import('./pages/admin/staff/new-staff/new-staff').then(m => m.NewStaff), 
+            data: {title: 'Trabajadores > Alta', icon: 'bi-people'}
           }
         ]
       },

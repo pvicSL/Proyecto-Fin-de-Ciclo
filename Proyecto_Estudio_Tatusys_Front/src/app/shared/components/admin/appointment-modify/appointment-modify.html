@@ -51,7 +51,9 @@
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
                 [(ngModel)]="cita.tipo" >
           <option value="TATUAJE">Tatuaje</option>
-          <option value="PIERCING">Piercing</option>
+          <option value="ELIMINACION">Eliminación</option>
+          <option value="RETOQUE">Retoque</option>
+          <option value="COVER">Cover</option>
         </select>
         <span class="fw-bold small text-nowrap">{{ (precio.precioTipo) | currency:'EUR':'symbol' }}</span>
       </div>
@@ -63,9 +65,21 @@
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
                 [(ngModel)]="cita.zona" >
           <option value="BRAZO">Brazo</option>
-          <option value="PIERNA">Pierna</option>
-          <option value="ESPALDA">Espalda</option>
-          <option value="PECHO">Pecho</option>
+          <option value="ANTEBRAZO">Antebrazo</option>
+          <option value="CODO">Codo</option>
+          <option value="HOMBRO">Hombro</option>
+          <option value="TÓRAX">Tórax</option>
+          <option value="ABDOMEN">Abdomen</option>
+          <option value="PUBIS">Pubis</option>
+          <option value="MUSLO">Muslo</option>
+          <option value="RODILLA">Rodilla</option>
+          <option value="PANTORILLA">Pantorilla</option>
+          <option value="PIE">Pie</option>
+          <option value="MANO">Mano</option>
+          <option value="CERVICAL">Cervical</option>
+          <option value="LUMBARES">Lumbares</option>
+          <option value="NALGA">Nalga</option>
+          <option value="CABEZA">Cabeza</option>
         </select>
         <span class="fw-bold small text-nowrap">{{ (precio.precioZona || 0) | currency:'EUR':'symbol' }}</span>
       </div>
@@ -76,7 +90,8 @@
         <span class="text-secondary small">Tamaño:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
                 [(ngModel)]="cita.tamanio">
-          <option value="PEQUENO">Pequeño</option>
+          <option value="MINI">Mini</option>
+          <option value="PEQUEÑO">Pequeño</option>
           <option value="MEDIANO">Mediano</option>
           <option value="GRANDE">Grande</option>
         </select>
@@ -102,7 +117,7 @@
         <span class="text-secondary small">Coloración:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
                 [(ngModel)]="cita.coloracion" >
-          <option value="NEGRO">Negro/Gris</option>
+          <option value="NEGRO">Negro</option>
           <option value="COLOR">Color</option>
         </select>
         <span class="fw-bold small text-nowrap">{{ (precio.precioColoracion || 0) | currency:'EUR':'symbol' }}</span>
@@ -116,8 +131,11 @@
                 [(ngModel)]="cita.estilo" >
           <option value="REALISMO">Realismo</option>
           <option value="TRADICIONAL">Tradicional</option>
-          <option value="FINE_LINE">Fine Line</option>
-          <option value="BLACKWORK">Blackwork</option>
+          <option value="FINELINE">Fine Line</option>
+          <option value="BLACKANDGREY">Black and Grey</option>
+          <option value="ANIME">Anime</option>
+          <option value="LETERING">Letering</option>
+          <option value="JAPONES">Japones</option>
         </select>
         <span class="fw-bold small text-nowrap">{{ (precio.precioEstilo || 0) | currency:'EUR':'symbol' }}</span>
       </div>
@@ -133,7 +151,7 @@
 
     <div class="mb-3">
       <p class="fw-bold small mb-1 text-uppercase text-muted" style="letter-spacing: 0.5px;">Comentarios:</p>
-      <p class="text-dark small lh-base bg-light p-2 rounded">{{cita.comentariosServicio || 'Sin comentarios adicionales.'}}</p>
+      <p class="text-dark small lh-base bg-light p-2 rounded">{{cita.comentarios || 'Sin comentarios adicionales.'}}</p>
     </div>
         <div class="row g-3">
             @if (cita.imagenRef1){
@@ -173,7 +191,7 @@
             <div class="mb-3">
                 <label class="fw-bold small mb-1 text-uppercase text-muted">Comentarios:</label>
                 <textarea class="form-control bg text-mutted border-1" name="comentariosPresupuesto" 
-                          [(ngModel)]="cita.comentarios" rows="3">
+                          [(ngModel)]="cita.presupuestoComentarios" rows="3">
                 </textarea>
             </div>
             <div class="d-flex gap-3">

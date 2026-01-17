@@ -1,2 +1,6 @@
 /* Ajusta la ruta según dónde esté tu archivo del padre */
 @import "../../../../shared/layouts/admin-layout/admin-layout.css";
+
+.contenedor{
+    background-color: var(--antiflash-white);
+}

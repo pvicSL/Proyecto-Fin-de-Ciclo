@@ -28,7 +28,7 @@ export class ReviewedRequests {
    */
   cargarCitas(): void {
     // Usamos el método de tu servicio que trae todas las pendientes
-    this.appointmentService.getRequests().subscribe({
+    this.appointmentService.getGeneratedBudgets().subscribe({
       next: (data) => {
         this.citasPendientes = data;
         this.paginaActual = 1; // Reiniciamos a la primera página tras cargar

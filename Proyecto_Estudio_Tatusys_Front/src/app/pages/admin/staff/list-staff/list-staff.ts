@@ -29,7 +29,6 @@ export class ListStaff implements OnInit {
 
   ngOnInit(): void {
     this.cargarStaff();
-    this.cargarAlertas();
   }
 
   /**
@@ -47,35 +46,42 @@ export class ListStaff implements OnInit {
     });
   }
 
-  cargarAlertas() {
-    this.appointmentService.getRequests().subscribe({
-      next: (data) => this.numeroPendientes = data.length,
-      error: (err) => console.error(err)
-    });
-  }
+
 
   // --- Navegación ---
 
   irANuevoMiembro(): void {
-    this.router.navigate(['admin/staff/nuevo']);
+    this.router.navigate(['admin/trabajadores/alta']);
   }
 
   editarStaff(id: number): void {
-    this.router.navigate(['admin/staff/editar', id]);
+    this.router.navigate(['admin/trabajadores/editar', id]);
   }
 
-  verDetallesStaff(id: number): void {
-    this.router.navigate(['admin/staff/detalles', id]);
+  EliminarStaff(id: number): void {
+    this.router.navigate(['admin/trabajadores/eliminar', id]);
   }
 
   // --- Lógica de Paginación Dinámica ---
   
   get itemsPorPagina(): number {
-    const altoVentana = window.innerHeight;
-    const espacioOcupado = window.innerWidth < 992 ? 380 : 340;
-    const altoFila = window.innerWidth < 576 ? 80 : 65; 
-    return Math.max(4, Math.floor((altoVentana - espacioOcupado) / altoFila));
-  }
+  const altoVentana = window.innerHeight;
+  const anchoVentana = window.innerWidth;
+
+  // 1. Definimos el espacio que NO es tabla (Header + Breadcrumb + Footer + Margen)
+  // En móvil el header suele ser más alto, en desktop más bajo.
+  const espacioOcupado = anchoVentana < 992 ? 380 : 340;
+
+  // 2. Definimos cuánto mide cada fila (ajusta según tu CSS)
+  const altoFila = anchoVentana < 576 ? 80 : 65; 
+
+  // 3. Calculamos cuántas caben
+  const espacioDisponible = altoVentana - espacioOcupado;
+  const filasCalculadas = Math.floor(espacioDisponible / altoFila);
+
+  // 4. Ponemos límites lógicos (mínimo 4, máximo según necesites)
+  return Math.max(4, filasCalculadas);
+}
 
   @HostListener('window:resize')
   onResize() { 
