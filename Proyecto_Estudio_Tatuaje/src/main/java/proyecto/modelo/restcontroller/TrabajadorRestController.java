@@ -41,12 +41,18 @@ public class TrabajadorRestController {
 	
 	
 	@GetMapping("/trabajadores/{idTrabajador}")
-	public ResponseEntity<?>buscarTrabajador(@PathVariable int idTrabajador) {
-		if (trabajadorService.buscarUnTrabajador(idTrabajador) == null) {
-			return new ResponseEntity<String>("No hay ningún trabajador con ese Id", HttpStatusCode.valueOf(404));
-		} else {
-			return new ResponseEntity<Trabajador>(trabajadorService.buscarUnTrabajador(idTrabajador), HttpStatusCode.valueOf(200));
-		}
+	public ResponseEntity<?> buscarTrabajador(@PathVariable int idTrabajador) {
+	    // 1. Buscar el trabajador (solo una vez)
+	    Trabajador trabajador = trabajadorService.buscarUnTrabajador(idTrabajador);
+	    
+	    // 2. Verificar si existe
+	    if (trabajador == null) {
+	        return new ResponseEntity<String>("No hay ningún trabajador con ese Id", HttpStatusCode.valueOf(404));
+	    } else {
+	        // 3. Convertir a DTO y devolver
+	        TrabajadorDTO trabajadorDTO = new TrabajadorDTO(trabajador);
+	        return new ResponseEntity<TrabajadorDTO>(trabajadorDTO, HttpStatusCode.valueOf(200));
+	    }
 	}
 	
 	//Version para TrabajadorDTO

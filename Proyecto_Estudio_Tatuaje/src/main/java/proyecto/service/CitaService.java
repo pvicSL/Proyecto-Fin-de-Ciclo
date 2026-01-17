@@ -63,4 +63,8 @@ public interface CitaService {
     String asignarTrabajador(int citaId, int trabajadorId);
     String desasignarTrabajador(int citaId);
 
+	void aceptarPresupuesto(Cita cita);
+
+	void rechazarPresupuesto(Cita cita);
+
 }
