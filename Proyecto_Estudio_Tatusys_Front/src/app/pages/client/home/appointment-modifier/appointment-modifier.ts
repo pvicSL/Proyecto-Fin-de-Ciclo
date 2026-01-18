@@ -4,16 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { AppointmentService } from '../../../../core/services/appointment.service';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
 
-// Estados posibles para el recuadro de modificación o cancelación de una cita
+// Estados posibles para el recuadro de modificación
 type ModifierState = 'search' | 'inicial' | 'modificando' | 'confirmado' | 'cancelado';
 
+// Estados de los días del calendario
 interface DayColumn {
   dateObj: Date;
   dateStr: string;
   weekday: string;
   dayNumber: string;
   slots: string[];
-  // Añadimos tipado estricto para controlar las clases CSS en el HTML
   status: 'available' | 'weekend' | 'disabled' | 'empty';
 }
 
@@ -21,25 +21,35 @@ interface DayColumn {
   selector: 'app-appointment-modifier',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './appointment-modifier.html', // Verifica extensión .html
-  styleUrl: './appointment-modifier.css'     // Verifica extensión .css o .scss
+  templateUrl: './appointment-modifier.html',
+  styleUrl: './appointment-modifier.css'
 })
 export class AppointmentModifierComponent {
 
   @Output() closeRequest = new EventEmitter<void>();
 
+  /* ============================================================
+   ===== BÚSQUEDA DE CITA EXISTENTE, CON MAIL Y REFERENCIA ===== 
+   ==============================================================*/
   currentState: ModifierState = 'search';
 
-  // VARIABLES DE BÚSQUEDA
-  bookingCode: string = '';  // Referencia
-  bookingEmail: string = ''; // Email
+  // Variables de la búsqueda
+  bookingCode: string = '';  // Referencia de la cita (Ej: A1B2C3D4)
+  bookingEmail: string = ''; // Email del cliente
 
   currentAppointment: AppointmentDTO | null = null;
   calculatedDuration: number = 0;
 
+  // Variables para reasignar una fecha
   selectedNewDate: string = '';
   availableSlots: string[] = [];
 
+  // Variables para el calendario semanal
+  allDays: DayColumn[] = [];
+  weekIndex: number = 0;
+  daysPerPage: number = 7;
+
+  // Datos del resumen visual (Ej: tu cita es el XXX a las XXX)
   viewDetails = {
     weekday: '',
     day: '',
@@ -48,43 +58,21 @@ export class AppointmentModifierComponent {
     durationText: ''
   };
 
-  // VARIABLES PARA EL CALENDARIO SEMANAL
-  allDays: DayColumn[] = [];
-  weekIndex: number = 0;
-  daysPerPage: number = 7;
-
   constructor(private appointmentService: AppointmentService) { }
 
-  // --- GETTER PARA EL ENCABEZADO (NUEVO: REQUISITO DE FORMATO SEMANA) ---
+  // --- GETTER PARA EL ENCABEZADO (MES Y SEMANA) ---
   get currentWeekHeader(): string {
     if (this.visibleDays.length === 0) return '';
 
-    // Cogemos el primer día visible (que siempre será lunes gracias a la nueva lógica)
     const firstDay = this.visibleDays[0].dateObj;
-
-    // Nombre del mes
     const monthName = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' })
       .format(firstDay).toUpperCase();
-
-    // Número de semana del año
     const weekNumber = this.getWeekNumber(firstDay);
 
     return `${monthName} - SEMANA ${weekNumber}`;
   }
 
-  // --- MÉTODOS DE LÓGICA DE NEGOCIO ---
-
-  formatSlotDate(isoDate: string): string {
-    const safeDate = isoDate.replace(' ', 'T');
-    const date = new Date(safeDate);
-    if (isNaN(date.getTime())) return isoDate;
-
-    const dayFormatter = new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short' });
-    const timeFormatter = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' });
-
-    return `${dayFormatter.format(date).toUpperCase()} - ${timeFormatter.format(date)}`;
-  }
-
+  // --- LÓGICA DE BÚSQUEDA ---
   searchAppointment() {
     if (!this.bookingCode.trim() || !this.bookingEmail.trim()) return;
 
@@ -92,16 +80,14 @@ export class AppointmentModifierComponent {
       next: (data) => {
         this.currentAppointment = data;
 
-        // Comprobamos si la cita ya está cancelada o rechazada
-        // (Asegúrate que tu DTO trae el estatus como string)
+        // Validar si ya está cancelada, por si acaso (podría haberla cancelado el estudio, por ejemplo)
         if (data.estatus === 'RECHAZADO' || data.estatus === 'CANCELADO') {
           alert('Esta cita ya figura como cancelada.');
           this.changeState('cancelado');
           return;
         }
 
-        // USAMOS EL DATO DEL BACKEND (duracionEstimada)
-        // IMPORTANTE: Asegúrate de que AppointmentDTO tiene este campo opcional
+        // Recuperar la duración guardada en BBDD
         this.calculatedDuration = data.duracionEstimada || 60;
 
         this.formatViewDetails(data.fecha, data.hora);
@@ -114,37 +100,79 @@ export class AppointmentModifierComponent {
     });
   }
 
-  // --- MODIFICADO: PREPARADO PARA FILTROS ---
+  // --- LÓGICA DE MODIFICACIÓN (CALENDARIO) ---
   startModification() {
     if (!this.currentAppointment) return;
 
-    console.log("Buscando huecos para:", this.calculatedDuration, "minutos");
+    // IMPORTANTE: Al modificar, mantenemos el trabajador original asignado.
+    // Necesitamos su ID para buscar huecos en SU agenda, no en la de otro.
+    // Si viene dentro de un objeto anidado, se ajustaría a: this.currentAppointment.trabajador.idTrabajador
+    const workerId = this.currentAppointment.idTrabajador;
 
-    /* -----------------------------------------------------------------------
-       PREPARACIÓN PARA FUTURO FILTRADO POR EMPLEADO
-       Extraemos el tipo y estilo de la cita actual para buscar huecos compatibles.
-       ----------------------------------------------------------------------- */
-    const filtrosFuturos = {
-      tipo: this.currentAppointment.tipo,   // Asegúrate de que el DTO tenga estos campos
-      estilo: this.currentAppointment.estilo
-    };
+    console.log(`Buscando huecos para trabajador ${workerId} con duración ${this.calculatedDuration} min`);
 
-    // Llamamos al Back. Dejamos 'filtrosFuturos' comentado en la llamada 
-    // para que no dé error hasta que el service/backend estén listos.
-    this.appointmentService.getAvailableSlots(this.calculatedDuration /*, filtrosFuturos */).subscribe({
+    // Llamamos al servicio pasando duración de la cita y la Id del trabajador
+    this.appointmentService.getAvailableSlots(this.calculatedDuration, workerId).subscribe({
       next: (dataBackend) => {
-        // CAMBIO: Usamos la nueva lógica 'generateCalendarGrid' en vez de 'transformarMapaADias'
-        // para garantizar semanas completas de Lunes a Domingo.
         this.allDays = this.generateCalendarGrid(dataBackend);
         this.weekIndex = 0;
         this.selectedNewDate = '';
         this.changeState('modificando');
       },
-      error: (err) => alert("Error cargando disponibilidad")
+      error: (err) => {
+        console.error(err);
+        alert("Error cargando la disponibilidad del trabajador.");
+      }
     });
   }
 
-  // --- MÉTODOS DE NAVEGACIÓN Y VISUALIZACIÓN ---
+  // --- LÓGICA DE CALENDARIO (GENERACIÓN Y NAVEGACIÓN) ---
+
+  private generateCalendarGrid(dataBackend: any): DayColumn[] {
+    const days: DayColumn[] = [];
+    const formatterDia = new Intl.DateTimeFormat('es-ES', { weekday: 'short' });
+
+    // Fecha de inicio: hoy + 3 días de margen
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const minDate = new Date(today);
+    minDate.setDate(today.getDate() + 3);
+
+    // La semana siempre empieza visualmente por el lunes
+    const startGridDate = this.getMonday(minDate);
+
+    // GENERA 35 días, quizá se debería cambiar a un margen más amplio
+    const daysToGenerate = 35;
+
+    for (let i = 0; i < daysToGenerate; i++) {
+      const iterDate = new Date(startGridDate);
+      iterDate.setDate(startGridDate.getDate() + i);
+
+      const isoDate = iterDate.toISOString().split('T')[0];
+      const isWeekend = iterDate.getDay() === 0 || iterDate.getDay() === 6;
+      const isLocked = iterDate < minDate;
+
+      const slots = dataBackend[isoDate] || [];
+      const hasSlots = slots.length > 0;
+
+      let status: 'available' | 'weekend' | 'disabled' | 'empty' = 'empty';
+
+      if (isLocked) status = 'disabled';
+      else if (isWeekend) status = 'weekend';
+      else if (hasSlots) status = 'available';
+      else status = 'empty';
+
+      days.push({
+        dateObj: iterDate,
+        dateStr: isoDate,
+        weekday: formatterDia.format(iterDate).toUpperCase().replace('.', ''),
+        dayNumber: iterDate.getDate().toString(),
+        slots: slots,
+        status: status
+      });
+    }
+    return days;
+  }
 
   get visibleDays(): DayColumn[] {
     const start = this.weekIndex * this.daysPerPage;
@@ -171,60 +199,7 @@ export class AppointmentModifierComponent {
     return this.selectedNewDate === `${day.dateStr} ${slotTime}`;
   }
 
-  // --- NUEVA LÓGICA DE CALENDARIO (REQUISITO: LUNES A DOMINGO) ---
-  // Sustituye a 'transformarMapaADias' para rellenar huecos vacíos y forzar inicio en lunes.
-  private generateCalendarGrid(dataBackend: any): DayColumn[] {
-    const days: DayColumn[] = [];
-    const formatterDia = new Intl.DateTimeFormat('es-ES', { weekday: 'short' });
-
-    // 1. Calcular fecha de inicio (Mínimo: hoy + 3 días)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const minDate = new Date(today);
-    minDate.setDate(today.getDate() + 3);
-
-    // 2. Retroceder al Lunes de esa fecha mínima para que la semana empiece bien visualmente
-    const startGridDate = this.getMonday(minDate);
-
-    // 3. Determinar cuántos días cargar (ej. 5 semanas = 35 días)
-    const daysToGenerate = 35;
-
-    for (let i = 0; i < daysToGenerate; i++) {
-      const iterDate = new Date(startGridDate);
-      iterDate.setDate(startGridDate.getDate() + i);
-
-      // Formato YYYY-MM-DD para buscar en el mapa del backend
-      const isoDate = iterDate.toISOString().split('T')[0];
-      const isWeekend = iterDate.getDay() === 0 || iterDate.getDay() === 6;
-      const isLocked = iterDate < minDate; // Días pasados o margen de 3 días
-
-      // Recuperar slots si existen en el backend para esa fecha
-      const slots = dataBackend[isoDate] || [];
-      const hasSlots = slots.length > 0;
-
-      // Determinamos el estado para el CSS
-      let status: 'available' | 'weekend' | 'disabled' | 'empty' = 'empty';
-
-      if (isLocked) status = 'disabled';
-      else if (isWeekend) status = 'weekend';
-      else if (hasSlots) status = 'available';
-      else status = 'empty'; // Día laborable sin huecos o no cargado en back
-
-      days.push({
-        dateObj: iterDate,
-        dateStr: isoDate,
-        weekday: formatterDia.format(iterDate).toUpperCase().replace('.', ''),
-        dayNumber: iterDate.getDate().toString(),
-        slots: slots,
-        status: status
-      });
-    }
-
-    return days;
-  }
-
-  // --- MODIFICADO: USA REFERENCIA Y EMAIL ---
+  // --- ACCIONES FINALES (CONFIRMAR / CANCELAR) ---
   confirmChange() {
     if (!this.selectedNewDate || !this.currentAppointment) return;
 
@@ -232,32 +207,28 @@ export class AppointmentModifierComponent {
     const newFecha = dateObj.toISOString().split('T')[0];
     const newHora = dateObj.toTimeString().split(' ')[0];
 
-    // CAMBIO CRÍTICO: Usamos bookingCode (Referencia) y bookingEmail
     this.appointmentService.updateAppointmentDate(
-      this.bookingCode,  // Referencia
-      this.bookingEmail, // Email
+      this.bookingCode,
+      this.bookingEmail,
       newFecha,
       newHora
     ).subscribe({
       next: (resp) => {
-        // Al confirmar, volvemos a formatear para mostrar duración y datos en el resumen final
         this.formatViewDetails(newFecha, newHora);
         this.changeState('confirmado');
+        console.log("Se ha guardado el cambio correctamente.")
       },
       error: (err) => {
         console.error(err);
-        alert('Error al modificar la cita. Verifica que los datos sean correctos.');
+        alert('Error al modificar la cita. Inténtalo de nuevo.');
       }
     });
   }
 
-  // --- MODIFICADO: USA REFERENCIA Y EMAIL ---
   cancelAppointment() {
     if (!this.currentAppointment) return;
 
-    if (confirm('¿Seguro que deseas cancelar? Esta acción es irreversible.')) {
-
-      // CAMBIO CRÍTICO: Usamos bookingCode (Referencia) y bookingEmail
+    if (confirm('¿Seguro que deseas cancelar? Esta acción es irreversible y perderás la fianza.')) {
       this.appointmentService.cancelAppointment(
         this.bookingCode,
         this.bookingEmail
@@ -271,35 +242,33 @@ export class AppointmentModifierComponent {
     }
   }
 
-  // --- UTILIDADES ---
+  // --- UTILIDADES Y FORMATO ---
+  formatSlotDate(isoDate: string): string {
+    const safeDate = isoDate.replace(' ', 'T');
+    const date = new Date(safeDate);
+    if (isNaN(date.getTime())) return isoDate;
+
+    const dayFormatter = new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short' });
+    const timeFormatter = new Intl.DateTimeFormat('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+    return `${dayFormatter.format(date).toUpperCase()} - ${timeFormatter.format(date)}`;
+  }
 
   private formatViewDetails(fecha: string | null, hora: string | null) {
-    // 1. Protección contra nulos (por si el backend falla)
     if (!fecha || !hora) {
-      console.warn('La cita recuperada está vacía o incompleta.');
-      this.viewDetails = {
-        weekday: '---',
-        day: '--',
-        year: '----',
-        hour: '--:--',
-        durationText: ''
-      };
+      this.viewDetails = { weekday: '---', day: '--', year: '----', hour: '--:--', durationText: '' };
       return;
     }
 
-    // 2. Construcción segura de la fecha
     const fechaLimpia = fecha.toString().split('T')[0];
     const fullDate = new Date(`${fechaLimpia}T${hora}`);
 
-    if (isNaN(fullDate.getTime())) {
-      console.error('Fecha inválida tras concatenar:', fecha, hora);
-      return;
-    }
+    if (isNaN(fullDate.getTime())) return;
 
     const weekdayFormatter = new Intl.DateTimeFormat('es-ES', { weekday: 'long' });
     const dayFormatter = new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short' });
 
-    // CÁLCULO DE DURACIÓN (Nuevo requisito: mostrar duración al confirmar también)
+    // Cálculo de texto de duración (ej: 2 horas, para que el cliente sepa lo que dura su cita)
     const horas = Math.floor(this.calculatedDuration / 60);
     const minRestantes = this.calculatedDuration % 60;
     let durText = '';
@@ -315,15 +284,13 @@ export class AppointmentModifierComponent {
     };
   }
 
-  // Utilidad para obtener el lunes de una fecha dada
   private getMonday(d: Date): Date {
     const date = new Date(d);
     const day = date.getDay();
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Ajuste: Lunes=1 ... Domingo=0(-6)
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
     return new Date(date.setDate(diff));
   }
 
-  // Utilidad para obtener número de semana (Estándar ISO 8601)
   private getWeekNumber(d: Date): number {
     const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     const dayNum = date.getUTCDay() || 7;
@@ -334,6 +301,7 @@ export class AppointmentModifierComponent {
 
   closeModifier() {
     this.bookingCode = '';
+    this.bookingEmail = '';
     this.selectedNewDate = '';
     this.currentAppointment = null;
     this.currentState = 'search';

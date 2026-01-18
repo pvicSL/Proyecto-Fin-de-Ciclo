@@ -49,23 +49,19 @@ export class AppointmentService {
     // 3. MODIFICACIÓN Y CANCELACIÓN (¡CAMBIO IMPORTANTE!)
     // ==========================================
 
-    /**
-     * Modifica la fecha de una cita usando la REFERENCIA como llave.
-     * OJO: Tu Backend debe tener un endpoint que acepte esto.
-     */
-    updateAppointmentDate(referencia: string, email: string, fecha: string, hora: string): Observable<any> {
-        console.log("Enviando modificación para cita:", referencia);
 
-        const payload = {
-            referencia: referencia, // Enviamos ref en lugar de ID
-            email: email,          // Enviamos email por seguridad extra
-            fecha: fecha,
-            hora: hora
+    //Modifica la fecha de una cita usando la REFERENCIA como llave.
+    updateAppointmentDate(referencia: string, email: string, nuevaFecha: string, nuevaHora: string): Observable<any> {
+        // El backend espera un objeto JSON (CitaModificacionDTO)
+        const body = {
+            referencia: referencia,
+            email: email,
+            nuevaFecha: nuevaFecha,
+            nuevaHora: nuevaHora + ":00" // Aseguramos formato HH:mm:ss si hace falta
         };
 
-        // CAMBIO: La ruta ya no es /actualizar/{id}, ahora debería ser segura.
-        // Sugerencia para backend: PUT /api/citas/actualizar-seguro
-        return this.http.put(`${this.apiUrl}/modificar-conreferencia`, payload);
+        // CORRECCIÓN: Apuntamos a '/modificar-conreferencia'
+        return this.http.put(`${this.apiUrl}/modificar-conreferencia`, body);
     }
 
     /**
@@ -73,13 +69,13 @@ export class AppointmentService {
      * Ya no usamos el ID numérico en la URL para evitar borrados accidentales/maliciosos.
      */
     cancelAppointment(referencia: string, email: string): Observable<any> {
+        // Preparamos los parámetros ?ref=...&email=...
         const params = new HttpParams()
             .set('ref', referencia)
             .set('email', email);
 
-        // CAMBIO: Delete ahora envía parámetros, no un ID en el path.
-        // Sugerencia para backend: DELETE /api/citas/eliminar-seguro?ref=...&email=...
-        return this.http.delete(`${this.apiUrl}/cancelar-conreferencia`, { params, responseType: 'text' });
+        // CORRECCIÓN: Apuntamos a '/cancelar-conreferencia'
+        return this.http.delete(`${this.apiUrl}/cancelar-conreferencia`, { params });
     }
 
     // ==========================================
@@ -88,7 +84,7 @@ export class AppointmentService {
 
     // Nuevo método para obtener duración y trabajador
     calculatePreBookingData(criterios: any): Observable<any> {
-        return this.http.post(`${this.apiUrl}/citas/calculo-previo`, criterios);
+        return this.http.post(`${this.apiUrl}/calculo-previo`, criterios);
     }
 
     /**
@@ -101,27 +97,15 @@ export class AppointmentService {
    * Busca huecos libres.
    * workerId es opcional (?) para mantener compatibilidad con el modificador de citas antiguo.
    */
-    getAvailableSlots(durationMinutes: number, workerId?: number): Observable<any> {
+    getAvailableSlots(duracion: number, workerId?: number): Observable<any> {
+        let params = new HttpParams().set('duracion', duracion.toString());
 
-        // CASO A: Tenemos trabajador asignado (Formulario Nuevo)
         if (workerId) {
-            const url = `${this.apiUrl}/citas/huecos-disponibles`;
-            let params = new HttpParams()
-                .set('duracion', durationMinutes)
-                .set('idTrabajador', workerId);
-
-            return this.http.get(url, { params });
+            params = params.set('idTrabajador', workerId.toString());
         }
 
-        // CASO B: No tenemos trabajador (Modificador de citas antiguo)
-        // Usamos el endpoint antiguo para que no explote la aplicación.
-        else {
-            // Asegúrate de que en tu Backend Java (Controller) sigues teniendo 
-            // el endpoint antiguo @GetMapping("/disponibilidad/{duracion}")
-            // Si lo borraste, avísame y arreglamos el Modificador también.
-            const url = `${this.apiUrl}/disponibilidad/${durationMinutes}`;
-            return this.http.get(url);
-        }
+        // CORRECCIÓN: La ruta en tu Back es '/huecos-disponibles', no '/disponibilidad'
+        return this.http.get(`${this.apiUrl}/huecos-disponibles`, { params });
     }
 
     /*
