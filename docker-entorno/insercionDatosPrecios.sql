@@ -19,7 +19,7 @@ INSERT INTO precios_adicionales (categoria, valor, precio_adicional) VALUES ('ZO
 INSERT INTO precios_adicionales (categoria, valor, precio_adicional) VALUES ('ZONA', 'PANTORILLA', 0.00);
 INSERT INTO precios_adicionales (categoria, valor, precio_adicional) VALUES ('ZONA', 'PIE', 20.00);
 INSERT INTO precios_adicionales (categoria, valor, precio_adicional) VALUES ('ZONA', 'MANO', 25.00);
-INSERT INTO precios_adicionales (categoria, valor, precio_adicional) VALUES ('ZONA', 'CERVIAL', 15.00);
+INSERT INTO precios_adicionales (categoria, valor, precio_adicional) VALUES ('ZONA', 'CERVICAL', 15.00);
 INSERT INTO precios_adicionales (categoria, valor, precio_adicional) VALUES ('ZONA', 'LUMBARES', 10.00);
 INSERT INTO precios_adicionales (categoria, valor, precio_adicional) VALUES ('ZONA', 'NALGA', 10.00);
 INSERT INTO precios_adicionales (categoria, valor, precio_adicional) VALUES ('ZONA', 'CABEZA', 30.00);
