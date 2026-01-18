@@ -49,6 +49,9 @@ CREATE TABLE precios_adicionales (
     UNIQUE KEY unique_categoria_valor (categoria, valor)
 );
 
+-- PRECIO BASE
+INSERT INTO precios_adicionales (categoria, valor, precio_adicional, activo) VALUES ('BASE', 'SERVICIO_BASE', 00.00, 1);
+
 -- =====================================================
 -- NIVEL 1: Tablas que dependen de nivel 0
 -- =====================================================
