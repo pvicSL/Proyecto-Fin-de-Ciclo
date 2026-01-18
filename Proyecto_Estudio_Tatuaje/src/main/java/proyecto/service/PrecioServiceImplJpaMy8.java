@@ -4,6 +4,7 @@ package proyecto.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,29 @@ public class PrecioServiceImplJpaMy8 implements PrecioService {
 	@Override
 	public Precio encontrarPorCategoriaValor(CategoriaEnum categoria, String valor) {
 	    return precioRepository.findByCategoriaAndValor(categoria, valor).orElse(null);
+	}
+	
+	@Override
+	public Precio actualizarPrecioBase(BigDecimal nuevoPrecio) {
+	    // Buscar si existe el precio base
+	    Optional<Precio> precioBaseOpt = precioRepository.findByCategoriaAndValor(CategoriaEnum.BASE, "SERVICIO_BASE");
+	    
+	    Precio precioBase;
+	    
+	    if (precioBaseOpt.isPresent()) {
+	        // Actualizar existente
+	        precioBase = precioBaseOpt.get();
+	        precioBase.setPrecioAdicional(nuevoPrecio);
+	    } else {
+	        // Crear nuevo registro
+	        precioBase = new Precio();
+	        precioBase.setCategoria(CategoriaEnum.BASE);
+	        precioBase.setValor("SERVICIO_BASE");
+	        precioBase.setPrecioAdicional(nuevoPrecio);
+	        precioBase.setActivo(true); 
+	    }
+	    
+	    return precioRepository.save(precioBase);
 	}
 
 	

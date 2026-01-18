@@ -42,7 +42,6 @@ import proyecto.modelo.enums.Tipo;
 import proyecto.modelo.enums.Zona;
 import proyecto.modelo.repository.CitaRepository;
 import proyecto.modelo.repository.ClienteRepository;
-import proyecto.modelo.repository.PrecioRepository;
 import proyecto.modelo.repository.PresupuestoRepository;
 import proyecto.modelo.repository.TrabajadorRepository;
 

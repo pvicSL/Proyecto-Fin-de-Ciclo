@@ -1,5 +1,6 @@
 package proyecto.modelo.restcontroller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -111,6 +112,24 @@ public class PreciosRestController {
             
         } catch (Exception e) {
             return ResponseEntity.ok(Map.of("error", "Error al eliminar el precio: " + e.getMessage()));
+        }
+    }
+    
+    @PutMapping("/actualizar-base")
+    public ResponseEntity<?> actualizarPrecioBase(@RequestBody BigDecimal nuevoPrecio) {
+        try {
+            // Validación
+            if (nuevoPrecio.compareTo(BigDecimal.ZERO) < 0) {
+                return ResponseEntity.ok(Map.of("error", "El precio base no puede ser negativo"));
+            }
+            
+            Precio precioBaseActualizado = precioService.actualizarPrecioBase(nuevoPrecio);
+            return ResponseEntity.ok(Map.of(
+                "mensaje", "Precio base actualizado correctamente",
+                "precio", precioBaseActualizado
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.ok(Map.of("error", "Error al actualizar el precio base: " + e.getMessage()));
         }
     }
 }
