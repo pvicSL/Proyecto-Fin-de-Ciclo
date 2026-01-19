@@ -30,8 +30,8 @@ public class Presupuesto implements Serializable{
 	private int idPresupuesto;
 	@Column(name="id_servicio")
 	private int idServicio;
-	@Column(name="precio_base")
-	private BigDecimal precioBase;
+	@Column(name="precio_sin_iva")
+	private BigDecimal precioSinIva;
 	private BigDecimal iva;
 	@Column(name="precio_final")
 	private BigDecimal precioFinal;
@@ -49,11 +49,11 @@ public class Presupuesto implements Serializable{
 
 
 
-	public Presupuesto(int idServicio, BigDecimal precioBase, BigDecimal iva, BigDecimal precioFinal, LocalDateTime fecha,
+	public Presupuesto(int idServicio, BigDecimal precioSinIva, BigDecimal iva, BigDecimal precioFinal, LocalDateTime fecha,
 			boolean vigente, Estado estado, String comentarios) {
 		super();
 		this.idServicio = idServicio;
-		this.precioBase = precioBase;
+		this.precioSinIva = precioSinIva;
 		this.iva = iva;
 		this.precioFinal = precioFinal;
 		this.fecha = fecha;
@@ -88,14 +88,14 @@ public class Presupuesto implements Serializable{
 
 
 
-	public BigDecimal getPrecioBase() {
-		return precioBase;
+	public BigDecimal getprecioSinIva() {
+		return precioSinIva;
 	}
 
 
 
-	public void setPrecioBase(BigDecimal precioBase) {
-		this.precioBase = precioBase;
+	public void setprecioSinIva(BigDecimal precioSinIva) {
+		this.precioSinIva = precioSinIva;
 	}
 
 
@@ -199,8 +199,8 @@ public class Presupuesto implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Presupuesto [idPresupuesto=" + idPresupuesto + ", idServicio=" + idServicio + ", precioBase="
-				+ precioBase + ", iva=" + iva + ", precioFinal=" + precioFinal + ", fecha=" + fecha + ", vigente="
+		return "Presupuesto [idPresupuesto=" + idPresupuesto + ", idServicio=" + idServicio + ", precioSinIva="
+				+ precioSinIva + ", iva=" + iva + ", precioFinal=" + precioFinal + ", fecha=" + fecha + ", vigente="
 				+ vigente + ", estado=" + estado + ", comentarios=" + comentarios + "]";
 	}
 	

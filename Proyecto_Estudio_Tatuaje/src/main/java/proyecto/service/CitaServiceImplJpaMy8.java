@@ -42,7 +42,6 @@ import proyecto.modelo.enums.Tipo;
 import proyecto.modelo.enums.Zona;
 import proyecto.modelo.repository.CitaRepository;
 import proyecto.modelo.repository.ClienteRepository;
-import proyecto.modelo.repository.PrecioRepository;
 import proyecto.modelo.repository.PresupuestoRepository;
 import proyecto.modelo.repository.TrabajadorRepository;
 
@@ -541,7 +540,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(id);
 	    if (presupuestoOpt.isPresent()) {
 	        Presupuesto presupuestoExistente = presupuestoOpt.get();
-	        presupuestoExistente.setPrecioBase(valores[0]);
+	        presupuestoExistente.setprecioSinIva(valores[0]);
 	        presupuestoExistente.setIva(valores[1]);
 	        presupuestoExistente.setPrecioFinal(valores[2]);
 	        presupuestoExistente.setEstado(Estado.GENERADO);

@@ -1,6 +1,7 @@
 package proyecto.service;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import proyecto.modelo.dto.PreciosIndividualesDTO;
@@ -17,5 +18,6 @@ public interface PrecioService {
 	Precio actualizarPrecio(Precio precio);
 	
 	Precio encontrarPorCategoriaValor (CategoriaEnum categoria, String valor);
+	Precio actualizarPrecioBase(BigDecimal nuevoPrecio);
 
 }

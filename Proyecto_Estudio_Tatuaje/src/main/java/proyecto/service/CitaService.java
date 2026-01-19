@@ -73,5 +73,7 @@ public interface CitaService {
 	Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos, int idTrabajador);
 
 	Trabajador seleccionarTrabajadorAutomatico(Tipo tipoServicio, Estilo estiloServicio);
+	
+
 
 }

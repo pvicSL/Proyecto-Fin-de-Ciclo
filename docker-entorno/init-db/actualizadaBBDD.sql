@@ -49,6 +49,9 @@ CREATE TABLE precios_adicionales (
     UNIQUE KEY unique_categoria_valor (categoria, valor)
 );
 
+-- PRECIO BASE
+INSERT INTO precios_adicionales (categoria, valor, precio_adicional, activo) VALUES ('BASE', 'SERVICIO_BASE', 00.00, 1);
+
 -- =====================================================
 -- NIVEL 1: Tablas que dependen de nivel 0
 -- =====================================================
@@ -89,7 +92,7 @@ CREATE TABLE servicios (
 CREATE TABLE presupuestos (
     id_presupuesto INT PRIMARY KEY AUTO_INCREMENT,
     id_servicio INT NOT NULL,
-    precio_base DECIMAL(8,2) NOT NULL,
+    precio_sin_iva DECIMAL(8,2) NOT NULL,
     iva DECIMAL(8,2) NOT NULL,
     precio_final DECIMAL(8,2) NOT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

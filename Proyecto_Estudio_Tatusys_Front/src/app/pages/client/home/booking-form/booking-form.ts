@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AppointmentService } from '../../../../core/services/appointment.service';
-import { debounceTime, filter, switchMap, map } from 'rxjs/operators'; // <--- Añadido 'map'
+import { debounceTime, filter, switchMap, map } from 'rxjs/operators';
 
 // Interfaz para tipar correctamente los días del calendario
 interface CalendarDay {
@@ -28,9 +28,7 @@ export class BookingFormComponent implements OnInit {
   // ==========================================
   isFormOpen: boolean = false;
   activeHint: string | null = null;
-  // NUEVA VARIABLE DE ESTADO: ID del trabajador asignado automáticamente
   assignedWorkerId: number | null = null;
-
 
   // ==========================================
   // 2. FORMULARIO Y DATOS
@@ -52,7 +50,6 @@ export class BookingFormComponent implements OnInit {
   // ==========================================
   // 4. MAPAS DE TRADUCCIÓN (HTML -> BBDD)
   // ==========================================
-
   private readonly MAPA_ZONAS: Record<string, string> = {
     'body-arm': 'BRAZO',
     'body-forearm': 'ANTEBRAZO',
@@ -136,29 +133,28 @@ export class BookingFormComponent implements OnInit {
   // ==========================================
   // 5. LÓGICA DEL CALENDARIO Y DISPONIBILIDAD
   // ==========================================
-
   get currentMonthName(): string {
     return new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(this.currentViewDate).toUpperCase();
   }
 
-  // --- MODIFICADO: Escucha cambios para calcular duración y trabajador ---
+  // --- Escucha cambios para calcular duración y trabajador ---
   private escucharCambiosParaDisponibilidad() {
     this.bookingForm.valueChanges.pipe(
       debounceTime(500),
       // Solo procede si los campos que definen la cita están llenos
       filter(val => val.service && val.size && val.detailLevel && val.colorMode),
       switchMap(val => {
-        // Preparamos TODOS los criterios para el cálculo previo
+        // Se preparan todos los criterios para el cálculo previo
         const criterios = {
           tamanio: this.mapearTamanio(val.size),
           detalle: this.mapearDetalle(val.detailLevel),
           coloracion: val.colorMode === 'bw' ? 'NEGRO' : 'COLOR',
           tipo: this.mapearServicio(val.service),
           estilo: this.mapearEstilo(val.style),
-          zona: this.mapearZona(val.bodyZone) // Añadido zona por si acaso
+          zona: this.mapearZona(val.bodyZone)
         };
 
-        // Llama al NUEVO endpoint intermedio
+        // Llama a un endpoint intermedio
         // Este endpoint debe devolver { duracion: X, idTrabajador: Y }
         return this.appointmentService.calculatePreBookingData(criterios);
       })
@@ -167,7 +163,7 @@ export class BookingFormComponent implements OnInit {
         console.log('Cálculo previo recibido:', resultado);
 
         const duracion = resultado.duracion;
-        this.assignedWorkerId = resultado.idTrabajador; // Guardamos el ID del trabajador
+        this.assignedWorkerId = resultado.idTrabajador;
 
         // Cargamos huecos con duración Y trabajador específico
         if (this.assignedWorkerId) {
@@ -178,7 +174,7 @@ export class BookingFormComponent implements OnInit {
     });
   }
 
-  // --- MODIFICADO: Recibe workerId ---
+  // --- La carga de huecos incluye el workerId ---
   private cargarHuecosBackend(duracion: number, workerId: number) {
     this.appointmentService.getAvailableSlots(duracion, workerId).subscribe({
       next: (respuestaBackend) => {
@@ -195,7 +191,10 @@ export class BookingFormComponent implements OnInit {
     today.setHours(0, 0, 0, 0);
 
     const minDate = new Date(today);
-    minDate.setDate(today.getDate() + 3); // 3 Días de margen
+    // Esto establece un margen de 3 días, para que no se pueda pedir una cita
+    // para el día siguiente, ya que no daría tiempo a pagar la fianza
+    // y preparar el diseño. Este margen evita problemas.
+    minDate.setDate(today.getDate() + 3);
 
     const startOfWeek = this.getMonday(this.currentViewDate);
 
@@ -231,8 +230,7 @@ export class BookingFormComponent implements OnInit {
     }
   }
 
-  // --- GETTERS PARA CONTROLAR LA NAVEGACIÓN (NO DEBE DEJAR IR AL PASADO) ---
-
+  // --- GETTERS PARA QUE EL SELECTOR DE FECHA NO PERMITA RETROCEDER DESDE LA FECHA ACTUAL ---
   // Devuelve true si el mes que estamos viendo es el actual (o anterior), para bloquear el botón "<"
   get isPrevMonthDisabled(): boolean {
     const today = new Date();
@@ -268,7 +266,7 @@ export class BookingFormComponent implements OnInit {
     const newDate = new Date(this.currentViewDate);
     newDate.setMonth(newDate.getMonth() + direction);
 
-    // Evitar ir al pasado más allá del mes actual
+    // Evita ir al pasado más allá del mes actual
     const today = new Date();
     if (direction < 0 && newDate.getMonth() < today.getMonth() && newDate.getFullYear() <= today.getFullYear()) {
       return;
@@ -308,7 +306,6 @@ export class BookingFormComponent implements OnInit {
   // ==========================================
   // 6. GESTIÓN DEL FORMULARIO Y ARCHIVOS
   // ==========================================
-
   toggleForm() {
     this.isFormOpen = !this.isFormOpen;
     if (this.isFormOpen) {
@@ -349,9 +346,8 @@ export class BookingFormComponent implements OnInit {
   }
 
   // =====================================
-  // 7. ENVÍO (SUBMIT) - CREACIÓN FINAL
+  // 7. ENVÍO (SUBMIT) - CREACIÓN FINAL DE LA CITA
   // =====================================
-
   onSubmit() {
     // Validamos form, fecha, hora Y trabajador asignado
     if (this.bookingForm.valid && this.selectedSlot && this.selectedDateStr && this.assignedWorkerId) {
@@ -370,7 +366,6 @@ export class BookingFormComponent implements OnInit {
         comentarios: raw.comments,
         factura: raw.needInvoice ? 1 : 0,
         estatus: 'PENDIENTE',
-        // --- CAMBIO: Incluimos el trabajador asignado ---
         trabajador: {
           idTrabajador: this.assignedWorkerId
         },
@@ -378,7 +373,7 @@ export class BookingFormComponent implements OnInit {
           nombre: raw.firstName,
           apellido1: raw.lastSurname,
           apellido2: raw.secondSurname,
-          email: raw.email.toLowerCase(), // Normalización importante
+          email: raw.email.toLowerCase(),
           telefono: raw.phone,
           documentoIdentificacion: raw.cif
         }
@@ -418,7 +413,6 @@ export class BookingFormComponent implements OnInit {
   // ==========================================
   // 8. HELPERS DE MAPEO
   // ==========================================
-
   emailMatchValidator(form: AbstractControl): ValidationErrors | null {
     const e = form.get('email')?.value;
     const c = form.get('confirmEmail')?.value;

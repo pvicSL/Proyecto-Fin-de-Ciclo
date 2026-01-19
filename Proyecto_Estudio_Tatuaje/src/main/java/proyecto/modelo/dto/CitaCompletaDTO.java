@@ -20,7 +20,7 @@ public class CitaCompletaDTO {
     private String clienteEmail, clienteTelefono, clienteDocumentoIdentificacion;
 
     // Datos Presupuesto
-    private BigDecimal precioBase, iva, precioFinal;
+    private BigDecimal precioSinIva, iva, precioFinal;
     private LocalDateTime presupuestoFecha;
     private String estadoPresupuesto;
     private boolean vigente;
@@ -44,7 +44,7 @@ public class CitaCompletaDTO {
 	public CitaCompletaDTO(int idCita, String tipo, String zona, String tamanio, String detalle, String coloracion,
 			String estilo, LocalDate fecha, LocalTime hora, String comentarios, String imagenRef1, String imagenRef2,
 			String imagenRef3, String clienteNombre, String clienteApellido1, String clienteApellido2,
-			String clienteEmail, String clienteTelefono, String clienteDocumentoIdentificacion, BigDecimal precioBase,
+			String clienteEmail, String clienteTelefono, String clienteDocumentoIdentificacion, BigDecimal precioSinIva,
 			BigDecimal iva, BigDecimal precioFinal, LocalDateTime presupuestoFecha, String estadoPresupuesto,
 			boolean vigente, String presupuestoComentarios, BigDecimal precioTipo, BigDecimal precioZona,
 			BigDecimal precioTamanio, BigDecimal precioDetalle, BigDecimal precioColoracion, BigDecimal precioEstilo) {
@@ -68,7 +68,7 @@ public class CitaCompletaDTO {
 		this.clienteEmail = clienteEmail;
 		this.clienteTelefono = clienteTelefono;
 		this.clienteDocumentoIdentificacion = clienteDocumentoIdentificacion;
-		this.precioBase = precioBase;
+		this.precioSinIva = precioSinIva;
 		this.iva = iva;
 		this.precioFinal = precioFinal;
 		this.presupuestoFecha = presupuestoFecha;
@@ -87,7 +87,7 @@ public class CitaCompletaDTO {
 	public CitaCompletaDTO(int idCita, String tipo, String zona, String tamanio, String detalle, String coloracion,
 	        String estilo, LocalDate fecha, LocalTime hora, String comentarios, String imagenRef1, String imagenRef2,
 	        String imagenRef3, String clienteNombre, String clienteApellido1, String clienteApellido2,
-	        String clienteEmail, String clienteTelefono, String clienteDocumentoIdentificacion, BigDecimal precioBase,
+	        String clienteEmail, String clienteTelefono, String clienteDocumentoIdentificacion, BigDecimal precioSinIva,
 	        BigDecimal iva, BigDecimal precioFinal, LocalDateTime presupuestoFecha, String estadoPresupuesto,
 	        boolean vigente, String presupuestoComentarios) {
 	    super();
@@ -110,7 +110,7 @@ public class CitaCompletaDTO {
 	    this.clienteEmail = clienteEmail;
 	    this.clienteTelefono = clienteTelefono;
 	    this.clienteDocumentoIdentificacion = clienteDocumentoIdentificacion;
-	    this.precioBase = precioBase;
+	    this.precioSinIva = precioSinIva;
 	    this.iva = iva;
 	    this.precioFinal = precioFinal;
 	    this.presupuestoFecha = presupuestoFecha;
@@ -312,13 +312,13 @@ public class CitaCompletaDTO {
 	}
 
 
-	public BigDecimal getPrecioBase() {
-		return precioBase;
+	public BigDecimal getPrecioSinIva() {
+		return precioSinIva;
 	}
 
 
-	public void setPrecioBase(BigDecimal precioBase) {
-		this.precioBase = precioBase;
+	public void setPrecioSinIva(BigDecimal precioSinIva) {
+		this.precioSinIva = precioSinIva;
 	}
 
 
