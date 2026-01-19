@@ -43,7 +43,7 @@ export class EditStaff implements OnInit {
       this.staffService.updateStaff(this.staff.idTrabajador, this.staff).subscribe({
         next: () => {
           alert('Datos actualizados correctamente');
-          this.router.navigate(['/admin/staff']);
+          window.history.back();
         },
         error: (err) => alert('Error: ' + err.error?.message)
       });

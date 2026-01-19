@@ -176,6 +176,11 @@ export class AppointmentService {
         return this.http.put<AppointmentAdminDTO>(url, appointment);
     }
 
+    deleteAppointment(id: number): Observable<any> {
+        return this.http.put<any>(`${this.apiUrl}/${id}/presupuesto/rechazar`,{});
+        }
+
+
 
     calcularDuracion(datos: AppointmentDTO): Observable<number> {
         return this.http.post<number>(`${this.apiUrl}/calcular-duracion/`, datos);
