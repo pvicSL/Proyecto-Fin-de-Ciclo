@@ -19,6 +19,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import proyecto.modelo.enums.Coloracion;
 import proyecto.modelo.enums.Detalle;
+import proyecto.modelo.enums.EstadoFactura;
 import proyecto.modelo.enums.Estatus;
 import proyecto.modelo.enums.Estilo;
 import proyecto.modelo.enums.Tamanio;
@@ -85,6 +86,10 @@ public class Cita implements Serializable {
 
 	@Column(unique = true)
 	private String referencia;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "estado_factura")
+	private EstadoFactura estadoFactura;
 
 	@ManyToOne
 	@JoinColumn(name = "id_cliente")

@@ -78,6 +78,7 @@ CREATE TABLE servicios (
     id_cliente INTEGER NOT NULL,
     id_trabajador INT DEFAULT NULL,
     factura BOOLEAN NOT NULL,
+    estado_factura ENUM('NO_REQUIERE', 'PENDIENTE', 'ENVIADA') NULL,
     estatus ENUM('PENDIENTE', 'CONFIRMADO'),
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
     FOREIGN KEY (id_trabajador) REFERENCES trabajadores(id_trabajador),
