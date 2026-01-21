@@ -34,6 +34,7 @@ import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Coloracion;
 import proyecto.modelo.enums.Detalle;
 import proyecto.modelo.enums.Estado;
+import proyecto.modelo.enums.EstadoFactura;
 import proyecto.modelo.enums.Estatus;
 import proyecto.modelo.enums.Estilo;
 import proyecto.modelo.enums.Funciones;
@@ -357,51 +358,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		return null;
 	}
 
-	/*@Override
-	public Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos) {
-		Map<String, List<String>> calendario = new LinkedHashMap<>();
 
-		// CONFIGURACIÓN DEL ESTUDIO (Ajustar según necesidad)
-		LocalTime horaApertura = LocalTime.of(10, 0);
-		LocalTime horaCierre = LocalTime.of(20, 0);
-		int intervaloMinutos = 30; // Saltos del selector de hora
-
-		LocalDate diaActual = LocalDate.now().plusDays(1); // Empezamos a buscar desde mañana
-
-		// Revisamos los próximos 7 días
-		// CAMBIADO A 30 DÍAS, HABRÁ QUE DECIDIR A CUÁNTOS MESES VISTA
-		// TIENEN ABIERTA LA AGENDA DE CITAS EN EL ESTUDIO.
-		for (int i = 0; i < 30; i++) {
-			LocalDate fechaRevision = diaActual.plusDays(i);
-			List<String> huecosDia = new ArrayList<>();
-
-			// 1. Obtenemos las citas que YA existen ese día
-			List<Cita> citasOcupadas = citaRepository.findByFecha(fechaRevision);
-
-			// 2. Iteramos desde la apertura hasta el cierre
-			LocalTime horaIteracion = horaApertura;
-
-			// El bucle termina cuando la hora + duración supera el cierre
-			while (horaIteracion.plusMinutes(duracionMinutos).isBefore(horaCierre)
-					|| horaIteracion.plusMinutes(duracionMinutos).equals(horaCierre)) {
-
-				// Verificamos si este hueco choca con alguna cita existente
-				if (esHuecoLibre(horaIteracion, duracionMinutos, citasOcupadas)) {
-					huecosDia.add(horaIteracion.format(DateTimeFormatter.ofPattern("HH:mm")));
-				}
-
-				// Saltamos al siguiente intervalo
-				horaIteracion = horaIteracion.plusMinutes(intervaloMinutos);
-			}
-
-			// Si hay huecos, los guardamos en el mapa con la fecha como clave
-			if (!huecosDia.isEmpty()) {
-				calendario.put(fechaRevision.toString(), huecosDia);
-			}
-		}
-
-		return calendario;
-	}*/
 	
 	@Override
     public Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos, int idTrabajador) {
@@ -534,6 +491,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    cita.setImagenRef1(citaEditada.getImagenRef1());
 	    cita.setImagenRef2(citaEditada.getImagenRef2());
 	    cita.setImagenRef3(citaEditada.getImagenRef3());
+	    cita.setEstadoFactura(cita.getFactura() ? EstadoFactura.PENDIENTE : EstadoFactura.NO_REQUIERE);
 	    
 	    // 3. ACTUALIZAR CAMPOS DEL CLIENTE
 	    Cliente cliente = cita.getCliente();

@@ -112,9 +112,12 @@ public class Cita implements Serializable {
 		this.duracionMinutos = duracionMinutos;
 	}
 
+	
+
 	public Cita(int idCita, Tipo tipo, Zona zona, Tamanio tamanio, Detalle detalle, Coloracion coloracion,
 			Estilo estilo, LocalDate fecha, LocalTime hora, String comentarios, Boolean factura, Estatus estatus,
-			Integer duracionMinutos, Cliente cliente) {
+			Integer duracionMinutos, String imagenRef1, String imagenRef2, String imagenRef3, String referencia,
+			EstadoFactura estadoFactura, Cliente cliente, Trabajador trabajador) {
 		super();
 		this.idCita = idCita;
 		this.tipo = tipo;
@@ -129,7 +132,13 @@ public class Cita implements Serializable {
 		this.factura = factura;
 		this.estatus = estatus;
 		this.duracionMinutos = duracionMinutos;
+		this.imagenRef1 = imagenRef1;
+		this.imagenRef2 = imagenRef2;
+		this.imagenRef3 = imagenRef3;
+		this.referencia = referencia;
+		this.estadoFactura = estadoFactura;
 		this.cliente = cliente;
+		this.trabajador = trabajador;
 	}
 
 	// GETTERS Y SETTERS
@@ -277,12 +286,25 @@ public class Cita implements Serializable {
 	public void setTrabajador(Trabajador trabajador) {
 	    this.trabajador = trabajador;
 	}
+	
+	public EstadoFactura getEstadoFactura() {
+		return estadoFactura;
+	}
+
+	public void setEstadoFactura(EstadoFactura estadoFactura) {
+		this.estadoFactura = estadoFactura;
+	}
+
+	
 
 	@Override
 	public String toString() {
 		return "Cita [idCita=" + idCita + ", tipo=" + tipo + ", zona=" + zona + ", tamanio=" + tamanio + ", detalle="
-				+ detalle + ", estilo=" + estilo + ", fecha=" + fecha + ", hora=" + hora + ", comentarios="
-				+ comentarios + ", cliente=" + cliente + "]";
+				+ detalle + ", coloracion=" + coloracion + ", estilo=" + estilo + ", fecha=" + fecha + ", hora=" + hora
+				+ ", comentarios=" + comentarios + ", factura=" + factura + ", estatus=" + estatus
+				+ ", duracionMinutos=" + duracionMinutos + ", imagenRef1=" + imagenRef1 + ", imagenRef2=" + imagenRef2
+				+ ", imagenRef3=" + imagenRef3 + ", referencia=" + referencia + ", estadoFactura=" + estadoFactura
+				+ ", cliente=" + cliente + ", trabajador=" + trabajador + "]";
 	}
 
 	@Override
