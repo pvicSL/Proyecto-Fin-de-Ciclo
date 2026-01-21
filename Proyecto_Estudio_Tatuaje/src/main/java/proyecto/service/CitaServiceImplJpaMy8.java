@@ -259,31 +259,52 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 
 
 	// --- MÉTODO AUXILIAR PARA GUARDAR EN DISCO ---
-	private String guardarArchivo(MultipartFile archivo) throws IOException {
-		// Nombre carpeta donde se guardan (Créala en la raíz de tu proyecto o usa ruta
-		// absoluta)
-		String carpetaUploads = "uploads";
+    private String guardarArchivo(MultipartFile archivo) throws IOException {
+        // 1. VALIDACIÓN DE TIPO DE ARCHIVO
+        String contentType = archivo.getContentType();
+        if (!esFormatoPermitido(contentType)) {
+            throw new IllegalArgumentException("Formato de archivo no permitido. Solo se permiten: JPG, PNG, GIF, WEBP");
+        }
+        
+        // 2. VALIDACIÓN DE TAMAÑO (5MB máximo)
+        if (archivo.getSize() > 5 * 1024 * 1024) {
+            throw new IllegalArgumentException("El archivo excede el tamaño máximo permitido (5MB)");
+        }
+        
+        // 3. VALIDACIÓN DE NOMBRE DE ARCHIVO
+        String nombreOriginal = archivo.getOriginalFilename();
+        if (nombreOriginal == null || nombreOriginal.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nombre de archivo no válido");
+        }
+        
+        // Tu código existente continúa...
+        String carpetaUploads = "uploads";
+        Path rutaCarpeta = Paths.get(carpetaUploads);
+        if (!Files.exists(rutaCarpeta)) {
+            Files.createDirectories(rutaCarpeta);
+        }
 
-		// Creamos la carpeta si no existe
-		Path rutaCarpeta = Paths.get(carpetaUploads);
-		if (!Files.exists(rutaCarpeta)) {
-			Files.createDirectories(rutaCarpeta);
-		}
+        String extension = "";
+        if (nombreOriginal.contains(".")) {
+            extension = nombreOriginal.substring(nombreOriginal.lastIndexOf("."));
+        }
+        String nombreUnico = UUID.randomUUID().toString() + extension;
 
-		// Generamos nombre único para evitar que "foto.jpg" sobrescriba otra "foto.jpg"
-		String nombreOriginal = archivo.getOriginalFilename();
-		String extension = "";
-		if (nombreOriginal != null && nombreOriginal.contains(".")) {
-			extension = nombreOriginal.substring(nombreOriginal.lastIndexOf("."));
-		}
-		String nombreUnico = UUID.randomUUID().toString() + extension;
+        Path rutaCompleta = rutaCarpeta.resolve(nombreUnico);
+        Files.copy(archivo.getInputStream(), rutaCompleta);
 
-		// Guardamos el fichero
-		Path rutaCompleta = rutaCarpeta.resolve(nombreUnico);
-		Files.copy(archivo.getInputStream(), rutaCompleta);
+        return nombreUnico;
+    }
 
-		return nombreUnico; // Devolvemos el nombre para guardarlo en la BBDD
-	}
+    private boolean esFormatoPermitido(String contentType) {
+        return contentType != null && (
+            contentType.equals("image/jpeg") ||
+            contentType.equals("image/jpg") ||
+            contentType.equals("image/png") ||
+            contentType.equals("image/gif") ||
+            contentType.equals("image/webp")
+        );
+    }
 
 
 	@Override
