@@ -1,6 +1,5 @@
 package proyecto.service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Trabajador;
-import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Estado;
 import proyecto.modelo.enums.Estatus;
 import proyecto.modelo.enums.Estilo;
@@ -73,6 +71,8 @@ public interface CitaService {
 	Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos, int idTrabajador);
 
 	Trabajador seleccionarTrabajadorAutomatico(Tipo tipoServicio, Estilo estiloServicio);
+
+	String finalizarPresupuesto(Cita cita);
 	
 
 

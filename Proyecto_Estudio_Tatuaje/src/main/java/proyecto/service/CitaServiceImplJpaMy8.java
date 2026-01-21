@@ -27,10 +27,8 @@ import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
-import proyecto.modelo.entities.Precio;
 import proyecto.modelo.entities.Presupuesto;
 import proyecto.modelo.entities.Trabajador;
-import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Coloracion;
 import proyecto.modelo.enums.Detalle;
 import proyecto.modelo.enums.Estado;
@@ -491,7 +489,10 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    cita.setImagenRef1(citaEditada.getImagenRef1());
 	    cita.setImagenRef2(citaEditada.getImagenRef2());
 	    cita.setImagenRef3(citaEditada.getImagenRef3());
-	    cita.setEstadoFactura(cita.getFactura() ? EstadoFactura.PENDIENTE : EstadoFactura.NO_REQUIERE);
+	 // Solo actualizar estado de facturación si es la primera vez (null)
+	    if (cita.getEstadoFactura() == null) {
+	        cita.setEstadoFactura(cita.getFactura() ? EstadoFactura.PENDIENTE : EstadoFactura.NO_REQUIERE);
+	    }
 	    
 	    // 3. ACTUALIZAR CAMPOS DEL CLIENTE
 	    Cliente cliente = cita.getCliente();
@@ -516,7 +517,13 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	        presupuestoExistente.setprecioSinIva(valores[0]);
 	        presupuestoExistente.setIva(valores[1]);
 	        presupuestoExistente.setPrecioFinal(valores[2]);
-	        presupuestoExistente.setEstado(Estado.GENERADO);
+	        if (presupuestoExistente.getEstado() == Estado.PENDIENTE) {
+	            presupuestoExistente.setEstado(Estado.GENERADO);  // Primera vez
+	        } else if (presupuestoExistente.getEstado() == Estado.GENERADO) {
+	            presupuestoExistente.setEstado(Estado.GENERADO);  // Mantener mientras se edita
+	        } else if (presupuestoExistente.getEstado() == Estado.ACEPTADO) {
+	            presupuestoExistente.setEstado(Estado.ACEPTADO);  // Mantener si ya fue aceptado
+	        }
 	        presupuestoExistente.setComentarios(citaEditada.getPresupuestoComentarios());
 	        presupuestoRepository.save(presupuestoExistente);
 	    } else {
@@ -604,10 +611,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
     }
     
 
-    private Precio encontrarPorCategoriaValor(CategoriaEnum categoria, String valor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+ 
 
 	@Override
     public String asignarTrabajador(int citaId, int trabajadorId) {
@@ -761,6 +765,30 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    presupuestoRepository.save(presupuesto);
 	}
 
+	@Override
+	public String finalizarPresupuesto(Cita cita) {
+	    // Buscar presupuesto por ID de cita
+	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(cita.getIdCita());
+
+	    // Si no existe, lanzar excepción
+	    if (!presupuestoOpt.isPresent()) {
+	        throw new IllegalArgumentException("No se encontró presupuesto para la cita con ID: " + cita.getIdCita());
+	    }
+
+	    Presupuesto presupuesto = presupuestoOpt.get();
+
+	    // Validar que esté en estado ACEPTADO
+	    if (presupuesto.getEstado() != Estado.ACEPTADO) {
+	        throw new IllegalStateException("El presupuesto debe estar en estado ACEPTADO para poder ser finalizado. Estado actual: " + presupuesto.getEstado());
+	    }
+
+	    // Cambiar estado y vigencia
+	    presupuesto.setEstado(Estado.FINALIZADO);
+	    presupuesto.setVigente(false);
+	    presupuestoRepository.save(presupuesto);
+	    
+	    return "Presupuesto finalizado correctamente";
+	}
 
 
 
