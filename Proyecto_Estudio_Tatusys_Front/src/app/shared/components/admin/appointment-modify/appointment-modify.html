@@ -41,7 +41,6 @@
     <div class="col-12 col-md-4">
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
         <span class="text-secondary small">Precio Base:</span>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioBase) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -55,9 +54,9 @@
           <option value="RETOQUE">Retoque</option>
           <option value="COVER">Cover</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioTipo) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
+
 
     <div class="col-12 col-md-4">
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
@@ -81,7 +80,6 @@
           <option value="NALGA">Nalga</option>
           <option value="CABEZA">Cabeza</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioZona || 0) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -89,13 +87,12 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
         <span class="text-secondary small">Tamaño:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.tamanio">
+                [(ngModel)]="cita.tamanio" >
           <option value="MINI">Mini</option>
           <option value="PEQUEÑO">Pequeño</option>
           <option value="MEDIANO">Mediano</option>
           <option value="GRANDE">Grande</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioTamanio || 0) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -108,7 +105,6 @@
           <option value="MEDIO">Medio</option>
           <option value="DENSO">Denso</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioDetalle || 0) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -116,11 +112,10 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
         <span class="text-secondary small">Coloración:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.coloracion" >
+                [(ngModel)]="cita.coloracion"  >
           <option value="NEGRO">Negro</option>
           <option value="COLOR">Color</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioColoracion || 0) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -137,7 +132,6 @@
           <option value="LETERING">Letering</option>
           <option value="JAPONES">Japones</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioEstilo || 0) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -200,8 +194,8 @@
                 <span class="badge bg-primary">{{cita.estadoPresupuesto}}</span>
               </div>
               <div>
-                <span class="text-secondary d-block small">Fecha Presupuesto:</span>
-                <span>{{cita.fechaPresupuesto | date:'dd/MM/yyyy'}}</span>
+                <span class="text-secondary d-block small">Fecha y Hora:</span>
+                <span>{{cita.fecha | date:'dd/MM/yyyy'}} {{cita.hora}}</span>
               </div>
             </div>
         </div>

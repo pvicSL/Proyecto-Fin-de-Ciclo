@@ -113,6 +113,33 @@ export const routes: Routes = [
           }
         ]
       },
+      {
+        path: 'ajustes',
+        loadComponent: () => import('./pages/admin/adminsettings/adminsettings').then(m => m.Adminsettings),
+        data: {title: 'Ajustes', icon: 'bi bi-gear-wide-connected'},
+
+        children: [
+          { path: '', redirectTo: 'admin', pathMatch: 'full' },
+
+          {
+            path: 'admin',
+            loadComponent: () => import('./pages/admin/adminsettings/admin-settings/admin-settings').then(m => m.AdminSettings),
+            data: {title: 'Ajustes > Administrador', icon: 'bi bi-gear-wide-connected'}
+          },
+          {
+            path: 'servicios',
+            loadComponent: () => import('./pages/admin/adminsettings/services-settings/services-settings').then(m => m.ServicesSettings),
+            data: {title: 'Ajustes > Servicios', icon: 'bi bi-gear-wide-connected'}
+          },
+          {
+            path: 'precios',
+            loadComponent: () => import('./pages/admin/adminsettings/prices-settings/prices-settings').then(m => m.PricesSettings),
+            data: {title: 'Ajustes > Precios', icon: 'bi bi-gear-wide-connected'}
+          },
+          
+        ]
+
+      },
 
       // Comodín Específico de ADMIN -> lleva a /admin/citas
       { path: '**', redirectTo: 'citas' }

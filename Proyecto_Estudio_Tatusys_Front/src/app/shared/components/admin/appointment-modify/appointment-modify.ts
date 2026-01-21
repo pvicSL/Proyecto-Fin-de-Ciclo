@@ -56,6 +56,42 @@ export class AppointmentModify implements OnInit {
     });
   }
 
+  /*
+
+  actualizarCalculos() {
+    if (!this.cita || !this.precio) return;
+
+    // 1. Precio Base del servicio
+    const base = this.precio.precioBase || 0;
+
+    // 2. Precio por Tamaño (Normalizamos la key: 'PEQUEÑO' -> 'pequeno')
+    const keyTamanio = this.cita.tamanio;
+    const precioTamanio = (this.precio.precioTamanio as any)[keyTamanio] || 0;
+
+    // 3. Precio por Detalle
+    const keyDetalle = this.cita.detalle;
+    const precioDetalle = (this.precio.precioDetalle as any)[keyDetalle] || 0;
+    
+    const keyEstilo = this.cita.estilo;
+    const precioEstilo = (this.precio.precioEstilo as any)[keyEstilo] || 0;
+
+    const keyColoracion = this.cita.coloracion;
+    const precioColoracion = (this.precio.precioColoracion as any)[keyColoracion] || 0;
+
+    const keyTipo = this.cita.tipo;
+    const precioTipo = (this.precio.precioTipo as any)[keyTipo] || 0;
+
+    const keyZona = this.cita.zona;
+    const precioZona = (this.precio.precioZona as any)[keyZona] || 0;
+
+
+    // 5. Totales
+    this.cita.precioBase = base + precioTamanio + precioDetalle + precioEstilo + precioColoracion + precioTipo + precioZona;
+    this.cita.iva = this.cita.precioBase * 0.21;
+    this.cita.precioFinal = this.cita.precioBase + this.cita.iva;
+  }
+    */
+
   // Si pulsa la 'X' o cerrar sin guardar
   cerrarDetalle() {
     // Restauramos el original antes de volver atrás para limpiar la memoria
@@ -81,7 +117,6 @@ export class AppointmentModify implements OnInit {
       });
   }
 }
-
 
 
   

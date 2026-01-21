@@ -40,10 +40,15 @@ export class AppointmentDetails implements OnInit {
     base: this.appointmentService.getAppointment(id)
   }).subscribe({
     next: (respuestas) => {
-      // Asignamos cada JSON a su variable correspondiente
-      this.cita = respuestas.admin;
-      this.precio = respuestas.precios;
-      this.citaDTO = respuestas.base;
+      // 1. Extraemos el objeto (por si viene como array)
+        const datosAdmin = Array.isArray(respuestas.admin) ? respuestas.admin[0] : respuestas.admin;
+        
+        // 2. Asignamos a la vista
+        this.cita = datosAdmin;
+        this.precio = respuestas.precios;
+        this.citaDTO = respuestas.base;
+
+        console.log('Datos Admin procesados:', this.cita);
 
       console.log('1. Datos Admin:', this.cita);
       console.log('2. Datos Precios:', this.precio);

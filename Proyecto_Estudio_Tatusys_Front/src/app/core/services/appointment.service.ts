@@ -137,10 +137,18 @@ export class AppointmentService {
     // 5. MÉTODOS AUXILIARES / ADMIN
     // ==========================================
 
+    vista: 'dia' | 'semana' = 'dia';
+    fechaActual: Date = new Date();
+    paginaActual: number = 1;
+
     getConfirmedAppointments(fecha: string, vista: string): Observable<AppointmentDTO[]> {
         return this.http.get<AppointmentDTO[]>(`${this.apiUrl}/buscar/confirmadas/${fecha}/${vista}`, {
             params: { fecha, vista }
         });
+    }
+
+    getNumberConfirmedAppointments(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/buscar/confirmadas`);
     }
 
     getRequests(): Observable<any[]> {
