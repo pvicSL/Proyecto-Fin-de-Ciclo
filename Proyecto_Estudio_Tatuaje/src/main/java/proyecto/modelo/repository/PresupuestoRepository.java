@@ -1,5 +1,6 @@
 package proyecto.modelo.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +20,7 @@ public interface PresupuestoRepository extends JpaRepository<Presupuesto, Intege
 		List<CitaDTO> findByEstadoPresupuesto(@Param("estadoPresupuesto") Estado estadoPresupuesto);
 
 	Optional<Presupuesto> findByIdServicio(int idServicio);
+	
+	List<Presupuesto> findByEstadoAndFechaBefore(Estado estado, LocalDateTime fecha);
+	void deleteByEstadoAndFechaBefore(Estado estado, LocalDateTime fecha);
 }

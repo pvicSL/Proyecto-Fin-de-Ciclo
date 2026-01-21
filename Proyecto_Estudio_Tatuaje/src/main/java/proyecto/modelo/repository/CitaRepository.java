@@ -23,7 +23,8 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
     
     List<CitaDTO> findByEstatus(Estatus estatus);
 
-	
+    void deleteByIdCitaIn(List<Integer> ids);
+    
 	Optional<Cita> findByReferenciaAndClienteEmail(String referencia, String email);
 	
 	boolean existsByReferencia(String referencia);
