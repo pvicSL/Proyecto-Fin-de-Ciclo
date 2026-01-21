@@ -178,11 +178,26 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		Integer duracion = calcularDuracion(cita);
 		cita.setDuracionMinutos(duracion);
 
-		//4. NUEVO: ASIGNACIÓN DE TRABAJADOR (Si no viene del front, lo calculamos aquí por seguridad)
-        if (cita.getTrabajador() == null) {
-             Trabajador trabajadorAsignado = seleccionarTrabajadorAutomatico(cita.getTipo(), cita.getEstilo());
-             cita.setTrabajador(trabajadorAsignado);
-        }
+	    // 4. ASIGNACIÓN DE TRABAJADOR BLINDADA
+	    Trabajador trabajadorFinal = null;
+
+	    // CASO A: El Frontend nos envía una sugerencia (ej: idTrabajador=2)
+	    if (cita.getTrabajador() != null && cita.getTrabajador().getIdTrabajador() > 0) {
+	        // IMPORTANTE: Buscamos el objeto REAL en BBDD. 
+	        // No confiamos en el objeto "hueco" que viene del JSON.
+	        trabajadorFinal = trabajadorRepository.findById(cita.getTrabajador().getIdTrabajador())
+	                .orElse(null);
+	    }
+
+	    // CASO B: Si no venía nada o el ID enviado no existe -> Asignación Automática
+	    if (trabajadorFinal == null) {
+	        trabajadorFinal = seleccionarTrabajadorAutomatico(cita.getTipo(), cita.getEstilo());
+	    }
+
+	    // Asignamos el trabajador real y gestionado por Hibernate
+	    cita.setTrabajador(trabajadorFinal);
+
+
 
         // 5. GUARDAR CITA
         Cita citaGuardada = citaRepository.save(cita);
