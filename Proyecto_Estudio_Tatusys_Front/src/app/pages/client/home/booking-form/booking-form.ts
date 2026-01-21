@@ -321,14 +321,49 @@ export class BookingFormComponent implements OnInit {
   }
 
   onFileChange(event: any) {
-    const files = event.target.files;
+    const element = event.target as HTMLInputElement;
+    const files = element.files;
+
+    if (!files) return;
+
+    // 1. VALIDACIÓN DE CANTIDAD (Máx 3)
     if (files.length > 3) {
-      alert('Máximo de 3 imágenes.');
-      event.target.value = '';
+      alert('Solo puedes subir un máximo de 3 imágenes.');
+      element.value = ''; // Limpiar input
       this.selectedFiles = [];
       return;
     }
-    this.selectedFiles = Array.from(files);
+
+    const validFiles: File[] = [];
+    const MAX_SIZE_MB = 5;
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+    // 2. ITERAR Y VALIDAR CADA FICHERO
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // A. Validar Tipo
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        alert(`El archivo "${file.name}" no es válido. Solo se permiten JPG, PNG, GIF o WEBP.`);
+        element.value = '';
+        this.selectedFiles = [];
+        return;
+      }
+
+      // B. Validar Tamaño
+      if (file.size > MAX_SIZE_BYTES) {
+        alert(`El archivo "${file.name}" es demasiado grande. El máximo es ${MAX_SIZE_MB}MB.`);
+        element.value = '';
+        this.selectedFiles = [];
+        return;
+      }
+
+      validFiles.push(file);
+    }
+
+    // Si todo está bien, guardamos
+    this.selectedFiles = validFiles;
   }
 
   resetForm() {
@@ -343,6 +378,12 @@ export class BookingFormComponent implements OnInit {
     // Limpiar input file manualmente
     const fileInput = document.getElementById('references') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
+  }
+
+  // Acción combinada para el botón CANCELAR
+  cancelForm() {
+    this.resetForm();       // 1. Borra todos los datos (inputs, archivos, calendario...)
+    this.isFormOpen = false; // 2. Cierra el formulario
   }
 
   // =====================================
