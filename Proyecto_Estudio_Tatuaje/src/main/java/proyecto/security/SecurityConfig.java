@@ -32,11 +32,12 @@ public class SecurityConfig {
             		.requestMatchers("/**").permitAll()
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/index.html").permitAll()
-                .requestMatchers("/api/citas/**").permitAll()           // ← Ya existía
-                .requestMatchers("/presupuesto_nuevo").permitAll()      // ← AÑADIR ESTA LÍNEA
+                .requestMatchers("/api/citas/**").permitAll()           
+                .requestMatchers("/presupuesto_nuevo").permitAll() 
                 .requestMatchers("/api/**").permitAll()  // ← Cambiar para cubrir todo /api/
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/trabajador/**").hasAnyRole("ADMIN", "TRABAJADOR")
+                .requestMatchers("/uploads/**").permitAll() 
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

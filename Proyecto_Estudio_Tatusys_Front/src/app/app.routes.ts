@@ -18,6 +18,11 @@ export const routes: Routes = [
       { path: '', component: HomeComponent },
       // Aquí podrías añadir más rutas públicas en el futuro
 
+      {
+        path: 'terminos',
+        loadComponent: () => import('./pages/client/terms/terms').then(m => m.TermsComponent)
+      },
+
     ]
   },
 
@@ -36,20 +41,20 @@ export const routes: Routes = [
         path: 'citas',
         loadComponent: () => import('./pages/admin/dashboard-home/dashboard-home').then(m => m.DashboardHome),
         children: [
-          { 
+          {
             path: '',
             loadComponent: () => import('./pages/admin/dashboard-home/appointments/appointments').then(m => m.Appointments),
-            data: {title: 'Citas', icon: 'bi-house-door'}
+            data: { title: 'Citas', icon: 'bi-house-door' }
           },
-          { 
+          {
             path: 'detalleCitaConfirmada/:id',
             loadComponent: () => import('./pages/admin/dashboard-home/appointment-detail/appointment-detail').then(m => m.AppointmentDetail),
-            data: {title: 'Home > Detalle Cita Confirmada'}
+            data: { title: 'Home > Detalle Cita Confirmada' }
           },
           {
             path: 'confirmarPresupuesto/:id',
             loadComponent: () => import('./pages/admin/dashboard-home/appointment-confirm/appointment-confirm').then(m => m.AppointmentConfirm),
-            data: {title: 'Home > Confirmar Presupuesto'}
+            data: { title: 'Home > Confirmar Presupuesto' }
           }
         ]
       },
@@ -61,55 +66,55 @@ export const routes: Routes = [
         children: [
           { path: '', redirectTo: 'pendientes', pathMatch: 'full' },
           {
-            path: 'pendientes', 
-            loadComponent: () => import('./pages/admin/requests/pending-requests/pending-requests').then(m => m.PendingRequests), 
-            data: {title: 'Solicitudes > Pendientes', icon: 'bi-envelope'}
+            path: 'pendientes',
+            loadComponent: () => import('./pages/admin/requests/pending-requests/pending-requests').then(m => m.PendingRequests),
+            data: { title: 'Solicitudes > Pendientes', icon: 'bi-envelope' }
           },
           {
-            path: 'revisadas', 
-            loadComponent: () => import('./pages/admin/requests/reviewed-requests/reviewed-requests').then(m => m.ReviewedRequests), 
-            data: {title: 'Solicitudes > Revisadas', icon: 'bi-envelope'}
+            path: 'revisadas',
+            loadComponent: () => import('./pages/admin/requests/reviewed-requests/reviewed-requests').then(m => m.ReviewedRequests),
+            data: { title: 'Solicitudes > Revisadas', icon: 'bi-envelope' }
           },
           {
-            path: 'revisadas/detalle/:id', 
-            loadComponent: () => import('./pages/admin/requests/reviewed-requests-detail/reviewed-requests-detail').then(m => m.ReviewedRequestsDetail), 
-            data: {title: 'Solicitudes > Revisadas > Detalle', icon: 'bi-envelope'}
+            path: 'revisadas/detalle/:id',
+            loadComponent: () => import('./pages/admin/requests/reviewed-requests-detail/reviewed-requests-detail').then(m => m.ReviewedRequestsDetail),
+            data: { title: 'Solicitudes > Revisadas > Detalle', icon: 'bi-envelope' }
           },
           {
-            path: 'pendientes/revisar/:id', 
-            loadComponent: () => import('./pages/admin/requests/generate-budget/generate-budget').then(m => m.GenerateBudget), 
-            data: {title: 'Solicitudes > Pendientes > Revisar', icon: 'bi-envelope'}
+            path: 'pendientes/revisar/:id',
+            loadComponent: () => import('./pages/admin/requests/generate-budget/generate-budget').then(m => m.GenerateBudget),
+            data: { title: 'Solicitudes > Pendientes > Revisar', icon: 'bi-envelope' }
           }
         ]
       },
 
       {
-        path: 'trabajadores', 
-        loadComponent: () => import('./pages/admin/staff/staff').then(m => m.Staff), 
-        data: {title: 'Trabajadores', icon: 'bi-people'},
+        path: 'trabajadores',
+        loadComponent: () => import('./pages/admin/staff/staff').then(m => m.Staff),
+        data: { title: 'Trabajadores', icon: 'bi-people' },
 
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
 
           {
-            path: 'lista', 
-            loadComponent: () => import('./pages/admin/staff/list-staff/list-staff').then(m => m.ListStaff), 
-            data: {title: 'Trabajadores', icon: 'bi-people'}
+            path: 'lista',
+            loadComponent: () => import('./pages/admin/staff/list-staff/list-staff').then(m => m.ListStaff),
+            data: { title: 'Trabajadores', icon: 'bi-people' }
           },
           {
-            path: 'editar/:id', 
-            loadComponent: () => import('./pages/admin/staff/edit-staff/edit-staff').then(m => m.EditStaff), 
-            data: {title: 'Trabajadores > Editar', icon: 'bi-people'}
+            path: 'editar/:id',
+            loadComponent: () => import('./pages/admin/staff/edit-staff/edit-staff').then(m => m.EditStaff),
+            data: { title: 'Trabajadores > Editar', icon: 'bi-people' }
           },
           {
-            path: 'eliminar/:id', 
-            loadComponent: () => import('./pages/admin/staff/delete-staff/delete-staff').then(m => m.DeleteStaff), 
-            data: {title: 'Trabajadores > Eliminar', icon: 'bi-people'}
+            path: 'eliminar/:id',
+            loadComponent: () => import('./pages/admin/staff/delete-staff/delete-staff').then(m => m.DeleteStaff),
+            data: { title: 'Trabajadores > Eliminar', icon: 'bi-people' }
           },
           {
-            path: 'alta', 
-            loadComponent: () => import('./pages/admin/staff/new-staff/new-staff').then(m => m.NewStaff), 
-            data: {title: 'Trabajadores > Alta', icon: 'bi-people'}
+            path: 'alta',
+            loadComponent: () => import('./pages/admin/staff/new-staff/new-staff').then(m => m.NewStaff),
+            data: { title: 'Trabajadores > Alta', icon: 'bi-people' }
           }
         ]
       },

@@ -69,13 +69,16 @@ export class AppointmentService {
      * Ya no usamos el ID numérico en la URL para evitar borrados accidentales/maliciosos.
      */
     cancelAppointment(referencia: string, email: string): Observable<any> {
-        // Preparamos los parámetros ?ref=...&email=...
         const params = new HttpParams()
             .set('ref', referencia)
             .set('email', email);
 
-        // CORRECCIÓN: Apuntamos a '/cancelar-conreferencia'
-        return this.http.delete(`${this.apiUrl}/cancelar-conreferencia`, { params });
+        // AÑADIR: responseType: 'text' as 'json'
+        // Esto fuerza a Angular a tratar la respuesta como un string simple
+        return this.http.delete(`${this.apiUrl}/cancelar-conreferencia`, {
+            params,
+            responseType: 'text' as 'json'
+        });
     }
 
     // ==========================================

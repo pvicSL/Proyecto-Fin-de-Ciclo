@@ -27,13 +27,12 @@ import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
-import proyecto.modelo.entities.Precio;
 import proyecto.modelo.entities.Presupuesto;
 import proyecto.modelo.entities.Trabajador;
-import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Coloracion;
 import proyecto.modelo.enums.Detalle;
 import proyecto.modelo.enums.Estado;
+import proyecto.modelo.enums.EstadoFactura;
 import proyecto.modelo.enums.Estatus;
 import proyecto.modelo.enums.Estilo;
 import proyecto.modelo.enums.Funciones;
@@ -178,11 +177,26 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		Integer duracion = calcularDuracion(cita);
 		cita.setDuracionMinutos(duracion);
 
-		//4. NUEVO: ASIGNACIÓN DE TRABAJADOR (Si no viene del front, lo calculamos aquí por seguridad)
-        if (cita.getTrabajador() == null) {
-             Trabajador trabajadorAsignado = seleccionarTrabajadorAutomatico(cita.getTipo(), cita.getEstilo());
-             cita.setTrabajador(trabajadorAsignado);
-        }
+	    // 4. ASIGNACIÓN DE TRABAJADOR BLINDADA
+	    Trabajador trabajadorFinal = null;
+
+	    // CASO A: El Frontend nos envía una sugerencia (ej: idTrabajador=2)
+	    if (cita.getTrabajador() != null && cita.getTrabajador().getIdTrabajador() > 0) {
+	        // IMPORTANTE: Buscamos el objeto REAL en BBDD. 
+	        // No confiamos en el objeto "hueco" que viene del JSON.
+	        trabajadorFinal = trabajadorRepository.findById(cita.getTrabajador().getIdTrabajador())
+	                .orElse(null);
+	    }
+
+	    // CASO B: Si no venía nada o el ID enviado no existe -> Asignación Automática
+	    if (trabajadorFinal == null) {
+	        trabajadorFinal = seleccionarTrabajadorAutomatico(cita.getTipo(), cita.getEstilo());
+	    }
+
+	    // Asignamos el trabajador real y gestionado por Hibernate
+	    cita.setTrabajador(trabajadorFinal);
+
+
 
         // 5. GUARDAR CITA
         Cita citaGuardada = citaRepository.save(cita);
@@ -245,31 +259,52 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 
 
 	// --- MÉTODO AUXILIAR PARA GUARDAR EN DISCO ---
-	private String guardarArchivo(MultipartFile archivo) throws IOException {
-		// Nombre carpeta donde se guardan (Créala en la raíz de tu proyecto o usa ruta
-		// absoluta)
-		String carpetaUploads = "uploads";
+    private String guardarArchivo(MultipartFile archivo) throws IOException {
+        // 1. VALIDACIÓN DE TIPO DE ARCHIVO
+        String contentType = archivo.getContentType();
+        if (!esFormatoPermitido(contentType)) {
+            throw new IllegalArgumentException("Formato de archivo no permitido. Solo se permiten: JPG, PNG, GIF, WEBP");
+        }
+        
+        // 2. VALIDACIÓN DE TAMAÑO (5MB máximo)
+        if (archivo.getSize() > 5 * 1024 * 1024) {
+            throw new IllegalArgumentException("El archivo excede el tamaño máximo permitido (5MB)");
+        }
+        
+        // 3. VALIDACIÓN DE NOMBRE DE ARCHIVO
+        String nombreOriginal = archivo.getOriginalFilename();
+        if (nombreOriginal == null || nombreOriginal.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nombre de archivo no válido");
+        }
+        
+        // Tu código existente continúa...
+        String carpetaUploads = "uploads";
+        Path rutaCarpeta = Paths.get(carpetaUploads);
+        if (!Files.exists(rutaCarpeta)) {
+            Files.createDirectories(rutaCarpeta);
+        }
 
-		// Creamos la carpeta si no existe
-		Path rutaCarpeta = Paths.get(carpetaUploads);
-		if (!Files.exists(rutaCarpeta)) {
-			Files.createDirectories(rutaCarpeta);
-		}
+        String extension = "";
+        if (nombreOriginal.contains(".")) {
+            extension = nombreOriginal.substring(nombreOriginal.lastIndexOf("."));
+        }
+        String nombreUnico = UUID.randomUUID().toString() + extension;
 
-		// Generamos nombre único para evitar que "foto.jpg" sobrescriba otra "foto.jpg"
-		String nombreOriginal = archivo.getOriginalFilename();
-		String extension = "";
-		if (nombreOriginal != null && nombreOriginal.contains(".")) {
-			extension = nombreOriginal.substring(nombreOriginal.lastIndexOf("."));
-		}
-		String nombreUnico = UUID.randomUUID().toString() + extension;
+        Path rutaCompleta = rutaCarpeta.resolve(nombreUnico);
+        Files.copy(archivo.getInputStream(), rutaCompleta);
 
-		// Guardamos el fichero
-		Path rutaCompleta = rutaCarpeta.resolve(nombreUnico);
-		Files.copy(archivo.getInputStream(), rutaCompleta);
+        return nombreUnico;
+    }
 
-		return nombreUnico; // Devolvemos el nombre para guardarlo en la BBDD
-	}
+    private boolean esFormatoPermitido(String contentType) {
+        return contentType != null && (
+            contentType.equals("image/jpeg") ||
+            contentType.equals("image/jpg") ||
+            contentType.equals("image/png") ||
+            contentType.equals("image/gif") ||
+            contentType.equals("image/webp")
+        );
+    }
 
 
 	@Override
@@ -342,51 +377,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		return null;
 	}
 
-	/*@Override
-	public Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos) {
-		Map<String, List<String>> calendario = new LinkedHashMap<>();
 
-		// CONFIGURACIÓN DEL ESTUDIO (Ajustar según necesidad)
-		LocalTime horaApertura = LocalTime.of(10, 0);
-		LocalTime horaCierre = LocalTime.of(20, 0);
-		int intervaloMinutos = 30; // Saltos del selector de hora
-
-		LocalDate diaActual = LocalDate.now().plusDays(1); // Empezamos a buscar desde mañana
-
-		// Revisamos los próximos 7 días
-		// CAMBIADO A 30 DÍAS, HABRÁ QUE DECIDIR A CUÁNTOS MESES VISTA
-		// TIENEN ABIERTA LA AGENDA DE CITAS EN EL ESTUDIO.
-		for (int i = 0; i < 30; i++) {
-			LocalDate fechaRevision = diaActual.plusDays(i);
-			List<String> huecosDia = new ArrayList<>();
-
-			// 1. Obtenemos las citas que YA existen ese día
-			List<Cita> citasOcupadas = citaRepository.findByFecha(fechaRevision);
-
-			// 2. Iteramos desde la apertura hasta el cierre
-			LocalTime horaIteracion = horaApertura;
-
-			// El bucle termina cuando la hora + duración supera el cierre
-			while (horaIteracion.plusMinutes(duracionMinutos).isBefore(horaCierre)
-					|| horaIteracion.plusMinutes(duracionMinutos).equals(horaCierre)) {
-
-				// Verificamos si este hueco choca con alguna cita existente
-				if (esHuecoLibre(horaIteracion, duracionMinutos, citasOcupadas)) {
-					huecosDia.add(horaIteracion.format(DateTimeFormatter.ofPattern("HH:mm")));
-				}
-
-				// Saltamos al siguiente intervalo
-				horaIteracion = horaIteracion.plusMinutes(intervaloMinutos);
-			}
-
-			// Si hay huecos, los guardamos en el mapa con la fecha como clave
-			if (!huecosDia.isEmpty()) {
-				calendario.put(fechaRevision.toString(), huecosDia);
-			}
-		}
-
-		return calendario;
-	}*/
 	
 	@Override
     public Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos, int idTrabajador) {
@@ -519,6 +510,10 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    cita.setImagenRef1(citaEditada.getImagenRef1());
 	    cita.setImagenRef2(citaEditada.getImagenRef2());
 	    cita.setImagenRef3(citaEditada.getImagenRef3());
+	 // Solo actualizar estado de facturación si es la primera vez (null)
+	    if (cita.getEstadoFactura() == null) {
+	        cita.setEstadoFactura(cita.getFactura() ? EstadoFactura.PENDIENTE : EstadoFactura.NO_REQUIERE);
+	    }
 	    
 	    // 3. ACTUALIZAR CAMPOS DEL CLIENTE
 	    Cliente cliente = cita.getCliente();
@@ -543,7 +538,13 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	        presupuestoExistente.setprecioSinIva(valores[0]);
 	        presupuestoExistente.setIva(valores[1]);
 	        presupuestoExistente.setPrecioFinal(valores[2]);
-	        presupuestoExistente.setEstado(Estado.GENERADO);
+	        if (presupuestoExistente.getEstado() == Estado.PENDIENTE) {
+	            presupuestoExistente.setEstado(Estado.GENERADO);  // Primera vez
+	        } else if (presupuestoExistente.getEstado() == Estado.GENERADO) {
+	            presupuestoExistente.setEstado(Estado.GENERADO);  // Mantener mientras se edita
+	        } else if (presupuestoExistente.getEstado() == Estado.ACEPTADO) {
+	            presupuestoExistente.setEstado(Estado.ACEPTADO);  // Mantener si ya fue aceptado
+	        }
 	        presupuestoExistente.setComentarios(citaEditada.getPresupuestoComentarios());
 	        presupuestoRepository.save(presupuestoExistente);
 	    } else {
@@ -631,10 +632,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
     }
     
 
-    private Precio encontrarPorCategoriaValor(CategoriaEnum categoria, String valor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+ 
 
 	@Override
     public String asignarTrabajador(int citaId, int trabajadorId) {
@@ -788,6 +786,30 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    presupuestoRepository.save(presupuesto);
 	}
 
+	@Override
+	public String finalizarPresupuesto(Cita cita) {
+	    // Buscar presupuesto por ID de cita
+	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(cita.getIdCita());
+
+	    // Si no existe, lanzar excepción
+	    if (!presupuestoOpt.isPresent()) {
+	        throw new IllegalArgumentException("No se encontró presupuesto para la cita con ID: " + cita.getIdCita());
+	    }
+
+	    Presupuesto presupuesto = presupuestoOpt.get();
+
+	    // Validar que esté en estado ACEPTADO
+	    if (presupuesto.getEstado() != Estado.ACEPTADO) {
+	        throw new IllegalStateException("El presupuesto debe estar en estado ACEPTADO para poder ser finalizado. Estado actual: " + presupuesto.getEstado());
+	    }
+
+	    // Cambiar estado y vigencia
+	    presupuesto.setEstado(Estado.FINALIZADO);
+	    presupuesto.setVigente(false);
+	    presupuestoRepository.save(presupuesto);
+	    
+	    return "Presupuesto finalizado correctamente";
+	}
 
 
 

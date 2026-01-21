@@ -78,6 +78,7 @@ CREATE TABLE servicios (
     id_cliente INTEGER NOT NULL,
     id_trabajador INT DEFAULT NULL,
     factura BOOLEAN NOT NULL,
+    estado_factura ENUM('NO_REQUIERE', 'PENDIENTE', 'ENVIADA') NULL,
     estatus ENUM('PENDIENTE', 'CONFIRMADO'),
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
     FOREIGN KEY (id_trabajador) REFERENCES trabajadores(id_trabajador),
@@ -97,9 +98,9 @@ CREATE TABLE presupuestos (
     precio_final DECIMAL(8,2) NOT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     vigente BOOLEAN NOT NULL,
-    estado ENUM('PENDIENTE', 'GENERADO', 'ACEPTADO', 'RECHAZADO') NOT NULL,
+    estado ENUM('PENDIENTE', 'GENERADO', 'ACEPTADO', 'RECHAZADO', 'FINALIZADO') NOT NULL,
     comentarios VARCHAR(200),
-    FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio) ON DELETE CASCADE
+    FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio)
 );
 
 -- =====================================================

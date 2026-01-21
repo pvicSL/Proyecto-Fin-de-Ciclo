@@ -104,14 +104,18 @@ export class AppointmentModifierComponent {
   startModification() {
     if (!this.currentAppointment) return;
 
-    // IMPORTANTE: Al modificar, mantenemos el trabajador original asignado.
-    // Necesitamos su ID para buscar huecos en SU agenda, no en la de otro.
-    // Si viene dentro de un objeto anidado, se ajustaría a: this.currentAppointment.trabajador.idTrabajador
+    // Recuperamos el ID del trabajador (asegurándonos de que existe)
     const workerId = this.currentAppointment.idTrabajador;
+
+    // PROTECCIÓN: Si es una cita antigua sin trabajador asignado
+    if (!workerId) {
+      alert("Esta cita es antigua y no tiene un tatuador asignado. Por favor, contacta con el estudio para modificarla manualmente.");
+      return;
+    }
 
     console.log(`Buscando huecos para trabajador ${workerId} con duración ${this.calculatedDuration} min`);
 
-    // Llamamos al servicio pasando duración de la cita y la Id del trabajador
+    // Llamamos al servicio (ahora seguro que workerId tiene valor)
     this.appointmentService.getAvailableSlots(this.calculatedDuration, workerId).subscribe({
       next: (dataBackend) => {
         this.allDays = this.generateCalendarGrid(dataBackend);
