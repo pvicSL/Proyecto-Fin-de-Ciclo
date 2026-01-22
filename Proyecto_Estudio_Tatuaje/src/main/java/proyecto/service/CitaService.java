@@ -74,6 +74,7 @@ public interface CitaService {
 
 	String finalizarPresupuesto(Cita cita);
 	
-
+	// Listar citas de un trabajador específico como DTOs
+	List<CitaDTO> listarCitasDelTrabajador(Integer idTrabajador);
 
 }

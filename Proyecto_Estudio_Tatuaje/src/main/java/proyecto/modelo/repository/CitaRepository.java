@@ -52,6 +52,8 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
 
 	List<Cita> findByTrabajadorIdTrabajadorAndFecha(int idTrabajador, LocalDate fechaRevision);
 
+	// Buscar citas asignadas a un trabajador específico
+	List<Cita> findByTrabajador_IdTrabajador(Integer idTrabajador);
 	
 
 

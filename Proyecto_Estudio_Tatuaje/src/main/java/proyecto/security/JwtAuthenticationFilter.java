@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -14,6 +13,8 @@ import jakarta.servlet.ServletException;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
@@ -45,20 +46,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	            // 4. Validar token
 	            if (jwtService.esTokenValido(token)) {
 	                
-	                // 5. Extraer rol del token
-	                String role = jwtService.extraerRole(token);
-	                
-	                // 6. Crear autenticación para Spring Security
-	                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-	                    email, 
-	                    null, 
-	                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
-	                );
-	                
-	                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-	                
-	                // 7. Establecer autenticación en el contexto
-	                SecurityContextHolder.getContext().setAuthentication(authToken);
+	            	// 5. Extraer rol Y idTrabajador del token
+	            	String role = jwtService.extraerRole(token);
+	            	Integer idTrabajador = jwtService.extraerIdTrabajador(token);  // ← NUEVO
+
+	            	// 6. Crear autenticación para Spring Security
+	            	UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+	            	    email,
+	            	    null,
+	            	    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
+	            	);
+	            	//Añadir idTrabajador a los detalles
+	            	Map<String, Object> detallesExtra = new HashMap<>();
+	            	detallesExtra.put("idTrabajador", idTrabajador);
+	            	detallesExtra.put("rol", role);
+
+	            	authToken.setDetails(detallesExtra);
+
+	            	// 7. Establecer autenticación en el contexto
+	            	SecurityContextHolder.getContext().setAuthentication(authToken);
 	            }
 	        }
 	        

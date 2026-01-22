@@ -810,6 +810,15 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    
 	    return "Presupuesto finalizado correctamente";
 	}
+	
+	@Override
+	public List<CitaDTO> listarCitasDelTrabajador(Integer idTrabajador) {
+	    List<Cita> citas = citaRepository.findByTrabajador_IdTrabajador(idTrabajador);
+	    
+	    return citas.stream()
+	        .map(CitaDTO::new)  // Convierte Cita a CitaDTO
+	        .collect(Collectors.toList());
+	}
 
 
 

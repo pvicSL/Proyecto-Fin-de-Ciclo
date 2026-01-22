@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -19,15 +19,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.springframework.web.bind.annotation.RequestPart;
-
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.dto.CitaModificacionDTO;
@@ -41,7 +37,10 @@ import proyecto.modelo.enums.Estilo;
 import proyecto.modelo.enums.Tamanio;
 import proyecto.modelo.enums.Tipo;
 import proyecto.modelo.repository.CitaRepository;
+import proyecto.security.SecurityUtils;
 import proyecto.service.CitaService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/api/citas")
@@ -56,38 +55,125 @@ public class CitaRestController {
 	// NUEVO PARA IMG. REF.: Herramienta para convertir JSON String a Objeto Java
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private SecurityUtils securityUtils;
 
-	@GetMapping("/listarCitas")
-	public ResponseEntity<List<CitaDTO>> listarCitas() {
-		// Service ya devuelve DTOs directamente
-		List<CitaDTO> citasDTO = citaService.listarCitasDTO();
-		return ResponseEntity.ok(citasDTO);
-	}
+	@GetMapping("/listarCitas") //SEGURIDAD OK
+    public ResponseEntity<List<CitaDTO>> listarCitas() {
+        
+        // Si está autenticado, aplicar filtros por rol
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+            
+            if (securityUtils.esAdmin()) {
+                // Admin ve todas
+                List<CitaDTO> citasDTO = citaService.listarCitasDTO();
+                return ResponseEntity.ok(citasDTO);
+            } else {
+                // Trabajador ve solo las suyas
+                Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+                List<CitaDTO> citasDTO = citaService.listarCitasDelTrabajador(idTrabajador);
+                return ResponseEntity.ok(citasDTO);
+            }
+        }
+        
+        // Sin autenticación: comportamiento normal para testing
+        List<CitaDTO> citasDTO = citaService.listarCitasDTO();
+        return ResponseEntity.ok(citasDTO);
+    }
 
-	@GetMapping("/{idCita}")
+	@GetMapping("/{idCita}")	//SEGURIDAD OK
 	public ResponseEntity<CitaDTO> obtenerCita(@PathVariable int idCita) {
-		// Service maneja la conversión y validación
-		CitaDTO citaDTO = citaService.obtenerCitaDTOPorId(idCita);
-
-		if (citaDTO != null) {
-			return ResponseEntity.ok(citaDTO);
-		} else {
-			return ResponseEntity.notFound().build(); // 404 Not Found
-		}
+	    
+	    // Si está autenticado, aplicar filtros por rol
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+	        
+	        if (securityUtils.esAdmin()) {
+	            // Admin puede ver cualquier cita
+	            CitaDTO citaDTO = citaService.obtenerCitaDTOPorId(idCita);
+	            if (citaDTO != null) {
+	                return ResponseEntity.ok(citaDTO);
+	            } else {
+	                return ResponseEntity.notFound().build();
+	            }
+	        } else {
+	            // Trabajador: verificar que la cita le pertenece
+	            Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+	            CitaDTO citaDTO = citaService.obtenerCitaDTOPorId(idCita);
+	            
+	            if (citaDTO != null) {
+	                // Verificar si la cita pertenece al trabajador
+	                List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+	                boolean esSuya = susCitas.stream()
+	                    .anyMatch(suya -> suya.getIdCita() == idCita);
+	                
+	                if (esSuya) {
+	                    return ResponseEntity.ok(citaDTO);
+	                } else {
+	                    return ResponseEntity.notFound().build(); // No revelar que existe
+	                }
+	            } else {
+	                return ResponseEntity.notFound().build();
+	            }
+	        }
+	    }
+	    
+	    // Sin autenticación: comportamiento normal para testing
+	    CitaDTO citaDTO = citaService.obtenerCitaDTOPorId(idCita);
+	    if (citaDTO != null) {
+	        return ResponseEntity.ok(citaDTO);
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
 	}
 
-	@PutMapping("/actualizar/{idCita}")
+	@PutMapping("/actualizar/{idCita}")		//SEGURIDAD OK
 	public ResponseEntity<CitaDTO> actualizarCita(@PathVariable int idCita, @RequestBody Cita cita) {
-		
-		cita.setIdCita(idCita);
-
-		Cita citaActualizada = citaService.actualizarCita(cita);
-
-		if (citaActualizada != null) {
-			return ResponseEntity.ok(new CitaDTO(citaActualizada));
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+	    
+	    // Si está autenticado, aplicar filtros por rol
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+	        
+	        if (securityUtils.esAdmin()) {
+	            // Admin puede actualizar cualquier cita
+	            cita.setIdCita(idCita);
+	            Cita citaActualizada = citaService.actualizarCita(cita);
+	            if (citaActualizada != null) {
+	                return ResponseEntity.ok(new CitaDTO(citaActualizada));
+	            } else {
+	                return ResponseEntity.notFound().build();
+	            }
+	        } else {
+	            // Trabajador: verificar que la cita le pertenece
+	            Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+	            List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+	            boolean esSuya = susCitas.stream()
+	                .anyMatch(suya -> suya.getIdCita() == idCita);
+	            
+	            if (esSuya) {
+	                cita.setIdCita(idCita);
+	                Cita citaActualizada = citaService.actualizarCita(cita);
+	                if (citaActualizada != null) {
+	                    return ResponseEntity.ok(new CitaDTO(citaActualizada));
+	                } else {
+	                    return ResponseEntity.notFound().build();
+	                }
+	            } else {
+	                return ResponseEntity.notFound().build();
+	            }
+	        }
+	    }
+	    
+	    // Sin autenticación: comportamiento normal para testing
+	    cita.setIdCita(idCita);
+	    Cita citaActualizada = citaService.actualizarCita(cita);
+	    if (citaActualizada != null) {
+	        return ResponseEntity.ok(new CitaDTO(citaActualizada));
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
 	}
 
 	/*
@@ -100,6 +186,7 @@ public class CitaRestController {
 	 */
 
 	// --- METODO CREAR CITA MODIFICADO PARA SUBIDA DE ARCHIVOS ---
+			//SEGURIDAD OK
 	@PostMapping(value = "/crear-cita", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> crearCita(
 			// Recibimos los datos de la cita como un String JSON
@@ -125,8 +212,8 @@ public class CitaRestController {
 		}
 	}
 	// ------------------------------------------------------------
-
-	@GetMapping("/disponibilidad/{duracion}/{idTrabajador}")
+	
+	@GetMapping("/disponibilidad/{duracion}/{idTrabajador}")	//SEGURIDAD OK
 	public ResponseEntity<Map<String, List<String>>> obtenerDisponibilidad(
 	    @PathVariable int duracion, 
 	    @PathVariable int idTrabajador) {
@@ -135,102 +222,342 @@ public class CitaRestController {
 	    return ResponseEntity.ok(huecos);
 	}
 
-	@DeleteMapping("/eliminar/{idCita}")
+	@DeleteMapping("/eliminar/{idCita}")	//SEGURIDAD OK
 	public ResponseEntity<String> eliminarCita(@PathVariable int idCita) {
-		int resultado = citaService.eliminarCita(idCita);
-
-		if (resultado == 1) {
-			return ResponseEntity.ok("Cita eliminada correctamente");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la cita con ID: " + idCita);
-		}
+	    
+	    // Si está autenticado, aplicar filtros por rol
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+	        
+	        if (securityUtils.esAdmin()) {
+	            // Admin puede eliminar cualquier cita
+	            int resultado = citaService.eliminarCita(idCita);
+	            if (resultado == 1) {
+	                return ResponseEntity.ok("Cita eliminada correctamente");
+	            } else {
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la cita con ID: " + idCita);
+	            }
+	        } else {
+	            // Trabajador: verificar que la cita le pertenece antes de eliminar
+	            Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+	            List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+	            boolean esSuya = susCitas.stream()
+	                .anyMatch(suya -> suya.getIdCita() == idCita);
+	            
+	            if (esSuya) {
+	                int resultado = citaService.eliminarCita(idCita);
+	                if (resultado == 1) {
+	                    return ResponseEntity.ok("Cita eliminada correctamente");
+	                } else {
+	                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la cita con ID: " + idCita);
+	                }
+	            } else {
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la cita con ID: " + idCita);
+	            }
+	        }
+	    }
+	    
+	    // Sin autenticación: comportamiento normal para testing
+	    int resultado = citaService.eliminarCita(idCita);
+	    if (resultado == 1) {
+	        return ResponseEntity.ok("Cita eliminada correctamente");
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la cita con ID: " + idCita);
+	    }
 	}
 	
 	@GetMapping("/buscar/confirmadas/{fecha}/{vista}")
 	public ResponseEntity<List<CitaDTO>> obtenerPorRango(
-		@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha, 
-		@PathVariable String vista) {
+	    @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+	    @PathVariable String vista) {
 	    
+	    // Si está autenticado, aplicar filtros por rol
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+	        
+	        if (securityUtils.esAdmin()) {
+	            // Admin ve todas por rango
+	            return ResponseEntity.ok(citaService.obtenerPorRango(fecha, vista));
+	        } else {
+	            // Trabajador: filtrar solo las suyas del rango
+	            Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+	            List<CitaDTO> todasDelRango = citaService.obtenerPorRango(fecha, vista);
+	            List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+	            
+	            // Intersección: citas que están en el rango Y son suyas
+	            List<CitaDTO> susCitasDelRango = todasDelRango.stream()
+	                .filter(rango -> susCitas.stream()
+	                    .anyMatch(suya -> suya.getIdCita() == rango.getIdCita()))
+	                .collect(Collectors.toList());
+	                
+	            return ResponseEntity.ok(susCitasDelRango);
+	        }
+	    }
+	    
+	    // Sin autenticación: comportamiento normal
 	    return ResponseEntity.ok(citaService.obtenerPorRango(fecha, vista));
 	}
 	
-    @GetMapping("/buscar/confirmadas")
-    public ResponseEntity<?> obtenerCitasConfirmadas() {
-        List<CitaDTO> citas = citaService.obtenerPorEstatus(Estatus.CONFIRMADO);
-        
-        if (citas.isEmpty()) {
-            return ResponseEntity.ok(Map.of("mensaje", "No hay citas confirmadas"));
-        }
-        
-        return ResponseEntity.ok(citas);
-    }
+	@GetMapping("/buscar/confirmadas") //SEGURIDAD OK
+	public ResponseEntity<?> obtenerCitasConfirmadas() {
+	    List<CitaDTO> citas;
+	    
+	    // Si está autenticado, aplicar filtros por rol
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+	        
+	        if (securityUtils.esAdmin()) {
+	            // Admin ve todas las confirmadas
+	            citas = citaService.obtenerPorEstatus(Estatus.CONFIRMADO);
+	        } else {
+	            // Trabajador: obtener SUS citas y filtrar las confirmadas
+	            Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+	            List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+	            
+	            // Filtrar solo las confirmadas
+	            citas = susCitas.stream()
+	                .filter(cita -> "CONFIRMADO".equals(cita.getEstatus()))  // ← Filtro en Java
+	                .collect(Collectors.toList());
+	        }
+	    } else {
+	        // Sin autenticación: comportamiento normal
+	        citas = citaService.obtenerPorEstatus(Estatus.CONFIRMADO);
+	    }
+	    
+	    if (citas.isEmpty()) {
+	        return ResponseEntity.ok(Map.of("mensaje", "No hay citas confirmadas"));
+	    }
+	    return ResponseEntity.ok(citas);
+	}
     
-    @GetMapping("/buscar/pendientes")
-    public ResponseEntity<?> obtenerCitasPendientes() {
-        List<CitaDTO> citas = citaService.obtenerPorEstatus(Estatus.PENDIENTE);
-        
-        if (citas.isEmpty()) {
-            return ResponseEntity.ok(Map.of("mensaje", "No hay citas pendientes"));
-        }
-        
-        return ResponseEntity.ok(citas);
-    }
+	@GetMapping("/buscar/pendientes") //SEGURIDAD OK
+	public ResponseEntity<?> obtenerCitasPendientes() {
+	    List<CitaDTO> citas;
+	    
+	    // Si está autenticado, aplicar filtros por rol
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+	        
+	        if (securityUtils.esAdmin()) {
+	            // Admin ve todas las pendientes
+	            citas = citaService.obtenerPorEstatus(Estatus.PENDIENTE);
+	        } else {
+	            // Trabajador: obtener SUS citas y filtrar las pendientes
+	            Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+	            List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+	            
+	            // Filtrar solo las pendientes
+	            citas = susCitas.stream()
+	                .filter(cita -> "PENDIENTE".equals(cita.getEstatus()))
+	                .collect(Collectors.toList());
+	        }
+	    } else {
+	        // Sin autenticación: comportamiento normal
+	        citas = citaService.obtenerPorEstatus(Estatus.PENDIENTE);
+	    }
+	    
+	    if (citas.isEmpty()) {
+	        return ResponseEntity.ok(Map.of("mensaje", "No hay citas pendientes"));
+	    }
+	    return ResponseEntity.ok(citas);
+	}
     
-    @GetMapping("/detalles-completos/{id}")
-    public ResponseEntity<?> obtenerDetallesCita(@PathVariable int id) {
-        CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
-        
-        if (citaCompleta != null) {
-            return ResponseEntity.ok(citaCompleta);
-        } else {
-            return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
-        }
-    }
+	@GetMapping("/detalles-completos/{id}") //SEGURIDAD OK
+	public ResponseEntity<?> obtenerDetallesCita(@PathVariable int id) {
+	    
+	    // Si está autenticado, aplicar filtros por rol
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+	        
+	        if (securityUtils.esAdmin()) {
+	            // Admin puede ver detalles de cualquier cita
+	            CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+	            if (citaCompleta != null) {
+	                return ResponseEntity.ok(citaCompleta);
+	            } else {
+	                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+	            }
+	        } else {
+	            // Trabajador: verificar que la cita le pertenece
+	            Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+	            List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+	            boolean esSuya = susCitas.stream()
+	                .anyMatch(suya -> suya.getIdCita() == id);
+	            
+	            if (esSuya) {
+	                CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+	                if (citaCompleta != null) {
+	                    return ResponseEntity.ok(citaCompleta);
+	                } else {
+	                    return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+	                }
+	            } else {
+	                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+	            }
+	        }
+	    }
+	    
+	    // Sin autenticación: comportamiento normal para testing
+	    CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+	    if (citaCompleta != null) {
+	        return ResponseEntity.ok(citaCompleta);
+	    } else {
+	        return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+	    }
+	}
 	
-    @PutMapping("/detalles-completos-modificar/{id}")
-    public ResponseEntity<?> actualizarCitaCompleta(@PathVariable int id, @RequestBody CitaCompletaDTO citaEditada) {
-        CitaCompletaDTO citaActualizada = citaService.actualizarCitaCompleta(id, citaEditada);
-        
-        if (citaActualizada != null) {
-            Map<String, Object> respuesta = new HashMap<>();
-            respuesta.put("mensaje", "Cita actualizada correctamente y presupuesto recalculado");
-            respuesta.put("cita", citaActualizada);
-            return ResponseEntity.ok(respuesta);
-        } else {
-            return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
-        }
-    }
+	@PutMapping("/detalles-completos-modificar/{id}")	//SEGURIDAD OK
+	public ResponseEntity<?> actualizarCitaCompleta(@PathVariable int id, @RequestBody CitaCompletaDTO citaEditada) {
+	    
+	    // Si está autenticado, aplicar filtros por rol
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+	        
+	        if (securityUtils.esAdmin()) {
+	            // Admin puede modificar cualquier cita
+	            CitaCompletaDTO citaActualizada = citaService.actualizarCitaCompleta(id, citaEditada);
+	            if (citaActualizada != null) {
+	                Map<String, Object> respuesta = new HashMap<>();
+	                respuesta.put("mensaje", "Cita actualizada correctamente y presupuesto recalculado");
+	                respuesta.put("cita", citaActualizada);
+	                return ResponseEntity.ok(respuesta);
+	            } else {
+	                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+	            }
+	        } else {
+	            // Trabajador: verificar que la cita le pertenece
+	            Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+	            List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+	            boolean esSuya = susCitas.stream()
+	                .anyMatch(suya -> suya.getIdCita() == id);
+	            
+	            if (esSuya) {
+	                CitaCompletaDTO citaActualizada = citaService.actualizarCitaCompleta(id, citaEditada);
+	                if (citaActualizada != null) {
+	                    Map<String, Object> respuesta = new HashMap<>();
+	                    respuesta.put("mensaje", "Cita actualizada correctamente y presupuesto recalculado");
+	                    respuesta.put("cita", citaActualizada);
+	                    return ResponseEntity.ok(respuesta);
+	                } else {
+	                    return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+	                }
+	            } else {
+	                return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+	            }
+	        }
+	    }
+	    
+	    // Sin autenticación: comportamiento normal para testing
+	    CitaCompletaDTO citaActualizada = citaService.actualizarCitaCompleta(id, citaEditada);
+	    if (citaActualizada != null) {
+	        Map<String, Object> respuesta = new HashMap<>();
+	        respuesta.put("mensaje", "Cita actualizada correctamente y presupuesto recalculado");
+	        respuesta.put("cita", citaActualizada);
+	        return ResponseEntity.ok(respuesta);
+	    } else {
+	        return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+	    }
+	}
     
-    @GetMapping("/buscar/presupuesto-pendientes")
+    @GetMapping("/buscar/presupuesto-pendientes") //SEGURIDAD OK
     public ResponseEntity<?> obtenerCitasPresupuestoPendiente() {
-        List<CitaDTO> citas = citaService.obtenerPorEstadoPresupuesto(Estado.PENDIENTE);
+        List<CitaDTO> citas;
+        
+        // Si está autenticado, aplicar filtros por rol
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+            
+            if (securityUtils.esAdmin()) {
+                // Admin ve todas con presupuesto pendiente
+                citas = citaService.obtenerPorEstadoPresupuesto(Estado.PENDIENTE);
+            } else {
+                // Trabajador: intersección de SUS citas con las que tienen presupuesto pendiente
+                Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+                List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+                List<CitaDTO> todasPendientes = citaService.obtenerPorEstadoPresupuesto(Estado.PENDIENTE);
+                
+                // Intersección: citas que están en ambas listas
+                citas = susCitas.stream()
+                    .filter(suya -> todasPendientes.stream()
+                        .anyMatch(pendiente -> suya.getIdCita() == pendiente.getIdCita()))
+                    .collect(Collectors.toList());
+            }
+        } else {
+            // Sin autenticación: comportamiento normal
+            citas = citaService.obtenerPorEstadoPresupuesto(Estado.PENDIENTE);
+        }
         
         if (citas.isEmpty()) {
             return ResponseEntity.ok(Map.of("mensaje", "No hay citas con presupuesto pendiente"));
         }
-        
         return ResponseEntity.ok(citas);
     }
 
-    @GetMapping("/buscar/presupuesto-generados")
+    @GetMapping("/buscar/presupuesto-generados") //SEGURIDAD OK
     public ResponseEntity<?> obtenerCitasPresupuestoGenerado() {
-        List<CitaDTO> citas = citaService.obtenerPorEstadoPresupuesto(Estado.GENERADO);
+        List<CitaDTO> citas;
+        
+        // Si está autenticado, aplicar filtros por rol
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+            
+            if (securityUtils.esAdmin()) {
+                // Admin ve todas con presupuesto generado
+                citas = citaService.obtenerPorEstadoPresupuesto(Estado.GENERADO);
+            } else {
+                // Trabajador: intersección de SUS citas con las que tienen presupuesto generado
+                Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+                List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+                List<CitaDTO> todasGeneradas = citaService.obtenerPorEstadoPresupuesto(Estado.GENERADO);
+                
+                // Intersección: citas que están en ambas listas
+                citas = susCitas.stream()
+                    .filter(suya -> todasGeneradas.stream()
+                        .anyMatch(generada -> suya.getIdCita() == generada.getIdCita()))
+                    .collect(Collectors.toList());
+            }
+        } else {
+            // Sin autenticación: comportamiento normal
+            citas = citaService.obtenerPorEstadoPresupuesto(Estado.GENERADO);
+        }
         
         if (citas.isEmpty()) {
             return ResponseEntity.ok(Map.of("mensaje", "No hay citas con presupuesto generado"));
         }
-        
         return ResponseEntity.ok(citas);
     }
 
-    @GetMapping("/buscar/presupuesto-aceptados")
+    @GetMapping("/buscar/presupuesto-aceptados") //SEGURIDAD OK
     public ResponseEntity<?> obtenerCitasPresupuestoAceptado() {
-        List<CitaDTO> citas = citaService.obtenerPorEstadoPresupuesto(Estado.ACEPTADO);
+        List<CitaDTO> citas;
+        
+        // Si está autenticado, aplicar filtros por rol
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+            
+            if (securityUtils.esAdmin()) {
+                // Admin ve todas con presupuesto aceptado
+                citas = citaService.obtenerPorEstadoPresupuesto(Estado.ACEPTADO);
+            } else {
+                // Trabajador: intersección de SUS citas con las que tienen presupuesto aceptado
+                Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+                List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+                List<CitaDTO> todasAceptadas = citaService.obtenerPorEstadoPresupuesto(Estado.ACEPTADO);
+                
+                // Intersección: citas que están en ambas listas
+                citas = susCitas.stream()
+                    .filter(suya -> todasAceptadas.stream()
+                        .anyMatch(aceptada -> suya.getIdCita() == aceptada.getIdCita()))
+                    .collect(Collectors.toList());
+            }
+        } else {
+            // Sin autenticación: comportamiento normal
+            citas = citaService.obtenerPorEstadoPresupuesto(Estado.ACEPTADO);
+        }
         
         if (citas.isEmpty()) {
             return ResponseEntity.ok(Map.of("mensaje", "No hay citas con presupuesto aceptado"));
         }
-        
         return ResponseEntity.ok(citas);
     }
 	
@@ -349,19 +676,60 @@ public class CitaRestController {
         }
     }
     
-    @PutMapping("/{id}/presupuesto/aceptar")
+    @PutMapping("/{id}/presupuesto/aceptar")	//Seguridad ok
     public ResponseEntity<?> aceptarPresupuesto(@PathVariable int id) {
+        
+        // Si está autenticado, verificar que es trabajador Y que es el asignado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+            
+            if (securityUtils.esAdmin()) {
+                // Admin NO puede aceptar presupuestos, solo trabajadores
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", "Solo el trabajador asignado puede aceptar presupuestos"));
+            } else {
+                // Trabajador: verificar que la cita le está asignada
+                Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+                List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+                boolean esSuya = susCitas.stream()
+                    .anyMatch(suya -> suya.getIdCita() == id);
+                
+                if (!esSuya) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body(Map.of("error", "Solo el trabajador asignado puede aceptar este presupuesto"));
+                }
+                
+                // Es su cita, puede aceptar el presupuesto
+                try {
+                    Cita cita = citaRepository.findById(id).orElse(null);
+                    if (cita == null) {
+                        return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+                    }
+                    
+                    citaService.aceptarPresupuesto(cita);
+                    CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+                    
+                    if (citaCompleta != null) {
+                        return ResponseEntity.ok(citaCompleta);
+                    } else {
+                        return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+                    }
+                    
+                } catch (IllegalArgumentException | IllegalStateException e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Map.of("error", e.getMessage()));
+                }
+            }
+        }
+        
+        // Sin autenticación: comportamiento normal para testing
         try {
-            // 1. Buscar la cita
             Cita cita = citaRepository.findById(id).orElse(null);
             if (cita == null) {
                 return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
             }
             
-            // 2. Aceptar presupuesto
             citaService.aceptarPresupuesto(cita);
-            
-            // 3. Obtener cita completa actualizada
             CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
             
             if (citaCompleta != null) {
@@ -370,37 +738,82 @@ public class CitaRestController {
                 return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
             }
             
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
-        } catch (IllegalStateException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
         }
     }
 
-    @PutMapping("/{id}/presupuesto/rechazar")
+    @PutMapping("/{id}/presupuesto/rechazar") //SEGURIDAD OK
     public ResponseEntity<?> rechazarPresupuesto(@PathVariable int id) {
+        
+        // Si está autenticado, verificar que es trabajador Y que es el asignado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+            
+            if (securityUtils.esAdmin()) {
+                // Admin NO puede rechazar presupuestos, solo trabajadores
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", "Solo el trabajador asignado puede rechazar presupuestos"));
+            } else {
+                // Trabajador: verificar que la cita le está asignada
+                Integer idTrabajador = securityUtils.obtenerIdTrabajador();
+                List<CitaDTO> susCitas = citaService.listarCitasDelTrabajador(idTrabajador);
+                boolean esSuya = susCitas.stream()
+                    .anyMatch(suya -> suya.getIdCita() == id);
+                
+                if (!esSuya) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body(Map.of("error", "Solo el trabajador asignado puede rechazar este presupuesto"));
+                }
+                
+                // Es su cita, puede rechazar el presupuesto
+                try {
+                    Cita cita = citaRepository.findById(id).orElse(null);
+                    if (cita == null) {
+                        return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+                    }
+                    
+                    // Rechazar presupuesto
+                    citaService.rechazarPresupuesto(cita);
+                    
+                    // Desasignar trabajador
+                    String resultadoDesasignacion = citaService.desasignarTrabajador(id);
+                    if (resultadoDesasignacion.startsWith("Error:")) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of("error", resultadoDesasignacion));
+                    }
+                    
+                    CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
+                    
+                    if (citaCompleta != null) {
+                        return ResponseEntity.ok(citaCompleta);
+                    } else {
+                        return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
+                    }
+                    
+                } catch (IllegalArgumentException | IllegalStateException e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Map.of("error", e.getMessage()));
+                }
+            }
+        }
+        
+        // Sin autenticación: comportamiento normal para testing
         try {
-            // 1. Buscar la cita
             Cita cita = citaRepository.findById(id).orElse(null);
             if (cita == null) {
                 return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
             }
             
-            // 2. Rechazar presupuesto
             citaService.rechazarPresupuesto(cita);
-            
-            // 3. Desasignar trabajador
             String resultadoDesasignacion = citaService.desasignarTrabajador(id);
             
-            // Si hay error en la desasignación, devolver error
             if (resultadoDesasignacion.startsWith("Error:")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of("error", resultadoDesasignacion));
             }
             
-            // 4. Obtener cita completa actualizada
             CitaCompletaDTO citaCompleta = citaService.obtenerCitaCompleta(id);
             
             if (citaCompleta != null) {
@@ -409,10 +822,7 @@ public class CitaRestController {
                 return ResponseEntity.ok(Map.of("mensaje", "No se encontró la cita con ID: " + id));
             }
             
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
-        } catch (IllegalStateException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
         }
@@ -456,11 +866,6 @@ public class CitaRestController {
     	public ResponseEntity<?> getHuecos(@RequestParam int duracion, @RequestParam int idTrabajador) {
     		return ResponseEntity.ok(citaService.buscarHuecosDisponibles(duracion, idTrabajador));
     }
-
-
-    
-
-
 
 
 }
