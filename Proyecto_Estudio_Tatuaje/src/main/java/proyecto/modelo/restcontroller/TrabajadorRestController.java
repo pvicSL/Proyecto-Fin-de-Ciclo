@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.dto.TrabajadorDTO;
 import proyecto.modelo.entities.Trabajador;
+import proyecto.modelo.enums.Rol;
 import proyecto.service.TrabajadorService;
 
 @RestController
@@ -31,10 +32,11 @@ public class TrabajadorRestController {
 	private TrabajadorService trabajadorService;
 	
 	
-	@GetMapping("/trabajadores")
+	//No usar: se bucla por la lista de citas de cada trabajador
+	/*@GetMapping("/trabajadores")
 	public List<Trabajador>leerTodos(){
 		return trabajadorService.leerTodos();
-	}
+	}*/
 	
 	
 	
@@ -138,6 +140,17 @@ public class TrabajadorRestController {
 	    } catch (Exception e) {
 	        return new ResponseEntity<>("Error al actualizar el trabajador: " + e.getMessage(), 
 	                                  HttpStatusCode.valueOf(500));
+	    }
+	}
+	
+	@GetMapping("/rol/{rol}")
+	public ResponseEntity<List<TrabajadorDTO>> obtenerTrabajadoresPorRol(@PathVariable String rol) {
+	    try {
+	        Rol rolEnum = Rol.valueOf(rol.toUpperCase());
+	        List<TrabajadorDTO> trabajadores = trabajadorService.obtenerTrabajadoresPorRol(rolEnum);
+	        return ResponseEntity.ok(trabajadores);
+	    } catch (IllegalArgumentException e) {
+	        return ResponseEntity.badRequest().build(); // Rol inválido
 	    }
 	}
 	
