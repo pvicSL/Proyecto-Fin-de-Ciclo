@@ -125,21 +125,41 @@ public class TrabajadorRestController {
 	@PutMapping("/trabajadores/{trabajadorId}")
 	public ResponseEntity<?> actualizarTrabajador(@PathVariable int trabajadorId, @RequestBody Trabajador trabajador) {
 	    try {
-	        // Asegurar que el ID del path coincida con el del objeto
-	        trabajador.setIdTrabajador(trabajadorId);
-	        
-	        // Verificar que el trabajador existe antes de actualizar
-	        if (trabajadorService.buscarUnTrabajador(trabajadorId) == null) {
-	            return new ResponseEntity<>("No se encontró ningún trabajador con ID: " + trabajadorId, 
-	                                      HttpStatusCode.valueOf(404));
+	        // Verificar que el trabajador existe
+	        Trabajador trabajadorExistente = trabajadorService.buscarUnTrabajador(trabajadorId);
+	        if (trabajadorExistente == null) {
+	            return new ResponseEntity<>(
+	                Map.of("mensaje", "No se encontró ningún trabajador con ID: " + trabajadorId),
+	                HttpStatusCode.valueOf(404)
+	            );
 	        }
+
+	        // Preservar las citas existentes y actualizar solo los otros campos
+	        trabajadorExistente.setDni(trabajador.getDni());
+	        trabajadorExistente.setNumeroCuenta(trabajador.getNumeroCuenta());
+	        trabajadorExistente.setContrasenia(trabajador.getContrasenia());
+	        trabajadorExistente.setNombre(trabajador.getNombre());
+	        trabajadorExistente.setApellido1(trabajador.getApellido1());
+	        trabajadorExistente.setApellido2(trabajador.getApellido2());
+	        trabajadorExistente.setEmail(trabajador.getEmail());
+	        trabajadorExistente.setTelefono(trabajador.getTelefono());
+	        trabajadorExistente.setRol(trabajador.getRol());
+	        trabajadorExistente.setFunciones(trabajador.getFunciones());
+	        // Las citas se mantienen intactas
+
+	        // Actualizar el trabajador
+	        trabajadorService.actualizarTrabajador(trabajadorExistente);
 	        
-	        Trabajador trabajadorActualizado = trabajadorService.actualizarTrabajador(trabajador);
-	        return new ResponseEntity<>(trabajadorActualizado, HttpStatusCode.valueOf(200));
-	        
+	        return new ResponseEntity<>(
+	            Map.of("mensaje", "Trabajador actualizado correctamente"),
+	            HttpStatusCode.valueOf(200)
+	        );
+
 	    } catch (Exception e) {
-	        return new ResponseEntity<>("Error al actualizar el trabajador: " + e.getMessage(), 
-	                                  HttpStatusCode.valueOf(500));
+	        return new ResponseEntity<>(
+	            Map.of("mensaje", "Error al actualizar el trabajador: " + e.getMessage()),
+	            HttpStatusCode.valueOf(500)
+	        );
 	    }
 	}
 	

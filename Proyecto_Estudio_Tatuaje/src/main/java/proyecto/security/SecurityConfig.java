@@ -53,8 +53,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/**").permitAll()  // Por ahora público
                 
                 // 5. RUTAS por rol (para el futuro)
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/trabajador/**").hasAnyRole("ADMIN", "TRABAJADOR")
+               // .requestMatchers("/admin/**").hasRole("ADMIN")
+               // .requestMatchers("/trabajador/**").hasAnyRole("ADMIN", "TRABAJADOR")
                 
                 // 6. DEFAULT: Requerir autenticación
                 .anyRequest().authenticated()
