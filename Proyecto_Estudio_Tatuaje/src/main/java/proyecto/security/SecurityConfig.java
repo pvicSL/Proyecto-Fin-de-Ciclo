@@ -42,12 +42,12 @@ public class SecurityConfig {
                 .requestMatchers("/api/citas/**").permitAll()
                 
                 // FASE PRODUCCIÓN (para el futuro):
-                // .requestMatchers("/api/citas/crear-cita", "/api/citas/disponibilidad/**").permitAll()
-                // .requestMatchers("/api/citas/buscar", "/api/citas/calcular-duracion").permitAll()
-                // .requestMatchers("/api/citas/modificar-conreferencia", "/api/citas/cancelar-conreferencia").permitAll()
-                // .requestMatchers("/api/citas/asignar-trabajador/**", "/api/citas/desasignar-trabajador/**").permitAll()
-                // .requestMatchers("/api/citas/calculo-previo", "/api/citas/huecos-disponibles").permitAll()
-                // .requestMatchers("/api/citas/**").authenticated()  // Resto requiere login
+                //.requestMatchers("/api/citas/crear-cita", "/api/citas/disponibilidad/**").permitAll()
+                //.requestMatchers("/api/citas/buscar", "/api/citas/calcular-duracion").permitAll()
+                //.requestMatchers("/api/citas/modificar-conreferencia", "/api/citas/cancelar-conreferencia").permitAll()
+                //.requestMatchers("/api/citas/asignar-trabajador/**", "/api/citas/desasignar-trabajador/**").permitAll()
+                //.requestMatchers("/api/citas/calculo-previo", "/api/citas/huecos-disponibles").permitAll()
+                //.requestMatchers("/api/citas/**").authenticated()  // Resto requiere login
                 
                 // 4. OTROS endpoints API (por configurar después)
                 .requestMatchers("/api/**").permitAll()  // Por ahora público

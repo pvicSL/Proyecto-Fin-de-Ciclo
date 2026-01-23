@@ -1,6 +1,7 @@
 package proyecto.service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -76,5 +77,7 @@ public interface CitaService {
 	
 	// Listar citas de un trabajador específico como DTOs
 	List<CitaDTO> listarCitasDelTrabajador(Integer idTrabajador);
+	
+	boolean esHorarioComercialValido(LocalTime horaInicio, int duracionMinutos);
 
 }
