@@ -47,6 +47,12 @@ import proyecto.modelo.repository.TrabajadorRepository;
 @Service
 public class CitaServiceImplJpaMy8 implements CitaService {
 
+    // --- NUEVO: HORARIOS CENTRALIZADOS ---
+    private static final LocalTime HORA_APERTURA = LocalTime.of(10, 0); // 10:00 AM
+    private static final LocalTime HORA_CIERRE = LocalTime.of(20, 0);   // 08:00 PM
+    // -------------------------------------
+
+	
 	@Autowired
 	private CitaRepository citaRepository;
 
@@ -174,8 +180,15 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 		}
 
 		// 3. CALCULAR DURACIÓN
-		Integer duracion = calcularDuracion(cita);
-		cita.setDuracionMinutos(duracion);
+        Integer duracion = calcularDuracion(cita);
+        cita.setDuracionMinutos(duracion);
+
+        // --- NUEVO: VALIDACIÓN DE SEGURIDAD DE HORARIO ---
+        if (!esHorarioComercialValido(cita.getHora(), duracion)) {
+            throw new IllegalArgumentException("Error: La cita está fuera del horario comercial (" 
+                + HORA_APERTURA + " - " + HORA_CIERRE + ")");
+        }
+
 
 	    // 4. ASIGNACIÓN DE TRABAJADOR BLINDADA
 	    Trabajador trabajadorFinal = null;
@@ -379,13 +392,12 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 
 
 	
-	@Override
+    @Override
     public Map<String, List<String>> buscarHuecosDisponibles(int duracionMinutos, int idTrabajador) {
         Map<String, List<String>> calendario = new LinkedHashMap<>();
-
-        // ... (Tu configuración de horas apertura/cierre sigue igual) ...
-        LocalTime horaApertura = LocalTime.of(10, 0);
-        LocalTime horaCierre = LocalTime.of(20, 0);
+        
+        // Usamos las constantes de la clase
+        LocalTime horaIteracion = HORA_APERTURA; 
         int intervaloMinutos = 30;
         LocalDate diaActual = LocalDate.now().plusDays(1);
 
@@ -393,15 +405,13 @@ public class CitaServiceImplJpaMy8 implements CitaService {
             LocalDate fechaRevision = diaActual.plusDays(i);
             List<String> huecosDia = new ArrayList<>();
 
-            // CAMBIO CRÍTICO: Buscar citas SOLO de ese trabajador
-            // Necesitas crear este método en CitaRepository si no existe:
-            // List<Cita> findByTrabajadorIdTrabajadorAndFecha(int idTrabajador, LocalDate fecha);
             List<Cita> citasOcupadas = citaRepository.findByTrabajadorIdTrabajadorAndFecha(idTrabajador, fechaRevision);
 
-            LocalTime horaIteracion = horaApertura;
+            // Reiniciamos la hora de iteración a la apertura para cada día
+            horaIteracion = HORA_APERTURA;
 
-            while (horaIteracion.plusMinutes(duracionMinutos).isBefore(horaCierre)
-                    || horaIteracion.plusMinutes(duracionMinutos).equals(horaCierre)) {
+            while (horaIteracion.plusMinutes(duracionMinutos).isBefore(HORA_CIERRE)
+                    || horaIteracion.plusMinutes(duracionMinutos).equals(HORA_CIERRE)) {
 
                 if (esHuecoLibre(horaIteracion, duracionMinutos, citasOcupadas)) {
                     huecosDia.add(horaIteracion.format(DateTimeFormatter.ofPattern("HH:mm")));
@@ -415,6 +425,8 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         }
         return calendario;
     }
+
+
 
 
 	// MÉTODO AUXILIAR PRIVADO PARA COMPROBAR COLISIONES
@@ -810,6 +822,33 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    
 	    return "Presupuesto finalizado correctamente";
 	}
+	
+	@Override
+	public List<CitaDTO> listarCitasDelTrabajador(Integer idTrabajador) {
+	    List<Cita> citas = citaRepository.findByTrabajador_IdTrabajador(idTrabajador);
+	    
+	    return citas.stream()
+	        .map(CitaDTO::new)  // Convierte Cita a CitaDTO
+	        .collect(Collectors.toList());
+	}
+
+
+    // --- MÉTODO PRIVADO PARA VALIDAR HORARIO COMERCIAL ---
+    public boolean esHorarioComercialValido(LocalTime horaInicio, int duracionMinutos) {
+        LocalTime horaFin = horaInicio.plusMinutes(duracionMinutos);
+        
+        // La cita no puede empezar antes de la apertura
+        if (horaInicio.isBefore(HORA_APERTURA)) {
+            return false;
+        }
+        
+        // La cita no puede terminar después del cierre
+        if (horaFin.isAfter(HORA_CIERRE)) {
+            return false;
+        }
+        
+        return true;
+    }
 
 
 

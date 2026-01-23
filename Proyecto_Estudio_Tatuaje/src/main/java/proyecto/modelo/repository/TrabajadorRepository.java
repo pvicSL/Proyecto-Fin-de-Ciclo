@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import proyecto.modelo.entities.Trabajador;
 import proyecto.modelo.enums.Funciones;
+import proyecto.modelo.enums.Rol;
 
 public interface TrabajadorRepository extends JpaRepository<Trabajador, Integer>{
 
@@ -16,4 +17,6 @@ public interface TrabajadorRepository extends JpaRepository<Trabajador, Integer>
 	Optional<Trabajador> findByDniIgnoreCase(String documento);
 
 	List<Trabajador> findByFunciones(Funciones funcionRequerida);
+	
+	List<Trabajador> findByRol(Rol rol);
 }

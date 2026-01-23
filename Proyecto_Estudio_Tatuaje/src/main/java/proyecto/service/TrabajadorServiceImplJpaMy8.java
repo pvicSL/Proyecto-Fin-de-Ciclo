@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import proyecto.modelo.dto.CitaDTO;
+import proyecto.modelo.dto.TrabajadorDTO;
 import proyecto.modelo.entities.Trabajador;
+import proyecto.modelo.enums.Rol;
 import proyecto.modelo.repository.CitaRepository;
 import proyecto.modelo.repository.TrabajadorRepository;
 
@@ -83,5 +85,25 @@ public class TrabajadorServiceImplJpaMy8 implements TrabajadorService {
 	public Optional<Trabajador> buscarPorDocumento(String documento) {
 		return trabajadorRepository.findByDniIgnoreCase(documento);
 	}
-	
+
+	@Override
+	public List<TrabajadorDTO> obtenerTrabajadoresPorRol(Rol rol) {
+	    List<Trabajador> trabajadores = trabajadorRepository.findByRol(rol);
+	    return trabajadores.stream()
+	            .map(this::convertirADTO)
+	            .collect(Collectors.toList());
+	}
+    
+    private TrabajadorDTO convertirADTO(Trabajador trabajador) {
+        TrabajadorDTO dto = new TrabajadorDTO();
+        dto.setIdTrabajador(trabajador.getIdTrabajador());
+        dto.setNombre(trabajador.getNombre());
+        dto.setApellido1(trabajador.getApellido1());
+        dto.setApellido2(trabajador.getApellido2());
+        dto.setEmail(trabajador.getEmail());
+        dto.setTelefono(trabajador.getTelefono());
+        return dto;
+    }
 }
+	
+

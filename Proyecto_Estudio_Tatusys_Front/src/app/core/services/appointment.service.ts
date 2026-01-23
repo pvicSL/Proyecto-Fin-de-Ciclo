@@ -23,9 +23,12 @@ export class AppointmentService {
         return this.http.post(`${this.apiUrl}/crear-cita`, formData);
     }
 
+    /*COMENTO ESTE MÉTODO PORQUE PARECE QUE YA NO LO USO, PERO NO
+    VOY A BORRARLO HASTA COMPROBARLO EN FIRME
     calculateDuration(criteria: { tamanio: string, detalle: string, coloracion: string }): Observable<number> {
         return this.http.post<number>(`${this.apiUrl}/calcular-duracion`, criteria);
     }
+    */
 
     // ==========================================
     // 2. BÚSQUEDA SEGURA (Por Referencia + Email)
@@ -48,7 +51,6 @@ export class AppointmentService {
     // ==========================================
     // 3. MODIFICACIÓN Y CANCELACIÓN (¡CAMBIO IMPORTANTE!)
     // ==========================================
-
 
     //Modifica la fecha de una cita usando la REFERENCIA como llave.
     updateAppointmentDate(referencia: string, email: string, nuevaFecha: string, nuevaHora: string): Observable<any> {
@@ -171,6 +173,7 @@ export class AppointmentService {
         return this.http.put<AppointmentAdminDTO>(url, appointment);
     }
 
+
     deleteAppointment(id: number): Observable<any> {
         return this.http.put<any>(`${this.apiUrl}/${id}/presupuesto/rechazar`,{});
         }
@@ -180,6 +183,13 @@ export class AppointmentService {
     calcularDuracion(datos: AppointmentDTO): Observable<number> {
         return this.http.post<number>(`${this.apiUrl}/calcular-duracion`, datos);
     }
+
+    /* MÉTODO COMENTADO, EN PRINCIPIO YA NO SE USA, PERO ANTES DE ELIMINARLO
+    DEL TODO, LO DEJO ASÍ PARA HACER COMPROBACIONES
+    calcularDuracion(datos: AppointmentDTO): Observable<number> {
+            return this.http.post<number>(`${this.apiUrl}/calcular-duracion/`, datos);
+        }*/
+
 
     getAppointment(id: number): Observable<AppointmentDTO> {
         return this.http.get<AppointmentDTO>(`${this.apiUrl}/${id}`);

@@ -7,7 +7,6 @@ import proyecto.security.AuthenticationService;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*") // Permitir requests desde cualquier origen (frontend)
 public class AuthController {
     
     @Autowired

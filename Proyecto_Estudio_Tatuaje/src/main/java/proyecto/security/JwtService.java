@@ -57,6 +57,11 @@ public class JwtService {
         return extractAllClaims(token).getSubject();
     }
     
+ // Extraer idTrabajador del token
+    public Integer extraerIdTrabajador(String token) {
+        return extractAllClaims(token).get("idTrabajador", Integer.class);
+    }
+    
     /*Recibe un token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1..."
 	Extrae el "subject" (que pusimos como email en generateToken)
 	Devuelve: "juan@tatuajes.com"
