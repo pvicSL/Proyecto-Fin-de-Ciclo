@@ -23,6 +23,15 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/client/terms/terms').then(m => m.TermsComponent)
       },
 
+      // --- RUTA ACTUALIZADA ---
+      {
+        path: 'pago-fianza/:token',
+        // Antes era: import('./components/payment-gateway/...')
+        // Ahora es:
+        loadComponent: () => import('./shared/components/client/payment-gateway/payment-gateway').then(m => m.PaymentGatewayComponent)
+      }
+      // ------------------------
+
     ]
   },
 

@@ -54,15 +54,12 @@ export class AppointmentService {
 
     //Modifica la fecha de una cita usando la REFERENCIA como llave.
     updateAppointmentDate(referencia: string, email: string, nuevaFecha: string, nuevaHora: string): Observable<any> {
-        // El backend espera un objeto JSON (CitaModificacionDTO)
         const body = {
             referencia: referencia,
             email: email,
-            nuevaFecha: nuevaFecha,
-            nuevaHora: nuevaHora + ":00" // Aseguramos formato HH:mm:ss si hace falta
+            fecha: nuevaFecha,
+            hora: nuevaHora // <--- Enviamos tal cual viene del selector
         };
-
-        // CORRECCIÓN: Apuntamos a '/modificar-conreferencia'
         return this.http.put(`${this.apiUrl}/modificar-conreferencia`, body);
     }
 
