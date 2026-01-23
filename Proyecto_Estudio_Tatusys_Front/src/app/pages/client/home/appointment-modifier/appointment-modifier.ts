@@ -104,6 +104,10 @@ export class AppointmentModifierComponent {
   startModification() {
     if (!this.currentAppointment) return;
 
+    // --- AÑADE ESTO PARA VER LA ESTRUCTURA REAL ---
+    console.log("DATOS DE LA CITA:", this.currentAppointment);
+    // ----------------------------------------------
+
     // Recuperamos el ID del trabajador (asegurándonos de que existe)
     const workerId = this.currentAppointment.idTrabajador;
 
