@@ -55,11 +55,12 @@ export class AppointmentModify implements OnInit {
   const pDetalle = obtenerPrecio(this.cita.detalle);
   const pEstilo = obtenerPrecio(this.cita.estilo);
   const pColor = obtenerPrecio(this.cita.coloracion); // Buscará 'COLOR' o 'NEGRO'
-  
+  const precioBase = this.precio?.precioBase || 0;
+
 
   // 2. Sumamos todo
   // Si tienes un precio mínimo de entrada, súmalo aquí (ej: + 40)
-  this.cita.precioSinIva = this.cita.precioSinIva + pTipo + pZona + pTamanio + pDetalle + pEstilo + pColor;
+  this.cita.precioSinIva = precioBase + pTipo + pZona + pTamanio + pDetalle + pEstilo + pColor;
 
   // 3. Impuestos y Total
   this.cita.iva = this.cita.precioSinIva * 0.21;
@@ -97,12 +98,17 @@ export class AppointmentModify implements OnInit {
       todosLosPrecios: this.priceService.getAllPrices()
     }).subscribe({
       next: (respuestas) => {
+
+        this.precio = respuestas.precios;
+
+        this.citaDTO = respuestas.base;
         // 1. Extraemos el objeto (por si viene como array)
         const datosAdmin = Array.isArray(respuestas.admin) ? respuestas.admin[0] : respuestas.admin;
         
         // 2. Asignamos a la vista
         this.cita = datosAdmin;
-        this.citaDTO = respuestas.base;
+        
+        
 
         if (this.cita.imagenRef1) this.cita.imagenRef1 = this.uploadService.getImagenUrl(this.cita.imagenRef1);
         if (this.cita.imagenRef2) this.cita.imagenRef2 = this.uploadService.getImagenUrl(this.cita.imagenRef2);

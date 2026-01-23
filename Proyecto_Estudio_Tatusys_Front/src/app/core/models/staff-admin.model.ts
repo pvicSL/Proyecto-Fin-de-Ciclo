@@ -13,7 +13,7 @@ export interface StaffAdminDTO{
 
     rol: string;
     funciones: string;
-    citas: AppointmentDTO[];
+
 
 }
 

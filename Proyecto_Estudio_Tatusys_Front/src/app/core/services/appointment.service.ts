@@ -164,6 +164,10 @@ export class AppointmentService {
         return this.http.get<any[]>(`${this.apiUrl}/buscar/presupuesto-generados`);
     }
 
+    getAceptedBudgets(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/buscar/presupuesto-aceptados`);
+    }
+
     getAppointmentDetails(id: number): Observable<AppointmentAdminDTO> {
         return this.http.get<AppointmentAdminDTO>(`${this.apiUrl}/detalles-completos/${id}`);
     }

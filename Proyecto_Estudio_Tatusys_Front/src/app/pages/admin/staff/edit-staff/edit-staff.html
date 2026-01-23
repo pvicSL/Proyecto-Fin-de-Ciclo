@@ -1,9 +1,16 @@
 @if(staff){
-    <h1 class="text-subtitle">
-        Editar Trabajador - # {{staff.idTrabajador}}
-    </h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="text-subtitle m-0">
+            Editar Trabajador - # {{staff.idTrabajador}}
+        </h1>
+        @if(hayCambios){
+            <span class="badge bg-warning text-dark animate__animated animate__fadeIn">
+                ⚠️ Cambios detectados sin guardar
+            </span>
+        }
+    </div>
 
-    <div class="contenedor-scroll container-fluid p-4 rounded shadow-sm border ">
+    <div class="contenedor-scroll container-fluid p-4 rounded shadow-sm border bg-white">
         <div class="d-flex mb-2">
             <button type="button" class="btn-close ms-auto" (click)="cancelar()"></button>
         </div>
@@ -16,83 +23,82 @@
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Nombre:</label>
                         <input type="text" class="form-control" name="nombre" 
-                            [(ngModel)]="staff.nombre" required placeholder="Nombre..." required>
+                            [(ngModel)]="staff.nombre" (input)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Apellido 1:</label>
                         <input type="text" class="form-control" name="apellido1" 
-                            [(ngModel)]="staff.apellido1" placeholder="Apellido1..." required>
+                            [(ngModel)]="staff.apellido1" (input)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Apellido 2:</label>
                         <input type="text" class="form-control" name="apellido2" 
-                            [(ngModel)]="staff.apellido2" placeholder="Apellido2..." required>
+                            [(ngModel)]="staff.apellido2" (input)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">DNI:</label>
                         <input type="text" class="form-control" name="dni" 
-                            [(ngModel)]="staff.dni" placeholder="200983451A" required>
+                            [(ngModel)]="staff.dni" (input)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Email:</label>
                         <input type="text" class="form-control" name="email" 
-                            [(ngModel)]="staff.email" placeholder="tatuador@gmail.com..." required>
+                            [(ngModel)]="staff.email" (input)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Teléfono:</label>
-                        <input type="email" class="form-control" name="telefono" 
-                            [(ngModel)]="staff.telefono" placeholder="621053948..." required>
+                        <input type="text" class="form-control" name="telefono" 
+                            [(ngModel)]="staff.telefono" (input)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Nº Cuenta:</label>
                         <input type="text" class="form-control" name="numeroCuenta" 
-                            [(ngModel)]="staff.numeroCuenta" placeholder="ES6001820200123456789012" required>
+                            [(ngModel)]="staff.numeroCuenta" (input)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Funciones:</label>
-                        <select class="form-select" name="rol" [(ngModel)]="staff.funciones">
+                        <select class="form-select" name="funciones" [(ngModel)]="staff.funciones" (change)="verificarCambios()">
                             <option value="CREACION">Creación</option>
                             <option value="ELIMINACION">Eliminación</option>
                         </select>
                     </div>
-                    
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Rol:</label>
-                        <select class="form-select" name="rol" [(ngModel)]="staff.rol">
+                        <select class="form-select" name="rol" [(ngModel)]="staff.rol" (change)="verificarCambios()">
                             <option value="TRABAJADOR">Trabajador</option>
                         </select>
                     </div>
-                
-
                     <div class="col-md-4">
-                        <label class="fw-bold small mb-1 text-uppercase text-muted mt-5">Contraseña:</label>
-                        <input type="text" class="form-control" name="contraseña" 
-                            [(ngModel)]="staff.contrasenia" required>
+                        <label class="fw-bold small mb-1 text-uppercase text-muted">Contraseña:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="contrasenia" 
+                                [(ngModel)]="staff.contrasenia" (input)="verificarCambios()" 
+                                placeholder="********" required>
+                        </div>
                     </div>
-                
                 </div>
 
-                <div class="d-flex justify-content-end mt-5">
-                    <button class="btn btn-confirmar py-2 px-5 fw-bold" 
+                <input type="text" [(ngModel)]="staff.nombre" (input)="verificarCambios()" name="nombre" class="form-control" required>
+
+                <div class="d-flex justify-content-end mt-5 gap-3">
+                    <button type="button" class="btn btn-danger px-4" (click)="cargarDatosStaff(staff.idTrabajador)" [disabled]="!hayCambios">
+                        REVERTIR CAMBIOS
+                    </button>
+                    <button class="btn py-2 px-5 fw-bold text-white" 
                             (click)="guardarStaff()" 
-                            [disabled]="!staffForm.valid">
-                                ACTUALIZAR DATOS
+                            [disabled]="!staffForm.valid || !hayCambios">
+                        {{ hayCambios ? 'ACTUALIZAR DATOS' : 'SIN CAMBIOS' }}
                     </button>
                 </div>
             </form>
         </section>
     </div>
-}@else{
-    <div class="d-flex justify-content-center align-items-center p-5">
-    <div class="spinner-border text-primary me-3" role="status"></div>
-    <span class="text-muted fw-medium">Preparando editor de trabajador...</span>
-  </div>
 }

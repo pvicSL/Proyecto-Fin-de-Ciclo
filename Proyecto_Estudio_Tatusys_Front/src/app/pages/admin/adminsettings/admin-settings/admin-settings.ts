@@ -47,9 +47,7 @@ export class AdminSettings implements OnInit {
   
   // Eliminamos la lista de citas manualmente antes de enviar 
   // para evitar que el JSON se rompa por la recursividad
-  if (datosParaEnviar.citas) {
-    delete (datosParaEnviar as any).citas;
-  }
+  
 
   this.staffService.updateStaff(this.staff.idTrabajador, datosParaEnviar).subscribe({
     next: () => {

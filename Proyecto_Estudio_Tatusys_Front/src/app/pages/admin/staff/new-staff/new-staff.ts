@@ -27,7 +27,7 @@ export class NewStaff implements OnInit {
   contrasenia: '',
   rol: 'TRABAJADOR',
   funciones: 'CREACION',
-  citas: [] // Enviamos el array vacío como pediste
+
 };
 
   constructor(
