@@ -17,6 +17,7 @@ import { StaffAdminDTO } from '../../../../core/models/staff-admin.model';
 export class AdminSettings implements OnInit {
 
   staff!: StaffAdminDTO;
+  
 
 
   constructor(
@@ -26,8 +27,9 @@ export class AdminSettings implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.params['id'];
-      this.cargarDatosStaff(id);
+    // Forzamos el ID a 1 directamente
+  const idFijo = 1; 
+  this.cargarDatosStaff(idFijo);
 
   }
 
@@ -40,16 +42,26 @@ export class AdminSettings implements OnInit {
   }
 
   guardarStaff() {
-      this.staffService.updateStaff(this.staff.idTrabajador, this.staff).subscribe({
-        next: () => {
-          alert('Datos actualizados correctamente');
-          window.history.back();
-        },
-        error: (err) => alert('Error: ' + err.error?.message)
-      });
-    }
-
-  cancelar() {
-    window.history.back();
+      // Creamos una copia para no dañar la vista
+  const datosParaEnviar = { ...this.staff };
+  
+  // Eliminamos la lista de citas manualmente antes de enviar 
+  // para evitar que el JSON se rompa por la recursividad
+  if (datosParaEnviar.citas) {
+    delete (datosParaEnviar as any).citas;
   }
+
+  this.staffService.updateStaff(this.staff.idTrabajador, datosParaEnviar).subscribe({
+    next: () => {
+      alert('Datos actualizados correctamente');
+      window.history.back();
+    },
+    error: (err) => {
+      console.error(err);
+      alert('Error al actualizar. Revisa la consola para ver el JSON.');
+    }
+  });
+}
+
+
 }

@@ -25,7 +25,7 @@ export interface AppointmentAdminDTO {
   imagenRef3: string;
 
   // Datos del Presupuesto
-  precioBase: number;
+  precioSinIva: number;
   iva: number;
   precioFinal: number;
   estadoPresupuesto: string;

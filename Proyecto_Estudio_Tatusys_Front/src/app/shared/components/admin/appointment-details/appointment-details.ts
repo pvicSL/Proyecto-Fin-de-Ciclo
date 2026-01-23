@@ -9,6 +9,7 @@ import { PricesService } from '../../../../core/services/prices.service';
 import { PricesAdminDTO } from '../../../../core/models/prices-admin.model';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
 import { forkJoin } from 'rxjs';
+import { UploadService } from '../../../../core/services/upload.service';
 
 @Component({
   selector: 'app-appointment-details',
@@ -28,6 +29,7 @@ export class AppointmentDetails implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private priceService: PricesService,
+    private uploadService: UploadService,
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +49,11 @@ export class AppointmentDetails implements OnInit {
         this.cita = datosAdmin;
         this.precio = respuestas.precios;
         this.citaDTO = respuestas.base;
+
+        // Transformamos los nombres de archivo en URLs completas para el HTML
+        if (this.cita.imagenRef1) this.cita.imagenRef1 = this.uploadService.getImagenUrl(this.cita.imagenRef1);
+        if (this.cita.imagenRef2) this.cita.imagenRef2 = this.uploadService.getImagenUrl(this.cita.imagenRef2);
+        if (this.cita.imagenRef3) this.cita.imagenRef3 = this.uploadService.getImagenUrl(this.cita.imagenRef3);
 
         console.log('Datos Admin procesados:', this.cita);
 

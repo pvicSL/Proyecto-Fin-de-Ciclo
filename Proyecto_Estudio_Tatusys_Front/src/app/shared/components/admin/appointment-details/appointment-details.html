@@ -151,7 +151,7 @@
         <div class="col-md-4 ms-auto">
             <div class="text-end">
                 <span class="text-secondary d-block small">Precio Base:</span>
-                <span class="text-dark">{{ (cita.precioBase || 0) | currency:'EUR':'symbol' }}</span>
+                <span class="text-dark">{{ (cita.precioSinIva || 0) | currency:'EUR':'symbol' }}</span>
             </div>
             <div class="text-end">
                 <span class="text-secondary d-block small">IVA (21%):</span>

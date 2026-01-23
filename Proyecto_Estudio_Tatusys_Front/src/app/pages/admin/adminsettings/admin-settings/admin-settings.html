@@ -4,9 +4,7 @@
     </h1>
 
     <div class="contenedor-scroll container-fluid p-4 rounded shadow-sm border ">
-        <div class="d-flex mb-2">
-            <button type="button" class="btn-close ms-auto" (click)="cancelar()"></button>
-        </div>
+
 
         <section class="mb-4">
             <h2 class="h5 fw-bold mb-4">Datos del Trabajador</h2>
@@ -67,7 +65,7 @@
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Rol:</label>
                         <select class="form-select" name="rol" [(ngModel)]="staff.rol">
-                            <option value="TRABAJADOR">Trabajador</option>
+                            <option value="ADMIN">Administrador</option>
                         </select>
                     </div>
                 

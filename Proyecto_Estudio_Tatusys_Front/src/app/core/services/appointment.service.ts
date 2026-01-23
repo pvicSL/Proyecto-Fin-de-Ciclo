@@ -178,7 +178,7 @@ export class AppointmentService {
 
 
     calcularDuracion(datos: AppointmentDTO): Observable<number> {
-        return this.http.post<number>(`${this.apiUrl}/calcular-duracion/`, datos);
+        return this.http.post<number>(`${this.apiUrl}/calcular-duracion`, datos);
     }
 
     getAppointment(id: number): Observable<AppointmentDTO> {

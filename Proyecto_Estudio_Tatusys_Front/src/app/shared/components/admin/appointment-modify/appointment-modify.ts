@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -10,10 +10,11 @@ import { PricesService } from '../../../../core/services/prices.service';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
 import { PricesAdminDTO } from '../../../../core/models/prices-admin.model';
 import { forkJoin } from 'rxjs';
+import { UploadService } from '../../../../core/services/upload.service';
 
 @Component({
   selector: 'app-appointment-modify',
-  imports: [CommonModule, FormsModule, FormatoHorasPipe],
+  imports: [CommonModule, FormsModule, ],
   templateUrl: './appointment-modify.html',
   styleUrls: ['./appointment-modify.css'],
   encapsulation: ViewEncapsulation.None
@@ -24,13 +25,67 @@ export class AppointmentModify implements OnInit {
   citaDTO!: AppointmentDTO;
   precio!: PricesAdminDTO;
   citaOriginal!: AppointmentAdminDTO; // <-- Importante: El respaldo
+  tarifasBBDD: any = {};
+  duracionEstimada: number = 0;
+  
 
+  
 
   constructor(
     private appointmentService: AppointmentService,
     private route: ActivatedRoute,
     private priceService: PricesService,
+    private uploadService: UploadService,
+    private cdr: ChangeDetectorRef // Inyectamos el detector de cambios
   ) {}
+
+  actualizarCalculos() {
+  if (!this.cita || !this.tarifasBBDD) return;
+
+  // Función de búsqueda segura
+  const obtenerPrecio = (seleccion: string | undefined) => {
+    if (!seleccion) return 0;
+    return this.tarifasBBDD[seleccion.toUpperCase()] || 0;
+  };
+
+  // 1. Obtenemos cada precio individual de tu JSON
+  const pTipo = obtenerPrecio(this.cita.tipo);
+  const pZona = obtenerPrecio(this.cita.zona);
+  const pTamanio = obtenerPrecio(this.cita.tamanio);
+  const pDetalle = obtenerPrecio(this.cita.detalle);
+  const pEstilo = obtenerPrecio(this.cita.estilo);
+  const pColor = obtenerPrecio(this.cita.coloracion); // Buscará 'COLOR' o 'NEGRO'
+  
+
+  // 2. Sumamos todo
+  // Si tienes un precio mínimo de entrada, súmalo aquí (ej: + 40)
+  this.cita.precioSinIva = this.cita.precioSinIva + pTipo + pZona + pTamanio + pDetalle + pEstilo + pColor;
+
+  // 3. Impuestos y Total
+  this.cita.iva = this.cita.precioSinIva * 0.21;
+  this.cita.precioFinal = this.cita.precioSinIva + this.cita.iva;
+
+  console.log("Suma realizada con éxito:", this.cita.precioFinal);
+
+  // SINCRONIZACIÓN: Pasamos los cambios de 'cita' a 'citaDTO'
+  // Esto es necesario porque el HTML modifica 'this.cita', pero el servicio usa 'this.citaDTO'
+    Object.assign(this.citaDTO, {
+    tipo: this.cita.tipo,
+    zona: this.cita.zona,
+    tamanio: this.cita.tamanio,
+    detalle: this.cita.detalle,
+    coloracion: this.cita.coloracion,
+    estilo: this.cita.estilo
+  });
+
+  this.appointmentService.calcularDuracion(this.citaDTO).subscribe({
+    next: (minutos) => {
+      this.duracionEstimada = minutos;
+      this.cdr.detectChanges();
+    },
+    error: (err) => console.error('Error al calcular duración:', err)
+  });
+}
 
   ngOnInit(): void {
     const id = this.route.snapshot.params['id'];
@@ -38,7 +93,8 @@ export class AppointmentModify implements OnInit {
     forkJoin({
       admin: this.appointmentService.getAppointmentDetails(id),
       precios: this.priceService.getPrices(id),
-      base: this.appointmentService.getAppointment(id)
+      base: this.appointmentService.getAppointment(id),
+      todosLosPrecios: this.priceService.getAllPrices()
     }).subscribe({
       next: (respuestas) => {
         // 1. Extraemos el objeto (por si viene como array)
@@ -46,51 +102,37 @@ export class AppointmentModify implements OnInit {
         
         // 2. Asignamos a la vista
         this.cita = datosAdmin;
-        this.precio = respuestas.precios;
         this.citaDTO = respuestas.base;
+
+        if (this.cita.imagenRef1) this.cita.imagenRef1 = this.uploadService.getImagenUrl(this.cita.imagenRef1);
+        if (this.cita.imagenRef2) this.cita.imagenRef2 = this.uploadService.getImagenUrl(this.cita.imagenRef2);
+        if (this.cita.imagenRef3) this.cita.imagenRef3 = this.uploadService.getImagenUrl(this.cita.imagenRef3);
+
+        // En tu subscribe del ngOnInit
+        respuestas.todosLosPrecios.forEach(p => {
+          // Verificamos 'valor' y 'precioAdicional' que son los nombres de tu JSON
+          if (p && p.valor) {
+            const llave = p.valor.trim().toUpperCase();
+            this.tarifasBBDD[llave] = p.precioAdicional; // Guardamos el precio adicional
+          }
+        });
+
+        // Agregamos manualmente el SERVICIO_BASE si quieres que sume desde ahí
+        this.cita.precioSinIva = this.tarifasBBDD['SERVICIO_BASE'] || 0;
+        // Transformamos los nombres de archivo en URLs completas para el HTML
+        
+
+        
 
         // 3. CREAMOS LA COPIA DE SEGURIDAD
         this.citaOriginal = JSON.parse(JSON.stringify(datosAdmin));
+        setTimeout(() => this.actualizarCalculos());
       },
       error: (err) => console.error('Error al cargar:', err)
     });
   }
 
-  /*
 
-  actualizarCalculos() {
-    if (!this.cita || !this.precio) return;
-
-    // 1. Precio Base del servicio
-    const base = this.precio.precioBase || 0;
-
-    // 2. Precio por Tamaño (Normalizamos la key: 'PEQUEÑO' -> 'pequeno')
-    const keyTamanio = this.cita.tamanio;
-    const precioTamanio = (this.precio.precioTamanio as any)[keyTamanio] || 0;
-
-    // 3. Precio por Detalle
-    const keyDetalle = this.cita.detalle;
-    const precioDetalle = (this.precio.precioDetalle as any)[keyDetalle] || 0;
-    
-    const keyEstilo = this.cita.estilo;
-    const precioEstilo = (this.precio.precioEstilo as any)[keyEstilo] || 0;
-
-    const keyColoracion = this.cita.coloracion;
-    const precioColoracion = (this.precio.precioColoracion as any)[keyColoracion] || 0;
-
-    const keyTipo = this.cita.tipo;
-    const precioTipo = (this.precio.precioTipo as any)[keyTipo] || 0;
-
-    const keyZona = this.cita.zona;
-    const precioZona = (this.precio.precioZona as any)[keyZona] || 0;
-
-
-    // 5. Totales
-    this.cita.precioBase = base + precioTamanio + precioDetalle + precioEstilo + precioColoracion + precioTipo + precioZona;
-    this.cita.iva = this.cita.precioBase * 0.21;
-    this.cita.precioFinal = this.cita.precioBase + this.cita.iva;
-  }
-    */
 
   // Si pulsa la 'X' o cerrar sin guardar
   cerrarDetalle() {
@@ -117,6 +159,20 @@ export class AppointmentModify implements OnInit {
       });
   }
 }
+
+getBadgeClass(estado: string | undefined): string {
+  
+  switch (this.cita.estadoPresupuesto) {
+    case 'PENDIENTE': return 'badge bg-warning';
+    case 'CONFIRMADO': return 'badge bg-success';
+    case 'RECHAZADO': return 'badge bg-danger';
+    case 'ENVIADO': return 'badge bg-info';
+    default: return 'bg-primary';
+  }
+}
+
+
+
 
 
   

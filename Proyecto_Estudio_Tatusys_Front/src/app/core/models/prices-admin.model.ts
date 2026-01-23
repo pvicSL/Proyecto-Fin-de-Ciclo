@@ -11,3 +11,21 @@ export interface PricesAdminDTO{
     total: number;
 }
 
+export enum CategoriaEnum {
+    BASE = 'BASE',
+    TIPO = 'TIPO',
+    ZONA = 'ZONA',
+    TAMANIO = 'TAMANIO',
+    DETALLE = 'DETALLE',
+    COLORACION = 'COLORACION',
+    ESTILO = 'ESTILO'
+}
+
+export interface Precio {
+    idPrecio?: number;
+    categoria: CategoriaEnum;
+    valor: string;
+    precioAdicional: number;
+    activo: boolean;
+}
+
