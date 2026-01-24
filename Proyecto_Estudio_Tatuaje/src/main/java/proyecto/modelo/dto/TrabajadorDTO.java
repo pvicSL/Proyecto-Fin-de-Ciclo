@@ -19,7 +19,15 @@ public class TrabajadorDTO {
     // SIN: dni, numeroCuenta, contrasenia (DATOS SENSIBLES)
 
     // CONSTRUCTORES
-    public TrabajadorDTO(Trabajador trabajador) {}
+    public TrabajadorDTO(Trabajador trabajador) {
+        this.idTrabajador = trabajador.getIdTrabajador();
+        this.nombre = trabajador.getNombre();
+        this.apellido1 = trabajador.getApellido1();
+        this.apellido2 = trabajador.getApellido2();
+        this.email = trabajador.getEmail();
+        this.telefono = trabajador.getTelefono();
+        this.dni = trabajador.getDni();
+    }
 
     
 
