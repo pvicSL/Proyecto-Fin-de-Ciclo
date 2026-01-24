@@ -6,4 +6,5 @@ export interface StaffDTO{
     apellido2: string;
     email: string;
     telefono: string;
+    dni: string;
 }

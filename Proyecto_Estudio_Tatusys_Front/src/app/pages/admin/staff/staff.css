@@ -5,3 +5,4 @@ app-list-staff{
     flex-grow: 1;
     min-height: 0; /* importante para permitir que los hijos con overflow se ajusten */
 }
+

@@ -2,12 +2,19 @@ import { Routes } from '@angular/router';
 import { ClientLayoutComponent } from './shared/layouts/client-layout/client-layout';
 import { HomeComponent } from './pages/client/home/home';
 import { NotFoundComponent } from './pages/public/not-found/not-found';
+import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   {
     path: '404',
     component: NotFoundComponent
   },
+
+  //{
+    //path: 'login',
+    //loadComponent: () => import('./pages/public/login/login').then(m => m.LoginComponent)
+  //},
 
 
   // 1. RUTA CLIENTE FINAL
@@ -39,6 +46,7 @@ export const routes: Routes = [
 
   {
     path: 'admin',
+    //canActivate: [authGuard],// <--- NIVEL 1: Nadie entra aquí sin estar logueado
     loadComponent: () => import('./shared/layouts/admin-layout/admin-layout')
       .then(m => m.AdminLayout),
 
@@ -99,6 +107,7 @@ export const routes: Routes = [
 
       {
         path: 'trabajadores',
+        //canActivate: [adminGuard], // <--- NIVEL 2: Solo si rol === 'ADMIN'
         loadComponent: () => import('./pages/admin/staff/staff').then(m => m.Staff),
         data: { title: 'Trabajadores', icon: 'bi-people' },
 
@@ -129,6 +138,7 @@ export const routes: Routes = [
       },
       {
         path: 'ajustes',
+        //canActivate: [adminGuard], // <--- NIVEL 2: Solo si rol === 'ADMIN'
         loadComponent: () => import('./pages/admin/adminsettings/adminsettings').then(m => m.Adminsettings),
         data: {title: 'Ajustes', icon: 'bi bi-gear-wide-connected'},
 
@@ -145,11 +155,6 @@ export const routes: Routes = [
             loadComponent: () => import('./pages/admin/adminsettings/services-settings/services-settings').then(m => m.ServicesSettings),
             data: {title: 'Ajustes > Servicios', icon: 'bi bi-gear-wide-connected'}
           },
-          {
-            path: 'precios',
-            loadComponent: () => import('./pages/admin/adminsettings/prices-settings/prices-settings').then(m => m.PricesSettings),
-            data: {title: 'Ajustes > Precios', icon: 'bi bi-gear-wide-connected'}
-          },
           
         ]
 
@@ -163,8 +168,8 @@ export const routes: Routes = [
           { path: '', redirectTo: 'mes', pathMatch: 'full' },
           {
             path: 'mes',
-            loadComponent: () => import('./pages/admin/requests/pending-requests/pending-requests').then(m => m.PendingRequests),
-            data: { title: 'Calendario > Pendientes', icon: 'bi-envelope' }
+            loadComponent: () => import('./pages/admin/calendar/calendar-page/calendar-page').then(m => m.CalendarPage),
+            data: { title: 'Calendario', icon: 'bi-envelope' }
           }
         ]
       },

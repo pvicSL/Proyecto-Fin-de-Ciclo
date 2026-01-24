@@ -18,6 +18,7 @@ export class EditStaff implements OnInit {
   staff!: StaffAdminDTO;
   datosOriginales: string = ''; // Para detectar cambios
   hayCambios: boolean = false;
+  dniFijo: string = '';
 
   constructor(
     private staffService: StaffService,
@@ -33,13 +34,23 @@ export class EditStaff implements OnInit {
   cargarDatosStaff(dni: string) {
   this.staffService.getStaffByDni(dni).subscribe({
     next: (data) => {
-      this.staff = data;
-      this.datosOriginales = JSON.stringify(data);
-      this.hayCambios = false;
+      // 1. Forzamos la limpieza de la referencia para que Angular detecte el cambio visual
+      this.staff = null as any; 
+      if (!this.dniFijo) {
+        this.dniFijo = data.dni;
+      }
+      // 2. Usamos un pequeño timeout de 0ms para que el ciclo de detección de Angular se refresque
+      setTimeout(() => {
+        
+        this.staff = data;
+        this.datosOriginales = JSON.stringify(data);
+        this.hayCambios = false;
+        console.log('Datos reseteados visualmente');
+      }, 0);
     },
     error: (err) => {
-      console.error('Error al conectar con la API:', err);
-      // Si la API devuelve el 404 que programaste, saldrá aquí
+      console.error('Error al recuperar datos:', err);
+      alert('No se pudieron recuperar los datos originales.');
     }
   });
 }
@@ -48,6 +59,13 @@ export class EditStaff implements OnInit {
   verificarCambios() {
     this.hayCambios = JSON.stringify(this.staff) !== this.datosOriginales;
   }
+
+  revertirCambios() {
+  if (confirm('¿Seguro que quieres descartar los cambios y volver a los datos originales?')) {
+    // Usamos el DNI que guardamos al cargar por primera vez
+    this.cargarDatosStaff(this.dniFijo); 
+  }
+}
 
   guardarStaff() {
   if (confirm('¿Deseas actualizar los datos del trabajador?')) {

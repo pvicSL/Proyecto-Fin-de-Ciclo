@@ -1,1 +1,18 @@
-<p>calendar-page works!</p>
+<div class="calendar-container p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-capitalize fw-bold m-0">{{ mesActual }}</h1>
+
+    <div class="d-flex ">
+      <button class="btn btn-outline-primary" (click)="irAlMesAnterior()">
+        <i class="bi bi-chevron-left"></i> Anterior
+      </button>
+      <button class="btn btn-outline-primary" (click)="irAlMesSiguiente()">
+        Siguiente <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-sm rounded-3 p-2">
+    <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+  </div>
+</div>

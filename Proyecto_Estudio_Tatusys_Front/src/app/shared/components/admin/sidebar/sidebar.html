@@ -1,26 +1,44 @@
-<nav class="navbar d-lg-none mb-3 text-white">
+<nav class="navbar d-lg-none mb-3 text-white bg-dark">
   <div class="container-fluid">
     <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-mobile">
       <i class="bi bi-list fs-1"></i>
     </button>
-    <span class="p-2 fs-3">Nombre Usuario</span>
+    <span class="p-2 fs-5 text-truncate" style="max-width: 200px;">
+      {{ authService.currentUser()?.nombre || 'Usuario' }}
+    </span>
   </div>
 </nav>
 
-<div id="sidebar-mobile" class=" collapse d-lg-none text-white">
+<div id="sidebar-mobile" class="collapse d-lg-none text-white bg-dark shadow">
   <div class="d-flex justify-content-end p-3">
     <button type="button" class="btn-close btn-close-white" data-bs-toggle="collapse" data-bs-target="#sidebar-mobile"></button>
   </div>
-  <ul class="nav flex-column text-center">
+  
+  <ul class="nav flex-column text-center pb-4">
     @for (item of navItems; track item.title) {
-      <li class="sidebar-item">
-        <a [routerLink]="item.link" routerLinkActive="active" (click)="cerrarSidebarMobile()" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link text-white fs-5">{{ item.title }}</a>
+      <li class="sidebar-item py-2">
+        <a [routerLink]="item.link" 
+           routerLinkActive="active" 
+           (click)="cerrarSidebarMobile()" 
+           [routerLinkActiveOptions]="{ exact: true }" 
+           class="sidebar-link text-white fs-5 text-decoration-none">{{ item.title }}</a>
       </li>
     }
-    <hr class="text-white">
+    
+    <hr class="mx-5 text-white">
+
     @for (item of footerItems; track item.title) {
-      <li class="sidebar-footer-item">
-        <a [routerLink]="item.link" routerLinkActive="active" (click)="cerrarSidebarMobile()" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link text-white fs-5">{{ item.title }}</a>
+      <li class="sidebar-footer-item py-2">
+        @if (item.link === '/logout') {
+          <a href="javascript:void(0)" (click)="authService.logout(); cerrarSidebarMobile()" class="sidebar-link text-danger fs-5 text-decoration-none">
+            {{ item.title }}
+          </a>
+        } @else {
+          <a [routerLink]="item.link" 
+             routerLinkActive="active" 
+             (click)="cerrarSidebarMobile()" 
+             class="sidebar-link text-white fs-5 text-decoration-none">{{ item.title }}</a>
+        }
       </li>
     }
   </ul>
@@ -28,14 +46,18 @@
 
 <div class="wrapper d-none d-lg-block sticky-top">
   <aside id="sidebar" [class.expand]="isExpanded">
+    
     <div class="d-flex align-items-center p-3">
       <button id="toggle-btn" type="button" (click)="toggleSidebar()">
         <i class="bi bi-list"></i>
       </button>
       
       @if (isExpanded) {
-        <div class="sidebar-logo ms-2">
-          <p class="mb-0 fw-bold">Nombre usuario</p>
+        <div class="sidebar-logo ms-2 overflow-hidden">
+          <p class="mb-0 fw-bold text-nowrap">{{ authService.currentUser()?.nombre }}</p>
+          <small class="text-secondary text-uppercase" style="font-size: 0.65rem;">
+            {{ authService.currentUser()?.rol }}
+          </small>
         </div>
       }
     </div>
@@ -43,7 +65,10 @@
     <ul class="sidebar-nav">
       @for (item of navItems; track item.title) {
         <li class="sidebar-item">
-          <a [routerLink]="item.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+          <a [routerLink]="item.link" 
+             routerLinkActive="active" 
+             [routerLinkActiveOptions]="{ exact: true }" 
+             class="sidebar-link">
             <i class="bi {{ item.icon }}"></i>
             <span>{{ item.title }}</span>
           </a>
@@ -54,10 +79,20 @@
     <ul class="sidebar-footer">
       @for (item of footerItems; track item.title) {
         <li class="sidebar-footer-item">
-          <a [routerLink]="item.link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
-            <i class="bi {{ item.icon }}"></i>
-            <span>{{ item.title }}</span>
-          </a>
+          @if (item.link === '/logout') {
+            <a href="javascript:void(0)" (click)="authService.logout()" class="sidebar-link text-danger">
+              <i class="bi {{ item.icon }}"></i>
+              <span>{{ item.title }}</span>
+            </a>
+          } @else {
+            <a [routerLink]="item.link" 
+               routerLinkActive="active" 
+               [routerLinkActiveOptions]="{ exact: true }" 
+               class="sidebar-link">
+              <i class="bi {{ item.icon }}"></i>
+              <span>{{ item.title }}</span>
+            </a>
+          }
         </li>
       }
     </ul>

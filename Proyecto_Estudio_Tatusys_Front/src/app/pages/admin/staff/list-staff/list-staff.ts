@@ -54,8 +54,8 @@ export class ListStaff implements OnInit {
     this.router.navigate(['admin/trabajadores/alta']);
   }
 
-  editarStaff(id: number): void {
-    this.router.navigate(['admin/trabajadores/editar', id]);
+  editarStaff(dni: string): void {
+    this.router.navigate(['admin/trabajadores/editar', dni]);
   }
 
   EliminarStaff(id: number): void {
