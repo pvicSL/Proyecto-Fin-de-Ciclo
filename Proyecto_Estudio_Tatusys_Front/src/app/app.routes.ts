@@ -111,7 +111,7 @@ export const routes: Routes = [
             data: { title: 'Trabajadores', icon: 'bi-people' }
           },
           {
-            path: 'editar/:id',
+            path: 'editar/:dni',
             loadComponent: () => import('./pages/admin/staff/edit-staff/edit-staff').then(m => m.EditStaff),
             data: { title: 'Trabajadores > Editar', icon: 'bi-people' }
           },
@@ -124,6 +124,47 @@ export const routes: Routes = [
             path: 'alta',
             loadComponent: () => import('./pages/admin/staff/new-staff/new-staff').then(m => m.NewStaff),
             data: { title: 'Trabajadores > Alta', icon: 'bi-people' }
+          }
+        ]
+      },
+      {
+        path: 'ajustes',
+        loadComponent: () => import('./pages/admin/adminsettings/adminsettings').then(m => m.Adminsettings),
+        data: {title: 'Ajustes', icon: 'bi bi-gear-wide-connected'},
+
+        children: [
+          { path: '', redirectTo: 'admin', pathMatch: 'full' },
+
+          {
+            path: 'admin',
+            loadComponent: () => import('./pages/admin/adminsettings/admin-settings/admin-settings').then(m => m.AdminSettings),
+            data: {title: 'Ajustes > Administrador', icon: 'bi bi-gear-wide-connected'}
+          },
+          {
+            path: 'servicios',
+            loadComponent: () => import('./pages/admin/adminsettings/services-settings/services-settings').then(m => m.ServicesSettings),
+            data: {title: 'Ajustes > Servicios', icon: 'bi bi-gear-wide-connected'}
+          },
+          {
+            path: 'precios',
+            loadComponent: () => import('./pages/admin/adminsettings/prices-settings/prices-settings').then(m => m.PricesSettings),
+            data: {title: 'Ajustes > Precios', icon: 'bi bi-gear-wide-connected'}
+          },
+          
+        ]
+
+      },
+      {
+        path: 'calendario',
+        loadComponent: () => import('./pages/admin/calendar/calendar').then(m => m.Calendar),
+        data: {title: 'Calendario', icon: 'bi bi-gear-wide-connected'},
+
+        children: [
+          { path: '', redirectTo: 'mes', pathMatch: 'full' },
+          {
+            path: 'mes',
+            loadComponent: () => import('./pages/admin/requests/pending-requests/pending-requests').then(m => m.PendingRequests),
+            data: { title: 'Calendario > Pendientes', icon: 'bi-envelope' }
           }
         ]
       },

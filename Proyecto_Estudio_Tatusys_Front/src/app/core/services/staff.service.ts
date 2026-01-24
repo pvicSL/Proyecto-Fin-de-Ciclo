@@ -18,8 +18,16 @@ export class StaffService {
       return this.http.get<any>(`${this.apiUrl}/trabajadores/todos`);
     }
 
+    getStaffByRol(rol: string): Observable<any> {
+      return this.http.get<any>(`${this.apiUrl}/rol/${rol}`);
+    }
+
     getStaffById(id: number): Observable<any> {
       return this.http.get<any>(`${this.apiUrl}/trabajadores/${id}`);
+    }
+
+    getStaffByDni(documento: string): Observable<StaffAdminDTO> {
+      return this.http.get<StaffAdminDTO>(`${this.apiUrl}/trabajador-dni/${documento}`);
     }
 
     updateStaff(id: number, staff: StaffAdminDTO): Observable<any>{

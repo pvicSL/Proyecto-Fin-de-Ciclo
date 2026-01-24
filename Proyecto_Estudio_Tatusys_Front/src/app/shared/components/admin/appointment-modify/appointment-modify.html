@@ -41,7 +41,6 @@
     <div class="col-12 col-md-4">
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
         <span class="text-secondary small">Precio Base:</span>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioBase) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -49,21 +48,21 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
         <span class="text-secondary small">Tipo:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.tipo" >
+                [(ngModel)]="cita.tipo" (ngModelChange)="actualizarCalculos()">
           <option value="TATUAJE">Tatuaje</option>
           <option value="ELIMINACION">Eliminación</option>
           <option value="RETOQUE">Retoque</option>
           <option value="COVER">Cover</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioTipo) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
+
 
     <div class="col-12 col-md-4">
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
         <span class="text-secondary small">Zona:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.zona" >
+                [(ngModel)]="cita.zona" (ngModelChange)="actualizarCalculos()">
           <option value="BRAZO">Brazo</option>
           <option value="ANTEBRAZO">Antebrazo</option>
           <option value="CODO">Codo</option>
@@ -81,7 +80,6 @@
           <option value="NALGA">Nalga</option>
           <option value="CABEZA">Cabeza</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioZona || 0) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -89,13 +87,12 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
         <span class="text-secondary small">Tamaño:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.tamanio">
+                [(ngModel)]="cita.tamanio" (ngModelChange)="actualizarCalculos()">
           <option value="MINI">Mini</option>
           <option value="PEQUEÑO">Pequeño</option>
           <option value="MEDIANO">Mediano</option>
           <option value="GRANDE">Grande</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioTamanio || 0) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -103,12 +100,11 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
         <span class="text-secondary small">Detalle:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.detalle" >
+                [(ngModel)]="cita.detalle" (ngModelChange)="actualizarCalculos()">
           <option value="SENCILLO">Sencillo</option>
           <option value="MEDIO">Medio</option>
           <option value="DENSO">Denso</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioDetalle || 0) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -116,11 +112,10 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
         <span class="text-secondary small">Coloración:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.coloracion" >
+                [(ngModel)]="cita.coloracion"  (ngModelChange)="actualizarCalculos()">
           <option value="NEGRO">Negro</option>
           <option value="COLOR">Color</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioColoracion || 0) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
@@ -128,7 +123,7 @@
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
         <span class="text-secondary small">Estilo:</span>
         <select class="form-select form-select-sm w-auto border-0 fw-bold text-dark" 
-                [(ngModel)]="cita.estilo" >
+                [(ngModel)]="cita.estilo" (ngModelChange)="actualizarCalculos()">
           <option value="REALISMO">Realismo</option>
           <option value="TRADICIONAL">Tradicional</option>
           <option value="FINELINE">Fine Line</option>
@@ -137,14 +132,17 @@
           <option value="LETERING">Letering</option>
           <option value="JAPONES">Japones</option>
         </select>
-        <span class="fw-bold small text-nowrap">{{ (precio.precioEstilo || 0) | currency:'EUR':'symbol' }}</span>
       </div>
     </div>
 
     <div class="col-12 col-md-4">
       <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
-        <span class="text-secondary small">Duración del Servicio: </span>
-        <span class="text-dark fw-bold">{{ citaDTO.duracionEstimada | formatoHoras }}</span>
+        <span class="text-secondary small">Duración estimada:</span>
+        <span class="fw-bold d-block">
+          <i class="bi bi-clock me-1"></i>
+          {{ duracionEstimada >= 60 ? (duracionEstimada / 60 | number:'1.0-0') + 'h ' : '' }}
+          {{ duracionEstimada % 60 }} min
+        </span>
       </div>
     </div>
   </div>
@@ -163,7 +161,7 @@
                     </a>
                 </div>
             }
-            @if (cita.imagenRef1){
+            @if (cita.imagenRef2){
                 <div class="col-md-4 mb-3">
                     <a [href]="cita.imagenRef2" target="_blank" 
                     class="btn btn-secondary border shadow-sm d-flex align-items-center py-2 px-3 rounded-3 text-decoration-none text-dark">
@@ -172,7 +170,7 @@
                     </a>
                 </div>
             }
-            @if (cita.imagenRef1){
+            @if (cita.imagenRef3){
                 <div class="col-md-4 mb-3">
                     <a [href]="cita.imagenRef3" target="_blank" 
                     class="btn btn-secondary border shadow-sm d-flex align-items-center py-2 px-3 rounded-3 text-decoration-none text-dark">
@@ -197,11 +195,11 @@
             <div class="d-flex gap-3">
               <div>
                 <span class="text-secondary d-block small">Estado:</span>
-                <span class="badge bg-primary">{{cita.estadoPresupuesto}}</span>
+                <span [ngClass]="getBadgeClass(cita.estadoPresupuesto)">{{cita.estadoPresupuesto}}</span>
               </div>
               <div>
-                <span class="text-secondary d-block small">Fecha Presupuesto:</span>
-                <span>{{cita.fechaPresupuesto | date:'dd/MM/yyyy'}}</span>
+                <span class="text-secondary d-block small">Fecha y Hora:</span>
+                <span>{{cita.fecha | date:'dd/MM/yyyy'}} {{cita.hora}}</span>
               </div>
             </div>
         </div>
@@ -210,7 +208,7 @@
             <div class=" p-3 rounded shadow-inner">
                 <div class="d-flex justify-content-between mb-2">
                     <span class="text-secondary small">Precio Base:</span>
-                    <span class="fw-bold">{{ (cita.precioBase || 0) | currency:'EUR' }}</span>
+                    <span class="fw-bold">{{ (cita.precioSinIva || 0) | currency:'EUR' }}</span>
                 </div>
 
                 <div class="d-flex justify-content-between mb-1 small text-secondary">
@@ -227,6 +225,7 @@
             <button class="btn border-0 w-100 mt-3 fw-bold py-2 " (click)="guardarPresupuesto()">
                 <i class="bi bi-check-circle-fill me-2"></i> ACTUALIZAR PRESUPUESTO
             </button>
+            <ng-content select="[extra-btn]"></ng-content>
         </div>
     </div>
   </section>

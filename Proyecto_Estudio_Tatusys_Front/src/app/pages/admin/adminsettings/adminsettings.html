@@ -1,0 +1,21 @@
+<div class="filter-group mb-3" *ngIf="layoutService.showParentButtons$ | async">
+  <button 
+    class="btn btn-secondary me-1" 
+    [class.active]="filtroSeleccionado === 'admin'"
+    (click)="cambiarFiltro('admin')">
+    Administrador
+  </button>
+
+  <button 
+    class="btn btn-secondary me-1" 
+    [class.active]="filtroSeleccionado === 'servicios'"
+    (click)="cambiarFiltro('servicios')">
+    Servicios
+  </button>
+
+
+</div>
+
+<div class="dashboard-content d-flex flex-column flex-grow-1">
+   <router-outlet></router-outlet> 
+</div>

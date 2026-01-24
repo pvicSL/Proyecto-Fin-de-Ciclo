@@ -45,49 +45,42 @@
       <div class="col-12 col-md-4">
         <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
           <span class="text-secondary small">Precio Base:</span>
-          <span class="fw-bold small text-nowrap">{{ (precio.precioBase) | currency:'EUR':'symbol' }}</span>
         </div>
       </div>
 
       <div class="col-12 col-md-4">
         <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
           <span class="text-secondary small">Tipo: <span class="text-dark ms-1">{{ cita.tipo }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (precio.precioTipo) | currency:'EUR':'symbol' }}</span>
         </div>
       </div>
 
       <div class="col-12 col-md-4">
         <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
           <span class="text-secondary small">Zona: <span class="text-dark ms-1">{{ cita.zona }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (precio.precioZona || 0) | currency:'EUR':'symbol' }}</span>
         </div>
       </div>
 
       <div class="col-12 col-md-4">
         <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
           <span class="text-secondary small">Tamaño: <span class="text-dark ms-1">{{ cita.tamanio }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (precio.precioTamanio) | currency:'EUR':'symbol' }}</span>
         </div>
       </div>
 
       <div class="col-12 col-md-4">
         <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end px-3 px-md-4">
           <span class="text-secondary small">Detalle: <span class="text-dark ms-1">{{ cita.detalle }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (precio.precioDetalle || 0) | currency:'EUR':'symbol' }}</span>
         </div>
       </div>
 
       <div class="col-12 col-md-4">
         <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 ps-md-4 px-3 px-md-0">
           <span class="text-secondary small">Coloración: <span class="text-dark ms-1">{{ cita.coloracion }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (precio.precioColoracion || 0) | currency:'EUR':'symbol' }}</span>
         </div>
       </div>
 
       <div class="col-12 col-md-4">
         <div class="d-flex justify-content-between align-items-center border-bottom border-md-bottom-0 pb-2 pb-md-0 border-md-end pe-md-4 px-3 px-md-0">
           <span class="text-secondary small">Estilo: <span class="text-dark ms-1">{{ cita.estilo }}</span></span>
-          <span class="fw-bold small text-nowrap">{{ (precio.precioEstilo || 0) | currency:'EUR':'symbol' }}</span>
         </div>
       </div>
       <div class="col-12 col-md-4">
@@ -112,7 +105,7 @@
                     </a>
                 </div>
             }
-            @if (cita.imagenRef1){
+            @if (cita.imagenRef2){
                 <div class="col-md-4 mb-3">
                     <a [href]="cita.imagenRef2" target="_blank" 
                     class="btn btn-secondary border shadow-sm d-flex align-items-center py-2 px-3 rounded-3 text-decoration-none text-dark">
@@ -121,7 +114,7 @@
                     </a>
                 </div>
             }
-            @if (cita.imagenRef1){
+            @if (cita.imagenRef3){
                 <div class="col-md-4 mb-3">
                     <a [href]="cita.imagenRef3" target="_blank" 
                     class="btn btn-secondary border shadow-sm d-flex align-items-center py-2 px-3 rounded-3 text-decoration-none text-dark">
@@ -148,8 +141,8 @@
               </span>
             </div>
             <div>
-                <span class="text-secondary d-block small">Fecha:
-                  <span class="text-dark">{{cita.fechaPresupuesto | date:'dd/MM/yyyy'}}</span>
+                <span class="text-secondary d-block small">Fecha y Hora:
+                  <span class="text-dark">{{cita.fecha| date:'dd/MM/yyyy'}} {{cita.hora}}</span>
                 </span>
             </div>
           </div>
@@ -158,7 +151,7 @@
         <div class="col-md-4 ms-auto">
             <div class="text-end">
                 <span class="text-secondary d-block small">Precio Base:</span>
-                <span class="text-dark">{{ (cita.precioBase || 0) | currency:'EUR':'symbol' }}</span>
+                <span class="text-dark">{{ (cita.precioSinIva || 0) | currency:'EUR':'symbol' }}</span>
             </div>
             <div class="text-end">
                 <span class="text-secondary d-block small">IVA (21%):</span>

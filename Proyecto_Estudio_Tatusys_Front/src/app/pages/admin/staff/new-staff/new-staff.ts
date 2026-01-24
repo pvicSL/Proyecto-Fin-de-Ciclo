@@ -27,7 +27,7 @@ export class NewStaff implements OnInit {
   contrasenia: '',
   rol: 'TRABAJADOR',
   funciones: 'CREACION',
-  citas: [] // Enviamos el array vacío como pediste
+
 };
 
   constructor(
@@ -44,7 +44,7 @@ export class NewStaff implements OnInit {
     this.staffService.createStaff(this.staff).subscribe({
       next: () => {
         alert('Trabajador creado correctamente');
-        this.router.navigate(['/admin/staff']);
+        window.history.back();
       },
       error: (err) => alert('Error al crear: ' + (err.error?.message || 'Servidor no disponible'))
     });

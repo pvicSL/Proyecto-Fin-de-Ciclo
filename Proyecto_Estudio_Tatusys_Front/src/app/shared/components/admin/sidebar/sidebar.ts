@@ -43,7 +43,7 @@ export class Sidebar {
   ];
 
   footerItems: NavItem[] = [
-    { title: 'Configuración', link: '/config', icon: 'bi-gear-wide-connected' },
+    { title: 'Configuración', link: '/admin/ajustes', icon: 'bi-gear-wide-connected' },
     { title: 'Cerrar Sesión', link: '/logout', icon: 'bi-box-arrow-left' }
   ];
 

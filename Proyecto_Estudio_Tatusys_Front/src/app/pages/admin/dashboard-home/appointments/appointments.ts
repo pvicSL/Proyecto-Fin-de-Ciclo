@@ -21,17 +21,25 @@ export class Appointments implements OnInit{
   citasConfirmadas: AppointmentDTO[] = [];
   
   // --- Estado para los botones ---
-  fechaActual: Date = new Date();
-  vista: 'dia' | 'semana' = 'dia';
+  fechaActual: Date;
+  vista: 'dia' | 'semana';
+  paginaActual: number;
 
   constructor(
     private appointmentService: AppointmentService,
     private router: Router,
-  ) {}
+    private stateService: AppointmentService,
+  ) {{
+    // Recuperamos el estado guardado
+    this.fechaActual = this.stateService.fechaActual;
+    this.vista = this.stateService.vista;
+    this.paginaActual = this.stateService.paginaActual;
+  }}
 
   ngOnInit(): void {
     this.cargarCitas();
     this.cargarCitasPendientes();
+    this.cargarNumeroCitas();
   }
 
   // --- Lógica de navegación ---
@@ -41,6 +49,9 @@ export class Appointments implements OnInit{
    */
   setVista(tipo: 'dia' | 'semana'): void {
     this.vista = tipo;
+    this.stateService.vista = tipo; // Actualizamos el servicio
+    this.paginaActual = 1;
+    this.stateService.paginaActual = 1;
     this.cargarCitas();
   }
 
@@ -53,6 +64,7 @@ export class Appointments implements OnInit{
     const nuevaFecha = new Date(this.fechaActual);
     nuevaFecha.setDate(nuevaFecha.getDate() + (direccion * paso));
     this.fechaActual = nuevaFecha;
+    this.stateService.fechaActual = nuevaFecha;
     
     this.cargarCitas();
   }
@@ -75,6 +87,7 @@ export class Appointments implements OnInit{
 
   // --- Lógica de datos y navegación de rutas ---
 
+  
   cargarCitas(): void {
   // Formateamos la fecha para que Java la entienda (YYYY-MM-DD)
   const fechaISO = this.fechaActual.toISOString().split('T')[0];
@@ -96,7 +109,7 @@ export class Appointments implements OnInit{
     this.router.navigate(['admin/citas/detalleCitaConfirmada', id]);
   }
 
-  paginaActual: number = 1;
+  
 
   get citasPorPagina(): number {
   const altoVentana = window.innerHeight;
@@ -146,12 +159,22 @@ irAPagina(pagina: number | string): void {
     } else if (typeof pagina === 'number') {
         this.paginaActual = pagina;
     }
+  this.stateService.paginaActual = this.paginaActual;
 }
 
+numeroConfirmadas = 0;
+
+  cargarNumeroCitas(): void{
+    this.appointmentService.getNumberConfirmedAppointments().subscribe({
+      next: (data) =>{
+        this.numeroConfirmadas = data.length;
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+
 numeroPendientes: number = 0;
-
-
-
 
   cargarCitasPendientes() {
     this.appointmentService.getRequests().subscribe({

@@ -139,18 +139,30 @@ export class AppointmentService {
     // 5. MÉTODOS AUXILIARES / ADMIN
     // ==========================================
 
+    vista: 'dia' | 'semana' = 'dia';
+    fechaActual: Date = new Date();
+    paginaActual: number = 1;
+
     getConfirmedAppointments(fecha: string, vista: string): Observable<AppointmentDTO[]> {
         return this.http.get<AppointmentDTO[]>(`${this.apiUrl}/buscar/confirmadas/${fecha}/${vista}`, {
             params: { fecha, vista }
         });
     }
 
+    getNumberConfirmedAppointments(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/buscar/confirmadas`);
+    }
+
     getRequests(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/buscar/pendientes`);
+        return this.http.get<any[]>(`${this.apiUrl}/buscar/presupuesto-pendientes`);
     }
 
     getGeneratedBudgets(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/buscar/presupuesto-generados`);
+    }
+
+    getAceptedBudgets(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/buscar/presupuesto-aceptados`);
     }
 
     getAppointmentDetails(id: number): Observable<AppointmentAdminDTO> {
@@ -160,6 +172,17 @@ export class AppointmentService {
     updateAppointmentDetails(id: number, appointment: AppointmentAdminDTO): Observable<any> {
         const url = `${this.apiUrl}/detalles-completos-modificar/${id}`;
         return this.http.put<AppointmentAdminDTO>(url, appointment);
+    }
+
+
+    deleteAppointment(id: number): Observable<any> {
+        return this.http.put<any>(`${this.apiUrl}/${id}/presupuesto/rechazar`,{});
+        }
+
+
+
+    calcularDuracion(datos: AppointmentDTO): Observable<number> {
+        return this.http.post<number>(`${this.apiUrl}/calcular-duracion`, datos);
     }
 
     /* MÉTODO COMENTADO, EN PRINCIPIO YA NO SE USA, PERO ANTES DE ELIMINARLO

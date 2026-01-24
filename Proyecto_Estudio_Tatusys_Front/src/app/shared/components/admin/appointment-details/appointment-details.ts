@@ -9,6 +9,7 @@ import { PricesService } from '../../../../core/services/prices.service';
 import { PricesAdminDTO } from '../../../../core/models/prices-admin.model';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
 import { forkJoin } from 'rxjs';
+import { UploadService } from '../../../../core/services/upload.service';
 
 @Component({
   selector: 'app-appointment-details',
@@ -28,6 +29,7 @@ export class AppointmentDetails implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private priceService: PricesService,
+    private uploadService: UploadService,
   ) {}
 
   ngOnInit(): void {
@@ -40,10 +42,20 @@ export class AppointmentDetails implements OnInit {
     base: this.appointmentService.getAppointment(id)
   }).subscribe({
     next: (respuestas) => {
-      // Asignamos cada JSON a su variable correspondiente
-      this.cita = respuestas.admin;
-      this.precio = respuestas.precios;
-      this.citaDTO = respuestas.base;
+      // 1. Extraemos el objeto (por si viene como array)
+        const datosAdmin = Array.isArray(respuestas.admin) ? respuestas.admin[0] : respuestas.admin;
+        
+        // 2. Asignamos a la vista
+        this.cita = datosAdmin;
+        this.precio = respuestas.precios;
+        this.citaDTO = respuestas.base;
+
+        // Transformamos los nombres de archivo en URLs completas para el HTML
+        if (this.cita.imagenRef1) this.cita.imagenRef1 = this.uploadService.getImagenUrl(this.cita.imagenRef1);
+        if (this.cita.imagenRef2) this.cita.imagenRef2 = this.uploadService.getImagenUrl(this.cita.imagenRef2);
+        if (this.cita.imagenRef3) this.cita.imagenRef3 = this.uploadService.getImagenUrl(this.cita.imagenRef3);
+
+        console.log('Datos Admin procesados:', this.cita);
 
       console.log('1. Datos Admin:', this.cita);
       console.log('2. Datos Precios:', this.precio);
@@ -60,11 +72,14 @@ export class AppointmentDetails implements OnInit {
     this.location.back(); 
   }
 
-  getBadgeClass(estado: string): string {
-    switch (estado) {
-      case 'Pendiente': return 'bg-warning';
-      case 'Rechazado': return 'bg-danger';
-      default: return 'bg-success';
-    }
+  getBadgeClass(estado: string | undefined): string {
+  
+  switch (this.cita.estadoPresupuesto) {
+    case 'PENDIENTE': return 'badge bg-warning';
+    case 'ACEPTADO': return 'badge bg-success';
+    case 'RECHAZADO': return 'badge bg-danger';
+    case 'GENERADO': return 'badge bg-info';
+    default: return 'bg-primary';
   }
+}
 } 
