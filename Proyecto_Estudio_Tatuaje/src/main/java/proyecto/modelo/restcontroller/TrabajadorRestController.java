@@ -1,5 +1,6 @@
 package proyecto.modelo.restcontroller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,14 +76,29 @@ public class TrabajadorRestController {
 	}
 	
 	@GetMapping("/trabajador-dni/{documento}")
-	public ResponseEntity<?>buscarTrabajadorPorDni(@PathVariable String documento) {
-		Optional<Trabajador> trabajador = trabajadorService.buscarPorDocumento(documento);
-		if (trabajador.isPresent()) {
-			return ResponseEntity.ok(trabajador.get());		// Equivale a: new ResponseEntity<>(cliente.get(), HttpStatus.OK)
-		} else {
-			return new ResponseEntity<>("Cliente no encontrado con documento: " + documento, HttpStatusCode.valueOf(404));
-			
-		}
+	public ResponseEntity<?> buscarTrabajadorPorDni(@PathVariable String documento) {
+	    try {
+	        Optional<Trabajador> trabajadorOpt = trabajadorService.buscarPorDocumento(documento);
+	        
+	        if (trabajadorOpt.isPresent()) {
+	            Trabajador trabajador = trabajadorOpt.get();
+	            // Limpiar las citas para evitar bucle JSON
+	            trabajador.setCitas(new ArrayList<>());
+	            
+	            return ResponseEntity.ok(trabajador);
+	        } else {
+	            return new ResponseEntity<>(
+	                Map.of("mensaje", "Trabajador no encontrado con documento: " + documento),
+	                HttpStatusCode.valueOf(404)
+	            );
+	        }
+	        
+	    } catch (Exception e) {
+	        return new ResponseEntity<>(
+	            Map.of("mensaje", "Error al buscar el trabajador: " + e.getMessage()),
+	            HttpStatusCode.valueOf(500)
+	        );
+	    }
 	}
 	
 	// Ver citas asignadas a un trabajador específico

@@ -1,5 +1,7 @@
 package proyecto.modelo.dto;
 
+import java.util.Objects;
+
 import proyecto.modelo.entities.Trabajador;
 
 public class TrabajadorDTO {
@@ -11,25 +13,41 @@ public class TrabajadorDTO {
     private String apellido2;
     private String email;
     private String telefono;
+    private String dni;
     
     
     // SIN: dni, numeroCuenta, contrasenia (DATOS SENSIBLES)
 
     // CONSTRUCTORES
-    public TrabajadorDTO() {}
+    public TrabajadorDTO(Trabajador trabajador) {}
 
-    public TrabajadorDTO(Trabajador trabajador) {
-        this.idTrabajador = trabajador.getIdTrabajador();
-        this.nombre = trabajador.getNombre();
-        this.apellido1 = trabajador.getApellido1();
-        this.apellido2 = trabajador.getApellido2();
-        this.email = trabajador.getEmail();
-        this.telefono = trabajador.getTelefono();
-        
+    
 
-    }
+    public TrabajadorDTO() {
+		super();
+	}
 
-    // GETTERS Y SETTERS
+
+
+	
+
+
+
+	public TrabajadorDTO(int idTrabajador, String nombre, String apellido1, String apellido2, String email,
+			String telefono, String dni) {
+		super();
+		this.idTrabajador = idTrabajador;
+		this.nombre = nombre;
+		this.apellido1 = apellido1;
+		this.apellido2 = apellido2;
+		this.email = email;
+		this.telefono = telefono;
+		this.dni = dni;
+	}
+
+
+
+	// GETTERS Y SETTERS
     public int getIdTrabajador() {
         return idTrabajador;
     }
@@ -37,6 +55,15 @@ public class TrabajadorDTO {
     public void setIdTrabajador(int idTrabajador) {
         this.idTrabajador = idTrabajador;
     }
+    
+    public String getDni() {
+		return dni;
+	}
+
+
+	public void setDni(String dni) {
+		this.dni = dni;
+	}
 
     public String getNombre() {
         return nombre;
@@ -85,4 +112,25 @@ public class TrabajadorDTO {
         return "TrabajadorDTO [idTrabajador=" + idTrabajador + ", nombre=" + nombre + ", apellido1=" + apellido1
                 + ", apellido2=" + apellido2 + ", email=" + email + ", telefono=" + telefono + "]";
     }
+
+
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dni);
+	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof TrabajadorDTO))
+			return false;
+		TrabajadorDTO other = (TrabajadorDTO) obj;
+		return Objects.equals(dni, other.dni);
+	}
+    
+    
 }
