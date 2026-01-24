@@ -176,8 +176,8 @@ export class AppointmentService {
 
 
     deleteAppointment(id: number): Observable<any> {
-        return this.http.put<any>(`${this.apiUrl}/${id}/presupuesto/rechazar`,{});
-        }
+        return this.http.put<any>(`${this.apiUrl}/${id}/presupuesto/rechazar`, {});
+    }
 
 
 
@@ -197,8 +197,22 @@ export class AppointmentService {
     }
 
     postLogin(credentials: any): Observable<any> {
-    // Asegúrate de que la URL coincide con tu backend (ej: http://localhost:8080/auth/login)
-    return this.http.post<any>(`${this.apiUrl}/auth/login`, credentials);
+        // Asegúrate de que la URL coincide con tu backend (ej: http://localhost:8080/auth/login)
+        return this.http.post<any>(`${this.apiUrl}/auth/login`, credentials);
     }
 
+
+    // ==========================================
+    // 6. MÉTODOS PARA LA PASARELA DE PAGO
+    // ==========================================
+
+    // 1. Para obtener los datos de la cita usando solo la referencia (Público)
+    getPublicAppointmentByRef(referencia: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/buscar-publica/${referencia}`);
+    }
+
+    // 2. Para confirmar que el pago se ha realizado
+    confirmPayment(referencia: string): Observable<any> {
+        return this.http.post(`${this.apiUrl}/confirmar-pago/${referencia}`, {});
+    }
 }

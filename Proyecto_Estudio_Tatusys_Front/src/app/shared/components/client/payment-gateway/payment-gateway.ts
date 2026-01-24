@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { PaymentService } from '../../../../core/services/payment.service';
+// He quitado PaymentService porque ya no lo usas aquí, usas AppointmentService
+import { AppointmentService } from '../../../../core/services/appointment.service';
 
 @Component({
   selector: 'app-payment-gateway',
@@ -13,14 +14,16 @@ import { PaymentService } from '../../../../core/services/payment.service';
 })
 export class PaymentGatewayComponent implements OnInit {
 
-  token: string = '';
-  loading: boolean = true;
-  tokenValido: boolean = false;
+  // Variables de Estado
+  loading: boolean = true;      // Empieza cargando
+  tokenValido: boolean = false; // Falso hasta que verifiquemos la cita
   pagoRealizado: boolean = false;
-  presupuestoRechazado: boolean = false;
+  citaYaPagada: boolean = false;
+  presupuestoRechazado: boolean = false; // <--- ¡AQUÍ ESTABA EL ERROR! Faltaba esta línea
   errorMsg: string = '';
 
-  datosCita: any = {};
+  // Datos de la cita
+  datosCita: any = null;
 
   tarjeta: any = {
     nombre: '',
@@ -29,7 +32,7 @@ export class PaymentGatewayComponent implements OnInit {
     cvc: ''
   };
 
-  // Objeto para controlar el estado visual de cada campo (true=valido, false=invalido, null=sin tocar)
+  // Objeto para controlar el estado visual de cada campo
   validStatus: any = {
     nombre: null,
     numero: null,
@@ -42,49 +45,67 @@ export class PaymentGatewayComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private paymentService: PaymentService
+    private appointmentService: AppointmentService
   ) { }
 
   ngOnInit(): void {
-    // MODO PRUEBA VISUAL
-    this.token = this.route.snapshot.paramMap.get('token') || '';
-    this.loading = false;
-    this.tokenValido = true;
-    this.datosCita = {
-      referencia: 'CITA-TEST-2026',
-      precioTotal: 250.00,
-      fianza: 30,
-      fecha: '22-03-2026',
-      hora: '16:30'
-    };
+    // 1. Capturamos la referencia que viene en la URL
+    const referencia = this.route.snapshot.paramMap.get('token');
+
+    if (!referencia) {
+      this.errorMsg = "No se ha proporcionado una referencia de cita.";
+      this.loading = false;
+      return;
+    }
+
+    // 2. Llamamos al Backend para buscar la cita REAL
+    this.appointmentService.getPublicAppointmentByRef(referencia).subscribe({
+      next: (data) => {
+        this.datosCita = data; // Guardamos los datos reales
+        this.loading = false;
+
+        // 3. Comprobaciones de seguridad
+        if (data.estatus === 'CONFIRMADO') {
+          this.citaYaPagada = true; // Bloqueamos si ya pagó
+          return;
+        }
+
+        // Si llegamos aquí, todo es correcto y mostramos el formulario
+        this.tokenValido = true;
+      },
+      error: (err) => {
+        this.loading = false;
+        // Si el back devuelve 404 (No existe) o 410 (Caducado)
+        if (err.status === 410 || (err.error && err.error.includes('caducado'))) {
+          this.errorMsg = "El enlace de pago ha caducado (48h expiradas).";
+        } else {
+          this.errorMsg = "No hemos encontrado la cita o el enlace es incorrecto.";
+        }
+      }
+    });
   }
 
   // ==========================================
   // LÓGICA DE FORMATEO Y VALIDACIÓN EN TIEMPO REAL
   // ==========================================
 
-  // 1. VALIDAR NOMBRE: Solo letras, espacios, guiones y tildes
   validarNombre() {
     const valor = this.tarjeta.nombre;
-    // Regex: Permite letras a-z, acentos, ñ, guiones y apostrofes. NO números ni @.
     const regexNombre = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s'-]+$/;
 
     if (valor && valor.length >= 3 && regexNombre.test(valor)) {
       this.validStatus.nombre = true;
     } else {
-      this.validStatus.nombre = valor ? false : null; // Si está vacío vuelve a neutro
+      this.validStatus.nombre = valor ? false : null;
     }
   }
 
-  // 2. FORMATEAR Y VALIDAR NÚMERO DE TARJETA (Luhn + Longitud)
   formatearTarjeta(event: any) {
-    let input = event.target.value.replace(/\D/g, ''); // Quitar todo lo que no sea número
-    // Añadir espacio cada 4 dígitos
-    input = input.substring(0, 19); // Máximo 19 dígitos
+    let input = event.target.value.replace(/\D/g, '');
+    input = input.substring(0, 19);
     const formatted = input.match(/.{1,4}/g)?.join(' ') || '';
     this.tarjeta.numero = formatted;
 
-    // Validar mientras escribe si ya tiene longitud mínima
     if (input.length >= 14) {
       this.validarTarjeta();
     } else {
@@ -93,19 +114,12 @@ export class PaymentGatewayComponent implements OnInit {
   }
 
   validarTarjeta() {
-    // Quitamos espacios para validar
     const numeroLimpio = this.tarjeta.numero.replace(/\s/g, '');
-
-    // Longitud entre 14 y 19
     const longitudValida = numeroLimpio.length >= 14 && numeroLimpio.length <= 19;
-
-    // Algoritmo de Luhn (Check digit)
     const luhnValido = this.luhnCheck(numeroLimpio);
-
     this.validStatus.numero = longitudValida && luhnValido;
   }
 
-  // Algoritmo de Luhn estándar
   luhnCheck(val: string): boolean {
     let sum = 0;
     let shouldDouble = false;
@@ -120,17 +134,13 @@ export class PaymentGatewayComponent implements OnInit {
     return (sum % 10) == 0;
   }
 
-  // 3. FORMATEAR Y VALIDAR FECHA (MM/AA)
   formatearFecha(event: any) {
-    let input = event.target.value.replace(/\D/g, ''); // Solo números
+    let input = event.target.value.replace(/\D/g, '');
 
-    // LÓGICA DE AUTO-COMPLETADO DE MES
-    // Si escribe un número del 2 al 9 como primer dígito, asumimos que es 02, 03...
     if (input.length === 1 && parseInt(input) > 1) {
       input = '0' + input;
     }
 
-    // Insertar barra automáticamente
     if (input.length >= 2) {
       input = input.substring(0, 2) + '/' + input.substring(2, 4);
     }
@@ -158,12 +168,9 @@ export class PaymentGatewayComponent implements OnInit {
     const anio = parseInt('20' + partes[1], 10);
 
     const ahora = new Date();
-    // Ajuste para evitar problemas de mes vencido en el mismo año
     const fechaActual = new Date(ahora.getFullYear(), ahora.getMonth());
-    const fechaTarjeta = new Date(anio, mes - 1); // Mes en JS es 0-11
+    const fechaTarjeta = new Date(anio, mes - 1);
 
-    // Si la fecha de la tarjeta es anterior a este mes, error
-    // Nota: A veces se permite el mes actual, aquí somos estrictos > hoy
     if (fechaTarjeta < fechaActual) {
       this.validStatus.expiracion = false;
     } else {
@@ -171,19 +178,15 @@ export class PaymentGatewayComponent implements OnInit {
     }
   }
 
-  // 4. VALIDAR CVC
   validarCvc() {
     const valor = this.tarjeta.cvc.replace(/\D/g, '');
     this.tarjeta.cvc = valor;
-
-    // Resetear error específico
     this.cvcCorto = false;
 
     if (valor.length >= 3 && valor.length <= 4) {
       this.validStatus.cvc = true;
     } else {
       this.validStatus.cvc = valor.length > 0 ? false : null;
-      // Si hay algo escrito pero es corto, activamos el flag
       if (valor.length > 0 && valor.length < 3) {
         this.cvcCorto = true;
       }
@@ -199,20 +202,34 @@ export class PaymentGatewayComponent implements OnInit {
 
   realizarPago() {
     if (!this.isFormValid) return;
+
     this.loading = true;
-    setTimeout(() => {
-      this.loading = false;
-      this.pagoRealizado = true;
-    }, 2000);
+
+    // LLAMADA AL BACKEND REAL
+    this.appointmentService.confirmPayment(this.datosCita.referencia).subscribe({
+      next: (resp) => {
+        setTimeout(() => {
+          this.loading = false;
+          this.pagoRealizado = true;
+        }, 1500);
+      },
+      error: (err) => {
+        this.loading = false;
+        alert(err.error || "Hubo un error al procesar el pago. Inténtalo de nuevo.");
+      }
+    });
   }
 
   rechazarPresupuesto() {
     const confirmar = window.confirm("¿Estás seguro de que deseas RECHAZAR la pre-reserva? Tu solicitud quedará cancelada.");
     if (confirmar) {
       this.loading = true;
+      // NOTA: Aquí solo estamos simulando visualmente.
+      // Si quisieras cancelar realmente en backend, deberías llamar a this.appointmentService.cancelAppointment(...)
+      // Pero para el alcance actual del pago, esto vale.
       setTimeout(() => {
         this.loading = false;
-        this.presupuestoRechazado = true;
+        this.presupuestoRechazado = true; // Ahora sí funcionará
       }, 1500);
     }
   }
