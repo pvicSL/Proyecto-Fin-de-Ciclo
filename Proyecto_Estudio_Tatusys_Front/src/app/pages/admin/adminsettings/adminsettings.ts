@@ -14,17 +14,15 @@ export class Adminsettings {
   constructor(private router: Router, public layoutService: LayoutService) {}
   // Filtro de Solicitudes
   // Estado inicial
-  filtroSeleccionado: 'admin' | 'servicios' | 'precios' = 'admin';
+  filtroSeleccionado: 'admin' | 'servicios' = 'admin';
 
-  cambiarFiltro(tipo: 'admin' | 'servicios' | 'precios' ) {
+  cambiarFiltro(tipo: 'admin' | 'servicios' ) {
     this.filtroSeleccionado = tipo;
     if (tipo === 'admin') {
       this.router.navigate(['/admin/ajustes/admin']); 
-    } else if (tipo === 'servicios') {
-      this.router.navigate(['/admin/ajustes/servicios']);  
     } else {
-      this.router.navigate(['/admin/ajustes/precios']);
-    }
+      this.router.navigate(['/admin/ajustes/servicios']);  
+    } 
   }
 
 }

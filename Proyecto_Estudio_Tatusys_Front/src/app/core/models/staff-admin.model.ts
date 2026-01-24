@@ -1,4 +1,4 @@
-import { AppointmentDTO } from "./appointment.model";
+
 
 export interface StaffAdminDTO{ 
     idTrabajador: number;

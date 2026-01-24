@@ -86,10 +86,9 @@
                     </div>
                 </div>
 
-                <input type="text" [(ngModel)]="staff.nombre" (input)="verificarCambios()" name="nombre" class="form-control" required>
 
                 <div class="d-flex justify-content-end mt-5 gap-3">
-                    <button type="button" class="btn btn-danger px-4" (click)="cargarDatosStaff(staff.idTrabajador)" [disabled]="!hayCambios">
+                    <button type="button" class="btn btn-danger px-4" (click)="cargarDatosStaff(staff.dni)" [disabled]="!hayCambios">
                         REVERTIR CAMBIOS
                     </button>
                     <button class="btn py-2 px-5 fw-bold text-white" 

@@ -111,7 +111,7 @@ export const routes: Routes = [
             data: { title: 'Trabajadores', icon: 'bi-people' }
           },
           {
-            path: 'editar/:id',
+            path: 'editar/:dni',
             loadComponent: () => import('./pages/admin/staff/edit-staff/edit-staff').then(m => m.EditStaff),
             data: { title: 'Trabajadores > Editar', icon: 'bi-people' }
           },
@@ -153,6 +153,20 @@ export const routes: Routes = [
           
         ]
 
+      },
+      {
+        path: 'calendario',
+        loadComponent: () => import('./pages/admin/calendar/calendar').then(m => m.Calendar),
+        data: {title: 'Calendario', icon: 'bi bi-gear-wide-connected'},
+
+        children: [
+          { path: '', redirectTo: 'mes', pathMatch: 'full' },
+          {
+            path: 'mes',
+            loadComponent: () => import('./pages/admin/requests/pending-requests/pending-requests').then(m => m.PendingRequests),
+            data: { title: 'Calendario > Pendientes', icon: 'bi-envelope' }
+          }
+        ]
       },
 
       // Comodín Específico de ADMIN -> lleva a /admin/citas

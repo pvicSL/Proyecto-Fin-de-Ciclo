@@ -35,7 +35,7 @@ export class ListStaff implements OnInit {
    * Carga los trabajadores desde la base de datos
    */
   cargarStaff(): void {
-    this.staffService.getStaff().subscribe({
+    this.staffService.getStaffByRol('TRABAJADOR').subscribe({
       next: (data: StaffDTO[]) => {
         this.listaStaff = data;
         console.log('Staff cargado:', this.listaStaff);

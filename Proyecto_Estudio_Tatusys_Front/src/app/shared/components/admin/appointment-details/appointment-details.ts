@@ -72,11 +72,14 @@ export class AppointmentDetails implements OnInit {
     this.location.back(); 
   }
 
-  getBadgeClass(estado: string): string {
-    switch (estado) {
-      case 'Pendiente': return 'bg-warning';
-      case 'Rechazado': return 'bg-danger';
-      default: return 'bg-success';
-    }
+  getBadgeClass(estado: string | undefined): string {
+  
+  switch (this.cita.estadoPresupuesto) {
+    case 'PENDIENTE': return 'badge bg-warning';
+    case 'ACEPTADO': return 'badge bg-success';
+    case 'RECHAZADO': return 'badge bg-danger';
+    case 'GENERADO': return 'badge bg-info';
+    default: return 'bg-primary';
   }
+}
 } 

@@ -40,37 +40,50 @@ export class AppointmentModify implements OnInit {
   ) {}
 
   actualizarCalculos() {
-  if (!this.cita || !this.tarifasBBDD) return;
+  if (!this.cita || !this.citaOriginal || !this.tarifasBBDD || !this.precio) return;
 
-  // Función de búsqueda segura
-  const obtenerPrecio = (seleccion: string | undefined) => {
-    if (!seleccion) return 0;
-    return this.tarifasBBDD[seleccion.toUpperCase()] || 0;
+  const obtenerTarifa = (val: string | undefined) => {
+    if (!val) return 0;
+    return Number(this.tarifasBBDD[val.toUpperCase()] || 0);
   };
 
-  // 1. Obtenemos cada precio individual de tu JSON
-  const pTipo = obtenerPrecio(this.cita.tipo);
-  const pZona = obtenerPrecio(this.cita.zona);
-  const pTamanio = obtenerPrecio(this.cita.tamanio);
-  const pDetalle = obtenerPrecio(this.cita.detalle);
-  const pEstilo = obtenerPrecio(this.cita.estilo);
-  const pColor = obtenerPrecio(this.cita.coloracion); // Buscará 'COLOR' o 'NEGRO'
-  const precioBase = this.precio?.precioBase || 0;
+  // 1. ¿Tiene la cita un precio guardado ya?
+  const precioGuardadoEnBD = Number(this.citaOriginal.precioSinIva) || 0;
 
+  if (precioGuardadoEnBD > 0) {
+    // CASO: YA EXISTE UN PRECIO. Aplicamos variaciones sobre ese precio pactado.
+    let nuevoPrecioSinIva = precioGuardadoEnBD;
+    const campos = ['tipo', 'zona', 'tamanio', 'detalle', 'estilo', 'coloracion'];
 
-  // 2. Sumamos todo
-  // Si tienes un precio mínimo de entrada, súmalo aquí (ej: + 40)
-  this.cita.precioSinIva = precioBase + pTipo + pZona + pTamanio + pDetalle + pEstilo + pColor;
+    campos.forEach(campo => {
+      const valorActual = (this.cita as any)[campo];
+      const valorOriginal = (this.citaOriginal as any)[campo];
 
-  // 3. Impuestos y Total
+      if (valorActual !== valorOriginal) {
+        const pViejo = obtenerTarifa(valorOriginal);
+        const pNuevo = obtenerTarifa(valorActual);
+        nuevoPrecioSinIva = nuevoPrecioSinIva - pViejo + pNuevo;
+      }
+    });
+    this.cita.precioSinIva = nuevoPrecioSinIva;
+  } else {
+    // CASO: CITA NUEVA (precio 0). Calculamos el total de cero.
+    const base = Number(this.precio.precioBase) || 0;
+    const extras = obtenerTarifa(this.cita.tipo) + obtenerTarifa(this.cita.zona) + 
+                   obtenerTarifa(this.cita.tamanio) + obtenerTarifa(this.cita.detalle) + 
+                   obtenerTarifa(this.cita.estilo) + obtenerTarifa(this.cita.coloracion);
+    this.cita.precioSinIva = base + extras;
+  }
+
+  // 2. Impuestos y Total
   this.cita.iva = this.cita.precioSinIva * 0.21;
   this.cita.precioFinal = this.cita.precioSinIva + this.cita.iva;
 
-  console.log("Suma realizada con éxito:", this.cita.precioFinal);
+  this.sincronizarYCalcularDuracion();
+}
 
-  // SINCRONIZACIÓN: Pasamos los cambios de 'cita' a 'citaDTO'
-  // Esto es necesario porque el HTML modifica 'this.cita', pero el servicio usa 'this.citaDTO'
-    Object.assign(this.citaDTO, {
+private sincronizarYCalcularDuracion() {
+  Object.assign(this.citaDTO, {
     tipo: this.cita.tipo,
     zona: this.cita.zona,
     tamanio: this.cita.tamanio,
@@ -89,54 +102,47 @@ export class AppointmentModify implements OnInit {
 }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.params['id'];
-    
-    forkJoin({
-      admin: this.appointmentService.getAppointmentDetails(id),
-      precios: this.priceService.getPrices(id),
-      base: this.appointmentService.getAppointment(id),
-      todosLosPrecios: this.priceService.getAllPrices()
-    }).subscribe({
-      next: (respuestas) => {
+  const id = this.route.snapshot.params['id'];
+  
+  forkJoin({
+    admin: this.appointmentService.getAppointmentDetails(id),
+    precios: this.priceService.getPrices(id),
+    base: this.appointmentService.getAppointment(id),
+    todosLosPrecios: this.priceService.getAllPrices()
+  }).subscribe({
+    next: (respuestas) => {
+      // 1. Asignaciones básicas
+      this.precio = respuestas.precios;
+      this.citaDTO = respuestas.base;
+      const datosAdmin = Array.isArray(respuestas.admin) ? respuestas.admin[0] : respuestas.admin;
+      this.cita = datosAdmin;
 
-        this.precio = respuestas.precios;
+      // 2. Mapeo de tarifas del catálogo
+      respuestas.todosLosPrecios.forEach(p => {
+        if (p && p.valor) {
+          const llave = p.valor.trim().toUpperCase();
+          this.tarifasBBDD[llave] = p.precioAdicional;
+        }
+      });
 
-        this.citaDTO = respuestas.base;
-        // 1. Extraemos el objeto (por si viene como array)
-        const datosAdmin = Array.isArray(respuestas.admin) ? respuestas.admin[0] : respuestas.admin;
-        
-        // 2. Asignamos a la vista
-        this.cita = datosAdmin;
-        
-        
+      // 3. URLs de imágenes
+      if (this.cita.imagenRef1) this.cita.imagenRef1 = this.uploadService.getImagenUrl(this.cita.imagenRef1);
+      if (this.cita.imagenRef2) this.cita.imagenRef2 = this.uploadService.getImagenUrl(this.cita.imagenRef2);
+      if (this.cita.imagenRef3) this.cita.imagenRef3 = this.uploadService.getImagenUrl(this.cita.imagenRef3);
 
-        if (this.cita.imagenRef1) this.cita.imagenRef1 = this.uploadService.getImagenUrl(this.cita.imagenRef1);
-        if (this.cita.imagenRef2) this.cita.imagenRef2 = this.uploadService.getImagenUrl(this.cita.imagenRef2);
-        if (this.cita.imagenRef3) this.cita.imagenRef3 = this.uploadService.getImagenUrl(this.cita.imagenRef3);
+      // --- ¡OJO AQUÍ! ---
+      // HE QUITADO la línea que ponía precioSinIva = SERVICIO_BASE.
+      // Dejamos que 'this.cita' conserve el precio que trae del servidor.
 
-        // En tu subscribe del ngOnInit
-        respuestas.todosLosPrecios.forEach(p => {
-          // Verificamos 'valor' y 'precioAdicional' que son los nombres de tu JSON
-          if (p && p.valor) {
-            const llave = p.valor.trim().toUpperCase();
-            this.tarifasBBDD[llave] = p.precioAdicional; // Guardamos el precio adicional
-          }
-        });
-
-        // Agregamos manualmente el SERVICIO_BASE si quieres que sume desde ahí
-        this.cita.precioSinIva = this.tarifasBBDD['SERVICIO_BASE'] || 0;
-        // Transformamos los nombres de archivo en URLs completas para el HTML
-        
-
-        
-
-        // 3. CREAMOS LA COPIA DE SEGURIDAD
-        this.citaOriginal = JSON.parse(JSON.stringify(datosAdmin));
-        setTimeout(() => this.actualizarCalculos());
-      },
-      error: (err) => console.error('Error al cargar:', err)
-    });
-  }
+      // 4. CREAMOS LA COPIA DE SEGURIDAD (con el precio real de la BD)
+      this.citaOriginal = JSON.parse(JSON.stringify(this.cita));
+      
+      // 5. Ejecutamos el cálculo inicial
+      this.actualizarCalculos();
+    },
+    error: (err) => console.error('Error al cargar:', err)
+  });
+}
 
 
 
@@ -170,9 +176,9 @@ getBadgeClass(estado: string | undefined): string {
   
   switch (this.cita.estadoPresupuesto) {
     case 'PENDIENTE': return 'badge bg-warning';
-    case 'CONFIRMADO': return 'badge bg-success';
+    case 'ACEPTADO': return 'badge bg-success';
     case 'RECHAZADO': return 'badge bg-danger';
-    case 'ENVIADO': return 'badge bg-info';
+    case 'GENERADO': return 'badge bg-info';
     default: return 'bg-primary';
   }
 }

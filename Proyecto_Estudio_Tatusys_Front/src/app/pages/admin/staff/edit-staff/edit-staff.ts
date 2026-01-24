@@ -26,21 +26,23 @@ export class EditStaff implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.params['id'];
-    this.cargarDatosStaff(id);
+    const dniUrl = this.route.snapshot.params['dni'];
+    this.cargarDatosStaff(dniUrl);
   }
 
-  cargarDatosStaff(id: number) {
-    this.staffService.getStaffById(id).subscribe({
-      next: (data) => {
-        this.staff = data;
-        // Guardamos una "foto" del estado inicial para comparar
-        this.datosOriginales = JSON.stringify(data);
-        this.hayCambios = false;
-      },
-      error: (err) => console.error('Error al cargar trabajador', err)
-    });
-  }
+  cargarDatosStaff(dni: string) {
+  this.staffService.getStaffByDni(dni).subscribe({
+    next: (data) => {
+      this.staff = data;
+      this.datosOriginales = JSON.stringify(data);
+      this.hayCambios = false;
+    },
+    error: (err) => {
+      console.error('Error al conectar con la API:', err);
+      // Si la API devuelve el 404 que programaste, saldrá aquí
+    }
+  });
+}
 
   // Se llama en cada input del HTML con (input)
   verificarCambios() {
