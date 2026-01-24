@@ -80,6 +80,7 @@ CREATE TABLE servicios (
     factura BOOLEAN NOT NULL,
     estado_factura ENUM('NO_REQUIERE', 'PENDIENTE', 'ENVIADA') NULL,
     estatus ENUM('PENDIENTE', 'CONFIRMADO'),
+	fecha_limite_pago DATETIME NULL,
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
     FOREIGN KEY (id_trabajador) REFERENCES trabajadores(id_trabajador),
     UNIQUE INDEX ID_UNIQUE_SERVICIO (id_cliente, id_servicio)

@@ -1,6 +1,7 @@
 package proyecto.modelo.repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +55,13 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
 
 	// Buscar citas asignadas a un trabajador específico
 	List<Cita> findByTrabajador_IdTrabajador(Integer idTrabajador);
+	
+    // 1. Busca citas pendientes cuya fecha límite ya ha pasado (para borrar)
+    List<Cita> findByEstatusAndFechaLimitePagoBefore(Estatus estatus, LocalDateTime fechaLimite);
+    
+    // 2. Busca por referencia (para confirmar el pago)
+    Optional<Cita> findByReferencia(String referencia);
+
 	
 
 

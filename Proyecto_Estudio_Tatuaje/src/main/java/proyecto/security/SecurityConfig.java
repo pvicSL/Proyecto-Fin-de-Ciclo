@@ -32,6 +32,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 // 1. AUTH endpoints (siempre públicos)
                 .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/api/citas/confirmar-pago/**").permitAll()
 
                 // 2. RECURSOS estáticos (siempre públicos)
                 .requestMatchers("/index.html").permitAll()

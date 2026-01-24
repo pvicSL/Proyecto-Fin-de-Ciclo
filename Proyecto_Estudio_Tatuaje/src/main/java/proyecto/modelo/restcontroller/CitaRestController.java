@@ -1,6 +1,7 @@
 package proyecto.modelo.restcontroller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -866,6 +867,35 @@ public class CitaRestController {
     	public ResponseEntity<?> getHuecos(@RequestParam int duracion, @RequestParam int idTrabajador) {
     		return ResponseEntity.ok(citaService.buscarHuecosDisponibles(duracion, idTrabajador));
     }
+    	
+    	@PostMapping("/confirmar-pago/{referencia}")
+    	public ResponseEntity<?> confirmarPago(@PathVariable String referencia) {
+    	    Optional<Cita> citaOpt = citaRepository.findByReferencia(referencia);
+
+    	    if (citaOpt.isPresent()) {
+    	        Cita cita = citaOpt.get();
+    	        
+    	        // BLOQUEO: Ya pagada
+    	        if (cita.getEstatus() == Estatus.CONFIRMADO) {
+    	             return ResponseEntity.badRequest().body("Error: Esta cita ya ha sido pagada previamente.");
+    	        }
+    	        
+    	        // BLOQUEO: Caducada (Doble check de seguridad)
+    	        if (cita.getFechaLimitePago() != null && LocalDateTime.now().isAfter(cita.getFechaLimitePago())) {
+    	            return ResponseEntity.status(HttpStatus.GONE).body("Error: El enlace ha caducado.");
+    	        }
+    	        // ÉXITO: Confirmamos
+    	        cita.setEstatus(Estatus.CONFIRMADO);
+    	        cita.setFechaLimitePago(null); // Borramos fecha límite (ya no caduca)
+    	        citaRepository.save(cita);
+    	        
+    	        return ResponseEntity.ok(java.util.Map.of("mensaje", "Pago registrado y cita confirmada."));
+    	    } else {
+    	        return ResponseEntity.notFound().build();
+    	    }
+    	}
+
+
 
 
 }
