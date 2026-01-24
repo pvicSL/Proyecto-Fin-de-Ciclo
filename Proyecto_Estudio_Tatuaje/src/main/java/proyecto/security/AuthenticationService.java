@@ -25,18 +25,34 @@ public class AuthenticationService {
      * @return JWT token si las credenciales son correctas
      * @throws RuntimeException si las credenciales son incorrectas
      */
-    public String login(String email, String password) {
+    public Trabajador autenticarYObtenerUsuario(String email, String password) {
         
         // 1. Buscar trabajador por email
         Trabajador trabajador = trabajadorRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("Email o contraseña incorrectos"));
         
-        // 2. Verificar contraseña (comparar texto plano con hash almacenado)
-        if (!password.equals(trabajador.getContrasenia())) {
+     // 2. Verificar contraseña - usar passwordEncoder
+        if (!passwordEncoder.matches(password, trabajador.getContrasenia())) {
             throw new RuntimeException("Email o contraseña incorrectos");
         }
         
-        // 3. Si llegamos aquí, las credenciales son correctas → generar token
+     // 3. Devolver trabajador completo
+        return trabajador;
+    }
+    
+    /**
+     * Método original (mantener para compatibilidad)
+     */
+    public String login(String email, String password) {
+        
+        Trabajador trabajador = trabajadorRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Email o contraseña incorrectos"));
+
+        // CORREGIR: Usar passwordEncoder en lugar de equals
+        if (!passwordEncoder.matches(password, trabajador.getContrasenia())) {
+            throw new RuntimeException("Email o contraseña incorrectas");
+        }
+
         return jwtService.generateToken(trabajador);
     }
     

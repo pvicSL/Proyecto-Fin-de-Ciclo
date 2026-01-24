@@ -45,7 +45,7 @@ public class TrabajadorRestController {
 	
 	
 	
-	@GetMapping("/trabajadores/{idTrabajador}")
+	@GetMapping("/trabajadores/{idTrabajador}") //SEGURIDAD OK
 	public ResponseEntity<?> buscarTrabajador(@PathVariable int idTrabajador) {
 	    
 	    // Validar permisos de acceso
@@ -112,8 +112,14 @@ public class TrabajadorRestController {
 	}
 	
 	// Ver citas asignadas a un trabajador específico
-	@GetMapping("/trabajadores/{trabajadorId}/citas")
+	@GetMapping("/trabajadores/{trabajadorId}/citas")	//SEGURIDAD OKEI
 	public ResponseEntity<?> obtenerCitasDelTrabajador(@PathVariable int trabajadorId) {
+	    
+	    // Validar permisos de acceso
+	    if (!securityUtils.puedeAccederARecursoTrabajador(trabajadorId)) {
+	        return securityUtils.crearRespuestaAccesoDenegado();
+	    }
+	    
 	    List<CitaDTO> citas = trabajadorService.obtenerCitasDelTrabajador(trabajadorId);
 	    
 	    if (citas.isEmpty()) {
@@ -128,7 +134,7 @@ public class TrabajadorRestController {
 	}
 
 	// Eliminar trabajador (con validación de citas)
-	@DeleteMapping("/trabajadores/{trabajadorId}")
+	@DeleteMapping("/trabajadores/{trabajadorId}")	//SEGURIDAD OKEI
 	public ResponseEntity<?> eliminarTrabajador(@PathVariable int trabajadorId) {
 	    int resultado = trabajadorService.eliminarTrabajador(trabajadorId);
 	    
@@ -148,8 +154,14 @@ public class TrabajadorRestController {
 	    }
 	}
 	
-	@PutMapping("/trabajadores/{trabajadorId}")
+	@PutMapping("/trabajadores/{trabajadorId}")	//SEGURIDAD OK
 	public ResponseEntity<?> actualizarTrabajador(@PathVariable int trabajadorId, @RequestBody Trabajador trabajador) {
+	    
+	    // Validar permisos de acceso
+	    if (!securityUtils.puedeAccederARecursoTrabajador(trabajadorId)) {
+	        return securityUtils.crearRespuestaAccesoDenegado();
+	    }
+	    
 	    try {
 	        // Verificar que el trabajador existe
 	        Trabajador trabajadorExistente = trabajadorService.buscarUnTrabajador(trabajadorId);
@@ -171,7 +183,6 @@ public class TrabajadorRestController {
 	        trabajadorExistente.setTelefono(trabajador.getTelefono());
 	        trabajadorExistente.setRol(trabajador.getRol());
 	        trabajadorExistente.setFunciones(trabajador.getFunciones());
-	        // Las citas se mantienen intactas
 
 	        // Actualizar el trabajador
 	        trabajadorService.actualizarTrabajador(trabajadorExistente);
