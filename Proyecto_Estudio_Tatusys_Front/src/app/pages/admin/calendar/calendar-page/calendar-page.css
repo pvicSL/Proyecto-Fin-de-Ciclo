@@ -1,0 +1,14 @@
+/* Asegúrate de que el texto de la cita sea visible */
+::ng-deep .fc-event {
+  background-color: #5ba19b !important; /* Color verde que querías */
+  color: white !important;
+  border: none !important;
+  padding: 2px !important;
+  display: block !important;
+}
+
+/* Si usas la clase personalizada que pusimos en el mapeo */
+::ng-deep .cita-badge {
+  cursor: pointer;
+  font-size: 0.85em;
+}

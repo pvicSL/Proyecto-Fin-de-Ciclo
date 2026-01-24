@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, } from '@angular/core';
-import { CalendarOptions, DatesSetArg } from '@fullcalendar/core';
+import { CalendarOptions, DatesSetArg, EventClickArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import esLocale from '@fullcalendar/core/locales/es'; // Para ponerlo en español
 import { Router } from '@angular/router';
@@ -28,7 +28,7 @@ export class CalendarPage {
       this.actualizarTituloMes();
       this.cargarCitasDesdeCalendario(info);
     },
-    eventClick: (info) => this.navegarADetalle(info.event.id)
+    eventClick: (info: EventClickArg) => this.navegarADetalle(info.event.id)
   };
 
   constructor(
@@ -41,24 +41,29 @@ export class CalendarPage {
    * y llama a tu servicio con los parámetros requeridos.
    */
   cargarCitasDesdeCalendario(info: DatesSetArg) {
-    // 1. Obtenemos la fecha central del rango visible para saber en qué mes estamos
-    // Usamos info.view.currentStart que es el primer día del mes actual
-    const fechaISO = info.view.currentStart.toISOString().split('T')[0];
-    
-    // 2. Llamamos a tu método con los dos parámetros: fecha y vista
-    // Enviamos "mes" porque esta página es específicamente para la vista mensual
-    this.appointmentService.getConfirmedAppointments(fechaISO, 'mes').subscribe({
-      next: (citas) => {
-        this.calendarOptions.events = citas.map(c => ({
-          id: c.idCita.toString(),
-          title: `${c.hora} - ${c.clienteNombre}`,
-          start: c.fecha,
-          className: 'cita-badge'
-        }));
-      },
-      error: (err) => console.error('Error al cargar citas mensuales', err)
-    });
-  }
+  const fechaISO = info.view.currentStart.toISOString().split('T')[0];
+  
+  this.appointmentService.getConfirmedAppointments(fechaISO, 'mes').subscribe({
+    next: (citas) => {
+      // 1. Mapeamos los datos
+      const nuevosEventos = citas.map(c => ({
+        id: c.idCita.toString(),
+        title: `${c.hora} - ${c.clienteNombre}`,
+        start: c.fecha, // Asegúrate que c.fecha sea 'YYYY-MM-DD'
+        className: 'cita-badge'
+      }));
+
+      // 2. IMPORTANTE: Reasignamos el objeto de opciones para que Angular detecte el cambio
+      this.calendarOptions = {
+        ...this.calendarOptions,
+        events: nuevosEventos
+      };
+
+      console.log('Citas cargadas con éxito:', nuevosEventos);
+    },
+    error: (err) => console.error('Error al cargar citas:', err)
+  });
+}
 
   // --- Métodos de navegación (Flechas) ---
 

@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { Router, RouterLink, RouterModule } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 
 interface NavItem {
   title: string;
   link: string;
   icon: string;
+  onlyAdmin?: boolean;
 }
 
 @Component({
@@ -16,11 +18,13 @@ interface NavItem {
 })
 export class Sidebar {
   isExpanded = false;
-
+  // Inyectamos el servicio de auth
+  public authService = inject(AuthService);
   constructor(private router: Router) {} // Inyectamos el router para leer la URL
 
   isItemActive(itemLink: string): boolean {
     const currentUrl = this.router.url;
+    
 
     // Lógica especial para Home/Citas y sus hijos (detalle y presupuesto)
     if (itemLink === '/admin/citas') {
@@ -34,18 +38,34 @@ export class Sidebar {
 
 
   // Lista de navegación centralizada
-  navItems: NavItem[] = [
+  private allNavItems: NavItem[] = [
     { title: 'Home', link: '/admin/citas', icon: 'bi-house-door-fill' },
     { title: 'Solicitudes', link: '/admin/solicitudes', icon: 'bi-envelope-fill' },
     { title: 'Facturas', link: '/facturas', icon: 'bi-file-earmark-ruled-fill' },
     { title: 'Calendario', link: '/admin/calendario', icon: 'bi-calendar2-event-fill' },
+    // Solo para admins
     { title: 'Trabajadores', link: '/admin/trabajadores', icon: 'bi-people-fill' }
   ];
 
-  footerItems: NavItem[] = [
+  private allFooterItems: NavItem[] = [
+    // Solo para admins
     { title: 'Configuración', link: '/admin/ajustes', icon: 'bi-gear-wide-connected' },
     { title: 'Cerrar Sesión', link: '/logout', icon: 'bi-box-arrow-left' }
   ];
+
+  // Getter para obtener solo los items permitidos para el usuario actual
+  get navItems(): NavItem[] {
+    return this.allNavItems.filter(item => !item.onlyAdmin || this.authService.isAdmin());
+  }
+
+  get footerItems(): NavItem[] {
+    return this.allFooterItems.filter(item => !item.onlyAdmin || this.authService.isAdmin());
+  }
+
+  // Modifica el método de logout para usar tu servicio
+  handleLogout() {
+    this.authService.logout();
+  }
 
   toggleSidebar() {
     this.isExpanded = !this.isExpanded;

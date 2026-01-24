@@ -10,7 +10,7 @@
         }
     </div>
 
-    <div class="contenedor-scroll container-fluid p-4 rounded shadow-sm border bg-white">
+    <div class="contenedor-scroll container-fluid p-4 rounded shadow-sm border">
         <div class="d-flex mb-2">
             <button type="button" class="btn-close ms-auto" (click)="cancelar()"></button>
         </div>
@@ -88,7 +88,7 @@
 
 
                 <div class="d-flex justify-content-end mt-5 gap-3">
-                    <button type="button" class="btn btn-danger px-4" (click)="cargarDatosStaff(staff.dni)" [disabled]="!hayCambios">
+                    <button type="button" class="btn btn-danger px-4" (click)=" cargarDatosStaff(dniFijo)" [disabled]="!hayCambios">
                         REVERTIR CAMBIOS
                     </button>
                     <button class="btn py-2 px-5 fw-bold text-white" 
