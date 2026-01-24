@@ -145,11 +145,6 @@ export const routes: Routes = [
             loadComponent: () => import('./pages/admin/adminsettings/services-settings/services-settings').then(m => m.ServicesSettings),
             data: {title: 'Ajustes > Servicios', icon: 'bi bi-gear-wide-connected'}
           },
-          {
-            path: 'precios',
-            loadComponent: () => import('./pages/admin/adminsettings/prices-settings/prices-settings').then(m => m.PricesSettings),
-            data: {title: 'Ajustes > Precios', icon: 'bi bi-gear-wide-connected'}
-          },
           
         ]
 
@@ -163,8 +158,8 @@ export const routes: Routes = [
           { path: '', redirectTo: 'mes', pathMatch: 'full' },
           {
             path: 'mes',
-            loadComponent: () => import('./pages/admin/requests/pending-requests/pending-requests').then(m => m.PendingRequests),
-            data: { title: 'Calendario > Pendientes', icon: 'bi-envelope' }
+            loadComponent: () => import('./pages/admin/calendar/calendar-page/calendar-page').then(m => m.CalendarPage),
+            data: { title: 'Calendario', icon: 'bi-envelope' }
           }
         ]
       },

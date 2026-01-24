@@ -38,7 +38,7 @@ export class Sidebar {
     { title: 'Home', link: '/admin/citas', icon: 'bi-house-door-fill' },
     { title: 'Solicitudes', link: '/admin/solicitudes', icon: 'bi-envelope-fill' },
     { title: 'Facturas', link: '/facturas', icon: 'bi-file-earmark-ruled-fill' },
-    { title: 'Calendario', link: '/calendario', icon: 'bi-calendar2-event-fill' },
+    { title: 'Calendario', link: '/admin/calendario', icon: 'bi-calendar2-event-fill' },
     { title: 'Trabajadores', link: '/admin/trabajadores', icon: 'bi-people-fill' }
   ];
 

@@ -1,14 +1,15 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, } from '@angular/core';
 import { CalendarOptions, DatesSetArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import esLocale from '@fullcalendar/core/locales/es'; // Para ponerlo en español
 import { Router } from '@angular/router';
 import { AppointmentService } from '../../../../core/services/appointment.service';
-import { FullCalendarComponent } from '@fullcalendar/angular';
+import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-calendar-page',
-  imports: [],
+  imports: [CommonModule, FullCalendarModule],
   templateUrl: './calendar-page.html',
   styleUrl: './calendar-page.css',
 })
