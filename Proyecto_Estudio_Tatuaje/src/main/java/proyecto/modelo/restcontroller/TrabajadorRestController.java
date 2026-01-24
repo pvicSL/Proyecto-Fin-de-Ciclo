@@ -23,6 +23,7 @@ import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.dto.TrabajadorDTO;
 import proyecto.modelo.entities.Trabajador;
 import proyecto.modelo.enums.Rol;
+import proyecto.security.SecurityUtils;
 import proyecto.service.TrabajadorService;
 
 @RestController
@@ -31,6 +32,9 @@ public class TrabajadorRestController {
 
 	@Autowired
 	private TrabajadorService trabajadorService;
+	
+	@Autowired
+	private SecurityUtils securityUtils;
 	
 	
 	//No usar: se bucla por la lista de citas de cada trabajador
@@ -41,16 +45,22 @@ public class TrabajadorRestController {
 	
 	
 	
-	@GetMapping("/trabajadores/{idTrabajador}")
+	@GetMapping("/trabajadores/{idTrabajador}") //SEGURIDAD OK
 	public ResponseEntity<?> buscarTrabajador(@PathVariable int idTrabajador) {
-	    // 1. Buscar el trabajador (solo una vez)
+	    
+	    // Validar permisos de acceso
+	    if (!securityUtils.puedeAccederARecursoTrabajador(idTrabajador)) {
+	        return securityUtils.crearRespuestaAccesoDenegado();
+	    }
+	    
+	    // Buscar el trabajador (solo una vez)
 	    Trabajador trabajador = trabajadorService.buscarUnTrabajador(idTrabajador);
 	    
-	    // 2. Verificar si existe
+	    // Verificar si existe
 	    if (trabajador == null) {
 	        return new ResponseEntity<String>("No hay ningún trabajador con ese Id", HttpStatusCode.valueOf(404));
 	    } else {
-	        // 3. Convertir a DTO y devolver
+	        // Convertir a DTO y devolver
 	        TrabajadorDTO trabajadorDTO = new TrabajadorDTO(trabajador);
 	        return new ResponseEntity<TrabajadorDTO>(trabajadorDTO, HttpStatusCode.valueOf(200));
 	    }
@@ -102,8 +112,14 @@ public class TrabajadorRestController {
 	}
 	
 	// Ver citas asignadas a un trabajador específico
-	@GetMapping("/trabajadores/{trabajadorId}/citas")
+	@GetMapping("/trabajadores/{trabajadorId}/citas")	//SEGURIDAD OKEI
 	public ResponseEntity<?> obtenerCitasDelTrabajador(@PathVariable int trabajadorId) {
+	    
+	    // Validar permisos de acceso
+	    if (!securityUtils.puedeAccederARecursoTrabajador(trabajadorId)) {
+	        return securityUtils.crearRespuestaAccesoDenegado();
+	    }
+	    
 	    List<CitaDTO> citas = trabajadorService.obtenerCitasDelTrabajador(trabajadorId);
 	    
 	    if (citas.isEmpty()) {
@@ -118,7 +134,7 @@ public class TrabajadorRestController {
 	}
 
 	// Eliminar trabajador (con validación de citas)
-	@DeleteMapping("/trabajadores/{trabajadorId}")
+	@DeleteMapping("/trabajadores/{trabajadorId}")	//SEGURIDAD OKEI
 	public ResponseEntity<?> eliminarTrabajador(@PathVariable int trabajadorId) {
 	    int resultado = trabajadorService.eliminarTrabajador(trabajadorId);
 	    
@@ -138,8 +154,14 @@ public class TrabajadorRestController {
 	    }
 	}
 	
-	@PutMapping("/trabajadores/{trabajadorId}")
+	@PutMapping("/trabajadores/{trabajadorId}")	//SEGURIDAD OK
 	public ResponseEntity<?> actualizarTrabajador(@PathVariable int trabajadorId, @RequestBody Trabajador trabajador) {
+	    
+	    // Validar permisos de acceso
+	    if (!securityUtils.puedeAccederARecursoTrabajador(trabajadorId)) {
+	        return securityUtils.crearRespuestaAccesoDenegado();
+	    }
+	    
 	    try {
 	        // Verificar que el trabajador existe
 	        Trabajador trabajadorExistente = trabajadorService.buscarUnTrabajador(trabajadorId);
@@ -161,7 +183,6 @@ public class TrabajadorRestController {
 	        trabajadorExistente.setTelefono(trabajador.getTelefono());
 	        trabajadorExistente.setRol(trabajador.getRol());
 	        trabajadorExistente.setFunciones(trabajador.getFunciones());
-	        // Las citas se mantienen intactas
 
 	        // Actualizar el trabajador
 	        trabajadorService.actualizarTrabajador(trabajadorExistente);

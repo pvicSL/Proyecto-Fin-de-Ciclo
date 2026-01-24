@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -75,5 +77,29 @@ public class SecurityUtils {
      */
     public String obtenerRol() {
         return (String) obtenerDatosUsuarioAutenticado().get("rol");
+    }
+    
+    /**
+     * Verifica si el usuario autenticado puede acceder a un recurso de trabajador específico
+     * @param idTrabajadorRecurso ID del trabajador al que se quiere acceder
+     * @return true si puede acceder, false si no
+     */
+    public boolean puedeAccederARecursoTrabajador(int idTrabajadorRecurso) {
+        if (esAdmin()) {
+            return true; // ADMIN puede acceder a cualquier trabajador
+        }
+        
+        Integer idTrabajadorActual = obtenerIdTrabajador();
+        return idTrabajadorActual != null && idTrabajadorActual.equals(idTrabajadorRecurso);
+    }
+
+    /**
+     * Crea una respuesta de error cuando no hay permisos
+     */
+    public ResponseEntity<?> crearRespuestaAccesoDenegado() {
+        return new ResponseEntity<>(
+            Map.of("mensaje", "No tienes permisos para acceder a este recurso"),
+            HttpStatusCode.valueOf(403)
+        );
     }
 }
