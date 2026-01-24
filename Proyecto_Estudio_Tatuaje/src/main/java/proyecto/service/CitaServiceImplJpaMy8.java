@@ -455,18 +455,25 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	@Override
 	public List<CitaDTO> obtenerPorRango(LocalDate fecha, String vista) {
 	    LocalDate inicio = fecha;
-	    LocalDate fin = vista.equals("dia") ? fecha : fecha.plusDays(6);
+	    LocalDate fin;
 
-	    // Obtener las citas de la base de datos
+	    // Ajustamos el cálculo del fin según la vista
+	    if ("dia".equalsIgnoreCase(vista)) {
+	        fin = fecha;
+	    } else if ("mes".equalsIgnoreCase(vista)) {
+	        // Si es mes, calculamos el último día de ese mes
+	        fin = fecha.withDayOfMonth(fecha.lengthOfMonth());
+	    } else {
+	        // Por defecto dejamos la semana (6 días adicionales)
+	        fin = fecha.plusDays(6);
+	    }
+
+	    // El resto del código se mantiene igual
 	    List<Cita> citas = citaRepository.findByEstatusAndFechaBetween(Estatus.CONFIRMADO, inicio, fin);
 	    
-	    // Crear lista para los DTOs
 	    List<CitaDTO> citasDTO = new ArrayList<>();
-	    
-	    // Convertir cada Cita a CitaDTO usando bucle 
 	    for (Cita cita : citas) {
-	        CitaDTO citaDTO = new CitaDTO(cita);
-	        citasDTO.add(citaDTO);
+	        citasDTO.add(new CitaDTO(cita));
 	    }
 	    
 	    return citasDTO;
