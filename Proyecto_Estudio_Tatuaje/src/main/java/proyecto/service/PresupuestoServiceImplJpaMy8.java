@@ -17,6 +17,7 @@ import proyecto.modelo.entities.Precio;
 import proyecto.modelo.entities.Presupuesto;
 import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Estado;
+import proyecto.modelo.enums.Estatus;
 import proyecto.modelo.repository.CitaRepository;
 import proyecto.modelo.repository.PrecioRepository;
 import proyecto.modelo.repository.PresupuestoRepository;
@@ -232,23 +233,27 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	public boolean aceptarPresupuesto(Cita cita) {
 	    // Buscar presupuesto por ID de cita
 	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(cita.getIdCita());
-	    
+
 	    // Si no existe, lanzar excepción
 	    if (!presupuestoOpt.isPresent()) {
 	        throw new IllegalArgumentException("No se encontró presupuesto para la cita con ID: " + cita.getIdCita());
 	    }
-	    
+
 	    Presupuesto presupuesto = presupuestoOpt.get();
-	    
+
 	    // Validar que esté en estado GENERADO
 	    if (presupuesto.getEstado() != Estado.GENERADO) {
 	        throw new IllegalStateException("El presupuesto debe estar en estado GENERADO para poder ser aceptado. Estado actual: " + presupuesto.getEstado());
 	    }
-	    
-	    // Cambiar estado y guardar
+
+	    // Cambiar estado del presupuesto y guardar
 	    presupuesto.setEstado(Estado.ACEPTADO);
 	    presupuestoRepository.save(presupuesto);
-	    
+
+	    // Cambiar estatus de la cita a CONFIRMADO y guardar
+	    cita.setEstatus(Estatus.CONFIRMADO);
+	    citaRepository.save(cita);
+
 	    return true;
 	}
 

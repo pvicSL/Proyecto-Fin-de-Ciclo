@@ -102,6 +102,7 @@ public class TrabajadorServiceImplJpaMy8 implements TrabajadorService {
         dto.setApellido2(trabajador.getApellido2());
         dto.setEmail(trabajador.getEmail());
         dto.setTelefono(trabajador.getTelefono());
+        dto.setDni(trabajador.getDni());
         return dto;
     }
 }
