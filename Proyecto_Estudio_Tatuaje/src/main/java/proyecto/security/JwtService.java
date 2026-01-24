@@ -38,18 +38,19 @@ public class JwtService {
     
     // Generar token cuando el login es exitoso
     public String generateToken(Trabajador trabajador) {
-    	// 1. Crear un "mapa" con datos extra para incluir en el token
         Map<String, Object> claims = new HashMap<>();
-        claims.put("authorities", List.of("ROLE_" + trabajador.getRol().toString()));		// ← "ADMIN" o "TRABAJADOR"
-        claims.put("nombre", trabajador.getNombre());			// ← "Juan"
-        
+        claims.put("authorities", List.of("ROLE_" + trabajador.getRol().toString()));
+        claims.put("nombre", trabajador.getNombre());
+        claims.put("rol", trabajador.getRol().toString()); // ← AÑADIR esta línea
+        claims.put("idTrabajador", trabajador.getIdTrabajador()); // ← AÑADIR esta línea
+
         return Jwts.builder()
-                .claims(claims)					// ← Añadir datos extra
-                .subject(trabajador.getEmail()) // El email es el "subject"
+                .claims(claims)
+                .subject(trabajador.getEmail())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expirationHours * 60 * 60 * 1000)) // 8 horas
-                .signWith(getSecretKey())		// ← Firmar con tu clave secreta
-                .compact();						// ← Convertir a String
+                .expiration(new Date(System.currentTimeMillis() + expirationHours * 60 * 60 * 1000))
+                .signWith(getSecretKey())
+                .compact();
     }
     
     // Extraer email del token

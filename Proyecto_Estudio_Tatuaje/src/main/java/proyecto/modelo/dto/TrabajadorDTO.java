@@ -36,11 +36,6 @@ public class TrabajadorDTO {
 	}
 
 
-
-	
-
-
-
 	public TrabajadorDTO(int idTrabajador, String nombre, String apellido1, String apellido2, String email,
 			String telefono, String dni) {
 		super();
