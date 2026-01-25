@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.transaction.annotation.Transactional;
 
 import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
@@ -781,7 +781,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         return true; // No hay conflictos
     }
 
-	
+    @Transactional
     @Override
     public void aceptarPresupuesto(Cita cita) {
         // Buscar presupuesto por ID de cita

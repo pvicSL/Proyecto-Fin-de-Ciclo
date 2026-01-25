@@ -25,10 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.transaction.Transactional;
 import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.entities.Cita;
+import proyecto.modelo.entities.Presupuesto;
 import proyecto.modelo.entities.Trabajador;
 import proyecto.modelo.enums.Coloracion;
 import proyecto.modelo.enums.Detalle;
@@ -38,6 +41,7 @@ import proyecto.modelo.enums.Estilo;
 import proyecto.modelo.enums.Tamanio;
 import proyecto.modelo.enums.Tipo;
 import proyecto.modelo.repository.CitaRepository;
+import proyecto.modelo.repository.PresupuestoRepository;
 import proyecto.security.SecurityUtils;
 import proyecto.service.CitaService;
 import org.springframework.security.core.Authentication;
@@ -52,6 +56,9 @@ public class CitaRestController {
 	
 	@Autowired
 	private CitaRepository citaRepository;
+	
+	@Autowired
+	private PresupuestoRepository presupuestoRepository;
 
 	// NUEVO PARA IMG. REF.: Herramienta para convertir JSON String a Objeto Java
 	@Autowired
@@ -875,21 +882,34 @@ public class CitaRestController {
     	    if (citaOpt.isPresent()) {
     	        Cita cita = citaOpt.get();
     	        
-    	        // BLOQUEO: Ya pagada
+    	        // 1. BLOQUEOS DE SEGURIDAD
     	        if (cita.getEstatus() == Estatus.CONFIRMADO) {
-    	             return ResponseEntity.badRequest().body("Error: Esta cita ya ha sido pagada previamente.");
+    	                return ResponseEntity.badRequest().body("Error: Esta cita ya ha sido pagada previamente.");
     	        }
     	        
-    	        // BLOQUEO: Caducada (Doble check de seguridad)
     	        if (cita.getFechaLimitePago() != null && LocalDateTime.now().isAfter(cita.getFechaLimitePago())) {
     	            return ResponseEntity.status(HttpStatus.GONE).body("Error: El enlace ha caducado.");
     	        }
-    	        // ÉXITO: Confirmamos
+
+    	        // 2. ACTUALIZAR ESTADO DE LA CITA
     	        cita.setEstatus(Estatus.CONFIRMADO);
-    	        cita.setFechaLimitePago(null); // Borramos fecha límite (ya no caduca)
+    	        cita.setFechaLimitePago(null); 
     	        citaRepository.save(cita);
     	        
-    	        return ResponseEntity.ok(java.util.Map.of("mensaje", "Pago registrado y cita confirmada."));
+    	        // 3. ACTUALIZAR ESTADO DEL PRESUPUESTO (EL BLOQUE QUE FALTABA)
+    	        // Buscamos el presupuesto asociado a esta cita
+    	        Optional<Presupuesto> presOpt = presupuestoRepository.findByIdServicio(cita.getIdCita());
+    	        
+    	        if (presOpt.isPresent()) {
+    	            Presupuesto presupuesto = presOpt.get();
+    	            // Solo cambiamos a ACEPTADO si estaba en GENERADO (para mantener coherencia)
+    	            if (presupuesto.getEstado() == Estado.GENERADO) {
+    	                presupuesto.setEstado(Estado.ACEPTADO);
+    	                presupuestoRepository.save(presupuesto);
+    	            }
+    	        }
+    	        
+    	        return ResponseEntity.ok(java.util.Map.of("mensaje", "Pago registrado, cita confirmada y presupuesto aceptado."));
     	    } else {
     	        return ResponseEntity.notFound().build();
     	    }
