@@ -782,27 +782,33 @@ public class CitaServiceImplJpaMy8 implements CitaService {
     }
 
 	
-	@Override
-	public void aceptarPresupuesto(Cita cita) {
-	    // Buscar presupuesto por ID de cita
-	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(cita.getIdCita());
-	    
-	    // Si no existe, lanzar excepción
-	    if (!presupuestoOpt.isPresent()) {
-	        throw new IllegalArgumentException("No se encontró presupuesto para la cita con ID: " + cita.getIdCita());
-	    }
-	    
-	    Presupuesto presupuesto = presupuestoOpt.get();
-	    
-	    // Validar que esté en estado GENERADO
-	    if (presupuesto.getEstado() != Estado.GENERADO) {
-	        throw new IllegalStateException("El presupuesto debe estar en estado GENERADO para poder ser aceptado. Estado actual: " + presupuesto.getEstado());
-	    }
-	    
-	    // Cambiar estado y guardar
-	    presupuesto.setEstado(Estado.ACEPTADO);
-	    presupuestoRepository.save(presupuesto);
-	}
+    @Override
+    public void aceptarPresupuesto(Cita cita) {
+        // Buscar presupuesto por ID de cita
+        Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(cita.getIdCita());
+
+        // Si no existe, lanzar excepción
+        if (!presupuestoOpt.isPresent()) {
+            throw new IllegalArgumentException("No se encontró presupuesto para la cita con ID: " + cita.getIdCita());
+        }
+
+        Presupuesto presupuesto = presupuestoOpt.get();
+
+        // Validar que esté en estado GENERADO
+        if (presupuesto.getEstado() != Estado.GENERADO) {
+            throw new IllegalStateException("El presupuesto debe estar en estado GENERADO para poder ser aceptado. Estado actual: " + presupuesto.getEstado());
+        }
+
+        // Cambiar estado del presupuesto y guardar
+        presupuesto.setEstado(Estado.ACEPTADO);
+        presupuestoRepository.save(presupuesto);
+
+        // ✅ CAMBIAR ESTATUS DE LA CITA A CONFIRMADO
+        cita.setEstatus(Estatus.CONFIRMADO);
+        citaRepository.save(cita);
+
+        System.out.println("Presupuesto aceptado y cita confirmada para referencia: " + cita.getReferencia());
+    }
 
 	@Override
 	public void rechazarPresupuesto(Cita cita) {
