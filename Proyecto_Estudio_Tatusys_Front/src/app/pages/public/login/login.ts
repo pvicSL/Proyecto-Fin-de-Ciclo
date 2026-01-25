@@ -2,10 +2,13 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { AppointmentService } from '../../../core/services/appointment.service';
 import { Router } from '@angular/router';
+import { LoginResponse } from '../../../core/models/loginResponse.model';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -35,24 +38,26 @@ export class Login {
   const credentials = { email: this.email, password: this.password };
 
   this.appointmentService.postLogin(credentials).subscribe({
-    next: (res) => {
-      // res contiene { token, message } según tu Java actual
-      
-      // IMPORTANTE: Si el Java no envía el rol, el sidebar no se filtrará.
-      // Por ahora guardamos lo que llega:
+    next: (res: LoginResponse) => {
+      // 1. Guardamos el token y los datos del usuario
+      // Si el backend aún no envía 'rol', le ponemos 'ADMIN' por defecto para poder testear
       this.authService.saveSession({
         token: res.token,
-        email: this.email, // Lo tomamos del input del formulario
-        rol: 'ADMIN',      // <--- OJO: Aquí habría que recibirlo del backend
-        nombre: 'Usuario',
-        id: 0
+        message: res.message,
+        id: res.id || 0,
+        nombre: res.nombre || 'Usuario',
+        email: res.email || this.email,
+        // Forzamos el tipo para que coincida con lo que espera saveSession
+        rol: (res.rol || 'ADMIN') as 'ADMIN' | 'TRABAJADOR'
       });
-      
+
+      // 2. Navegamos al panel principal
       this.router.navigate(['/admin/citas']);
     },
     error: (err) => {
       this.isLoading = false;
-      alert('Error: ' + (err.error?.message || 'Credenciales inválidas'));
+      console.error('Error en el login:', err);
+      alert(err.error?.message || 'Error de conexión con el servidor');
     }
   });
 }

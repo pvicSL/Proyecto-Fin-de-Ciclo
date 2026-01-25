@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AppointmentDTO } from '../models/appointment.model';
 import { AppointmentAdminDTO } from '../models/appointment-admin.model';
+import { LoginResponse } from '../models/loginResponse.model';
 
 @Injectable({
     providedIn: 'root'
@@ -196,10 +197,6 @@ export class AppointmentService {
         return this.http.get<AppointmentDTO>(`${this.apiUrl}/${id}`);
     }
 
-    postLogin(credentials: any): Observable<any> {
-        // Asegúrate de que la URL coincide con tu backend (ej: http://localhost:8080/auth/login)
-        return this.http.post<any>(`${this.apiUrl}/auth/login`, credentials);
-    }
 
 
     // ==========================================
@@ -214,5 +211,11 @@ export class AppointmentService {
     // 2. Para confirmar que el pago se ha realizado
     confirmPayment(referencia: string): Observable<any> {
         return this.http.post(`${this.apiUrl}/confirmar-pago/${referencia}`, {});
+    }
+
+    private authUrl = 'http://localhost:8085/auth'; // La URL del AuthController
+
+    postLogin(credentials: any): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.authUrl}/login`, credentials);
     }
 }

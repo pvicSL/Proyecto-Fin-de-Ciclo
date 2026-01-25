@@ -16,9 +16,9 @@ export const appConfig: ApplicationConfig = {
 
     // 2. HABILITAR CONEXIÓN CON SPRING BOOT
     // Sin esto, los servicios que se creen en 'core/services' no funcionarán.
-    provideHttpClient(withFetch()),
     provideHttpClient(
-      withInterceptors([authInterceptor]) // <-- Aquí registras el interceptor
+      withFetch(),
+      withInterceptors([authInterceptor]) 
     )
   ]
 };
