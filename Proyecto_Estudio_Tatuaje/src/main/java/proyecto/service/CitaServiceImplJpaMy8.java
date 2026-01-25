@@ -68,6 +68,9 @@ public class CitaServiceImplJpaMy8 implements CitaService {
     @Autowired  
     private TrabajadorRepository trabajadorRepository;
     
+    @Autowired
+    private EmailService emailService;
+    
     
 
 	@Override
@@ -515,7 +518,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    // 1. Buscar la cita existente
 	    Cita cita = citaRepository.findById(id).orElse(null);
 	    if (cita == null) return null;
-	    
+
 	    // 2. ACTUALIZAR CAMPOS DE LA CITA
 	    cita.setTipo(Tipo.valueOf(citaEditada.getTipo()));
 	    cita.setZona(Zona.valueOf(citaEditada.getZona()));
@@ -529,11 +532,12 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    cita.setImagenRef1(citaEditada.getImagenRef1());
 	    cita.setImagenRef2(citaEditada.getImagenRef2());
 	    cita.setImagenRef3(citaEditada.getImagenRef3());
-	 // Solo actualizar estado de facturación si es la primera vez (null)
+
+	    // Solo actualizar estado de facturación si es la primera vez (null)
 	    if (cita.getEstadoFactura() == null) {
 	        cita.setEstadoFactura(cita.getFactura() ? EstadoFactura.PENDIENTE : EstadoFactura.NO_REQUIERE);
 	    }
-	    
+
 	    // 3. ACTUALIZAR CAMPOS DEL CLIENTE
 	    Cliente cliente = cita.getCliente();
 	    cliente.setNombre(citaEditada.getClienteNombre());
@@ -542,14 +546,14 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	    cliente.setEmail(citaEditada.getClienteEmail());
 	    cliente.setTelefono(citaEditada.getClienteTelefono());
 	    cliente.setDocumentoIdentificacion(citaEditada.getClienteDocumentoIdentificacion());
-	    
+
 	    // 4. GUARDAR CAMBIOS
 	    clienteRepository.save(cliente);
 	    citaRepository.save(cita);
-	    
+
 	    // 5. Calcular nuevos valores del presupuesto
 	    BigDecimal[] valores = presupuestoService.calcularSoloValores(cita);
-	    
+
 	    // 6. Actualizar presupuesto existente
 	    Optional<Presupuesto> presupuestoOpt = presupuestoRepository.findByIdServicio(id);
 	    if (presupuestoOpt.isPresent()) {
@@ -557,20 +561,37 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	        presupuestoExistente.setprecioSinIva(valores[0]);
 	        presupuestoExistente.setIva(valores[1]);
 	        presupuestoExistente.setPrecioFinal(valores[2]);
+	        
 	        if (presupuestoExistente.getEstado() == Estado.PENDIENTE) {
 	            presupuestoExistente.setEstado(Estado.GENERADO);  // Primera vez
+	            
+	            // ✅ ENVIAR EMAIL SOLO LA PRIMERA VEZ (PENDIENTE → GENERADO)
+	            try {
+	                emailService.enviarSolicitudPago(
+	                    cita.getCliente().getEmail(),
+	                    cita.getCliente().getNombre(),
+	                    cita.getReferencia(),
+	                    presupuestoExistente.getPrecioFinal(),
+	                    new BigDecimal("30.00") // Fianza fija
+	                );
+	                System.out.println("Email de solicitud de pago enviado para cita: " + cita.getReferencia());
+	            } catch (Exception e) {
+	                System.err.println("Error enviando email: " + e.getMessage());
+	            }
+	            
 	        } else if (presupuestoExistente.getEstado() == Estado.GENERADO) {
 	            presupuestoExistente.setEstado(Estado.GENERADO);  // Mantener mientras se edita
 	        } else if (presupuestoExistente.getEstado() == Estado.ACEPTADO) {
 	            presupuestoExistente.setEstado(Estado.ACEPTADO);  // Mantener si ya fue aceptado
 	        }
+	        
 	        presupuestoExistente.setComentarios(citaEditada.getPresupuestoComentarios());
 	        presupuestoRepository.save(presupuestoExistente);
 	    } else {
 	        Presupuesto nuevoPresupuesto = presupuestoService.calcularPresupuesto(cita);
 	        nuevoPresupuesto.setComentarios(citaEditada.getPresupuestoComentarios());
 	    }
-	    
+
 	    // 7. Devolver datos actualizados CON precios individuales
 	    CitaCompletaDTO resultado = citaRepository.findCitaCompletaById(id);
 	    if (resultado != null) {

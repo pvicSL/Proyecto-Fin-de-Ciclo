@@ -37,9 +37,6 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	
 	@Autowired
 	private CitaRepository citaRepository;
-	
-	@Autowired
-	private EmailService emailService;
 
 
 	@Override
@@ -261,18 +258,7 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	    cita.setFechaLimitePago(LocalDateTime.now().plusHours(48)); 
 	    citaRepository.save(cita);
 
-	 // --- AÑADIDO: ENVIAR EMAIL ---
-	    try {
-	        emailService.enviarSolicitudPago(
-	            cita.getCliente().getEmail(),
-	            cita.getCliente().getNombre(),
-	            cita.getReferencia(),
-	            presupuesto.getPrecioFinal(),
-	            new BigDecimal("30.00") // Fianza fija
-	        );
-	    } catch (Exception e) {
-	        System.err.println("Error enviando email: " + e.getMessage());
-	    }
+	 
 
 	    return true;
 	}
