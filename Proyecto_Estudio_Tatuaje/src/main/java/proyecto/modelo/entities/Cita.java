@@ -2,6 +2,7 @@ package proyecto.modelo.entities;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
@@ -98,26 +99,21 @@ public class Cita implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "id_trabajador")
 	private Trabajador trabajador;
+	
+	@Column(name = "fecha_limite_pago")
+    private LocalDateTime fechaLimitePago;
+
 
 	// CONSTRUCTORES
 	public Cita() {
 		super();
 	}
 
-	public Integer getDuracionMinutos() {
-		return duracionMinutos;
-	}
-
-	public void setDuracionMinutos(Integer duracionMinutos) {
-		this.duracionMinutos = duracionMinutos;
-	}
-
-	
 
 	public Cita(int idCita, Tipo tipo, Zona zona, Tamanio tamanio, Detalle detalle, Coloracion coloracion,
 			Estilo estilo, LocalDate fecha, LocalTime hora, String comentarios, Boolean factura, Estatus estatus,
 			Integer duracionMinutos, String imagenRef1, String imagenRef2, String imagenRef3, String referencia,
-			EstadoFactura estadoFactura, Cliente cliente, Trabajador trabajador) {
+			EstadoFactura estadoFactura, Cliente cliente, Trabajador trabajador, LocalDateTime fechaLimitePago) {
 		super();
 		this.idCita = idCita;
 		this.tipo = tipo;
@@ -139,9 +135,36 @@ public class Cita implements Serializable {
 		this.estadoFactura = estadoFactura;
 		this.cliente = cliente;
 		this.trabajador = trabajador;
+		this.fechaLimitePago = fechaLimitePago;
 	}
 
+
+
+
+
+
 	// GETTERS Y SETTERS
+	
+	public LocalDateTime getFechaLimitePago() {
+		return fechaLimitePago;
+	}
+
+
+	public void setFechaLimitePago(LocalDateTime fechaLimitePago) {
+		this.fechaLimitePago = fechaLimitePago;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	public Integer getDuracionMinutos() {
+		return duracionMinutos;
+	}
+
+	public void setDuracionMinutos(Integer duracionMinutos) {
+		this.duracionMinutos = duracionMinutos;
+	}
+
 	public int getIdCita() {
 		return idCita;
 	}

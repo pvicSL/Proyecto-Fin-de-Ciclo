@@ -822,11 +822,15 @@ public class CitaServiceImplJpaMy8 implements CitaService {
 	        throw new IllegalStateException("El presupuesto debe estar en estado ACEPTADO para poder ser finalizado. Estado actual: " + presupuesto.getEstado());
 	    }
 
-	    // Cambiar estado y vigencia
+	    // Cambiar estado del presupuesto y vigencia
 	    presupuesto.setEstado(Estado.FINALIZADO);
 	    presupuesto.setVigente(false);
 	    presupuestoRepository.save(presupuesto);
-	    
+
+	    // Cambiar estatus de la cita a FINALIZADO
+	    cita.setEstatus(Estatus.FINALIZADO);
+	    citaRepository.save(cita);
+
 	    return "Presupuesto finalizado correctamente";
 	}
 	
