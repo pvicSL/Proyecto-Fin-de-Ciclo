@@ -1,7 +1,7 @@
 
 /* Asegura que los componentes de Angular no bloqueen el flex */
 app-dashboard-home, 
-appointments {
+.appointments {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
