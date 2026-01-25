@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -35,6 +37,7 @@ public class Trabajador implements Serializable {
 	@Column(name="numero_cuenta")
 	private String numeroCuenta;
 	@Column(nullable = false)
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String contrasenia;
 	@Column(nullable = false)
 	private String nombre;
