@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,9 @@ public class TrabajadorRestController {
 	
 	@Autowired
 	private SecurityUtils securityUtils;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	
 	//No usar: se bucla por la lista de citas de cada trabajador
@@ -78,6 +82,12 @@ public class TrabajadorRestController {
 	@PostMapping("/trabajador-alta")
 	public ResponseEntity<?>altaTrabajador(@RequestBody Trabajador trabajador) {
 		try {
+			
+			// ENCRIPTAR contraseña ANTES de guardar
+	        if (trabajador.getContrasenia() != null && !trabajador.getContrasenia().isEmpty()) {
+	            trabajador.setContrasenia(passwordEncoder.encode(trabajador.getContrasenia()));
+	        }
+	        
 			Trabajador confirmacionTrabajador = trabajadorService.altaTrabajador(trabajador);
 			return new ResponseEntity<Trabajador>(confirmacionTrabajador, HttpStatusCode.valueOf(200));
 		}catch (Exception e) {
@@ -134,7 +144,7 @@ public class TrabajadorRestController {
 	}
 
 	// Eliminar trabajador (con validación de citas)
-	@DeleteMapping("/trabajadores/{trabajadorId}")	//SEGURIDAD OKEI
+	@DeleteMapping("/trabajadores/{trabajadorId}")	//SEGURIDAD OK
 	public ResponseEntity<?> eliminarTrabajador(@PathVariable int trabajadorId) {
 	    int resultado = trabajadorService.eliminarTrabajador(trabajadorId);
 	    
@@ -156,12 +166,12 @@ public class TrabajadorRestController {
 	
 	@PutMapping("/trabajadores/{trabajadorId}")	//SEGURIDAD OK
 	public ResponseEntity<?> actualizarTrabajador(@PathVariable int trabajadorId, @RequestBody Trabajador trabajador) {
-	    
+
 	    // Validar permisos de acceso
 	    if (!securityUtils.puedeAccederARecursoTrabajador(trabajadorId)) {
 	        return securityUtils.crearRespuestaAccesoDenegado();
 	    }
-	    
+
 	    try {
 	        // Verificar que el trabajador existe
 	        Trabajador trabajadorExistente = trabajadorService.buscarUnTrabajador(trabajadorId);
@@ -172,10 +182,9 @@ public class TrabajadorRestController {
 	            );
 	        }
 
-	        // Preservar las citas existentes y actualizar solo los otros campos
+	        // Actualizar campos básicos (sin contraseña)
 	        trabajadorExistente.setDni(trabajador.getDni());
 	        trabajadorExistente.setNumeroCuenta(trabajador.getNumeroCuenta());
-	        trabajadorExistente.setContrasenia(trabajador.getContrasenia());
 	        trabajadorExistente.setNombre(trabajador.getNombre());
 	        trabajadorExistente.setApellido1(trabajador.getApellido1());
 	        trabajadorExistente.setApellido2(trabajador.getApellido2());
@@ -184,9 +193,24 @@ public class TrabajadorRestController {
 	        trabajadorExistente.setRol(trabajador.getRol());
 	        trabajadorExistente.setFunciones(trabajador.getFunciones());
 
+	        // ✅ MANEJO SEGURO DE CONTRASEÑA
+	        if (trabajador.getContrasenia() != null && !trabajador.getContrasenia().trim().isEmpty()) {
+	            String nuevaContrasenia = trabajador.getContrasenia().trim();
+	            
+	            // Solo encriptar si la contraseña realmente cambió
+	            // (evita re-encriptar la misma contraseña)
+	            if (!passwordEncoder.matches(nuevaContrasenia, trabajadorExistente.getContrasenia())) {
+	                trabajadorExistente.setContrasenia(passwordEncoder.encode(nuevaContrasenia));
+	                System.out.println("Contraseña actualizada y encriptada para: " + trabajadorExistente.getEmail());
+	            } else {
+	                System.out.println("Contraseña sin cambios para: " + trabajadorExistente.getEmail());
+	            }
+	        }
+	        // Si trabajador.getContrasenia() es null o vacío, no tocar la contraseña existente
+
 	        // Actualizar el trabajador
 	        trabajadorService.actualizarTrabajador(trabajadorExistente);
-	        
+
 	        return new ResponseEntity<>(
 	            Map.of("mensaje", "Trabajador actualizado correctamente"),
 	            HttpStatusCode.valueOf(200)

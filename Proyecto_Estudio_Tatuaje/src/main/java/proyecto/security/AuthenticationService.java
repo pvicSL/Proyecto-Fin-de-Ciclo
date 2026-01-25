@@ -31,15 +31,15 @@ public class AuthenticationService {
         Trabajador trabajador = trabajadorRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("Email o contraseña incorrectos"));
         
-     /* 2. Verificar contraseña - usar passwordEncoder
+     //2. Verificar contraseña - usar passwordEncoder
         if (!passwordEncoder.matches(password, trabajador.getContrasenia())) {
             throw new RuntimeException("Email o contraseña incorrectos");
-        }*/ //USAR CUANDO SE MIGREN LAS CONTRASEÑAS ENCRIPTADAS
+        } //USAR CUANDO SE MIGREN LAS CONTRASEÑAS ENCRIPTADAS*/
         
      // 2. Verificar contraseña (MANTENEMOS equals temporalmente)
-        if (!password.equals(trabajador.getContrasenia())) {
+        /*if (!password.equals(trabajador.getContrasenia())) {
             throw new RuntimeException("Email o contraseña incorrectos");
-        }
+        }*/
         
      // 3. Devolver trabajador completo
         return trabajador;
