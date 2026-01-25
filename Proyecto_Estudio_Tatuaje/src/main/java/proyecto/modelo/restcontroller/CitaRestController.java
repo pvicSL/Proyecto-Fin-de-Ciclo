@@ -894,6 +894,28 @@ public class CitaRestController {
     	        return ResponseEntity.notFound().build();
     	    }
     	}
+    	
+        // --- NUEVO: BUSQUEDA PÚBLICA PARA PASARELA DE PAGO ---
+        @GetMapping("/buscar-publica/{referencia}")
+        public ResponseEntity<?> buscarPorReferenciaPublica(@PathVariable String referencia) {
+            // Usamos el repositorio directamente para buscar por la referencia única
+            Optional<Cita> citaOpt = citaRepository.findByReferencia(referencia);
+
+            if (citaOpt.isPresent()) {
+                Cita cita = citaOpt.get();
+                CitaDTO dto = new CitaDTO(cita);
+                
+                // Si tu DTO no mapea automáticamente el precio del presupuesto, 
+                // asegúrate de setearlo aquí si fuera necesario, o de que CitaDTO ya lo incluya.
+                // dto.setPrecioFinal( ... ); 
+                
+                return ResponseEntity.ok(dto);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
+
+
 
 
 

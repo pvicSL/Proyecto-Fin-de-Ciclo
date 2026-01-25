@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/login").permitAll()
                 .requestMatchers("/migrar-contraseñas").permitAll() //TODO:BORRAR UNA VEZ MIGRADAS LAS CONTRASEÑAS!!!!!!
                 .requestMatchers("/api/citas/confirmar-pago/**").permitAll()
+                .requestMatchers("/api/citas/buscar-publica/**") .permitAll()
 
                 // 2. RECURSOS estáticos (siempre públicos)
                 .requestMatchers("/index.html").permitAll()
