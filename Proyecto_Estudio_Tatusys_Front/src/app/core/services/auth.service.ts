@@ -1,11 +1,11 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthResponse } from '../models/auth.model';
+import { LoginResponse } from '../models/loginResponse.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   // Usamos un Signal para que el Sidebar se actualice instantáneamente
-  private userSignal = signal<AuthResponse | null>(null);
+  private userSignal = signal<LoginResponse | null>(null);
 
   // Selectores reactivos
   currentUser = computed(() => this.userSignal());
@@ -19,7 +19,7 @@ export class AuthService {
     }
   }
 
-  saveSession(data: AuthResponse) {
+  saveSession(data: LoginResponse) {
     localStorage.setItem('session_data', JSON.stringify(data));
     localStorage.setItem('token', data.token); // El token suele ir aparte para el interceptor
     this.userSignal.set(data);
@@ -40,4 +40,8 @@ export class AuthService {
   getUserEmail(): string | undefined {
     return this.userSignal()?.email;
   }
+
+  isLoggedIn(): boolean {
+  return !!this.userSignal(); // Devuelve true si hay datos, false si es null
+}
 }
