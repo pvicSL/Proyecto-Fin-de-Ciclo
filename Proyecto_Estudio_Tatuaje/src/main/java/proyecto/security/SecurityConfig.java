@@ -40,6 +40,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 // 1. AUTH endpoints (siempre públicos)
                 .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/migrar-contraseñas").permitAll() //TODO:BORRAR UNA VEZ MIGRADAS LAS CONTRASEÑAS!!!!!!
                 .requestMatchers("/api/citas/confirmar-pago/**").permitAll()
 
                 // 2. RECURSOS estáticos (siempre públicos)
