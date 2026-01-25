@@ -29,6 +29,14 @@ public class SecurityConfig {
         return http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .cors(cors -> cors.configurationSource(request -> {
+                var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
+                corsConfiguration.setAllowedOrigins(java.util.List.of("http://localhost:4200", "http://localhost:4201"));
+                corsConfiguration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                corsConfiguration.setAllowedHeaders(java.util.List.of("*"));
+                corsConfiguration.setAllowCredentials(true);
+                return corsConfiguration;
+            }))
             .authorizeHttpRequests(authorize -> authorize
                 // 1. AUTH endpoints (siempre públicos)
                 .requestMatchers("/auth/login").permitAll()
@@ -45,12 +53,12 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/admin/trabajadores/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/admin/trabajadores/todos").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/admin/rol/**").hasRole("ADMIN")
-                
+
                 // 🟡 ADMIN + TRABAJADOR (con restricciones a nivel de lógica)
                 .requestMatchers(HttpMethod.GET, "/api/admin/trabajadores/*").hasAnyRole("ADMIN", "TRABAJADOR")
                 .requestMatchers(HttpMethod.PUT, "/api/admin/trabajadores/*").hasAnyRole("ADMIN", "TRABAJADOR")
                 .requestMatchers(HttpMethod.GET, "/api/admin/trabajadores/*/citas").hasAnyRole("ADMIN", "TRABAJADOR")
-                
+
                 // 🟠 ADMIN + TRABAJADOR (sin restricciones)
                 .requestMatchers(HttpMethod.GET, "/api/admin/trabajador-dni/**").hasAnyRole("ADMIN", "TRABAJADOR")
 
