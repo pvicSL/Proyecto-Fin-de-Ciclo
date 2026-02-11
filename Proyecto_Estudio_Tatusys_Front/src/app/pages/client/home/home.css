@@ -346,12 +346,11 @@ h6,
 /* ===============================
    RESPONSIVE - MÓVIL VERTICAL
    =============================== */
-@media (max-width: 480px) {
-
-    /* ==== SECCIÓN HERO ==== */
+@media (min-width: 344px) and (max-width: 719px) {
     #hero {
-        height: 55vh;
-        min-height: 20rem;
+        height: 50vh;
+        min-height: 25rem;
+        margin-top: -1px;
     }
 
     .hero-text {
@@ -417,10 +416,9 @@ h6,
    RESPONSIVE – MÓVILES APAISADO
    =============================== */
 
-@media (max-width: 740px) and (orientation: landscape) {
-
-    /* ==== SECCIÓN HERO ==== */
+@media (min-width: 720px) and (max-width: 767px) and (orientation: landscape) {
     #hero {
+        margin-top: -1px;
         height: 80vh;
     }
 
@@ -496,5 +494,53 @@ h6,
 
     .accordion-body {
         font-size: 1rem;
+    }
+}
+
+/* ===============================
+   AJUSTES RESPONSIVE - TABLETS GENERAL (Vertical y Apaisado)
+   =============================== */
+@media (min-width: 768px) and (max-width: 1180px) {
+
+    #hero {
+        min-height: 20rem;
+        height: 30vh;
+    }
+
+    .hero-text {
+        width: 85%;
+        max-width: 90%;
+        padding-inline: 2rem;
+    }
+
+    .hero-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+    }
+
+    .faq-toggle-btn {
+        width: 60%;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+
+    .faq .accordion {
+        max-width: 80%;
+    }
+}
+
+/* ===============================
+   TABLETS EN MODO APAISADO (LANDSCAPE)
+   =============================== */
+@media (min-width: 768px) and (max-width: 1368px) and (orientation: landscape) {
+
+    #hero {
+        min-height: 25rem;
+        height: 40vh;
+    }
+
+    .hero-text {
+        width: 70%;
+        max-width: 100%;
+        padding-inline: 0;
     }
 }
