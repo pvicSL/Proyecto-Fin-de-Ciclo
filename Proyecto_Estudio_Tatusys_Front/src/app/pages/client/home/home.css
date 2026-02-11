@@ -104,6 +104,8 @@ h6,
 
 /* texto ESTUDIO DE */
 .hero-tagline {
+    /*La tipografía se adapta a la pantalla con clamp, que va ajustando el tamaño
+    según la pantalla y las preferencias del usuario (con tamaño mínimo, preferido y máximo)*/
     font-size: clamp(1.1rem, 2.8vw, 1.8rem);
     font-weight: 600;
     color: white;
@@ -119,10 +121,11 @@ h6,
     font-weight: 700;
 }
 
-/* Párrafo descriptivo */
+/* Párrafo descriptivo de la sección hero*/
 .hero-description {
-    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
     color: var(--antiflash-white);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     text-align: justify;
     margin-bottom: 1em;
     line-height: 1.5;
@@ -219,23 +222,27 @@ h6,
 
 /* ESTILOS DEL TEXTO DE CAMBIO DE CITA */
 .cta-text {
-    font-size: clamp(0.9rem, 3vw, 1.2rem);
+    font-size: clamp(1.15rem, 4vw, 1.5rem);
     color: var(--jet);
     line-height: 1.6;
     font-weight: 500;
+    padding-inline: 1rem;
 }
 
 /* Estilo específico para la palabra 'AQUÍ' */
-.cta-link {
+.cta-link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
     color: var(--cardinal);
     font-weight: 800;
     text-transform: uppercase;
     cursor: pointer;
     transition: color 0.3s ease;
-    margin-left: 0.3rem;
 }
 
-.cta-link:hover {
+.cta-link-btn:hover {
     color: var(--burgundy);
 }
 
@@ -302,6 +309,7 @@ h6,
     color: var(--jet);
     font-weight: 500;
     transition: all 0.3s ease;
+    font-size: clamp(1.2rem, 1.5vw, 1.2rem);
 }
 
 /* formato con la pregunta abierta */
@@ -327,6 +335,7 @@ h6,
     color: var(--jet);
     text-align: justify;
     line-height: 1.6;
+    font-size: clamp(1rem, 1.2vw, 1.15rem);
 }
 
 /* margen para separar faq de footer un poco*/
@@ -342,17 +351,22 @@ h6,
     /* ==== SECCIÓN HERO ==== */
     #hero {
         height: 55vh;
-        min-height: 400px;
+        min-height: 20rem;
     }
 
     .hero-text {
         text-align: center;
-        padding: 1rem 1rem;
-        padding-top: 4em;
+        padding: 0.5rem;
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .hero-title {
-        font-size: 2.2rem;
+        font-size: clamp(2.2rem, 8vw, 2.5rem);
+        line-height: 1.1;
     }
 
     .hero-tagline {
@@ -366,9 +380,10 @@ h6,
     }
 
     .hero-location {
-        font-size: 0.85rem;
-        gap: 0.4rem;
-        padding-bottom: 4em;
+        width: 100%;
+        justify-content: center;
+        font-size: 0.9rem;
+        text-align: center;
     }
 
     /* ==== FAQ ==== */
@@ -401,7 +416,7 @@ h6,
 /* ===============================
    RESPONSIVE – MÓVILES APAISADO
    =============================== */
-/* OJO: He sacado este bloque fuera del anterior para que funcione correctamente */
+
 @media (max-width: 740px) and (orientation: landscape) {
 
     /* ==== SECCIÓN HERO ==== */
