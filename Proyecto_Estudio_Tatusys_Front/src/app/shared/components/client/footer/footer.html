@@ -1,26 +1,44 @@
-<footer class="site-footer mt-auto py-4">
+<!-- HTML DE FOOTER DE SITIO WEB CLIENTE FINAL -->
+<!-- Incluidas etiquetas de accesibilidad -->
+<footer class="site-footer mt-auto py-4" role="contentinfo">
     <div class="container text-center">
 
-        <div class="mb-2">
-            <a href="#" class="footer-link mx-2">Política de privacidad</a>
-            <a href="#" class="footer-link mx-2">Términos de servicio</a>
-            <a href="#" class="footer-link mx-2">Sobre nosotros</a>
-            <a href="#" class="footer-link mx-2">Contacto</a>
-        </div>
+        <nav aria-label="Enlaces legales y de contacto" class="mb-3">
+            <ul class="list-inline m-0">
+                <li class="list-inline-item mx-2">
+                    <a href="#" class="footer-link">Política de privacidad</a>
+                </li>
+                <li class="list-inline-item mx-2">
+                    <a href="#" class="footer-link">Términos de servicio</a>
+                </li>
+                <li class="list-inline-item mx-2">
+                    <a href="#" class="footer-link">Sobre nosotros</a>
+                </li>
+                <li class="list-inline-item mx-2">
+                    <a href="#" class="footer-link">Contacto</a>
+                </li>
+            </ul>
+        </nav>
 
-        <div class="mb-2">
-            <a href="#" class="social-link mx-2" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-            <a href="#" class="social-link mx-2" aria-label="X/Twitter"><i class="bi bi-x"></i></a>
-            <a href="#" class="social-link mx-2" aria-label="TikTok"><i class="bi bi-music-note-beamed"></i></a>
+        <div class="mb-3 social-icons-container">
+            <a href="#" class="social-link mx-2" aria-label="Visita nuestro perfil en Instagram">
+                <i class="bi bi-instagram" aria-hidden="true"></i>
+            </a>
+            <a href="#" class="social-link mx-2" aria-label="Visita nuestro perfil en X">
+                <i class="bi bi-x" aria-hidden="true"></i>
+            </a>
+            <a href="#" class="social-link mx-2" aria-label="Visita nuestro perfil en TikTok">
+                <i class="bi bi-music-note-beamed" aria-hidden="true"></i>
+            </a>
         </div>
 
         <div class="small text-muted">
-            INK&CO © 2026. Todos los derechos reservados.
+            INK&CO © {{ currentYear }}. Todos los derechos reservados.
         </div>
 
         <div class="powered-by text-end mt-2">
             Powered by
-            <a href="#" class="powered-link"><strong>TatuSys</strong></a>. @2026.
+            <a href="#" class="powered-link"><strong>TatuSys</strong></a>. ©{{ currentYear }}.
         </div>
     </div>
 </footer>

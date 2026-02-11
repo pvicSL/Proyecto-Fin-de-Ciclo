@@ -1,17 +1,25 @@
-<!-- SECCIÓN DE PRESENTACIÓN DEL ESTUDIO Y CARRUSEL DE IMG -->
-<section id="hero" class="position-relative">
+<!-- SECCIÓN DE PRESENTACIÓN DEL ESTUDIO Y CARRUSEL DE IMÁGENES -->
+<section id="hero" class="position-relative" aria-label="Presentación del estudio INK&CO">
 
-    <!-- Carrusel de fondo del header -->
-    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+    <!-- Carrusel de fondo del header, muestra imágenes evocadoras del trabajo del estudio -->
+    <!--Las etiquetas 'aria' permiten que los lectores de pantalla narren qué elementos existen en el sitio,
+     como las imágenes que se insertan como background-image no se leen por defecto, se necesita la
+     etiqueta role='img', que indica al navegador cómo tratar este contenido del div.-->
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000" aria-hidden="true">
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <div class="hero-slide" style="background-image: url('assets/client/hero1.jpg');"></div>
+                <div class="hero-slide" style="background-image: url('assets/client/hero1.jpg');" role="img"
+                    aria-label="Primer plano de las manos de un hombre con un tatuaje de inspiración vikinga."></div>
             </div>
             <div class="carousel-item">
-                <div class="hero-slide" style="background-image: url('assets/client/hero2.jpg');"></div>
+                <div class="hero-slide" style="background-image: url('assets/client/hero2.jpg');" role="img"
+                    aria-label="Imagen del hombro de una persona con un tatuaje minimalista de una hoja sobre la clavícula.">
+                </div>
             </div>
             <div class="carousel-item">
-                <div class="hero-slide" style="background-image: url('assets/client/hero3.jpg');"></div>
+                <div class="hero-slide" style="background-image: url('assets/client/hero3.jpg');" role="img"
+                    aria-label="Plano medio de un torso masculino con un tatuaje geométrico en bloques en los brazos, hombros y cuello.">
+                </div>
             </div>
         </div>
     </div>
@@ -25,56 +33,61 @@
         <h1 class="hero-title mb-2">@INK<span class="highlight">&</span>CO</h1>
         <h2 class="hero-tagline mb-3">ESTUDIO DE <span class="highlight">TATUAJE PROFESIONAL</span></h2>
 
-        <!-- ACORDARSE DE MODIFICAR EL LOREM IPSUM Y PONER UNA DESCRIPCIÓN -->
+        <!-- Texto descriptivo de marketing sobre el estudio -->
         <p class="hero-description mb-3">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse non
-            elit quis leo rhoncus aliquet. Phasellus viverra odio lectus, ut pretium ligula
-            ullamcorper eu.
+            Nacimos en 2020 para plasmar historias sobre la piel con gran calidad, creatividad y mucho amor por nuestro
+            arte. Tú pones la chispa, nosotros avivamos el fuego.
         </p>
-        <a href="#" class="hero-location d-inline-flex align-items-center gap-2">
-            <i class="bi bi-geo-alt-fill"></i>
-            <!-- INVENTAR UNA DIRECCIÓN PARA SUSTITUIR ESTE TEXTO-->
-            <span>Dirección física con enlace para saber cómo llegar</span>
+        <a href="https://maps.google.com" target="_blank" rel="noopener"
+            class="hero-location d-inline-flex align-items-center gap-2">
+            <!--La etiqueta aria-hidden sirve para que los lectores de pantalla omitan el icono de mapa, que es solo decorativo-->
+            <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+            <span>Avenida del Tintero, 17, Bajo Dcha., Villaestudiantes de la Distancia.</span>
         </a>
     </div>
 </section>
 
+<!-- CONTENEDOR DEL BOTÓN DE FORMULARIO Y TEXTO DEL MODIFICADOR DE CITAS EXISTENTES -->
 <div class="container py-4">
 
-    <!-- Contenedor para el formulario de solicitud de cita, cerrado por defecto, se abre con el botón-->
-    <div *ngIf="viewMode === 'booking'" class="view-transition">
+    <!-- Formulario de solicitud de cita, cerrado por defecto, se abre con el botón-->
+    <!--Uso de sintaxis moderna de Angular, on @If-->
+    @if (viewMode === 'booking') {
+    <div class="view-transition">
 
+        <!-- # se usa para crear una referencia local. Es lo que se usa en el @if para que el
+         padre reaccione al estado visual del hijo sin incluir un código más complejo-->
         <app-booking-form #booking></app-booking-form>
 
-        <!-- La condición permite que se vea el recuadro de la cita y oculta el botón del formulario -->
-        <div *ngIf="!booking.isFormOpen" class="fade-in-text">
+        @if (!booking.isFormOpen) {
+        <div class="fade-in-text">
             <p class="text-center mt-2 cta-text">
-                ¿Cambio de planes? Modifica
-                <br>tu cita
+                ¿Cambio de planes? <br>Modifica tu cita
 
-                <span (click)="toggleMode()" class="cta-link">
+                <!-- Elemento como botón para mejorar accesibilidad si se navega con teclado -->
+                <button type="button" (click)="toggleMode()" class="cta-link-btn">
                     AQUÍ
-                </span>.
-
+                </button>.
             </p>
         </div>
+        }
     </div>
+    }
 
-    <!-- Esto es para cuando entramos en la modificación de cita -->
-    <div *ngIf="viewMode === 'modifying'" class="view-transition">
+    @else if (viewMode === 'modifying') {
+    <div class="view-transition">
         <app-appointment-modifier (closeRequest)="toggleMode()">
         </app-appointment-modifier>
     </div>
+    }
 
 </div>
 
-<!-- ---------------------------------------
-     ----- SECCIÓN DE PREGUNTAS FRECUENTES -----
-     --------------------------------------- -->
+<!-- SECCIÓN DE PREGUNTAS FRECUENTES ------>
 <section class="faq text-center py-3">
 
     <!-- Botón de mostrar/ocultar el acordeón -->
-    <button class="btn faq-toggle-btn d-flex align-items-center justify-content-between mx-auto mb-4 px-4 py-"
+    <button class="btn faq-toggle-btn d-flex align-items-center justify-content-between mx-auto mb-4 px-4 py-2"
         type="button" data-bs-toggle="collapse" data-bs-target="#faqSection" aria-expanded="false"
         aria-controls="faqSection">
         <i class="bi bi-question-circle me-2 faq-icon-left"></i>
@@ -86,91 +99,41 @@
     <div class="collapse" id="faqSection">
         <div class="accordion mx-auto" id="faqAccordion">
 
-            <!-- Pregunta 1 -->
+            <!-- Este for recorre el array de preguntas y crea un bloque HTML para cada una. Esto 
+             permite que el código sea más mantenible, ya que no tendremos que editar este .html para
+             añadir o quitar preguntas.-->
+            <!-- $index es necesario para que funcione el acordeón de Bootstrap, así sabrá qué panel
+              abrir. Los índices del bucle for se usan como ids de los elementos (p. ej., faq1, faq2)-->
+            @for (item of faqs; track $index) {
+
             <div class="accordion-item">
-                <h2 class="accordion-header" id="faqHeading1">
+                <h2 class="accordion-header" [id]="'faqHeading' + $index">
+
+                    <!-- attr.data-bs sirve para que angular use esa propiedad como atributo-->
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#faq1" aria-expanded="false" aria-controls="faq1">
-                        ¿Duele hacerse un tatuaje?
+                        [attr.data-bs-target]="'#faq' + $index" aria-expanded="false"
+                        [attr.aria-controls]="'faq' + $index">
+
+                        {{ item.question }}
+
                     </button>
                 </h2>
-                <div id="faq1" class="accordion-collapse collapse" aria-labelledby="faqHeading1"
-                    data-bs-parent="#faqAccordion">
+
+                <!-- aria.labbeledby permite que un lector de pantalla relacione la pregunta con su respuesta
+                 para que no sea confuso-->
+                <div [id]="'faq' + $index" class="accordion-collapse collapse"
+                    [attr.aria-labelledby]="'faqHeading' + $index" data-bs-parent="#faqAccordion">
                     <div class="accordion-body">
-                        Depende de la zona y la tolerancia personal, pero la mayoría de las personas describen
-                        la sensación como molestia más que dolor agudo.
+
+                        {{ item.answer }}
+
                     </div>
                 </div>
             </div>
 
-            <!-- Pregunta 2 -->
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="faqHeading2">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
-                        ¿Qué cuidados son necesarios?
-                    </button>
-                </h2>
-                <div id="faq2" class="accordion-collapse collapse" aria-labelledby="faqHeading2"
-                    data-bs-parent="#faqAccordion">
-                    <div class="accordion-body">
-                        Mantén la zona limpia, aplica la pomada recomendada, evita sol directo y no rasques la
-                        costra.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pregunta 3 -->
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="faqHeading3">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
-                        ¿Puedo enviar referencias?
-                    </button>
-                </h2>
-                <div id="faq3" class="accordion-collapse collapse" aria-labelledby="faqHeading3"
-                    data-bs-parent="#faqAccordion">
-                    <div class="accordion-body">
-                        Sí, puedes subir hasta 3 imágenes como referencia al solicitar la cita.
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Pregunta 4 -->
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="faqHeading4">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#faq4" aria-expanded="false" aria-controls="faq4">
-                        ¿Qué es la densidad de tinta?
-                    </button>
-                </h2>
-                <div id="faq4" class="accordion-collapse collapse" aria-labelledby="faqHeading4"
-                    data-bs-parent="#faqAccordion">
-                    <div class="accordion-body">
-                        Lorem ipsum.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pregunta 5 -->
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="faqHeading5">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#faq5" aria-expanded="false" aria-controls="faq5">
-                        ¿Qué estilos ofrecéis? ¿En qué consiste cada uno?
-                    </button>
-                </h2>
-                <div id="faq5" class="accordion-collapse collapse" aria-labelledby="faqHeading5"
-                    data-bs-parent="#faqAccordion">
-                    <div class="accordion-body">
-                        Lorem ipsum.
-                    </div>
-                </div>
-            </div>
-
-            <!-- CONVENDRÍA AÑADIR MÁS PREGUNTAS, ESTAS SON ESCASAS -->
-
+            } @empty {
+            <p>No hay preguntas para mostrar.</p>
+            }
         </div>
     </div>
 </section>
