@@ -1,5 +1,7 @@
 package proyecto.service;
 
+import java.time.LocalDateTime;
+
 import proyecto.modelo.entities.PasswordResetToken;
 import proyecto.modelo.entities.Trabajador;
 
@@ -15,4 +17,6 @@ public interface PasswordResetTokenService {
     void eliminarTokensDelTrabajador(Trabajador trabajador);
     
     boolean esTokenValidoYNoExpirado(String token);
+    
+    long contarTokensCreados(LocalDateTime fechaDesde);
 }

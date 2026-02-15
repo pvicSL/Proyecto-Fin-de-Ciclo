@@ -67,4 +67,9 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService{
         return resetToken != null && !resetToken.isUtilizado() && !resetToken.isExpired();
 	}
 
+	@Override
+	public long contarTokensCreados(LocalDateTime fechaDesde) {
+		return tokenRepository.countByFechaCreacionAfter(fechaDesde);
+	}
+
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import proyecto.modelo.entities.PasswordResetToken;
 import proyecto.modelo.entities.Trabajador;
@@ -19,4 +21,7 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
     void deleteByFechaExpiracionBeforeAndUtilizadoTrue(LocalDateTime fecha);
     
     void deleteByTrabajador(Trabajador trabajador);
+    
+    @Query("SELECT COUNT(p) FROM PasswordResetToken p WHERE p.fechaCreacion >= :fechaDesde")
+    long countByFechaCreacionAfter(@Param("fechaDesde") LocalDateTime fechaDesde);
 }

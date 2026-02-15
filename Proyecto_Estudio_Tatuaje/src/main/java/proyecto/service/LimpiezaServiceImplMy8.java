@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,58 +25,55 @@ public class LimpiezaServiceImplMy8 implements LimpiezaService {
     
     private static final Logger log = LoggerFactory.getLogger(LimpiezaServiceImplMy8.class);
     
+    @Value("${tatusys.limpieza.datos.meses-antiguedad:3}")
+    private int mesesAntiguedad;
+    
     @Autowired
     private PresupuestoRepository presupuestoRepository;
     
     @Autowired
     private CitaRepository citaRepository;
     
+    // ✅ Configuración desde properties
     @Override
-    @Scheduled(cron = "0 0 13 * * *") // Todos los días a las 13:00
+    @Scheduled(cron = "${tatusys.limpieza.datos.cron:0 0 13 * * *}")
     public void limpiarDatosAntiguos() {
-        LocalDateTime fechaLimite = LocalDateTime.now().minusMonths(3);
-
+        LocalDateTime fechaLimite = LocalDateTime.now().minusMonths(mesesAntiguedad);
+        
         try {
-            log.info("Iniciando limpieza automática de datos anteriores a: {}", fechaLimite);
-
-            // 1. Buscar presupuestos finalizados antiguos
+            log.info("🧹 Iniciando limpieza automática de datos anteriores a: {}", fechaLimite);
+            
             List<Presupuesto> presupuestosAEliminar = presupuestoRepository
                 .findByEstadoAndFechaBefore(Estado.FINALIZADO, fechaLimite);
-
+            
             if (presupuestosAEliminar.isEmpty()) {
-                log.info("No se encontraron presupuestos finalizados para eliminar");
+                log.info("✅ No se encontraron presupuestos finalizados para eliminar");
                 return;
             }
-
-            // 2. Obtener IDs de citas asociadas
+            
             List<Integer> citasIds = presupuestosAEliminar.stream()
                 .map(Presupuesto::getIdServicio)
                 .collect(Collectors.toList());
-
+            
             log.info("Se procederá a eliminar {} presupuestos y {} citas",
                 presupuestosAEliminar.size(), citasIds.size());
-
-            // 3. Eliminar presupuestos
+            
+            // Eliminar
             presupuestoRepository.deleteByEstadoAndFechaBefore(Estado.FINALIZADO, fechaLimite);
-            log.info("Presupuestos eliminados correctamente");
-
-            // 4. Eliminar citas
             citaRepository.deleteByIdCitaIn(citasIds);
-            log.info("Citas eliminadas correctamente");
-
-            log.info("Limpieza automática completada exitosamente. Eliminados {} registros",
-                presupuestosAEliminar.size() + citasIds.size());
-
+            
+            log.info("✅ Limpieza completada: {} presupuestos + {} citas eliminados", 
+                     presupuestosAEliminar.size(), citasIds.size());
+            
         } catch (Exception e) {
-            log.error("Error durante la limpieza automática: {}", e.getMessage(), e);
-            throw e; // Re-lanzar para activar rollback
+            log.error("❌ Error durante la limpieza automática", e);
+            throw e;
         }
     }
 
-	@Override
-	public void ejecutarLimpiezaManual() {
-		log.info("Ejecutando limpieza manual solicitada por usuario");
-		limpiarDatosAntiguos();
-		
-	}
+    @Override
+    public void ejecutarLimpiezaManual() {
+        log.info("🔧 Ejecutando limpieza manual solicitada por usuario");
+        limpiarDatosAntiguos();
+    }
 }
