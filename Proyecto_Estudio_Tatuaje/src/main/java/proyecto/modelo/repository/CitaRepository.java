@@ -13,6 +13,7 @@ import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.enums.Estado;
+import proyecto.modelo.enums.EstadoFactura;
 import proyecto.modelo.enums.Estatus;
 
 public interface CitaRepository extends JpaRepository<Cita, Integer> {
@@ -63,6 +64,21 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
     Optional<Cita> findByReferencia(String referencia);
 
 	
+    
+    @Query("SELECT new proyecto.modelo.dto.CitaCompletaDTO(" +
+    	       "c.idCita, " +
+    	       "CAST(c.tipo AS string), CAST(c.zona AS string), CAST(c.tamanio AS string), " +
+    	       "CAST(c.detalle AS string), CAST(c.coloracion AS string), CAST(c.estilo AS string), " +
+    	       "c.fecha, c.hora, c.comentarios, c.imagenRef1, c.imagenRef2, c.imagenRef3, " +
+    	       "cl.nombre, cl.apellido1, cl.apellido2, cl.email, cl.telefono, cl.documentoIdentificacion, " +
+    	       "COALESCE(p.precioSinIva, 0), COALESCE(p.iva, 0), COALESCE(p.precioFinal, 0), " +
+    	       "COALESCE(p.fecha, CURRENT_TIMESTAMP), COALESCE(CAST(p.estado AS string), 'PENDIENTE'), " +
+    	       "COALESCE(p.vigente, false), COALESCE(p.comentarios, '')) " +
+    	       "FROM Cita c " +
+    	       "JOIN c.cliente cl " +
+    	       "LEFT JOIN Presupuesto p ON p.idServicio = c.idCita " +
+    	       "WHERE c.estadoFactura = :estado")
+    	List<CitaCompletaDTO> findByEstadoFactura(@Param("estado") EstadoFactura estado);
 
 
 

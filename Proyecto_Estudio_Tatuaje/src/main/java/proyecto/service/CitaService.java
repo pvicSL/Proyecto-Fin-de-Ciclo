@@ -83,5 +83,7 @@ public interface CitaService {
 	void finalizarTrabajo(Integer idCita);
 	
 	void generarFacturaManual(Integer idCita);
+	
+	List<CitaCompletaDTO> obtenerFacturasRealizadas();
 
 }

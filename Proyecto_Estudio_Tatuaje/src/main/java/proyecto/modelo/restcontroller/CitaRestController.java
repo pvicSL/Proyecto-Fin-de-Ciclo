@@ -948,5 +948,11 @@ public class CitaRestController {
         return ResponseEntity.ok().build();
         }
 
+        
+        @GetMapping("/api/admin/facturas/realizadas")
+        public ResponseEntity<List<CitaCompletaDTO>> obtenerFacturasRealizadas() {
+            List<CitaCompletaDTO> facturas = citaService.obtenerFacturasRealizadas();
+            return ResponseEntity.ok(facturas);
+        }
 
 }

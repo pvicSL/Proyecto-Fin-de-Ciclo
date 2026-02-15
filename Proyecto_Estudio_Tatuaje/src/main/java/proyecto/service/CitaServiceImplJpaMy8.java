@@ -30,8 +30,10 @@ import proyecto.modelo.dto.CitaModificacionDTO;
 import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Cliente;
+import proyecto.modelo.entities.Precio;
 import proyecto.modelo.entities.Presupuesto;
 import proyecto.modelo.entities.Trabajador;
+import proyecto.modelo.enums.CategoriaEnum;
 import proyecto.modelo.enums.Coloracion;
 import proyecto.modelo.enums.Detalle;
 import proyecto.modelo.enums.Estado;
@@ -73,6 +75,9 @@ public class CitaServiceImplJpaMy8 implements CitaService {
     
     @Autowired
     private EmailService emailService;
+    
+    @Autowired
+    private PrecioService precioService;
     
     
 
@@ -928,6 +933,52 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         cita.setEstadoFactura(EstadoFactura.ENVIADA);
         
         citaRepository.save(cita);
+    }
+    
+    @Override
+    public List<CitaCompletaDTO> obtenerFacturasRealizadas() {
+        // 1. Obtenemos las citas básicas
+        List<CitaCompletaDTO> citasBasicas = citaRepository.findByEstadoFactura(EstadoFactura.ENVIADA);
+        
+        // 2. Para cada cita, calculamos los precios individuales y creamos DTO completo
+        return citasBasicas.stream().map(this::completarConPreciosIndividuales).toList();
+    }
+
+    private CitaCompletaDTO completarConPreciosIndividuales(CitaCompletaDTO citaBasica) {
+        // Calculamos los 6 precios individuales
+        BigDecimal precioTipo = obtenerPrecioPorCategoria(CategoriaEnum.TIPO, citaBasica.getTipo());
+        BigDecimal precioZona = obtenerPrecioPorCategoria(CategoriaEnum.ZONA, citaBasica.getZona());
+        BigDecimal precioTamanio = obtenerPrecioPorCategoria(CategoriaEnum.TAMANIO, citaBasica.getTamanio());
+        BigDecimal precioDetalle = obtenerPrecioPorCategoria(CategoriaEnum.DETALLE, citaBasica.getDetalle());
+        BigDecimal precioColoracion = obtenerPrecioPorCategoria(CategoriaEnum.COLORACION, citaBasica.getColoracion());
+        BigDecimal precioEstilo = obtenerPrecioPorCategoria(CategoriaEnum.ESTILO, citaBasica.getEstilo());
+        
+        // Creamos el DTO completo con el constructor largo
+        return new CitaCompletaDTO(
+            citaBasica.getIdCita(),
+            citaBasica.getTipo(), citaBasica.getZona(), citaBasica.getTamanio(),
+            citaBasica.getDetalle(), citaBasica.getColoracion(), citaBasica.getEstilo(),
+            citaBasica.getFecha(), citaBasica.getHora(), citaBasica.getComentarios(),
+            citaBasica.getImagenRef1(), citaBasica.getImagenRef2(), citaBasica.getImagenRef3(),
+            citaBasica.getClienteNombre(), citaBasica.getClienteApellido1(), citaBasica.getClienteApellido2(),
+            citaBasica.getClienteEmail(), citaBasica.getClienteTelefono(), citaBasica.getClienteDocumentoIdentificacion(),
+            citaBasica.getPrecioSinIva(), citaBasica.getIva(), citaBasica.getPrecioFinal(),
+            citaBasica.getPresupuestoFecha(), citaBasica.getEstadoPresupuesto(),
+            citaBasica.isVigente(), citaBasica.getPresupuestoComentarios(),
+            precioTipo, precioZona, precioTamanio, precioDetalle, precioColoracion, precioEstilo
+        );
+    }
+
+    private BigDecimal obtenerPrecioPorCategoria(CategoriaEnum categoria, String valor) {
+        Precio precio = precioService.encontrarPorCategoriaValor(categoria, valor);
+        if (precio != null) {
+            try {
+                return new BigDecimal(precio.getValor());
+            } catch (NumberFormatException e) {
+                return BigDecimal.ZERO;
+            }
+        }
+        return BigDecimal.ZERO;
     }
     
 
