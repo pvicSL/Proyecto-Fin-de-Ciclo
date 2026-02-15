@@ -79,5 +79,9 @@ public interface CitaService {
 	List<CitaDTO> listarCitasDelTrabajador(Integer idTrabajador);
 	
 	boolean esHorarioComercialValido(LocalTime horaInicio, int duracionMinutos);
+	
+	void finalizarTrabajo(Integer idCita);
+	
+	void generarFacturaManual(Integer idCita);
 
 }

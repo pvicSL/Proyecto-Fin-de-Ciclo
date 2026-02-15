@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import proyecto.modelo.dto.CitaCompletaDTO;
@@ -887,8 +890,47 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         
         return true;
     }
+
+    @Transactional
+    public void finalizarTrabajo(Integer idCita) {
+        // 1. Buscamos y validamos la cita
+        Cita cita = citaRepository.findById(idCita)
+            .orElseThrow(() -> new EntityNotFoundException("Cita no encontrada"));
+        
+        // 2. Cerramos la cita
+        cita.setEstatus(Estatus.FINALIZADO);
+        
+        // 3. Buscamos y cerramos el presupuesto asociado
+        Presupuesto presupuesto = presupuestoService.findByIdServicio(idCita)
+            .orElseThrow(() -> new EntityNotFoundException("Presupuesto no encontrado para la cita"));
+        
+        presupuesto.setEstado(Estado.FINALIZADO);
+        
+        // 4. Si el cliente pidió factura, la marcamos como enviada
+        if (Boolean.TRUE.equals(cita.getFactura())) {
+            cita.setEstadoFactura(EstadoFactura.ENVIADA);
+        }
+        
+        // 5. Guardamos ambas entidades
+        citaRepository.save(cita);
+        presupuestoService.actualizarPresupuesto(presupuesto);
+    }
     
+    @Transactional
+    public void generarFacturaManual(Integer idCita) {
+        Cita cita = citaRepository.findById(idCita)
+            .orElseThrow(() -> new EntityNotFoundException("Cita no encontrada"));
+        
+        // 1. Forzamos el boolean a true
+        cita.setFactura(true);
+        
+        // 2. Cambiamos el estado para que aparezca en el listado de facturación
+        cita.setEstadoFactura(EstadoFactura.ENVIADA);
+        
+        citaRepository.save(cita);
+    }
     
+
 
 
 

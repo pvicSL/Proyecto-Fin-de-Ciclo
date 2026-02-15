@@ -285,5 +285,16 @@ public class PresupuestoServiceImplJpaMy8 implements PresupuestoService{
 	    
 	    return true;
 	}
+
+	@Override
+	public Optional<Presupuesto> findByIdServicio(int idServicio) {
+	    return presupuestoRepository.findByIdServicio(idServicio);
+	}
+
+	
+	
+	
+
+	
 	
 }

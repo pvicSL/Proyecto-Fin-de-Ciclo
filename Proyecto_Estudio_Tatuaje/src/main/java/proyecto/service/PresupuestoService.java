@@ -4,6 +4,7 @@ package proyecto.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import proyecto.modelo.dto.PreciosIndividualesDTO;
 import proyecto.modelo.entities.Cita;
@@ -27,5 +28,6 @@ public interface PresupuestoService {
 	Map<String, BigDecimal> obtenerPreciosIndividuales(Cita cita);
 	PreciosIndividualesDTO obtenerPreciosCompletosConIva(int idCita);
 	 BigDecimal[] calcularSoloValores(Cita cita);
+	 Optional<Presupuesto> findByIdServicio(int idServicio);
 	
 }

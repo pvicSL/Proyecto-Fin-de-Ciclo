@@ -935,9 +935,18 @@ public class CitaRestController {
             }
         }
 
-
-
-
+     // Endpoint para el cierre operativo
+        @PutMapping("/{id}/finalizar-trabajo")
+        public ResponseEntity<?> finalizarTrabajo(@PathVariable Integer id) {
+        citaService.finalizarTrabajo(id);
+        return ResponseEntity.ok().build();
+        }
+        // Endpoint para la factura confirmada manualmente
+        @PutMapping("/{id}/generar-factura")
+        public ResponseEntity<?> generarFacturaManual(@PathVariable Integer id) {
+        citaService.generarFacturaManual(id);
+        return ResponseEntity.ok().build();
+        }
 
 
 }
