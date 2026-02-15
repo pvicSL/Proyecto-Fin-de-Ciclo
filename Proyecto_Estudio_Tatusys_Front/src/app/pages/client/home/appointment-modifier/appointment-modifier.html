@@ -2,22 +2,23 @@
     <div class="card mx-auto booking-card" id="modifier-card" [class.card-wide]="currentState === 'modificando'">
 
         <div class="card-body text-center">
-
-            <div *ngIf="currentState === 'search'" class="modify-state fade-in">
+            @if (currentState === 'search') {
+            <div class="modify-state fade-in">
                 <h3 class="modify-title mb-4">GESTIONA TU CITA</h3>
                 <p class="contact-text mb-4">
                     Para acceder a tu reserva, introduce el localizador y tu correo electrónico.
                 </p>
                 <div class="mb-3 w-75 mx-auto">
-                    <label class="search-label mb-2">Localizador (Referencia)</label>
-                    <input type="text" class="form-control text-center input-reference" placeholder="Ej: A5B6F1C2"
-                        [(ngModel)]="bookingCode">
+                    <label for="bookingRef" class="search-label mb-2">Localizador (Referencia)</label>
+                    <input type="text" id="bookingRef" class="form-control text-center input-reference"
+                        placeholder="Ej: A5B6F1C2" [(ngModel)]="bookingCode" aria-required="true">
                 </div>
 
                 <div class="mb-4 w-75 mx-auto">
-                    <label class="search-label mb-2">Email asociado</label>
-                    <input type="email" class="form-control text-center input-reference" placeholder="tu@email.com"
-                        [(ngModel)]="bookingEmail" (keyup.enter)="searchAppointment()">
+                    <label for="bookingEmail" class="search-label mb-2">Email asociado</label>
+                    <input type="email" id="bookingEmail" class="form-control text-center input-reference"
+                        placeholder="tu@email.com" [(ngModel)]="bookingEmail" (keyup.enter)="searchAppointment()"
+                        aria-required="true">
                 </div>
                 <div class="d-flex justify-content-center gap-3">
                     <button class="btn btn-outline-light px-4" (click)="closeModifier()">VOLVER</button>
@@ -27,15 +28,17 @@
                     </button>
                 </div>
             </div>
+            }
 
-            <div *ngIf="currentState === 'inicial'" class="modify-state fade-in">
+            @if (currentState === 'inicial') {
+            <div class="modify-state fade-in">
                 <h3 class="modify-title mb-4">¿CAMBIO DE PLANES?</h3>
 
                 <p class="contact-text mb-4">
                     Ten en cuenta que <span class="text-warning-custom">modificar o cancelar una cita
                         es irreversible</span> y no se puede deshacer.
                 </p>
-                <div class="appointment-box mx-auto mb-4">
+                <div class="appointment-box mx-auto mb-4" role="region" aria-label="Detalles de la cita actual">
                     <p class="appointment-label py-1 fw-normal">
                         TU CITA, CON REF.: <span style="color: var(--burgundy);" class="fw-bold">{{ bookingCode
                             }}</span>, ES EL:
@@ -46,7 +49,7 @@
                             <h2 class="m-0 appointment-day">{{ viewDetails.day }}</h2>
                             <p class="m-0 year">{{ viewDetails.year }}</p>
                         </div>
-                        <div class="divider"></div>
+                        <div class="divider" aria-hidden="true"></div>
                         <div class="appointment-time text-center ms-3">
                             <p class="m-0 duration">a las</p>
                             <h2 class="m-0 appointment-hour">{{ viewDetails.hour }}</h2>
@@ -67,27 +70,31 @@
                     <button class="btn btn-outline-light px-4" (click)="closeModifier()">VOLVER</button>
                 </div>
             </div>
+            }
 
-            <div *ngIf="currentState === 'modificando'" class="modify-state w-100">
+            @if (currentState === 'modificando') {
+            <div class="modify-state w-100 fade-in">
 
                 <h3 class="modify-title mb-4">ELIGE UNA NUEVA FECHA</h3>
 
                 <div class="d-flex justify-content-between align-items-center mb-3 w-100 px-3">
-                    <button class="btn btn-outline-light nav-btn" (click)="prevWeek()" [disabled]="weekIndex === 0">
+                    <button class="btn btn-outline-light nav-btn" (click)="prevWeek()" [disabled]="weekIndex === 0"
+                        aria-label="Semana anterior">
                         &lt; Ant.
                     </button>
 
                     <span class="calendar-header-text">{{ currentWeekHeader }}</span>
 
                     <button class="btn btn-outline-light nav-btn" (click)="nextWeek()"
-                        [disabled]="(weekIndex + 1) * daysPerPage >= allDays.length">
+                        [disabled]="(weekIndex + 1) * daysPerPage >= allDays.length" aria-label="Semana siguiente">
                         Sig. &gt;
                     </button>
                 </div>
 
                 <div class="days-container d-flex gap-2 justify-content-center mb-4 overflow-auto pb-2">
 
-                    <div *ngFor="let day of visibleDays" class="day-column text-center"
+                    @for (day of visibleDays; track day.dateStr) {
+                    <div class="day-column text-center"
                         [class.disabled-day]="day.status === 'disabled' || day.status === 'empty'">
 
                         <div class="day-header mb-2">
@@ -95,45 +102,53 @@
                             <span class="fw-bold fs-5 text-white">{{day.dayNumber}}</span>
                         </div>
 
-                        <div *ngIf="day.status === 'weekend'" class="text-white-50 small mt-2">
-                            <i class="bi bi-slash-circle"></i>
+                        @if (day.status === 'weekend') {
+                        <div class="text-white-50 small mt-2" aria-label="Fin de semana"><i
+                                class="bi bi-slash-circle"></i></div>
+                        }
+                        @if (day.status === 'disabled') {
+                        <div class="text-white-50 small mt-2" aria-label="No disponible"><i class="bi bi-lock-fill"></i>
                         </div>
-                        <div *ngIf="day.status === 'disabled'" class="text-white-50 small mt-2">
-                            <i class="bi bi-lock-fill"></i>
-                        </div>
-                        <div *ngIf="day.status === 'empty'" class="text-white-50 small mt-2">
-                            -
-                        </div>
+                        }
+                        @if (day.status === 'empty') {
+                        <div class="text-white-50 small mt-2">-</div>
+                        }
 
-                        <div class="slots-list d-flex flex-column gap-2" *ngIf="day.status === 'available'">
-                            <button *ngFor="let slot of day.slots" class="btn btn-sm slot-btn"
-                                [class.selected]="isSlotSelected(day, slot)" (click)="selectSlot(day, slot)">
+                        @if (day.status === 'available') {
+                        <div class="slots-list d-flex flex-column gap-2">
+                            @for (slot of day.slots; track slot) {
+                            <button class="btn btn-sm slot-btn" [class.selected]="isSlotSelected(day, slot)"
+                                [attr.aria-pressed]="isSlotSelected(day, slot)" (click)="selectSlot(day, slot)">
                                 {{slot}}
                             </button>
+                            }
                         </div>
+                        }
                     </div>
+                    }
+
                 </div>
 
                 <div class="d-flex justify-content-center gap-3">
-                    <button class="btn btn-back-custom" (click)="changeState('inicial')">
-                        ATRÁS
-                    </button>
+                    <button class="btn btn-back-custom" (click)="changeState('inicial')">ATRÁS</button>
                     <button class="btn btn-confirm-custom px-4" [disabled]="!selectedNewDate" (click)="confirmChange()">
                         CONFIRMAR CAMBIO
                     </button>
                 </div>
             </div>
+            }
 
-            <div *ngIf="currentState === 'confirmado'" class="modify-state">
+            @if (currentState === 'confirmado') {
+            <div class="modify-state fade-in" aria-live="polite">
                 <h3 class="modify-title mb-4 confirm-title">¡TODO LISTO!</h3>
+
                 <div class="appointment-box mx-auto mb-3">
                     <p class="appointment-label mb-2">
-                        Modificación registrada para <br> REF.: <span class="text-dark">{{ bookingCode }}</span>. <br>Tu
-                        nueva cita es el:
+                        Modificación registrada. <br>Tu nueva cita es el:
                     </p>
+
                     <div class="appointment-info d-flex align-items-center justify-content-center">
                         <div class="appointment-date text-center me-3">
-                            <p class="m-0 weekday">{{ viewDetails.weekday }}</p>
                             <h2 class="m-0 appointment-day">{{ viewDetails.day }}</h2>
                             <p class="m-0 year">{{ viewDetails.year }}</p>
                         </div>
@@ -141,20 +156,24 @@
                         <div class="appointment-time text-center ms-3">
                             <p class="m-0 time-connector">a las</p>
                             <h2 class="m-0 appointment-hour">{{ viewDetails.hour }}</h2>
-                            <p class="m-0 duration">{{ viewDetails.durationText }}</p>
                         </div>
                     </div>
                 </div>
+
                 <button class="btn btn-close-custom mt-2" (click)="closeModifier()">CERRAR</button>
             </div>
+            }
 
-            <div *ngIf="currentState === 'cancelado'" class="modify-state">
-                <h3 class="modify-title mb-4 text-danger">CITA CANCELADA CORRECTAMENTE</h3>
+            @if (currentState === 'cancelado') {
+            <div class="modify-state fade-in" aria-live="polite">
+                <h3 class="modify-title mb-4 text-danger">CITA CANCELADA</h3>
                 <div class="appointment-box mx-auto mb-3">
-                    <p class="contact-text text-dark">Lamentamos que no puedas venir. ¡Esperamos verte muy pronto!</p>
+                    <p class="contact-text text-dark">Lamentamos que no puedas venir. ¡Esperamos verte pronto!</p>
                 </div>
                 <button class="btn btn-outline-light mt-2" (click)="closeModifier()">CERRAR</button>
             </div>
+            }
+
 
         </div>
     </div>
