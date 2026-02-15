@@ -1,7 +1,9 @@
 -- =====================================================
 -- TatuSys - Sistema de Gestión de Estudio de Tatuajes
 -- Script de creación de base de datos organizado por dependencias
+-- ACTUALIZADO: Incluye tabla password_reset_tokens
 -- =====================================================
+
 CREATE DATABASE IF NOT EXISTS estudio_tatuajes;
 USE estudio_tatuajes;
 
@@ -49,12 +51,23 @@ CREATE TABLE precios_adicionales (
     UNIQUE KEY unique_categoria_valor (categoria, valor)
 );
 
--- PRECIO BASE
-INSERT INTO precios_adicionales (categoria, valor, precio_adicional, activo) VALUES ('BASE', 'SERVICIO_BASE', 00.00, 1);
-
 -- =====================================================
 -- NIVEL 1: Tablas que dependen de nivel 0
 -- =====================================================
+
+-- Tabla de tokens para reset de contraseña (depende de trabajadores)
+CREATE TABLE password_reset_tokens (
+    id_token INT AUTO_INCREMENT PRIMARY KEY,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    id_trabajador INT NOT NULL,
+    fecha_expiracion DATETIME NOT NULL,
+    fecha_creacion DATETIME NOT NULL,
+    utilizado BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (id_trabajador) REFERENCES trabajadores(id_trabajador),
+    INDEX idx_token (token),
+    INDEX idx_trabajador (id_trabajador),
+    INDEX idx_expiracion (fecha_expiracion)
+);
 
 -- Tabla de servicios (depende de clientes)
 CREATE TABLE servicios (
@@ -80,7 +93,7 @@ CREATE TABLE servicios (
     factura BOOLEAN NOT NULL,
     estado_factura ENUM('NO_REQUIERE', 'PENDIENTE', 'ENVIADA') NULL,
     estatus ENUM('PENDIENTE', 'CONFIRMADO', 'FINALIZADO'),
-	fecha_limite_pago DATETIME NULL,
+    fecha_limite_pago DATETIME,
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
     FOREIGN KEY (id_trabajador) REFERENCES trabajadores(id_trabajador),
     UNIQUE INDEX ID_UNIQUE_SERVICIO (id_cliente, id_servicio)
@@ -90,7 +103,7 @@ CREATE TABLE servicios (
 -- NIVEL 2: Tablas que dependen de nivel 1
 -- =====================================================
 
--- Tabla de presupuestos (depende de servicios) - CON CASCADE
+-- Tabla de presupuestos (depende de servicios)
 CREATE TABLE presupuestos (
     id_presupuesto INT PRIMARY KEY AUTO_INCREMENT,
     id_servicio INT NOT NULL,
@@ -107,3 +120,9 @@ CREATE TABLE presupuestos (
 -- =====================================================
 -- Script completado - Base de datos lista para usar
 -- =====================================================
+
+-- COMENTARIOS SOBRE NUEVAS FUNCIONALIDADES:
+-- 1. password_reset_tokens: Maneja tokens de recuperación de contraseña
+-- 2. Tokens expiran automáticamente después de 30 minutos
+-- 3. Se incluyen índices para optimizar búsquedas por token y trabajador
+-- 4. Campo 'utilizado' previene reutilización de tokens

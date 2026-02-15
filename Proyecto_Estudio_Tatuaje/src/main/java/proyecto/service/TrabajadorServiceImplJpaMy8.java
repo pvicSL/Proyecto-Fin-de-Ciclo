@@ -105,6 +105,11 @@ public class TrabajadorServiceImplJpaMy8 implements TrabajadorService {
         dto.setDni(trabajador.getDni());
         return dto;
     }
+
+    @Override
+    public Optional<Trabajador> findByEmail(String email) {
+        return trabajadorRepository.findByEmail(email); 
+    }
 }
 	
 

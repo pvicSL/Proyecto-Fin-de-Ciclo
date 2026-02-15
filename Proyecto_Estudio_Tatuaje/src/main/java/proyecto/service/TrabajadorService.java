@@ -18,5 +18,6 @@ public interface TrabajadorService {
 	Optional<Trabajador>buscarPorDocumento(String documento);
 	List<CitaDTO> obtenerCitasDelTrabajador(int trabajadorId);
 	List<TrabajadorDTO> obtenerTrabajadoresPorRol(Rol rol);
+	Optional<Trabajador> findByEmail(String email);
 	
 }
