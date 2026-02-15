@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+// ReactiveFormsModule, para usar formGroup y formControlName
+import { CommonModule, NgClass } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AppointmentService } from '../../../../core/services/appointment.service';
-import { debounceTime, filter, switchMap, map } from 'rxjs/operators';
+import { debounceTime, filter, switchMap } from 'rxjs/operators';
 
-// Interfaz para tipar correctamente los días del calendario
+// Definición de la estructura de un día del calendario
 interface CalendarDay {
   dateObj: Date;
   dateStr: string;
@@ -17,7 +18,7 @@ interface CalendarDay {
 @Component({
   selector: 'app-booking-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgClass],
   templateUrl: './booking-form.html',
   styleUrl: './booking-form.css'
 })
@@ -41,6 +42,7 @@ export class BookingFormComponent implements OnInit {
   // ==========================================
   currentViewDate: Date = new Date();
   weekDaysToDisplay: CalendarDay[] = [];
+  // Mapa para guardar los huecos que devuelve el backend: Clave='2026-05-20', Valor=['10:00', '12:00']
   backendSlotsMap: Map<string, string[]> = new Map();
 
   selectedDayIndex: number | null = null;
@@ -48,7 +50,8 @@ export class BookingFormComponent implements OnInit {
   selectedSlot: string | null = null;
 
   // ==========================================
-  // 4. MAPAS DE TRADUCCIÓN (HTML -> BBDD)
+  // 4. MAPAS DE TRADUCCIÓN (FRONTEND -> BACKEND)
+  // Para convertir los valores de HTML a los ENUMS de Spring Boot
   // ==========================================
   private readonly MAPA_ZONAS: Record<string, string> = {
     'body-arm': 'BRAZO',
@@ -104,6 +107,7 @@ export class BookingFormComponent implements OnInit {
     private fb: FormBuilder,
     private appointmentService: AppointmentService
   ) {
+    // Inicialización del Formulario Reactivo
     this.bookingForm = this.fb.group({
       firstName: ['', Validators.required],
       lastSurname: ['', Validators.required],
@@ -125,26 +129,30 @@ export class BookingFormComponent implements OnInit {
       acceptTerms: [false, Validators.requiredTrue]
     }, { validators: this.emailMatchValidator });
 
+    // Inicialización de la escucha reactiva
     this.escucharCambiosParaDisponibilidad();
   }
 
   ngOnInit(): void { }
 
   // ==========================================
-  // 5. LÓGICA DEL CALENDARIO Y DISPONIBILIDAD
+  // 5. LÓGICA REACTIVA (RXJS)
   // ==========================================
-  get currentMonthName(): string {
-    return new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(this.currentViewDate).toUpperCase();
-  }
 
-  // --- Escucha cambios para calcular duración y trabajador ---
+  // En lugar de un botón "Calcular", el formulario reacciona automáticamente.
   private escucharCambiosParaDisponibilidad() {
     this.bookingForm.valueChanges.pipe(
+      // debounceTime(500): espera medio segundo a que el usuario deje de escribir/seleccionar.
+      // Así no se hacen peticiones constantes al servidor al ir pulsando cada tecla.
       debounceTime(500),
-      // Solo procede si los campos que definen la cita están llenos
+
+      // filter: Solo pasamos a la siguiente fase si los campos IMPORTANTES tienen valor.
       filter(val => val.service && val.size && val.detailLevel && val.colorMode),
+
+      // switchMap: si el usuario cambia algo mientras hay una petición pendiente, 
+      // cancela la anterior y lanza la nueva.
       switchMap(val => {
-        // Se preparan todos los criterios para el cálculo previo
+        // Prepara los datos para que el backend calcule la duración estimada
         const criterios = {
           tamanio: this.mapearTamanio(val.size),
           detalle: this.mapearDetalle(val.detailLevel),
@@ -154,35 +162,44 @@ export class BookingFormComponent implements OnInit {
           zona: this.mapearZona(val.bodyZone)
         };
 
-        // Llama a un endpoint intermedio
-        // Este endpoint debe devolver { duracion: X, idTrabajador: Y }
+        // Se llama al servicio (devuelve un Observable)
         return this.appointmentService.calculatePreBookingData(criterios);
       })
     ).subscribe({
       next: (resultado: any) => {
-        console.log('Cálculo previo recibido:', resultado);
+        console.log('El backend ha calculado:', resultado);
 
+        // Calculada en minutos: ej 120 minutos
         const duracion = resultado.duracion;
+        // el id es un número sencillo, tipo id=5
         this.assignedWorkerId = resultado.idTrabajador;
 
-        // Cargamos huecos con duración Y trabajador específico
+        // Cuando se conoce la  duración y quién lo hace, se solicita su agenda.
         if (this.assignedWorkerId) {
           this.cargarHuecosBackend(duracion, this.assignedWorkerId);
         }
       },
-      error: (err) => console.error('Error calculando datos previos', err)
+      error: (err) => console.error('Error en el cálculo automático:', err)
     });
   }
 
-  // --- La carga de huecos incluye el workerId ---
   private cargarHuecosBackend(duracion: number, workerId: number) {
     this.appointmentService.getAvailableSlots(duracion, workerId).subscribe({
       next: (respuestaBackend) => {
+        // Convierte el objeto JSON { "2026-05-20": [] } a un Map de TypeScript
         this.backendSlotsMap = new Map(Object.entries(respuestaBackend));
+        // Se genera de nuevo la vista del calendario
         this.generateWeekGrid();
       },
-      error: (err) => console.error('Error cargando huecos', err)
+      error: (err) => console.error('Error cargando disponibilidad:', err)
     });
+  }
+
+  // ==========================================
+  // 6. LÓGICA DEL CALENDARIO
+  // ==========================================
+  get currentMonthName(): string {
+    return new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(this.currentViewDate).toUpperCase();
   }
 
   generateWeekGrid() {
@@ -190,10 +207,8 @@ export class BookingFormComponent implements OnInit {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    // Norma del negocio: no se puede reservar antes de 3 días (para poder gestionar la fianza)
     const minDate = new Date(today);
-    // Esto establece un margen de 3 días, para que no se pueda pedir una cita
-    // para el día siguiente, ya que no daría tiempo a pagar la fianza
-    // y preparar el diseño. Este margen evita problemas.
     minDate.setDate(today.getDate() + 3);
 
     const startOfWeek = this.getMonday(this.currentViewDate);
@@ -203,6 +218,7 @@ export class BookingFormComponent implements OnInit {
       iterDate.setDate(startOfWeek.getDate() + i);
 
       const iterDateString = iterDate.toISOString().split('T')[0];
+      // El 0 es el dominhgo y el 6 el sábado
       const isWeekend = (iterDate.getDay() === 0 || iterDate.getDay() === 6);
 
       const iterDateMidnight = new Date(iterDate);
@@ -230,35 +246,23 @@ export class BookingFormComponent implements OnInit {
     }
   }
 
-  // --- GETTERS PARA QUE EL SELECTOR DE FECHA NO PERMITA RETROCEDER DESDE LA FECHA ACTUAL ---
-  // Devuelve true si el mes que estamos viendo es el actual (o anterior), para bloquear el botón "<"
+  // Validaciones de navegación (para que no se pueda retroceder al pasado)
   get isPrevMonthDisabled(): boolean {
     const today = new Date();
-    // Normalizamos al día 1 para comparar solo año y mes
     const currentView = new Date(this.currentViewDate.getFullYear(), this.currentViewDate.getMonth(), 1);
     const realToday = new Date(today.getFullYear(), today.getMonth(), 1);
-
-    // Si la vista es igual o anterior al mes real, deshabilitamos
     return currentView <= realToday;
   }
 
-  // Devuelve true si la semana que estamos viendo es la actual (o anterior), para bloquear el botón "<"
   get isPrevWeekDisabled(): boolean {
     const today = new Date();
-
-    // Obtenemos el lunes de la semana que se está viendo
     const viewMonday = this.getMonday(this.currentViewDate);
     viewMonday.setHours(0, 0, 0, 0);
-
-    // Obtenemos el lunes de la semana real actual
     const realMonday = this.getMonday(today);
     realMonday.setHours(0, 0, 0, 0);
-
-    // Si el lunes de la vista es igual o anterior al lunes real, deshabilitamos
     return viewMonday <= realMonday;
   }
 
-  // Navegación Calendario
   prevMonth() { this.navigateMonth(-1); }
   nextMonth() { this.navigateMonth(1); }
 
@@ -266,7 +270,7 @@ export class BookingFormComponent implements OnInit {
     const newDate = new Date(this.currentViewDate);
     newDate.setMonth(newDate.getMonth() + direction);
 
-    // Evita ir al pasado más allá del mes actual
+    // Protección extra para evitar que se retroceda a fechas pasadas
     const today = new Date();
     if (direction < 0 && newDate.getMonth() < today.getMonth() && newDate.getFullYear() <= today.getFullYear()) {
       return;
@@ -296,6 +300,7 @@ export class BookingFormComponent implements OnInit {
     if (day.status !== 'available') return;
     this.selectedDayIndex = this.weekDaysToDisplay.indexOf(day);
     this.selectedDateStr = day.dateStr;
+    //Esto reinicia la hora cuando se cambia de día
     this.selectedSlot = null;
   }
 
@@ -304,8 +309,10 @@ export class BookingFormComponent implements OnInit {
   }
 
   // ==========================================
-  // 6. GESTIÓN DEL FORMULARIO Y ARCHIVOS
+  // 7. INTERACCIÓN DE LA UI
   // ==========================================
+
+  //Abrir y cerrar el formulario
   toggleForm() {
     this.isFormOpen = !this.isFormOpen;
     if (this.isFormOpen) {
@@ -316,20 +323,21 @@ export class BookingFormComponent implements OnInit {
     }
   }
 
+  // Tooltips de información de opciones susceptibles de ser dudosas
   toggleHint(field: string) {
     this.activeHint = this.activeHint === field ? null : field;
   }
 
+
+  // Manejo de la subida de imágenes de referencia
   onFileChange(event: any) {
     const element = event.target as HTMLInputElement;
     const files = element.files;
-
     if (!files) return;
 
-    // 1. VALIDACIÓN DE CANTIDAD (Máx 3)
     if (files.length > 3) {
       alert('Solo puedes subir un máximo de 3 imágenes.');
-      element.value = ''; // Limpiar input
+      element.value = '';
       this.selectedFiles = [];
       return;
     }
@@ -339,33 +347,22 @@ export class BookingFormComponent implements OnInit {
     const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
     const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
-    // 2. ITERAR Y VALIDAR CADA FICHERO
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-
-      // A. Validar Tipo
       if (!ALLOWED_TYPES.includes(file.type)) {
-        alert(`El archivo "${file.name}" no es válido. Solo se permiten JPG, PNG, GIF o WEBP.`);
-        element.value = '';
-        this.selectedFiles = [];
-        return;
+        alert(`Archivo "${file.name}" no válido. Debes subir un JPG, PNG, GIF o WEBP.`);
+        element.value = ''; this.selectedFiles = []; return;
       }
-
-      // B. Validar Tamaño
       if (file.size > MAX_SIZE_BYTES) {
-        alert(`El archivo "${file.name}" es demasiado grande. El máximo es ${MAX_SIZE_MB}MB.`);
-        element.value = '';
-        this.selectedFiles = [];
-        return;
+        alert(`Archivo "${file.name}" demasiado grande. Máx. ${MAX_SIZE_MB}MB.`);
+        element.value = ''; this.selectedFiles = []; return;
       }
-
       validFiles.push(file);
     }
-
-    // Si todo está bien, guardamos
     this.selectedFiles = validFiles;
   }
 
+  //Limpiar el formulario con el botón de borrar
   resetForm() {
     this.bookingForm.reset({ colorMode: 'bw', needInvoice: false, acceptTerms: false });
     this.selectedSlot = null;
@@ -374,27 +371,22 @@ export class BookingFormComponent implements OnInit {
     this.weekDaysToDisplay = [];
     this.backendSlotsMap.clear();
     this.selectedFiles = [];
-
-    // Limpiar input file manualmente
     const fileInput = document.getElementById('references') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
   }
 
-  // Acción combinada para el botón CANCELAR
+  //Resetear el formulario al usar el botón cancelar
   cancelForm() {
-    this.resetForm();       // 1. Borra todos los datos (inputs, archivos, calendario...)
-    this.isFormOpen = false; // 2. Cierra el formulario
+    this.resetForm();
+    this.isFormOpen = false;
   }
 
-  // =====================================
-  // 7. ENVÍO (SUBMIT) - CREACIÓN FINAL DE LA CITA
-  // =====================================
+  //Envío de la información del formulario
   onSubmit() {
-    // Validamos form, fecha, hora Y trabajador asignado
     if (this.bookingForm.valid && this.selectedSlot && this.selectedDateStr && this.assignedWorkerId) {
       const raw = this.bookingForm.value;
 
-      // Objeto Cita para el Backend
+      // Construcción del DTO para el backend
       const citaObjeto = {
         tipo: this.mapearServicio(raw.service),
         zona: this.mapearZona(raw.bodyZone),
@@ -403,13 +395,11 @@ export class BookingFormComponent implements OnInit {
         coloracion: raw.colorMode === 'bw' ? 'NEGRO' : 'COLOR',
         estilo: this.mapearEstilo(raw.style),
         fecha: this.selectedDateStr,
-        hora: this.selectedSlot + ":00",
+        hora: this.selectedSlot + ":00", // El backend espera un formato HH:mm:ss
         comentarios: raw.comments,
         factura: raw.needInvoice ? 1 : 0,
         estatus: 'PENDIENTE',
-        trabajador: {
-          idTrabajador: this.assignedWorkerId
-        },
+        trabajador: { idTrabajador: this.assignedWorkerId },
         cliente: {
           nombre: raw.firstName,
           apellido1: raw.lastSurname,
@@ -420,63 +410,37 @@ export class BookingFormComponent implements OnInit {
         }
       };
 
-      // Empaquetado en FormData (JSON + Ficheros)
       const formData = new FormData();
       formData.append('cita', JSON.stringify(citaObjeto));
       this.selectedFiles.forEach(file => formData.append('ficheros', file));
 
-      console.log('Creando nueva cita con trabajador:', this.assignedWorkerId);
-
       this.appointmentService.createAppointment(formData).subscribe({
         next: (res) => {
-          alert('¡Solicitud enviada correctamente! Recibirás un email con los detalles para la fianza.');
+          alert('¡Solicitud enviada! En breve recibirás un correo de confirmación.');
           this.resetForm();
           this.isFormOpen = false;
         },
         error: (err) => {
           console.error(err);
-          if (err.status === 400) {
-            alert('Error en los datos. Por favor revisa el formulario.');
-          } else {
-            alert('Error al conectar con el servidor.');
-          }
+          alert('Se ha producido un error al enviar la solicitud.');
         }
       });
     } else {
       this.bookingForm.markAllAsTouched();
-      // Feedback si falta algo interno
-      if (!this.assignedWorkerId) {
-        console.error("Error: No se ha asignado trabajador automáticamente.");
-      }
     }
   }
 
-  // ==========================================
-  // 8. HELPERS DE MAPEO
-  // ==========================================
+  // Validación de que el email y la repetición coinciden
   emailMatchValidator(form: AbstractControl): ValidationErrors | null {
     const e = form.get('email')?.value;
     const c = form.get('confirmEmail')?.value;
     return (e && c && e === c) ? null : { emailsDontMatch: true };
   }
 
-  private mapearZona(valorHTML: string): string {
-    return this.MAPA_ZONAS[valorHTML] || 'BRAZO';
-  }
-
-  private mapearServicio(valorHTML: string): string {
-    return this.MAPA_SERVICIOS[valorHTML] || 'TATUAJE';
-  }
-
-  private mapearTamanio(valorHTML: string): string {
-    return this.MAPA_TAMANIOS[valorHTML] || 'MEDIANO';
-  }
-
-  private mapearEstilo(valorHTML: string): string {
-    return this.MAPA_ESTILOS[valorHTML] || 'REALISMO';
-  }
-
-  private mapearDetalle(valorHTML: string): string {
-    return this.MAPA_DETALLES[valorHTML] || valorHTML.split(' ')[0].toUpperCase();
-  }
+  // Mapeado de algunos elementos
+  private mapearZona(v: string): string { return this.MAPA_ZONAS[v] || 'BRAZO'; }
+  private mapearServicio(v: string): string { return this.MAPA_SERVICIOS[v] || 'TATUAJE'; }
+  private mapearTamanio(v: string): string { return this.MAPA_TAMANIOS[v] || 'MEDIANO'; }
+  private mapearEstilo(v: string): string { return this.MAPA_ESTILOS[v] || 'REALISMO'; }
+  private mapearDetalle(v: string): string { return this.MAPA_DETALLES[v] || 'MEDIO'; }
 }

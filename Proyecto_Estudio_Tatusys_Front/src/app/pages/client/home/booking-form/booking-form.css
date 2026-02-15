@@ -300,7 +300,6 @@ textarea.form-control {
     background: transparent;
     border: none;
     color: #555;
-    /* Gris oscuro para verse sobre blanco */
     font-size: 1.5rem;
     font-weight: bold;
     padding: 0 10px;
@@ -311,13 +310,19 @@ textarea.form-control {
 /* Hover en ROBIN EGG BLUE */
 .arrow-clean:hover {
     color: #00CED1;
-    /* Código aprox de Robin Egg / Turquesa */
     background: transparent;
     transform: scale(1.2);
-    /* Efecto zoom suave */
 }
 
-/* LA CARTA DEL DÍA */
+/* Recuadro del día */
+.btn-unstyled {
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+
 .day-card {
     cursor: default;
     padding: 10px 5px;
@@ -327,7 +332,6 @@ textarea.form-control {
     transition: all 0.2s;
     background-color: transparent;
     color: #666;
-    /* Color de días normales */
 }
 
 .day-number {
@@ -341,7 +345,7 @@ textarea.form-control {
 }
 
 /* ESTADOS */
-/* 1. DISPONIBLE (Verde o blanco brillante) */
+/* 1. DISPONIBLE */
 .day-card.available {
     cursor: pointer;
     font-weight: bold;
@@ -358,7 +362,6 @@ textarea.form-control {
     width: 6px;
     height: 6px;
     background-color: #008B8B;
-    /* Dark Cyan */
     border-radius: 50%;
     margin: 5px auto 0;
 }
@@ -366,9 +369,7 @@ textarea.form-control {
 /* 2. SELECCIONADO (Robin Egg) */
 .day-card.selected {
     background-color: #00CED1 !important;
-    /* Robin Egg Blue */
     color: #ffffff !important;
-    /* Texto blanco para contraste */
     box-shadow: 0 2px 8px rgba(0, 206, 209, 0.4);
 }
 
@@ -377,19 +378,16 @@ textarea.form-control {
     background-color: white;
 }
 
-/* 3. FIN DE SEMANA (Cardinal/Rojo) */
+/* 3. FIN DE SEMANA */
 .day-card.weekend {
     color: #C41E3A;
-    /* Cardinal Red aprox */
     opacity: 0.5;
     background-color: rgba(196, 30, 58, 0.05);
-    /* Fondo rojizo muy sutil */
 }
 
-/* 4. PASADO/DESHABILITADO */
+/* 3. DESHABILITADO / PASADO (Gris) */
 .day-card.disabled {
-    color: #ccc;
-    /* Gris muy claro */
+    color: #444;
     pointer-events: none;
 }
 
@@ -398,11 +396,6 @@ textarea.form-control {
     margin-top: 2px;
 }
 
-/* 3. DESHABILITADO / PASADO (Gris) */
-.day-card.disabled {
-    color: #444;
-    pointer-events: none;
-}
 
 /* 4. SELECCIONADO */
 .day-card.selected {
@@ -422,7 +415,6 @@ textarea.form-control {
 
 .btn-slot-custom {
     border: 1px solid #008B8B;
-    /* Borde Dark Cyan */
     color: #008B8B;
     background: white;
     transition: all 0.2s;
@@ -437,7 +429,7 @@ textarea.form-control {
 /* ===========================================
 SECCIÓN DE MENSAJES DE ERROR PARA VALIDACIONES
 ===============================================*/
-/* 1. MENSAJES DE ERROR (Validaciones) */
+/* MENSAJES DE ERROR (de las validaciones) */
 .invalid-feedback {
     text-align: left;
     font-size: clamp(0.9rem, 0.85rem + 0.5vw, 1.1rem);
@@ -476,4 +468,85 @@ botones de info adicional para el formulario
     text-align: left;
     font-size: clamp(0.7rem, 0.85rem + 0.5vw, 1rem);
     line-height: 1.4;
+}
+
+/* BOTONES FINALES */
+.btn-reservar-submit {
+    background-color: var(--dark-cyan);
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    padding: 1rem 3rem;
+    border-radius: 0.6rem;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+}
+
+.btn-reservar-submit:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.action-btn {
+    min-width: 140px;
+    padding-block: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-width: 2px;
+}
+
+/* ANIMACIONES */
+.smooth-collapse {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.5s ease-out, opacity 0.5s ease-out;
+    overflow: hidden;
+}
+
+.smooth-collapse.open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+.smooth-inner {
+    min-height: 0;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+/* RESPONSIVE EXTRA */
+@media (max-width: 480px) {
+    .booking-card {
+        padding: 0;
+        width: 100%;
+    }
+
+    .day-card {
+        padding: 5px 2px;
+    }
+
+    .day-number {
+        font-size: 1rem;
+    }
+
+    .btn-reservar-submit {
+        width: 100%;
+        padding: 1rem;
+    }
 }

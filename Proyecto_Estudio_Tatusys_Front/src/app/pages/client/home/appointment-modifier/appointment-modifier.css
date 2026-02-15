@@ -1,48 +1,33 @@
 /* =============================================
-ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
-================================================ */
+   ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
+   ================================================ */
 
-/* Input de la referencia de la cita y email */
-.input-reference {
-    background-color: rgba(255, 255, 255, 0.9);
-    border: none;
-
-    /* CAMBIO 1: Reducimos tamaño de 1.5rem a 1.1rem */
-    font-size: 1.1rem;
-
-    /* CAMBIO 2: Reducimos el espaciado entre letras (antes 0.125rem) 
-       para que el email quepa mejor */
-    letter-spacing: 0.03rem;
-
-    font-weight: 700;
-    color: var(--jet);
-
-    /* Nota: Mantenemos mayúsculas visuales, pero recuerda que el email 
-       lo conviertes a minúsculas en el TS antes de enviar */
-    text-transform: uppercase;
-
-    padding: 0.8rem;
-    border-radius: 0.5rem;
+/* --- GENERAL --- */
+.text-burgundy {
+    color: var(--burgundy);
 }
 
-/* Texto placeholder de ejemplo del input de id de cita*/
-.input-reference::placeholder {
-    color: #999;
-    font-size: 1.2rem;
-    font-weight: 400;
-    letter-spacing: normal;
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-.input-reference:focus {
-    background-color: #fff;
-    box-shadow: 0 0 0 4px var(--robin-egg-blue);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Estilo del contenedor de información de la cita */
+/* --- TARJETA PRINCIPAL --- */
 .booking-card {
     background-color: var(--jet);
     width: 95%;
-    max-width: 40rem;
+    max-width: 50rem;
     border-radius: 1rem;
     border: none;
     color: var(--antiflash-white);
@@ -50,44 +35,76 @@ ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
     transition: max-width 0.3s ease-in-out;
 }
 
+/* Cuando se abre el calendario, la tarjeta crece */
 .booking-card.card-wide {
     max-width: 65rem;
-    /* Mucho más ancha para ver la semana completa */
-}
-
-.card-wide .day-column {
-    /* En pantallas grandes, les damos aún más presencia */
-    min-width: 6.5rem;
 }
 
 .card-body {
     padding: clamp(1.5rem, 5vw, 4rem);
 }
 
+/* --- INPUTS REFERENCIA Y EMAIL --- */
+.input-reference {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    font-size: 1.1rem;
+    letter-spacing: 0.03rem;
+    font-weight: 700;
+    color: var(--jet);
+    text-transform: uppercase;
+    padding: 0.8rem;
+    border-radius: 0.5rem;
+}
+
+.input-reference:focus {
+    background-color: #fff;
+    box-shadow: 0 0 0 4px var(--robin-egg-blue);
+    outline: none;
+}
+
+/* --- TÍTULOS Y TEXTOS --- */
 .modify-title {
     font-family: 'Figtree', sans-serif;
     color: var(--antiflash-white);
     font-weight: 400;
-    /* Mínimo 1.2rem (móvil), ideal 3vw, máximo 1.8rem (escritorio) */
     font-size: clamp(1.2rem, 3vw, 1.8rem);
     letter-spacing: 0.02em;
-    margin-bottom: 1.5rem;
-    /* Ajuste de espaciado */
+
+    /* CORRECCIÓN ESPACIADO: Reducido margen inferior */
+    margin-bottom: 1rem !important;
 }
 
-/* Nuevo estilo para el Mes y Semana */
 .calendar-header-text {
     color: var(--antiflash-white);
-    /* Mínimo 1rem, escala rápido con 4vw, tope en 1.5rem */
     font-size: clamp(1rem, 4vw, 1.5rem);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05rem;
-    text-align: center;
-    /* Aseguramos que tenga espacio y no se pegue a las flechas */
     margin: 0 0.5rem;
 }
 
+.search-label {
+    color: var(--cardinal);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* --- TEXTOS EXPLICATIVOS --- */
+.contact-text {
+    font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+    line-height: 1.6;
+    /* CORRECCIÓN ESPACIADO: Reducido margen vertical */
+    margin-block: 1rem !important;
+}
+
+.text-warning-custom {
+    color: var(--cardinal);
+    font-weight: 700;
+    letter-spacing: 0.03rem;
+}
+
+/* --- CAJA RESUMEN CITA --- */
 .appointment-box {
     background-color: #f0f0f0;
     border-radius: 0.8rem;
@@ -96,9 +113,8 @@ ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
     color: var(--jet);
 }
 
-/* Títulos dentro del recuadro de inf. de cita */
 .appointment-label {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--jet);
     text-transform: uppercase;
@@ -108,95 +124,150 @@ ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+    flex-wrap: nowrap;
+    gap: clamp(1rem, 3vw, 2rem);
 }
 
-/* Separador vertical de los datos -> | */
+/* Divisor Vertical (se ocultará en móvil) */
 .divider {
     width: 0.15rem;
-    align-self: stretch;
     background-color: var(--jet);
     opacity: 0.3;
-    margin: 0 clamp(0.5rem, 2vw, 1.5rem);
     min-height: 4rem;
+    margin: 0 1rem;
 }
 
-/* Texto de día de la semana */
-.weekday {
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-/* Texto del número de día */
-.appointment-day {
-    font-size: clamp(2rem, 10vw, 2.5rem);
+/* TEXTOS DENTRO DE LA CAJA (Día, Hora, etc.) */
+.appointment-day,
+.appointment-hour {
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
     font-weight: 800;
     line-height: 1;
-    color: var(--burgundy);
-    margin: 0.3rem 0;
 }
 
-/* Textos del año y de duración en minutos de la cita */
-.year,
-.duration {
+.appointment-day {
+    color: var(--burgundy);
+}
+
+.appointment-hour {
+    color: var(--dark-cyan);
+}
+
+.weekday {
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--jet);
+}
+
+/* CORRECCIÓN TIPOGRAFÍA: "A LAS" */
+.time-connector {
+    font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+    color: var(--jet);
+    margin-bottom: 0.2rem;
+
+    /* Nuevos estilos */
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+/* Texto del año */
+.year {
     font-size: 1.2rem;
     letter-spacing: 0.1rem;
 }
 
-/* Texto de la hora de la cita */
-.appointment-hour {
-    font-size: clamp(2rem, 10vw, 2.5rem);
-    font-weight: 800;
-    color: var(--dark-cyan);
-    line-height: 1.1;
+/* CORRECCIÓN TIPOGRAFÍA: DURACIÓN */
+.duration {
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
+
+    /* Nuevos estilos */
+    text-transform: uppercase;
+    font-weight: 700;
 }
 
-/* Texto de ponerse en contacto para modificar otros datos */
-.contact-text {
-    font-size: 1.1rem;
-    line-height: 1.5;
-    margin-block: 2rem;
+/* --- CALENDARIO SEMANAL --- */
+.days-container {
+    width: 100%;
+    min-height: 0.625rem;
+    padding-bottom: 1rem;
 }
 
-/* --- BOTONES --- */
-/* Contenedor de botones: en versión móvil se ponen uno encima de otro */
-.action-buttons-container {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
+.day-column {
+    flex: 1;
+    min-width: 5.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 0.625rem 0.313rem;
 }
 
-/* Botón 'MODIFICAR CITA' */
+.card-wide .day-column {
+    min-width: 6.5rem;
+}
+
+.day-column.disabled-day {
+    opacity: 0.5;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.weekday-label {
+    color: var(--robin-egg-blue);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+/* Botones de Huecos (Slots) */
+.slot-btn {
+    border: 1px solid #666;
+    color: #ccc;
+    font-size: 0.85rem;
+    padding: 6px 0;
+    width: 100%;
+    transition: all 0.2s;
+    border-radius: 4px;
+    background: transparent;
+}
+
+.slot-btn:hover {
+    background-color: #444;
+    color: white;
+    border-color: #999;
+}
+
+.slot-btn.selected {
+    background-color: var(--robin-egg-blue);
+    border-color: var(--robin-egg-blue);
+    color: var(--night);
+    font-weight: 700;
+}
+
+/* --- BOTONES DE ACCIÓN --- */
+.btn-modify-custom,
 .btn-confirm-custom {
-    background-color: var(--dark-cyan);
-    border: 1px solid var(--dark-cyan);
-    color: var(--antiflash-white);
-    font-weight: 600;
+    background-color: transparent;
+    border: 2px solid var(--robin-egg-blue);
+    color: var(--robin-egg-blue) !important;
+    font-weight: 700;
     padding: 0.6rem 1.5rem;
     transition: all 0.3s ease;
 }
 
-.btn-confirm-custom:hover {
+.btn-modify-custom:hover:not(:disabled),
+.btn-confirm-custom:hover:not(:disabled) {
     background-color: var(--robin-egg-blue);
-    /* Un tono más claro al pasar el ratón */
-    border-color: var(--robin-egg-blue);
-    color: var(--night);
-    /* Texto oscuro para contraste */
-    box-shadow: 0 0 10px rgba(17, 195, 185, 0.4);
+    color: var(--night) !important;
 }
 
+.btn-modify-custom:disabled,
 .btn-confirm-custom:disabled {
-    background-color: #444;
-    border-color: #444;
-    color: #888;
-    box-shadow: none;
+    border-color: #555;
+    color: #555 !important;
+    cursor: not-allowed;
 }
 
-/* Botón 'CANCELAR CITA' */
 .btn-cancel-custom {
     color: white !important;
     background-color: transparent;
@@ -211,121 +282,25 @@ ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
     color: white;
 }
 
-
-/* ===== CONTENEDOR DEL SELECTOR DE NUEVA FECHA ====== */
-/* Contenedor con scroll horizontal por si la pantalla es muy pequeña */
-.days-container {
-    width: 100%;
-    /* Asegura que el contenedor ocupe todo el ancho disponible */
-    min-height: 0.625rem;
-    padding-bottom: 1rem;
-    /* Un poco de espacio para la barra de scroll si aparece */
-}
-
-/* Columna de día */
-.day-column {
-    flex: 1;
-    min-width: 5.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    padding: 0.625rem 0.313rem;
-    box-sizing: border-box;
-}
-
-/* Estilo visual para días deshabilitados en el calendario */
-.day-column.disabled-day {
-    opacity: 0.5;
-    pointer-events: none;
-    background: rgba(255, 255, 255, 0.02);
-}
-
-/* Botones de hora (huecos disponibles) */
-.slot-btn {
-    border: 1px solid #666;
-    color: #ccc;
-    font-size: 0.85rem;
-    /* Un pelín más grande para leer mejor */
-    padding: 6px 0;
-    /* Un poco más alto para facilitar el clic */
-    width: 100%;
-    transition: all 0.2s;
-    border-radius: 4px;
-    /* Un toque estético */
-}
-
-.slot-btn:hover {
-    background-color: #444;
-    color: white;
-    border-color: #999;
-}
-
-/* Estado seleccionado */
-.slot-btn.selected {
-    background-color: var(--robin-egg-blue);
-    border-color: var(--robin-egg-blue);
-    color: var(--night);
-    font-weight: 700;
-}
-
-/* --- ESTILOS CALENDARIO (DÍAS Y NAVEGACIÓN) --- */
-/* Título del día de la semana (LUN, MAR...) */
-.weekday-label {
-    color: var(--robin-egg-blue);
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.9rem;
-}
-
-/* Botones de navegación (Ant. / Sig.) */
-.nav-btn {
-    font-size: 1.1rem !important;
-    font-weight: 500;
-    padding-inline: 1rem;
-}
-
-/* Botón 'ATRÁS' personalizado */
 .btn-back-custom {
     color: #ccc !important;
     border: 1px solid #666;
-    background-color: transparent;
-    font-weight: 600;
-    padding: 0.6rem 0;
-    min-width: 8rem;
-    transition: all 0.3s ease;
+    background: transparent;
+    padding: 0.6rem 1rem;
+    transition: all 0.3s;
 }
 
 .btn-back-custom:hover {
-    background-color: #444;
-    border-color: #999;
-    color: white !important;
+    border-color: #fff;
+    color: #fff !important;
 }
 
-/* --- ESTILOS PANTALLA CONFIRMACIÓN --- */
-
-/* Título ¡TODO LISTO! */
-.confirm-title {
-    color: var(--robin-egg-blue) !important;
-    font-weight: 800;
-    letter-spacing: 0.05rem;
-}
-
-/* Texto conector 'a las' */
-.time-connector {
-    font-size: 1.3rem;
-    color: var(--jet);
-    margin-bottom: 0.2rem;
-}
-
-/* Botón CERRAR personalizado */
 .btn-close-custom {
     color: var(--antiflash-white);
     border: 1px solid var(--robin-egg-blue);
-    background-color: transparent;
-    font-size: 1.1rem;
+    background: transparent;
     padding: 0.7rem 3rem;
-    min-width: 12rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
 }
 
 .btn-close-custom:hover {
@@ -333,53 +308,51 @@ ESTILOS DEL COMPONENTE DE MODIFICACIÓN DE CITA
     color: var(--night);
 }
 
-/* Botón 'BUSCAR' y 'MODIFICAR CITA' */
-.btn-modify-custom {
-    background-color: transparent;
-    border: 2px solid var(--robin-egg-blue);
+.nav-btn {
+    font-size: 1.1rem !important;
+    font-weight: 500;
+    padding-inline: 1rem;
+}
+
+.confirm-title {
     color: var(--robin-egg-blue) !important;
-    /* Texto en color robin egg */
-    font-weight: 700;
-    padding: 0.6rem 1.5rem;
-    transition: all 0.3s ease;
+    font-weight: 800;
+    letter-spacing: 0.05rem;
 }
 
-/* Estado Hover (al pasar el ratón) */
-.btn-modify-custom:hover:not(:disabled) {
-    background-color: var(--robin-egg-blue);
-    /* Fondo se vuelve cyan */
-    border-color: var(--robin-egg-blue);
-    color: var(--night) !important;
-    /* Texto se vuelve negro (u oscuro) */
-}
+/* ===============================
+   RESPONSIVE MÓVIL
+   =============================== */
+@media (max-width: 480px) {
 
-/* Estado Deshabilitado (cuando no hay datos escritos) */
-.btn-modify-custom:disabled {
-    border-color: #555;
-    /* Borde gris apagado */
-    color: #555 !important;
-    /* Texto gris apagado */
-    background-color: transparent;
-    box-shadow: none;
-    cursor: not-allowed;
-}
+    /* CORRECCIÓN BORDE: Eliminado el border-radius: 0 que tenías antes */
+    .booking-card {
+        width: 95%;
+        /* Mantenemos margen lateral */
+        margin: 0 auto;
+    }
 
-/* Etiquetas de los campos de búsqueda (Localizador y Email) */
-.search-label {
-    color: var(--cardinal);
-    /* Color Cardinal */
-    font-size: 1.1rem;
-    /* Aumentamos el tamaño (antes era 'small' ~0.8rem) */
-    font-weight: 600;
-    /* Un poco más de peso para que se lea mejor */
-    letter-spacing: 0.03rem;
-}
+    .day-column {
+        min-width: 4.5rem;
+    }
 
-/* Texto de advertencia (irreversible) */
-.text-warning-custom {
-    color: var(--cardinal);
-    /* Rojo cardinal */
-    font-weight: 700;
-    /* Negrita */
-    letter-spacing: 0.03rem;
+    .appointment-info {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .divider {
+        display: none;
+    }
+
+    .appointment-date,
+    .appointment-time {
+        margin: 0 !important;
+        width: 100%;
+    }
+
+    .appointment-date {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding-bottom: 1rem;
+    }
 }

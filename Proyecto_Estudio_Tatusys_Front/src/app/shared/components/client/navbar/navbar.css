@@ -1,6 +1,14 @@
 /* Estilo para color del header (usa el root de styles.css general del proyecto) */
 .site-header {
     background: linear-gradient(180deg, var(--night), var(--jet));
+    position: relative;
+    z-index: 10;
+}
+
+.logo-link {
+    display: inline-block;
+    text-decoration: none;
+    transition: transform 0.3s ease;
 }
 
 /* Estilos para tamaño de logotipo */
@@ -8,4 +16,5 @@
     height: 3rem;
     max-height: 12vh;
     width: auto;
+    display: block;
 }
