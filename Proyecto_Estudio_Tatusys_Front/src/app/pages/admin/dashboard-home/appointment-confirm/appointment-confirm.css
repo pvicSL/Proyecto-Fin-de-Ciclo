@@ -18,3 +18,34 @@
 
     background-color: var(--antiflash-white);
 }
+
+.boton-animado {
+  /* Fondo degradado extralargo */
+  background: linear-gradient(270deg, #3af3e6, var(--dark-cyan));
+  background-size: 800% 800%; /* Tamaño grande para que el movimiento sea suave */
+  
+  /* Estilos básicos del botón */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+
+  /* Llamada a la animación */
+  animation: movimientoFondo 5s ease infinite;
+}
+
+/* Definición del movimiento */
+@keyframes movimientoFondo {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Efecto opcional de escala al pasar el ratón */
+.boton-animado:hover {
+  transform: scale(1.05);
+  transition: 0.3s;
+}

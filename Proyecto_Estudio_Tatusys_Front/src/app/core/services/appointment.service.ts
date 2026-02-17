@@ -197,6 +197,21 @@ export class AppointmentService {
         return this.http.get<AppointmentDTO>(`${this.apiUrl}/${id}`);
     }
 
+    // ==========================================
+    // MÉTODOS FINALIZACIÓN DE LA CITA
+    // ==========================================
+
+    finalizarTrabajo(id: number): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/${id}/finalizar-trabajo`, {});
+    }
+
+    generarFactura(id: number): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/${id}/generar-factura`, {});
+    }
+
+    getInvoices(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/api/admin/facturas/realizadas`);
+    }
 
 
     // ==========================================

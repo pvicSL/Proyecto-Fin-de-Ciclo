@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, Directive, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -19,6 +19,8 @@ import { UploadService } from '../../../../core/services/upload.service';
   styleUrls: ['./appointment-modify.css'],
   encapsulation: ViewEncapsulation.None
 })
+
+
 export class AppointmentModify implements OnInit {
 
   cita!: AppointmentAdminDTO;
@@ -27,16 +29,13 @@ export class AppointmentModify implements OnInit {
   citaOriginal!: AppointmentAdminDTO; // <-- Importante: El respaldo
   tarifasBBDD: any = {};
   duracionEstimada: number = 0;
-  
-
-  
 
   constructor(
-    private appointmentService: AppointmentService,
-    private route: ActivatedRoute,
-    private priceService: PricesService,
-    private uploadService: UploadService,
-    private cdr: ChangeDetectorRef // Inyectamos el detector de cambios
+    protected appointmentService: AppointmentService,
+    protected route: ActivatedRoute,
+    protected priceService: PricesService,
+    protected uploadService: UploadService,
+    protected cdr: ChangeDetectorRef // Inyectamos el detector de cambios
   ) {}
 
   actualizarCalculos() {
