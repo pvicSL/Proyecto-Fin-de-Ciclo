@@ -10,6 +10,7 @@ export interface AppointmentDTO {
     // Datos del servicio (es decir, de la cita que se solicita)
     comentarios?: string;
     factura?: boolean;
+    estadoFactura: string;
     tipo: string;
     zona: string;
     tamanio: string; // IMP, se usa para calcular duración

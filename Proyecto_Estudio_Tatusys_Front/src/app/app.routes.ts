@@ -74,6 +74,16 @@ export const routes: Routes = [
             path: 'confirmarPresupuesto/:id',
             loadComponent: () => import('./pages/admin/dashboard-home/appointment-confirm/appointment-confirm').then(m => m.AppointmentConfirm),
             data: { title: 'Home > Confirmar Presupuesto' }
+          },
+          {
+            path: 'generarFactura',
+            loadComponent: () => import('./pages/admin/dashboard-home/invoice-question/invoice-question').then(m => m.InvoiceQuestion),
+            data: { title: 'Home > Confirmar Presupuesto > Generar Factura' }
+          },
+          {
+            path: 'facturaGenerada',
+            loadComponent: () => import('./pages/admin/dashboard-home/invoice-message/invoice-message').then(m => m.InvoiceMessage),
+            data: { title: 'Home > Confirmar Presupuesto > Factura Generada' }
           }
         ]
       },
