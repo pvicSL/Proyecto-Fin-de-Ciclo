@@ -7,34 +7,39 @@
     </div>
 </section>
 
-<div class="container py-4">
+<main class="container py-4">
 
-    <div *ngIf="loading" class="text-center py-5">
+    @if (loading) {
+    <div class="text-center py-5">
         <div class="spinner-border text-cardinal" role="status">
             <span class="visually-hidden">Cargando...</span>
         </div>
         <p class="mt-3 text-muted">Procesando...</p>
     </div>
+    }
 
-    <div *ngIf="citaYaPagada" class="text-center py-5 text-white">
-        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+    @if (citaYaPagada) {
+    <div class="text-center py-5 text-white">
+        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;" aria-hidden="true"></i>
         <h3 class="mt-3">Esta cita ya está confirmada</h3>
         <p>La fianza ya fue abonada anteriormente.</p>
-        <button routerLink="/" class="btn btn-jet mt-3">Volver al Inicio</button>
+        <button routerLink="/inicio" class="btn bg-jet text-white mt-3">Volver al Inicio</button>
     </div>
+    }
 
-    <div *ngIf="!loading && !tokenValido && !citaYaPagada" class="text-center py-5 text-cardinal">
-        <i class="bi bi-x-circle text-secondary" style="font-size: 3rem;"></i>
+    @if (!loading && !tokenValido && !citaYaPagada) {
+    <div class="text-center py-5 text-cardinal">
+        <i class="bi bi-x-circle text-secondary" style="font-size: 3rem;" aria-hidden="true"></i>
         <h3 class="mt-3">Enlace no válido</h3>
         <p class="text-muted">{{ errorMsg }}</p>
-        <button routerLink="/" class="btn btn-jet mt-3">Volver al Inicio</button>
+        <button routerLink="/inicio" class="btn bg-jet text-white mt-3">Volver al Inicio</button>
     </div>
+    }
 
-    <div *ngIf="!loading && tokenValido && !pagoRealizado && !presupuestoRechazado && !citaYaPagada"
-        class="view-transition my-4">
+    @if (!loading && tokenValido && !pagoRealizado && !presupuestoRechazado && !citaYaPagada) {
+    <div class="view-transition my-4">
 
         <div class="payment-wrapper">
-
             <div class="row g-4 align-items-stretch">
 
                 <div class="col-lg-6">
@@ -46,25 +51,25 @@
                             <div class="bg-light rounded-3 p-3 text-dark mb-4">
                                 <div class="d-flex justify-content-between mb-2 border-bottom border-secondary pb-2">
                                     <span class="text-muted">Localizador:</span>
-                                    <span class="fw-bold text-jet">{{ datosCita.referencia }}</span>
+                                    <span class="fw-bold text-jet">{{ datosCita?.referencia || 'No disponible' }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2 border-bottom border-secondary pb-2">
                                     <span class="text-muted">Fecha:</span>
-                                    <span class="fw-bold text-jet">{{ datosCita.fecha | date:'dd/MM/yyyy' }}</span>
+                                    <span class="fw-bold text-jet">{{ datosCita?.fecha | date:'dd/MM/yyyy' }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2 border-bottom border-secondary pb-2">
                                     <span class="text-muted">Hora:</span>
-                                    <!-- meter comprobaciones if cosa NO existe, log de que pasa, si existe, tira palante-->
-                                    <span class="fw-bold text-jet">{{ datosCita.hora }}</span>
+                                    <span class="fw-bold text-jet">{{ datosCita?.hora || 'Por confirmar' }}</span>
                                 </div>
+
                                 <div class="d-flex justify-content-between pt-2">
                                     <span class="text-muted">Importe total:</span>
-                                    <span class="fs-5 fw-bold">{{ datosCita.precioTotal }} €</span>
+                                    <span class="fs-5 fw-bold">{{ datosCita?.precioTotal || '0' }} €</span>
                                 </div>
 
                                 <div class="d-flex justify-content-between border-top border-secondary pt-4">
                                     <span class="text-muted">Fianza:</span>
-                                    <span class="fs-5 fw-bold">{{ datosCita.fianza || 30 }} €</span>
+                                    <span class="fs-5 fw-bold">{{ datosCita?.fianza || 30 }} €</span>
                                 </div>
                                 <div class="d-flex justify-content-between pt-2">
                                     <span class="text-muted small">(A descontar del importe total)</span>
@@ -72,21 +77,20 @@
                             </div>
 
                             <div class="alert bg-robin-egg border-0 mb-3" role="alert">
-                                <small class="text-dark fw-semibold"><i class="bi bi-info-circle-fill me-2"></i>
+                                <small class="text-dark fw-semibold"><i class="bi bi-info-circle-fill me-2"
+                                        aria-hidden="true"></i>
                                     El resto del importe se abonará en el estudio el día de la cita.
                                 </small>
                             </div>
 
                             <div class="alert bg-cardinal text-white border-0" role="alert">
                                 <small>
-                                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                                    <i class="bi bi-exclamation-circle-fill me-2" aria-hidden="true"></i>
                                     <strong>Tienes 48 horas para realizar el pago.</strong>
-                                    <div class="mt-2">
-                                        <span>Al realizar el pago, aceptas el presupuesto y la fecha.</span>
-                                    </div>
-                                    <div class="mt-1">
-                                        <span>Si no realizas el pago en 48 horas, la solicitud quedará anulada.</span>
-                                    </div>
+                                    <span class="d-block mt-2">Al realizar el pago, aceptas el presupuesto y la
+                                        fecha.</span>
+                                    <span class="d-block mt-1">Si no realizas el pago en 48 horas, la solicitud quedará
+                                        anulada.</span>
                                 </small>
                             </div>
                         </div>
@@ -102,66 +106,88 @@
                         <div class="card-body p-3">
                             <div class="bg-light rounded-3 p-3 h-100">
                                 <p class="text-cardinal fw-bold small text-center mb-3">
-                                    <i class="bi bi-exclamation-triangle-fill"></i> MODO SIMULACIÓN TFG
+                                    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> MODO SIMULACIÓN
+                                    TFG
                                 </p>
 
                                 <form (ngSubmit)="realizarPago()">
 
                                     <div class="mb-3">
-                                        <label class="form-label small text-muted">Titular de la tarjeta</label>
+                                        <label for="titular-tarjeta" class="form-label small text-muted">Titular de la
+                                            tarjeta</label>
                                         <div class="position-relative">
-                                            <input type="text" class="form-control"
+                                            <input type="text" id="titular-tarjeta" class="form-control"
                                                 [class.valid-field]="validStatus.nombre === true"
                                                 [class.invalid-field]="validStatus.nombre === false" name="nombre"
                                                 [(ngModel)]="tarjeta.nombre" (input)="validarNombre()"
                                                 (blur)="validarNombre()" placeholder="Nombre completo del titular"
-                                                autocomplete="off">
-                                            <i *ngIf="validStatus.nombre"
-                                                class="bi bi-check-circle-fill text-robin position-absolute top-50 end-0 translate-middle-y me-3"></i>
+                                                autocomplete="cc-name" aria-describedby="nombre-error">
+
+                                            @if (validStatus.nombre) {
+                                            <i class="bi bi-check-circle-fill text-robin position-absolute top-50 end-0 translate-middle-y me-3"
+                                                aria-hidden="true"></i>
+                                            }
                                         </div>
-                                        <div *ngIf="validStatus.nombre === false" class="text-cardinal x-small mt-1">
-                                            Nombre no válido (sin números ni símbolos).</div>
+                                        @if (validStatus.nombre === false) {
+                                        <div id="nombre-error" class="text-cardinal x-small mt-1" role="alert">
+                                            Nombre no válido (sin números ni símbolos).
+                                        </div>
+                                        }
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="form-label small text-muted">Número de tarjeta</label>
+                                        <label for="numero-tarjeta" class="form-label small text-muted">Número de
+                                            tarjeta</label>
                                         <div class="input-group">
-                                            <span class="input-group-text bg-white"><i
-                                                    class="bi bi-credit-card-2-front text-jet"></i></span>
-                                            <input type="text" class="form-control"
+                                            <span class="input-group-text bg-white">
+                                                <i class="bi bi-credit-card-2-front text-jet" aria-hidden="true"></i>
+                                            </span>
+                                            <input type="text" id="numero-tarjeta" class="form-control"
                                                 [class.valid-field]="validStatus.numero === true"
                                                 [class.invalid-field]="validStatus.numero === false" name="numero"
                                                 [(ngModel)]="tarjeta.numero" (input)="formatearTarjeta($event)"
                                                 (blur)="validarTarjeta()" placeholder="0000 0000 0000 0000"
-                                                maxlength="23">
+                                                maxlength="23" autocomplete="cc-number" aria-describedby="numero-error">
                                         </div>
-                                        <div *ngIf="validStatus.numero === false" class="text-cardinal x-small mt-1">
-                                            Número no válido (Revisa los dígitos).</div>
+                                        @if (validStatus.numero === false) {
+                                        <div id="numero-error" class="text-cardinal x-small mt-1" role="alert">
+                                            Número no válido (Revisa los dígitos).
+                                        </div>
+                                        }
                                     </div>
 
                                     <div class="row">
                                         <div class="col-6 mb-4">
-                                            <label class="form-label small text-muted">Caducidad</label>
-                                            <input type="text" class="form-control"
+                                            <label for="expiracion-tarjeta"
+                                                class="form-label small text-muted">Caducidad</label>
+                                            <input type="text" id="expiracion-tarjeta" class="form-control"
                                                 [class.valid-field]="validStatus.expiracion === true"
                                                 [class.invalid-field]="validStatus.expiracion === false"
                                                 name="expiracion" [(ngModel)]="tarjeta.expiracion"
                                                 (input)="formatearFecha($event)" (blur)="validarFecha()"
-                                                placeholder="MM/AA" maxlength="5">
-                                            <div *ngIf="validStatus.expiracion === false"
-                                                class="text-cardinal x-small mt-1">
-                                                Fecha inválida o vencida.</div>
+                                                placeholder="MM/AA" maxlength="5" autocomplete="cc-exp"
+                                                aria-describedby="exp-error">
+
+                                            @if (validStatus.expiracion === false) {
+                                            <div id="exp-error" class="text-cardinal x-small mt-1" role="alert">
+                                                Fecha inválida o vencida.
+                                            </div>
+                                            }
                                         </div>
 
                                         <div class="col-6 mb-4">
-                                            <label class="form-label small text-muted">CVC</label>
-                                            <input type="text" class="form-control"
+                                            <label for="cvc-tarjeta" class="form-label small text-muted">CVC</label>
+                                            <input type="text" id="cvc-tarjeta" class="form-control"
                                                 [class.valid-field]="validStatus.cvc === true"
                                                 [class.invalid-field]="validStatus.cvc === false" name="cvc"
                                                 [(ngModel)]="tarjeta.cvc" (input)="validarCvc()" placeholder="123"
-                                                maxlength="4">
-                                            <div *ngIf="cvcCorto" class="text-cardinal x-small mt-1">Mínimo 3 cifras.
+                                                maxlength="4" autocomplete="cc-csc" aria-describedby="cvc-error">
+
+                                            @if (cvcCorto) {
+                                            <div id="cvc-error" class="text-cardinal x-small mt-1" role="alert">
+                                                Mínimo 3 cifras.
                                             </div>
+                                            }
                                         </div>
                                     </div>
 
@@ -169,7 +195,7 @@
                                         <button type="submit"
                                             class="btn btn-confirmar py-3 text-white fw-bold text-uppercase shadow-sm w-100"
                                             [disabled]="loading || !isFormValid">
-                                            PROCEDER CON EL PAGO ({{ datosCita.fianza || 30 }} €)
+                                            REALIZAR PAGO ({{ datosCita?.fianza || 30 }} €)
                                         </button>
 
                                         <button type="button" (click)="rechazarPresupuesto()"
@@ -186,23 +212,28 @@
             </div>
         </div>
     </div>
+    }
 
-    <div *ngIf="pagoRealizado" class="text-center py-5 view-transition">
+    @if (pagoRealizado) {
+    <div class="text-center py-5 view-transition">
         <div class="mb-4">
-            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;" aria-hidden="true"></i>
         </div>
         <h2 class="mb-3 text-jet">¡Pago confirmado!</h2>
-        <p class="lead text-muted">Tu cita está confirmada, nos vemos el {{ datosCita.fecha | date:'dd/MM/yyyy' }}.</p>
-        <button routerLink="/" class="btn btn-jet mt-4 px-4 py-2">Volver</button>
+        <p class="lead text-muted">Tu cita está confirmada, nos vemos el {{ datosCita?.fecha | date:'dd/MM/yyyy' }}.</p>
+        <button routerLink="/inicio" class="btn bg-jet text-white mt-4 px-4 py-2">Volver</button>
     </div>
+    }
 
-    <div *ngIf="presupuestoRechazado" class="text-center py-5 view-transition">
+    @if (presupuestoRechazado) {
+    <div class="text-center py-5 view-transition">
         <div class="mb-4">
-            <i class="bi bi-x-circle-fill text-cardinal" style="font-size: 5rem;"></i>
+            <i class="bi bi-x-circle-fill text-cardinal" style="font-size: 5rem;" aria-hidden="true"></i>
         </div>
         <h2 class="mb-3 text-jet">Pre-reserva rechazada</h2>
         <p class="lead text-muted">Tu solicitud ha sido anulada correctamente.</p>
-        <button routerLink="/" class="btn btn-jet mt-4 px-4 py-2">Volver</button>
+        <button routerLink="/inicio" class="btn bg-jet text-white mt-4 px-4 py-2">Volver</button>
     </div>
+    }
 
-</div>
+</main>
