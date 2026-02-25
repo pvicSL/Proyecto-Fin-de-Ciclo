@@ -1,10 +1,10 @@
 /* =========================================
-   1. LAYOUT Y ESTRUCTURA GENERAL
+   LAYOUT Y ESTRUCTURA GENERAL
 ========================================= */
 
 /* Contenedor principal para limitar el ancho en pantallas grandes */
 .payment-wrapper {
-    max-width: 1200px;
+    max-width: 75rem;
     margin: 0 auto;
     width: 100%;
 }
@@ -27,10 +27,9 @@
 }
 
 /* =========================================
-   2. TIPOGRAFÍA Y ENCABEZADOS
+   TIPOGRAFÍA Y ENCABEZADOS
 ========================================= */
 
-/* Usamos la variable global --font-main (Poppins) */
 h1,
 h2,
 h3,
@@ -43,13 +42,13 @@ h5,
 }
 
 /* =========================================
-   3. SECCIÓN HERO (Parte Superior)
+   SECCIÓN HERO (Parte Superior)
 ========================================= */
 
 #hero-payment {
     position: relative;
     height: 20vh;
-    min-height: 160px;
+    min-height: 10rem;
     background-color: black;
     overflow: hidden;
 }
@@ -78,12 +77,11 @@ h5,
     font-size: 0.85rem;
     letter-spacing: 0.2em;
     color: var(--antiflash-white);
-    /* Usando variable global */
     text-transform: uppercase;
 }
 
 /* =========================================
-   4. TARJETAS Y CONTENEDORES (Cuerpo)
+   TARJETAS Y CONTENEDORES (Cuerpo)
 ========================================= */
 
 .card {
@@ -96,23 +94,23 @@ h5,
 }
 
 /* =========================================
-   5. ALERTAS Y ELEMENTOS INFORMATIVOS
+   ALERTAS Y ELEMENTOS INFORMATIVOS
 ========================================= */
 
-/* Alerta Azul (Robin Egg) */
+/* Alerta en color Robin Egg */
 .alert.bg-robin-egg .text-dark {
     color: #000 !important;
     font-weight: 600;
 }
 
-/* Alerta Roja (Cardinal) */
+/* Alerta en color Cardinal */
 .alert.bg-cardinal {
     background-color: var(--cardinal) !important;
     color: white !important;
 }
 
 /* =========================================
-   6. FORMULARIOS E INPUTS
+   FORMULARIOS E INPUTS
 ========================================= */
 
 .form-control {
@@ -123,36 +121,38 @@ h5,
 }
 
 .form-control:focus {
-    box-shadow: none;
+    box-shadow: 0 0 0 3px rgba(7, 149, 139, 0.25);
+    outline: none;
     border-color: var(--dark-cyan);
 }
 
 /* --- Estados de Validación --- */
-
-/* Campo Válido */
+/* Campo válido */
 .valid-field {
     border-color: var(--robin-egg-blue) !important;
     background-color: rgba(17, 195, 185, 0.05);
-    /* Usando tono global con opacidad */
     padding-right: 2.5rem;
 }
 
-/* Campo Inválido */
+/* Campo no válido */
 .invalid-field {
     border-color: var(--cardinal) !important;
     background-color: rgba(198, 45, 73, 0.05);
-    /* Usando tono global con opacidad */
 }
 
 /* =========================================
-   7. BOTONES
+   BOTONES
 ========================================= */
 
-/* Botón Confirmar (Cyan) */
+/* Botón Confirmar en cyan) */
 .btn-confirmar {
     background-color: var(--dark-cyan);
     border: none;
     transition: all 0.3s ease;
+}
+
+.btn-confirmar:hover:not(:disabled) {
+    background-color: var(--robin-egg-blue);
 }
 
 .btn-confirmar:hover {
@@ -165,7 +165,7 @@ h5,
     transform: none;
 }
 
-/* Botón Rechazar (Rojo) */
+/* Botón Rechazar em burgundy */
 .btn-rechazar {
     background-color: var(--burgundy);
     border: none;
@@ -173,13 +173,13 @@ h5,
     transition: all 0.3s ease;
 }
 
-.btn-rechazar:hover {
+.btn-rechazar:hover:not(:disabled) {
     background-color: var(--cardinal);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* =========================================
-   8. UTILIDADES DE COLOR Y TEXTO
+   UTILIDADES
 ========================================= */
 
 .bg-jet {
@@ -210,61 +210,61 @@ h5,
     font-size: 0.75rem;
 }
 
-/* ... (Mantén todo el CSS anterior hasta llegar al apartado 9) ... */
-
 /* =========================================
-   9. RESPONSIVE Y AJUSTES ESPECÍFICOS
+   RESPONSIVE Y AJUSTES ESPECÍFICOS
 ========================================= */
 
-/* --- TABLETS Y IPADS (General) --- */
+/* --- TABLETS Y IPADS --- */
 @media (min-width: 768px) and (max-width: 1199px) {
 
-    /* FIX LÍNEA BLANCA: 
-       Aumentamos la altura mínima del cuerpo para que empuje el footer hacia abajo.
-       Calculamos aprox el 100vh menos la cabecera para cubrir el hueco. */
     .container {
         min-height: 70vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        /* Centra el contenido verticalmente si sobra espacio */
     }
 
-    /* En tablets, a veces el margen inferior de las columnas necesita ajuste */
+    #hero-payment {
+        height: 20vh;
+        min-height: 150px;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
     .col-lg-6 {
         margin-bottom: 2rem;
     }
 }
 
-/* --- TABLET/IPAD EN VERTICAL (Portrait) --- */
-/* Solo afecta cuando tienes la tablet "de pie" */
+/* --- TABLET/IPAD EN VERTICAL -- */
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
 
-    /* HERO REDUCIDO: El usuario pidió menos altura aquí */
     #hero-payment {
         height: 15vh;
-        /* Bajamos de 20vh a 15vh */
         min-height: 120px;
-        /* Bajamos el mínimo también */
     }
 
-    /* Ajustamos el tamaño del título para que no se coma el espacio reducido */
     .hero-title {
         font-size: 2.5rem;
     }
 
-    /* En vertical, aseguramos que los dos bloques (Detalles y Pago) 
-       tengan un poco de aire entre ellos al apilarse */
     .col-lg-6:first-child {
         margin-bottom: 2rem;
     }
 }
 
-/* --- MÓVILES (Smartphones) --- */
+/* --- MÓVILES --- */
 @media (max-width: 767px) {
     .container {
         padding-left: 20px;
         padding-right: 20px;
+    }
+
+    #hero-payment {
+        height: 15vh;
+        min-height: 120px;
     }
 
     .hero-title {
@@ -275,7 +275,6 @@ h5,
         padding: 1.25rem;
     }
 
-    /* En móvil vertical aseguramos margen entre tarjetas */
     .col-lg-6:first-child {
         margin-bottom: 1.5rem;
     }

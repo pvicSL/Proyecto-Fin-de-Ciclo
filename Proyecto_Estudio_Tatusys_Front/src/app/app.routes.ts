@@ -152,7 +152,7 @@ export const routes: Routes = [
         path: 'ajustes',
         canActivate: [adminGuard], // <--- NIVEL 2: Solo si rol === 'ADMIN'
         loadComponent: () => import('./pages/admin/adminsettings/adminsettings').then(m => m.Adminsettings),
-        data: {title: 'Ajustes', icon: 'bi bi-gear-wide-connected'},
+        data: { title: 'Ajustes', icon: 'bi bi-gear-wide-connected' },
 
         children: [
           { path: '', redirectTo: 'admin', pathMatch: 'full' },
@@ -160,21 +160,21 @@ export const routes: Routes = [
           {
             path: 'admin',
             loadComponent: () => import('./pages/admin/adminsettings/admin-settings/admin-settings').then(m => m.AdminSettings),
-            data: {title: 'Ajustes > Administrador', icon: 'bi bi-gear-wide-connected'}
+            data: { title: 'Ajustes > Administrador', icon: 'bi bi-gear-wide-connected' }
           },
           {
             path: 'servicios',
             loadComponent: () => import('./pages/admin/adminsettings/services-settings/services-settings').then(m => m.ServicesSettings),
-            data: {title: 'Ajustes > Servicios', icon: 'bi bi-gear-wide-connected'}
+            data: { title: 'Ajustes > Servicios', icon: 'bi bi-gear-wide-connected' }
           },
-          
+
         ]
 
       },
       {
         path: 'calendario',
         loadComponent: () => import('./pages/admin/calendar/calendar').then(m => m.Calendar),
-        data: {title: 'Calendario', icon: 'bi bi-gear-wide-connected'},
+        data: { title: 'Calendario', icon: 'bi bi-gear-wide-connected' },
 
         children: [
           { path: '', redirectTo: 'mes', pathMatch: 'full' },

@@ -47,7 +47,7 @@ export class HomeComponent {
     },
     {
       question: '¿Qué estilos ofrecéis en el estudio?',
-      answer: 'Somos especialistas en diseños de Realismo, Tradicional (Old School), Japonés, Lettering, Fineline, Black and Grey y Anime. Puedes ver una explicación más a fondo aquí.'
+      answer: 'Somos especialistas en diseños de Realismo, Tradicional (Old School), Japonés, Lettering, Fineline, Black and Grey y Anime.'
     }
   ];
 

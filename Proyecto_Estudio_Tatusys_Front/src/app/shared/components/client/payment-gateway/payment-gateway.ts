@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-// He quitado PaymentService porque ya no lo usas aquí, usas AppointmentService
 import { AppointmentService } from '../../../../core/services/appointment.service';
 
 @Component({
@@ -15,11 +14,14 @@ import { AppointmentService } from '../../../../core/services/appointment.servic
 export class PaymentGatewayComponent implements OnInit {
 
   // Variables de Estado
-  loading: boolean = true;      // Empieza cargando
-  tokenValido: boolean = false; // Falso hasta que verifiquemos la cita
+
+  // Empieza cargando
+  loading: boolean = true;
+  // Falso hasta que verifiquemos la cita    
+  tokenValido: boolean = false;
   pagoRealizado: boolean = false;
   citaYaPagada: boolean = false;
-  presupuestoRechazado: boolean = false; // <--- ¡AQUÍ ESTABA EL ERROR! Faltaba esta línea
+  presupuestoRechazado: boolean = false;
   errorMsg: string = '';
 
   // Datos de la cita
@@ -49,24 +51,31 @@ export class PaymentGatewayComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log('[DEBUG] PaymentGatewayComponent inicializado.');
     // 1. Capturamos la referencia que viene en la URL
     const referencia = this.route.snapshot.paramMap.get('token');
 
     if (!referencia) {
+      console.warn('[DEBUG] No se detectó referencia en la URL.');
       this.errorMsg = "No se ha proporcionado una referencia de cita.";
       this.loading = false;
       return;
     }
 
     // 2. Llamamos al Backend para buscar la cita REAL
+    console.log(`[DEBUG] Buscando cita con referencia: ${referencia}`);
     this.appointmentService.getPublicAppointmentByRef(referencia).subscribe({
       next: (data) => {
+        console.log('[DEBUG] Datos de la cita recibidos del servidor:', data);
+
         this.datosCita = data; // Guardamos los datos reales
         this.loading = false;
 
         // 3. Comprobaciones de seguridad
         if (data.estatus === 'CONFIRMADO') {
-          this.citaYaPagada = true; // Bloqueamos si ya pagó
+          console.log('[DEBUG] La cita ya consta como pagada/confirmada.');
+          // Si el usuario ya ha pagado, se impide que pueda volver a hacerlo
+          this.citaYaPagada = true;
           return;
         }
 
@@ -74,9 +83,10 @@ export class PaymentGatewayComponent implements OnInit {
         this.tokenValido = true;
       },
       error: (err) => {
+        console.error('[DEBUG] Error al recuperar la cita:', err);
         this.loading = false;
         // Si el back devuelve 404 (No existe) o 410 (Caducado)
-        if (err.status === 410 || (err.error && err.error.includes('caducado'))) {
+        if (err.status === 410 || (err.error && typeof err.error === 'string' && err.error.includes('caducado'))) {
           this.errorMsg = "El enlace de pago ha caducado (48h expiradas).";
         } else {
           this.errorMsg = "No hemos encontrado la cita o el enlace es incorrecto.";
@@ -204,16 +214,19 @@ export class PaymentGatewayComponent implements OnInit {
     if (!this.isFormValid) return;
 
     this.loading = true;
+    console.log('[DEBUG] Iniciando proceso de pago para referencia:', this.datosCita.referencia);
 
-    // LLAMADA AL BACKEND REAL
+    // LLAMADA AL BACKEND
     this.appointmentService.confirmPayment(this.datosCita.referencia).subscribe({
       next: (resp) => {
+        console.log('[DEBUG] Pago confirmado por el servidor:', resp);
         setTimeout(() => {
           this.loading = false;
           this.pagoRealizado = true;
         }, 1500);
       },
       error: (err) => {
+        console.error('[DEBUG] Error al procesar el pago:', err);
         this.loading = false;
         alert(err.error || "Hubo un error al procesar el pago. Inténtalo de nuevo.");
       }
@@ -223,13 +236,11 @@ export class PaymentGatewayComponent implements OnInit {
   rechazarPresupuesto() {
     const confirmar = window.confirm("¿Estás seguro de que deseas RECHAZAR la pre-reserva? Tu solicitud quedará cancelada.");
     if (confirmar) {
+      console.log('[DEBUG] Usuario ha rechazado la pre-reserva localmente.');
       this.loading = true;
-      // NOTA: Aquí solo estamos simulando visualmente.
-      // Si quisieras cancelar realmente en backend, deberías llamar a this.appointmentService.cancelAppointment(...)
-      // Pero para el alcance actual del pago, esto vale.
       setTimeout(() => {
         this.loading = false;
-        this.presupuestoRechazado = true; // Ahora sí funcionará
+        this.presupuestoRechazado = true;
       }, 1500);
     }
   }

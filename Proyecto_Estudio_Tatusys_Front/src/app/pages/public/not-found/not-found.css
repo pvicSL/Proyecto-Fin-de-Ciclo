@@ -1,36 +1,26 @@
-/* Importante: :host permite estilar el propio componente contenedor */
+/* HOST para darle estilo al componente contenedor */
 :host {
     display: block;
     width: 100%;
     height: 100vh;
-    /* Ocupa toda la altura de la ventana */
     overflow: hidden;
-    /* Evita scrollbars innecesarios */
-    background-color: #121212;
-    /* Fondo oscuro global */
+    background-color: black;
 }
 
 .error-container {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    padding: 1rem;
+    color: var(--antiflash-white);
+    padding: 2rem;
     box-sizing: border-box;
-    /* Un degradado sutil para darle profundidad */
     background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
 }
 
 .error-code {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 12rem;
-    /* Más grande aún al estar sola */
+    font-family: var(--font-main);
+    font-size: 10rem;
     line-height: 0.8;
-    color: #C41E3A;
-    /* CARDINAL */
+    color: var(--cardinal, #C41E3A);
     text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
     margin: 0;
     opacity: 0;
@@ -38,30 +28,71 @@
 }
 
 .error-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-sec);
     font-size: 3rem;
-    color: #ffffff;
-    letter-spacing: 3px;
+    color: var(--antiflash-white);
+    letter-spacing: 0.188rem;
+    font-weight: 700;
     margin-top: 1rem;
     opacity: 0;
     animation: fadeIn 1s 0.5s forwards;
-    /* Retardo de 0.5s */
 }
 
 .error-message {
-    font-family: 'Roboto', sans-serif;
-    font-size: 1.3rem;
-    color: #00CCCC;
-    /* ROBIN EGG */
+    font-family: var(--font-sec);
+    font-size: 1.5rem;
+    color: var(--robin-egg-blue);
     text-align: center;
-    max-width: 600px;
-    margin: 1.5rem 0 3rem 0;
+    max-width: 37.5rem;
+    margin: 1.5rem auto 3rem auto;
     line-height: 1.6;
     opacity: 0;
     animation: fadeIn 1s 0.8s forwards;
 }
 
-/* Animaciones */
+/* BOTÓN: animación y estilos */
+.fade-in-delayed {
+    opacity: 0;
+    animation: fadeIn 1s 1.1s forwards;
+}
+
+.btn-volver {
+    font-family: var(--font-main, 'Poppins', sans-serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    min-height: 3rem;
+    width: 50%;
+    background-color: var(--antiflash-white, #ffffff);
+    color: var(--jet, #2c3e50);
+    text-transform: uppercase;
+    border: 2px solid transparent;
+    border-radius: 0.6em;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+.btn-volver:hover {
+    background-color: var(--robin-egg-blue, #00CED1);
+    color: var(--jet, #2c3e50);
+    border-color: var(--jet, #2c3e50);
+}
+
+/* ACCESIBILIDAD Define un contorno visible cuando el usuario navega por la página usando la tecla TAB del teclado.*/
+.btn-volver:focus-visible {
+    outline: 4px solid var(--cardinal, #C41E3A);
+    outline-offset: 4px;
+    box-shadow: 0 0 0 4px var(--antiflash-white, #ffffff);
+}
+
+
+/*-------------------------------*/
+/* ANIMACIONES */
+/*-------------------------------*/
 @keyframes slideDown {
     from {
         transform: translateY(-50px);
@@ -81,5 +112,55 @@
 
     to {
         opacity: 1;
+    }
+}
+
+/* TABLETS */
+@media (max-width: 1180px) {
+    .error-code {
+        font-size: 9rem;
+    }
+
+    .error-title {
+        font-size: 2.5rem;
+    }
+
+    .error-message {
+        font-size: 1.2rem;
+        max-width: 85%;
+    }
+
+    .btn-volver {
+        font-size: 1.1rem;
+    }
+}
+
+/* SMARTPHONES */
+@media (max-width: 767.98px) {
+    .error-container {
+        padding: 1rem;
+    }
+
+    .error-code {
+        font-size: 6rem;
+    }
+
+    .error-title {
+        font-size: 2rem;
+        letter-spacing: 0.125rem;
+    }
+
+    .error-message {
+        font-size: 1rem;
+        line-height: 1.45;
+        margin: 1rem auto 2rem auto;
+        max-width: 95%;
+    }
+
+    .btn-volver {
+        font-size: 1rem;
+        padding-inline: 1.5em;
+        width: 100%;
+        max-width: 18.75rem;
     }
 }
