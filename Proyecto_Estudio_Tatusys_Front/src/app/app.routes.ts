@@ -21,7 +21,7 @@ export const routes: Routes = [
 
   // 1. RUTA CLIENTE FINAL
   {
-    path: 'inicio',
+    path: '',
     component: ClientLayoutComponent,
     children: [
       { path: '', component: HomeComponent },
