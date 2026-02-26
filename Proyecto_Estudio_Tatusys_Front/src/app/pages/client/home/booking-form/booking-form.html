@@ -55,7 +55,7 @@
                                 <label for="email" class="form-label">Correo electrónico*</label>
                                 <input type="email" id="email" class="form-control" formControlName="email"
                                     [attr.aria-invalid]="bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched"
-                                    aria-describedby="emailError">
+                                    aria-describedby="emailError" placeholder="Escribe tu email...">
                                 <div id="emailError" class="invalid-feedback">
                                     @if (bookingForm.get('email')?.errors?.['required']) {
                                     <span>El email es obligatorio.</span>
@@ -118,8 +118,8 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Servicio*</label>
-                                <select class="form-select" formControlName="service">
+                                <label for="service" class="form-label">Servicio*</label>
+                                <select id="service" class="form-select" formControlName="service">
                                     <option value="" selected>Elige un servicio...</option>
                                     <option value="tattoo-new">Tatuaje</option>
                                     <option value="tattoo-delete">Eliminación</option>
@@ -338,7 +338,7 @@
                             <div class="col-12 d-flex justify-content-center gap-3 mt-4">
                                 <button type="button" class="btn btn-outline-light action-btn"
                                     (click)="resetForm()">BORRAR</button>
-                                <button type="button" class="btn btn-outline-danger action-btn"
+                                <button type="button" class="btn btn-outline-red action-btn"
                                     (click)="cancelForm()">CANCELAR</button>
                             </div>
 
