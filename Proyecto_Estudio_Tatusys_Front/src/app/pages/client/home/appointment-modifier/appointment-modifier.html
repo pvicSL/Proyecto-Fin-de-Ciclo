@@ -103,8 +103,8 @@
                         </div>
 
                         @if (day.status === 'weekend') {
-                        <div class="text-white-50 small mt-2" aria-label="Fin de semana"><i
-                                class="bi bi-slash-circle"></i></div>
+                        <div class="text-white-50 small mt-2" role="img" aria-label="Fin de semana"><i
+                                class="bi bi-slash-circle" aria-hidden="true"></i></div>
                         }
                         @if (day.status === 'disabled') {
                         <div class="text-white-50 small mt-2" aria-label="No disponible"><i class="bi bi-lock-fill"></i>

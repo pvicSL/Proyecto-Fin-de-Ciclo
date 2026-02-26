@@ -319,8 +319,8 @@ h6,
 
 /* pregunta abierta (ESTADO ABIERTO) */
 .accordion-button:not(.collapsed) {
-    background-color: var(--dark-cyan) !important;
-    color: white !important;
+    background-color: var(--robin-egg-blue) !important;
+    color: black !important;
     box-shadow: none;
 }
 

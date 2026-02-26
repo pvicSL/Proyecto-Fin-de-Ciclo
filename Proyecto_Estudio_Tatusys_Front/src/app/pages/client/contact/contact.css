@@ -16,7 +16,7 @@ h6,
 
 .about-title {
     font-size: clamp(2.5rem, 4vw, 3.5rem);
-    color: var(--jet);
+    color: var(--cardinal);
     letter-spacing: 1px;
 }
 
@@ -39,7 +39,7 @@ h6,
 }
 
 .text-robin {
-    color: var(--dark-cyan);
+    color: var(--cardinal);
 }
 
 .bg-jet {
