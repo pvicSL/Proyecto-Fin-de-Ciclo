@@ -115,6 +115,9 @@
     }
 }
 
+/*-------------------------------*/
+/* RESPONSIVE - MEDIA QUERIES */
+/*-------------------------------*/
 /* TABLETS */
 @media (max-width: 1180px) {
     .error-code {
