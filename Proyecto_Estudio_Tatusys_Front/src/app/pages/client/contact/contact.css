@@ -1,0 +1,164 @@
+/* =========================================
+   1. TIPOGRAFÍA Y ENCABEZADOS
+========================================= */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.about-title,
+.form-title,
+.contact-subtitle {
+    font-family: var(--font-main);
+    font-weight: 600;
+}
+
+.about-title {
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    color: var(--jet);
+    letter-spacing: 1px;
+}
+
+.hero-subtitle {
+    font-family: var(--font-main);
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+}
+
+/* =========================================
+   2. TEXTOS Y UTILIDADES DE COLOR
+========================================= */
+.about-text p {
+    font-family: var(--font-sec);
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: var(--jet);
+    text-align: justify;
+}
+
+.text-robin {
+    color: var(--dark-cyan);
+}
+
+.bg-jet {
+    background-color: var(--jet);
+}
+
+.text-antiflash {
+    color: var(--antiflash-white);
+}
+
+.text-cardinal {
+    color: var(--cardinal);
+}
+
+.bg-cardinal {
+    background-color: var(--cardinal);
+}
+
+.bg-robin-egg {
+    background-color: var(--robin-egg-blue);
+}
+
+.x-small {
+    font-size: 0.8rem;
+}
+
+/* =========================================
+   3. FORMULARIOS E INPUTS
+========================================= */
+.form-control {
+    font-family: var(--font-sec);
+    padding: 0.75rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 4px rgba(17, 195, 185, 0.25);
+    border-color: var(--robin-egg-blue);
+    outline: none;
+}
+
+/* --- Estados de Validación visual --- */
+.valid-field {
+    border-color: var(--robin-egg-blue) !important;
+    background-color: #ffffff !important;
+}
+
+.invalid-field {
+    border-color: var(--cardinal) !important;
+    background-color: #fff0f2 !important;
+}
+
+/* =========================================
+   4. BOTÓN DE ENVÍO
+========================================= */
+.btn-enviar {
+    font-family: var(--font-main);
+    background-color: var(--dark-cyan);
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.btn-enviar:hover:not(:disabled) {
+    background-color: var(--robin-egg-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-enviar:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+}
+
+/* Foco de accesibilidad para teclado */
+.btn-enviar:focus-visible {
+    outline: 3px solid var(--antiflash-white);
+    outline-offset: 4px;
+}
+
+/* =========================================
+   5. RESPONSIVE
+========================================= */
+/* --- PANTALLAS MEDIANAS Y TABLETS --- */
+@media (max-width: 1199px) {
+    .about-text p {
+        font-size: 1.05rem;
+    }
+}
+
+/* --- TELÉFONOS MÓVILES --- */
+@media (max-width: 767px) {
+    .contact-page {
+        padding-top: 1rem !important;
+        padding-bottom: 2rem !important;
+    }
+
+    .about-section {
+        padding-inline: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .about-title {
+        font-size: 2rem;
+    }
+
+    .about-text p {
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    .form-section {
+        padding: 1.5rem !important;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+    }
+}
