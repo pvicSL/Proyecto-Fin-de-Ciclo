@@ -1,0 +1,157 @@
+<main class="contact-page py-5" aria-labelledby="about-title">
+    <div class="container py-4">
+        <div class="row g-5 align-items-center">
+
+            <div class="col-lg-6">
+                <section class="about-section pe-lg-4">
+                    <p class="hero-subtitle mb-2" style="color: var(--dark-cyan);">CONÓCENOS</p>
+                    <h1 id="about-title" class="about-title mb-4">Sobre Nosotros</h1>
+
+                    <div class="about-text text-muted">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus
+                            hendrerit
+                            arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh
+                            porttitor.
+                            Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor.
+                            Suspendisse
+                            dictum feugiat nisl ut dapibus. Mauris iaculis porttitor posuere. Praesent id metus massa,
+                            ut
+                            blandit odio.
+                        </p>
+                        <p>
+                            Proin quis tortor orci. Etiam at risus et justo dignissim congue. Donec congue lacinia dui,
+                            a
+                            porttitor lectus condimentum laoreet. Nunc eu ullamcorper orci. Quisque eget odio ac lectus
+                            vestibulum faucibus eget in metus. In pellentesque faucibus vestibulum. Nulla at nulla
+                            justo,
+                            eget luctus tortor. Nulla facilisi. Duis aliquet egestas purus in blandit.
+                        </p>
+                    </div>
+
+                    <div class="contact-info mt-5">
+                        <h2 class="h5 contact-subtitle mb-3">Información de contacto</h2>
+                        <ul class="list-unstyled text-muted">
+                            <li class="mb-2">
+                                <i class="bi bi-geo-alt-fill text-robin me-2" aria-hidden="true"></i>
+                                Av. del Tintero, 17, Bajo Dcha.
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-envelope-fill text-robin me-2" aria-hidden="true"></i>
+                                inkandcostudio&#64;proton.me
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-lg-6">
+                <section class="form-section bg-jet p-4 p-md-5 rounded-4 shadow-lg text-white"
+                    aria-labelledby="form-title">
+                    <h2 id="form-title" class="form-title h3 mb-4 text-center">Envíanos un mensaje</h2>
+
+                    @if (envioExitoso) {
+                    <div class="alert bg-robin-egg text-dark border-0 fw-bold text-center" role="alert">
+                        <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>
+                        ¡Mensaje enviado con éxito! Contactaremos contigo lo antes posible.
+                    </div>
+                    }
+
+                    @if (errorEnvio) {
+                    <div class="alert bg-cardinal text-white border-0 fw-bold text-center" role="alert">
+                        <i class="bi bi-x-circle-fill me-2" aria-hidden="true"></i>
+                        Error al enviar el mensaje. Inténtalo más tarde.
+                    </div>
+                    }
+
+                    <form (ngSubmit)="enviarMensaje()">
+
+                        <div class="mb-3">
+                            <label for="contact-nombre" class="form-label small text-antiflash">Nombre y apellidos
+                                *</label>
+                            <input type="text" id="contact-nombre" class="form-control bg-light"
+                                [class.valid-field]="validStatus.nombre === true"
+                                [class.invalid-field]="validStatus.nombre === false"
+                                [attr.aria-invalid]="validStatus.nombre === false ? true : null" name="nombre"
+                                [(ngModel)]="formData.nombre" (input)="validarNombre()" (blur)="validarNombre()"
+                                required autocomplete="name" aria-describedby="nombre-help">
+
+                            @if (validStatus.nombre === false) {
+                            <div id="nombre-help" class="text-cardinal x-small mt-1" role="alert">
+                                Introduce un nombre válido (mínimo 3 letras, sin números).
+                            </div>
+                            }
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="contact-email" class="form-label small text-antiflash">Correo electrónico
+                                    *</label>
+                                <input type="email" id="contact-email" class="form-control bg-light"
+                                    [class.valid-field]="validStatus.email === true"
+                                    [class.invalid-field]="validStatus.email === false"
+                                    [attr.aria-invalid]="validStatus.email === false ? true : null" name="email"
+                                    [(ngModel)]="formData.email" (input)="validarEmail()" (blur)="validarEmail()"
+                                    required autocomplete="email" aria-describedby="email-help">
+
+                                @if (validStatus.email === false) {
+                                <div id="email-help" class="text-cardinal x-small mt-1" role="alert">
+                                    Formato incorrecto (ej: nombre&#64;correo.com).
+                                </div>
+                                }
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="contact-telefono" class="form-label small text-antiflash">Teléfono
+                                    (Opcional)</label>
+                                <input type="tel" id="contact-telefono" class="form-control bg-light"
+                                    [class.valid-field]="validStatus.telefono === true"
+                                    [class.invalid-field]="validStatus.telefono === false"
+                                    [attr.aria-invalid]="validStatus.telefono === false ? true : null" name="telefono"
+                                    [(ngModel)]="formData.telefono" (input)="validarTelefono()"
+                                    (blur)="validarTelefono()" autocomplete="tel" aria-describedby="tel-help">
+
+                                @if (validStatus.telefono === false) {
+                                <div id="tel-help" class="text-cardinal x-small mt-1" role="alert">
+                                    Solo números (entre 9 y 15 dígitos).
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="contact-mensaje" class="form-label small text-antiflash">Tu mensaje *</label>
+                            <textarea id="contact-mensaje" class="form-control bg-light" rows="5"
+                                [class.valid-field]="validStatus.mensaje === true"
+                                [class.invalid-field]="validStatus.mensaje === false"
+                                [attr.aria-invalid]="validStatus.mensaje === false ? true : null" name="mensaje"
+                                [(ngModel)]="formData.mensaje" (input)="validarMensaje()" (blur)="validarMensaje()"
+                                required aria-describedby="mensaje-help" style="resize: none;"></textarea>
+
+                            @if (validStatus.mensaje === false) {
+                            <div id="mensaje-help" class="text-cardinal x-small mt-1" role="alert">
+                                El mensaje debe contener al menos 10 caracteres.
+                            </div>
+                            }
+                        </div>
+
+                        <div class="d-grid mt-2">
+                            <button type="submit"
+                                class="btn btn-enviar py-3 text-white fw-bold text-uppercase shadow-sm"
+                                [disabled]="loading || !isFormValid"
+                                [attr.aria-disabled]="loading || !isFormValid ? true : null">
+                                @if (loading) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                Enviando...
+                                } @else {
+                                ENVIAR MENSAJE
+                                }
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+</main>

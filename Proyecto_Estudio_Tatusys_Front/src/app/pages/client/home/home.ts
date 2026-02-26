@@ -13,8 +13,6 @@ interface FaqElement {
 @Component({
   selector: 'app-home',
   standalone: true,
-  // CommonModule es necesario para que funcionen *ngIf y *ngFor
-  //REVISAR SI COMMON MODULE SE PUEDE QUITAR AHORA QUE HE ELIMINADO LA SINTAXIS DEPRECADA
   imports: [CommonModule, BookingFormComponent, AppointmentModifierComponent],
   templateUrl: './home.html',
   styleUrl: './home.css'

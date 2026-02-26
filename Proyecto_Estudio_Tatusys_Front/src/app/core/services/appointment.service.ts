@@ -13,6 +13,9 @@ export class AppointmentService {
     // URL base de la API
     private apiUrl = 'http://localhost:8085/api/citas';
 
+    // URL base para el endpoint de la pasarela de pago
+    private paymentUrl = 'http://localhost:8085/api';
+
     // Inyección moderna de dependencias (opcional, pero recomendada)
     private http = inject(HttpClient);
 
@@ -220,7 +223,7 @@ export class AppointmentService {
 
     // 1. Para obtener los datos de la cita usando solo la referencia (Público)
     getPublicAppointmentByRef(referencia: string): Observable<any> {
-        return this.http.get(`${this.apiUrl}/buscar-publica/${referencia}`);
+        return this.http.get(`${this.paymentUrl}/buscar-publica/${referencia}`);
     }
 
     // 2. Para confirmar que el pago se ha realizado
@@ -228,9 +231,13 @@ export class AppointmentService {
         return this.http.post(`${this.apiUrl}/confirmar-pago/${referencia}`, {});
     }
 
+    // ==========================================
+    // 7. MÉTODOS PARA AUTENTICACIÓN
+    // ==========================================
+
     private authUrl = 'http://localhost:8085/auth'; // La URL del AuthController
 
     postLogin(credentials: any): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.authUrl}/login`, credentials);
+        return this.http.post<LoginResponse>(`${this.authUrl}/login`, credentials);
     }
 }

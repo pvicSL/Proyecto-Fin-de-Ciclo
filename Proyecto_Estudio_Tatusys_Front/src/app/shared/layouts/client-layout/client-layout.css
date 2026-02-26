@@ -1,4 +1,4 @@
-/* Esto solo afecta a TU parte de la aplicación */
+/* Esto solo afecta a la web pública de la aplicación, NO a la de ADMIN */
 .client-wrapper {
     margin: 0;
     background-color: var(--antiflash-white);

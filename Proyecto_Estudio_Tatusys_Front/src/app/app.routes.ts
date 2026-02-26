@@ -32,7 +32,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/client/terms/terms').then(m => m.TermsComponent)
       },
 
-      // --- RUTA ACTUALIZADA ---
+      {
+        path: 'contacto',
+        // Asegúrate de que la ruta de importación coincida con dónde has guardado el archivo contact.ts
+        loadComponent: () => import('./pages/client/contact/contact').then(m => m.ContactComponent)
+      },
+
       {
         path: 'pago-fianza/:token',
         // Antes era: import('./components/payment-gateway/...')
