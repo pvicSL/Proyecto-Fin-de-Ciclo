@@ -3,7 +3,7 @@ package proyecto.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import proyecto.modelo.dto.ContactoDTO;
-
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -210,6 +210,24 @@ public class EmailServiceImpl implements EmailService {
 			// error 500 al front
 			throw new RuntimeException("Error al procesar el envío del correo.");
 		}
+	}
+	
+	@Override
+	public void enviarFactura(String destinatario, String nombreCliente, byte[] pdfAdjunto) {
+	    MimeMessage message = javaMailSender.createMimeMessage();
+	    try {
+	        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+	        helper.setFrom("no-reply@inkandco.com");
+	        helper.setTo(destinatario);
+	        helper.setSubject("INK&CO - Tu factura");
+	        helper.setText("Adjuntamos la factura correspondiente al servicio realizado. Gracias por confiar en INK&CO.", false);
+	        helper.addAttachment("factura.pdf", new ByteArrayResource(pdfAdjunto));
+	        javaMailSender.send(message);
+	        System.out.println("✅ Factura enviada a: " + destinatario);
+	    } catch (MessagingException e) {
+	        System.err.println("❌ Error enviando factura: " + e.getMessage());
+	        throw new RuntimeException("Error al enviar la factura", e);
+	    }
 	}
 
 }
