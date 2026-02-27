@@ -30,6 +30,7 @@ import jakarta.transaction.Transactional;
 import proyecto.modelo.dto.CitaCompletaDTO;
 import proyecto.modelo.dto.CitaDTO;
 import proyecto.modelo.dto.CitaModificacionDTO;
+import proyecto.modelo.dto.ContactoDTO;
 import proyecto.modelo.entities.Cita;
 import proyecto.modelo.entities.Presupuesto;
 import proyecto.modelo.entities.Trabajador;
@@ -44,6 +45,8 @@ import proyecto.modelo.repository.CitaRepository;
 import proyecto.modelo.repository.PresupuestoRepository;
 import proyecto.security.SecurityUtils;
 import proyecto.service.CitaService;
+import proyecto.service.EmailService;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -66,6 +69,10 @@ public class CitaRestController {
 	
 	@Autowired
 	private SecurityUtils securityUtils;
+	
+	@Autowired
+    private EmailService emailService;
+
 
 	@GetMapping("/listarCitas") //SEGURIDAD OK
     public ResponseEntity<List<CitaDTO>> listarCitas() {
@@ -954,5 +961,32 @@ public class CitaRestController {
             List<CitaCompletaDTO> facturas = citaService.obtenerFacturasRealizadas();
             return ResponseEntity.ok(facturas);
         }
+        
+        /**
+         * Endpoint para procesar el formulario de contacto web.
+         * Ruta final esperada: POST http://localhost:8085/api/publico/contacto
+         */
+        @PostMapping("/contacto")
+        public ResponseEntity<?> recibirMensajeContacto(@RequestBody ContactoDTO contactoDTO) {
+            
+            // Validación básica de seguridad en el backend
+            if (contactoDTO.getEmail() == null || contactoDTO.getMensaje() == null) {
+                return ResponseEntity.badRequest().body("El email y el mensaje son obligatorios.");
+            }
 
-}
+            try {
+                // Se llama al servicio para enviar el correo
+                emailService.enviarMensajeContacto(contactoDTO);
+                
+                // Retornamos un 200 OK con un mensaje de éxito simple
+                return ResponseEntity.ok("Mensaje enviado correctamente.");
+                
+            } catch (Exception e) {
+                // Si el correo falla, devolvemos un 500 Internal Server Error
+                return ResponseEntity.internalServerError().body("No se pudo enviar el mensaje en este momento.");
+            }
+        }
+    }
+
+
+

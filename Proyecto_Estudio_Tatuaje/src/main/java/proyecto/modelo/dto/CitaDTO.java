@@ -2,8 +2,8 @@ package proyecto.modelo.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-
 import proyecto.modelo.entities.Cita;
+
 
 public class CitaDTO {
     
@@ -14,6 +14,7 @@ public class CitaDTO {
     private String comentarios;
     private Boolean factura;
     private String referencia;
+    private String estadoFactura;
     
     // Datos del servicio (como String para el frontend)
     private String tipo;
@@ -41,36 +42,43 @@ public class CitaDTO {
     public CitaDTO() {
     }
 
-    public CitaDTO(int idCita, LocalDate fecha, LocalTime hora, String comentarios, Boolean factura, String referencia,
-            String tipo, String zona, String tamanio, String detalle, String coloracion, String estilo, String estatus,
-            Integer duracionEstimada, String clienteNombre, String clienteApellido1, String clienteApellido2,
-            String clienteEmail, String clienteTelefono, int idTrabajador, String nombreTrabajador) {
-        super();
-        this.idCita = idCita;
-        this.fecha = fecha;
-        this.hora = hora;
-        this.comentarios = comentarios;
-        this.factura = factura;
-        this.setReferencia(referencia);
-        this.tipo = tipo;
-        this.zona = zona;
-        this.tamanio = tamanio;
-        this.detalle = detalle;
-        this.coloracion = coloracion;
-        this.estilo = estilo;
-        this.estatus = estatus;
-        this.duracionEstimada = duracionEstimada;
-        this.clienteNombre = clienteNombre;
-        this.clienteApellido1 = clienteApellido1;
-        this.clienteApellido2 = clienteApellido2;
-        this.clienteEmail = clienteEmail;
-        this.clienteTelefono = clienteTelefono;
-        // Asignación campos nuevos
-        this.idTrabajador = idTrabajador;
-        this.nombreTrabajador = nombreTrabajador;
-    }
+   
 
-    public CitaDTO(Cita cita) {
+    public CitaDTO(int idCita, LocalDate fecha, LocalTime hora, String comentarios, Boolean factura, String referencia,
+			String estadoFactura, String tipo, String zona, String tamanio, String detalle, String coloracion,
+			String estilo, String estatus, Integer duracionEstimada, String clienteNombre, String clienteApellido1,
+			String clienteApellido2, String clienteEmail, String clienteTelefono, int idTrabajador,
+			String nombreTrabajador) {
+		super();
+		this.idCita = idCita;
+		this.fecha = fecha;
+		this.hora = hora;
+		this.comentarios = comentarios;
+		this.factura = factura;
+		this.referencia = referencia;
+		this.estadoFactura = estadoFactura;
+		this.tipo = tipo;
+		this.zona = zona;
+		this.tamanio = tamanio;
+		this.detalle = detalle;
+		this.coloracion = coloracion;
+		this.estilo = estilo;
+		this.estatus = estatus;
+		this.duracionEstimada = duracionEstimada;
+		this.clienteNombre = clienteNombre;
+		this.clienteApellido1 = clienteApellido1;
+		this.clienteApellido2 = clienteApellido2;
+		this.clienteEmail = clienteEmail;
+		this.clienteTelefono = clienteTelefono;
+		this.idTrabajador = idTrabajador;
+		this.nombreTrabajador = nombreTrabajador;
+	}
+
+
+
+	
+
+	public CitaDTO(Cita cita) {
         this.idCita = cita.getIdCita();
         this.fecha = cita.getFecha();
         this.hora = cita.getHora();
@@ -86,6 +94,7 @@ public class CitaDTO {
         this.coloracion = cita.getColoracion() != null ? cita.getColoracion().name() : null;
         this.estilo = cita.getEstilo() != null ? cita.getEstilo().name() : null;
         this.estatus = cita.getEstatus() != null ? cita.getEstatus().name() : null;
+        this.estadoFactura = cita.getEstadoFactura() != null ? cita.getEstadoFactura().name() : null;
         
         // Mapear duracionMinutos a duracionEstimada
         this.duracionEstimada = cita.getDuracionMinutos();
@@ -107,6 +116,11 @@ public class CitaDTO {
     }
 
     // GETTERS Y SETTERS
+	
+	public String getEstadoFactura() { return estadoFactura; }
+	public void setEstadoFactura(String estadoFactura) { this.estadoFactura = estadoFactura; }
+	
+	
     public int getIdCita() { return idCita; }
     public void setIdCita(int idCita) { this.idCita = idCita; }
 
