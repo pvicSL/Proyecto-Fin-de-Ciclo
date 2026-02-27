@@ -28,8 +28,9 @@ public class PdfService {
     private PrecioRepository precioRepository;
 
     // --- DATOS DEL ESTUDIO ---
-    private static final String ESTUDIO_DIR1  = "Calle del Pez, 14, Local Bajo";
-    private static final String ESTUDIO_DIR2  = "28004 Madrid, Espana";
+    private static final String ESTUDIO_NOMBRE = "INK & CO S.L.";
+    private static final String ESTUDIO_DIR1  = "Calle Me Falta un Tornillo, 5, Local Bajo";
+    private static final String ESTUDIO_DIR2  = "47195 Arroyo de la Encomienda (Valladolid), España";
     private static final String ESTUDIO_TEL   = "TEL: 621 89 78 27";
     private static final String ESTUDIO_EMAIL = "EMAIL: administracion@inkandco.com";
     private static final String ESTUDIO_CIF   = "CIF: 12345678Z";
@@ -116,7 +117,7 @@ public class PdfService {
 
                 // ─── DATOS ESTUDIO ───
                 setColor(cs, COLOR_DARK, false);
-                for (String linea : new String[]{ESTUDIO_DIR1, ESTUDIO_DIR2, ESTUDIO_TEL, ESTUDIO_EMAIL, ESTUDIO_CIF}) {
+                for (String linea : new String[]{ESTUDIO_NOMBRE, ESTUDIO_DIR1, ESTUDIO_DIR2, ESTUDIO_TEL, ESTUDIO_EMAIL, ESTUDIO_CIF}) {
                     cs.beginText();
                     cs.setFont(fontRegular, 8);
                     cs.newLineAtOffset(margin, y);
