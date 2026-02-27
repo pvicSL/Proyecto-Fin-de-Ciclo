@@ -2,6 +2,8 @@ package proyecto.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import proyecto.modelo.dto.ContactoDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -168,6 +170,45 @@ public class EmailServiceImpl implements EmailService {
 			System.out.println("✅ Email de confirmación enviado a: " + destinatario);
 		} catch (Exception e) {
 			System.err.println("❌ Error enviando email de confirmación: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void enviarMensajeContacto(ContactoDTO contacto) {
+		// En este caso, el destinatario no es el cliente, sino el propio estudio
+		String destinatarioEstudio = "inkandcostudio@proton.me";
+
+		SimpleMailMessage message = new SimpleMailMessage();
+
+		// El from suele requerir ser un correo validado por el servidor SMTP
+		message.setFrom("no-reply@inkandco.com");
+		message.setTo(destinatarioEstudio);
+
+		// Asunto claro para identificar rápidamente los mensajes web
+		message.setSubject("NUEVO MENSAJE WEB - de " + contacto.getNombre());
+
+		// Construcción del cuerpo del mensaje en formato texto plano
+		// Se formatea el teléfono por si el usuario no lo introdujo
+		String telefonoStr = (contacto.getTelefono() != null && !contacto.getTelefono().isEmpty())
+				? contacto.getTelefono()
+				: "No proporcionado";
+
+		String cuerpoMensaje = String.format(
+				"Has recibido un nuevo mensaje desde el formulario web de Contacto:\n\n" + "DATOS DEL CLIENTE:\n"
+						+ "------------------\n" + "Nombre: %s\n" + "Email: %s\n" + "Teléfono: %s\n\n" + "MENSAJE:\n"
+						+ "------------------\n" + "%s\n",
+				contacto.getNombre(), contacto.getEmail(), telefonoStr, contacto.getMensaje());
+
+		message.setText(cuerpoMensaje);
+
+		try {
+			javaMailSender.send(message);
+			System.out.println("✅ Mensaje de contacto enviado al estudio desde: " + contacto.getEmail());
+		} catch (Exception e) {
+			System.err.println("❌ Error enviando mensaje de contacto al estudio: " + e.getMessage());
+			// Es buena práctica relanzar la excepción para que el controlador devuelva un
+			// error 500 al front
+			throw new RuntimeException("Error al procesar el envío del correo.");
 		}
 	}
 

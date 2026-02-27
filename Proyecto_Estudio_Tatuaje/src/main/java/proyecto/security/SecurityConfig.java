@@ -73,6 +73,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/citas/modificar-conreferencia", "/api/citas/cancelar-conreferencia").permitAll()
                 .requestMatchers("/api/citas/asignar-trabajador/**", "/api/citas/desasignar-trabajador/**").permitAll()
                 .requestMatchers("/api/citas/calculo-previo", "/api/citas/huecos-disponibles").permitAll()
+                .requestMatchers("/api/citas/contacto").permitAll()
                 .requestMatchers("/api/citas/**").authenticated()  // Resto requiere login
 
                 // 5. OTROS endpoints API (por configurar después)
