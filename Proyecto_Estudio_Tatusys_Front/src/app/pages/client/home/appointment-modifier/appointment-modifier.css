@@ -70,8 +70,6 @@
     font-weight: 400;
     font-size: clamp(1.2rem, 3vw, 1.8rem);
     letter-spacing: 0.02em;
-
-    /* CORRECCIÓN ESPACIADO: Reducido margen inferior */
     margin-bottom: 1rem !important;
 }
 
@@ -333,10 +331,8 @@
    =============================== */
 @media (max-width: 480px) {
 
-    /* CORRECCIÓN BORDE: Eliminado el border-radius: 0 que tenías antes */
     .booking-card {
         width: 95%;
-        /* Mantenemos margen lateral */
         margin: 0 auto;
     }
 

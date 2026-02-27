@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AppointmentService } from '../../../core/services/appointment.service';
 
 @Component({
     selector: 'app-contact',
@@ -31,6 +32,9 @@ export class ContactComponent implements OnInit {
         email: null,
         mensaje: null
     };
+
+    // Inyectamos el servicio en el constructor
+    constructor(private appointmentService: AppointmentService) { }
 
     ngOnInit(): void {
         console.log('[DEBUG] ContactComponent inicializado.');
@@ -96,7 +100,7 @@ export class ContactComponent implements OnInit {
     // ==========================================
     // ENVÍO DE DATOS
     // ==========================================
-
+    //http://localhost:8085/api/citas/contacto
     enviarMensaje() {
         if (!this.isFormValid) return;
 
@@ -104,18 +108,26 @@ export class ContactComponent implements OnInit {
         this.errorEnvio = false;
         this.envioExitoso = false;
 
-        console.log('[DEBUG] Datos listos para enviar a inkandcostudio@proton.me:', this.formData);
+        console.log('[DEBUG] Datos listos para enviar al backend', this.formData);
 
-        // SIMULACIÓN DE LLAMADA AL BACKEND
-        // TODO: Reemplazar por this.emailService.enviarContacto(this.formData).subscribe(...)
-        setTimeout(() => {
-            this.loading = false;
-            this.envioExitoso = true;
+        // Llamada real al backend a través del servicio
+        this.appointmentService.enviarMensajeContacto(this.formData).subscribe({
+            next: (respuestaServidor) => {
+                console.log('[DEBUG] Respuesta del servidor:', respuestaServidor);
 
-            // Limpiamos el formulario tras el éxito
-            this.formData = { nombre: '', telefono: '', email: '', mensaje: '' };
-            this.validStatus = { nombre: null, telefono: null, email: null, mensaje: null };
+                this.loading = false;
+                this.envioExitoso = true; // Muestra la alerta verde en el HTML
 
-        }, 1500);
+                // Limpiamos el formulario tras el éxito para que el usuario pueda enviar otro si quiere
+                this.formData = { nombre: '', telefono: '', email: '', mensaje: '' };
+                this.validStatus = { nombre: null, telefono: null, email: null, mensaje: null };
+            },
+            error: (error) => {
+                console.error('[DEBUG] Error en la petición de contacto:', error);
+
+                this.loading = false;
+                this.errorEnvio = true; // Muestra la alerta roja en el HTML
+            }
+        });
     }
 }
