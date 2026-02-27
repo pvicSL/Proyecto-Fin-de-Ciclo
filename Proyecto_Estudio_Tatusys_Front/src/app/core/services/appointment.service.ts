@@ -240,4 +240,17 @@ export class AppointmentService {
     postLogin(credentials: any): Observable<LoginResponse> {
         return this.http.post<LoginResponse>(`${this.authUrl}/login`, credentials);
     }
+
+
+    // ==========================================
+    // MÉTODO PARA FORMULARIO DE CONTACTO
+    // ==========================================
+
+    enviarMensajeContacto(datosContacto: any): Observable<any> {
+        // IMPORTANTE: como el backend de Java devuelve un texto plano (String) en el ResponseEntity.ok(),
+        // hay que configurar el responseType a 'text' para que Angular no intente parsearlo como JSON y falle.
+        return this.http.post(`${this.apiUrl}/contacto`, datosContacto, {
+            responseType: 'text' as 'json'
+        });
+    }
 }
