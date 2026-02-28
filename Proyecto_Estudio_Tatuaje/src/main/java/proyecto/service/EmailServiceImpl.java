@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import proyecto.modelo.dto.ContactoDTO;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,6 +27,14 @@ public class EmailServiceImpl implements EmailService {
     private JavaMailSender javaMailSender;
 
     private final String BASE_URL_FRONT = "http://localhost:4200";
+    
+ // --- DATOS DEL ESTUDIO ---
+    private static final String ESTUDIO_NOMBRE = "INK & CO S.L.";
+    private static final String ESTUDIO_DIR1  = "Calle Me Falta un Tornillo, 5, Local Bajo";
+    private static final String ESTUDIO_DIR2  = "47195 Arroyo de la Encomienda (Valladolid), España";
+    private static final String ESTUDIO_TEL   = "TEL: 621 89 78 27";
+    private static final String ESTUDIO_EMAIL = "EMAIL: tatusyspruebas@gmail.com";
+    private static final String ESTUDIO_CIF   = "CIF: 12345678Z";
 
 
     /* =====================================================
@@ -75,23 +84,58 @@ public class EmailServiceImpl implements EmailService {
                     BASE_URL_FRONT + "/pago-fianza/" + localizador;
 
             String htmlContent = String.format("""
-                    <html>
-                    <body>
-                    <h2>Hola %s</h2>
-                    <p>Tu cita ha sido aceptada.</p>
-                    <p>Total: %.2f €</p>
-                    <p>Fianza: %.2f €</p>
-                    <a href="%s">PAGAR FIANZA</a>
-                    </body>
-                    </html>
-                    """,
-                    nombreCliente,
-                    precioTotal,
-                    fianza,
-                    enlacePago);
+            	    <!DOCTYPE html>
+            	    <html>
+            	    <head>
+            	        <meta charset="UTF-8">
+            	        <style>
+            	            body { font-family: 'Arial', sans-serif; background-color: #f5f5f5; margin: 0; padding: 0; }
+            	            .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+            	            .header { background-color: #343434; padding: 30px; text-align: center; }
+            	            .logo { color: #ffffff; font-size: 28px; font-weight: bold; letter-spacing: 3px; text-decoration: none; }
+            	            .logo span { color: #00CCCC; }
+            	            .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
+            	            .h-title { color: #343434; font-size: 22px; margin-bottom: 20px; font-weight: bold; }
+            	            .box-info { background-color: #f8f9fa; border-left: 5px solid #343434; padding: 20px 25px 0; border-radius: 4px; }
+            	            .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+            	            .info-label { color: #666; font-size: 14px; }
+            	            .info-val { color: #343434; font-weight: bold; font-size: 16px; }
+            	            .btn-pay { display: block; width: fit-content; margin: 30px auto; background-color: #008B8B; color: #ffffff !important; padding: 15px 35px; text-decoration: none; border-radius: 5px; font-weight: bold; letter-spacing: 1px; text-align: center; cursor: pointer; }
+            	        </style>
+            	    </head>
+            	    <body>
+            	        <div class="container">
+            	            <div class="header">
+            	                <img src="cid:logoEstudio" alt="INK&CO" style="max-height: 70px;" />
+            	            </div>
+            	            <div class="content">
+            	                <p class="h-title">¡Hola, %s!</p>
+            	                <p>Tu cita ha sido aceptada. A continuación encontrarás el resumen con los detalles del pago.</p>
+            	                <div class="box-info">
+            	                    <div class="info-row">
+            	                        <span class="info-label">Total del servicio</span>
+            	                        <span class="info-val">%.2f €</span>
+            	                    </div>
+            	                    <div class="info-row">
+            	                        <span class="info-label">Fianza a abonar</span>
+            	                        <span class="info-val">%.2f €</span>
+            	                    </div>
+            	                </div>
+            	                <a class="btn-pay" href="%s">PAGAR FIANZA</a>
+            	            </div>
+            	        </div>
+            	    </body>
+            	    </html>
+            	    """,
+            	    nombreCliente,
+            	    precioTotal,
+            	    fianza,
+            	    enlacePago);
 
             helper.setText(htmlContent, true);
 
+            ClassPathResource logo = new ClassPathResource("static/logo-placeholder.png");
+            helper.addInline("logoEstudio", logo);
             javaMailSender.send(message);
 
             System.out.println("✅ Solicitud pago enviada");
@@ -206,37 +250,80 @@ public class EmailServiceImpl implements EmailService {
        ===================================================== */
     @Async("mailExecutor")
     @Override
-    public void enviarFactura(String destinatario,
-                              String nombreCliente,
-                              byte[] pdfAdjunto) {
+    public void enviarFactura(String destinatario, String nombreCliente, byte[] pdfAdjunto) {
 
         MimeMessage message = javaMailSender.createMimeMessage();
 
         try {
-
             MimeMessageHelper helper = crearHelper(message);
 
             helper.setTo(destinatario);
             añadirCopiaEstudio(helper);
-
             helper.setSubject("INK&CO - Tu factura");
 
-            helper.setText(
-                    "Adjuntamos la factura del servicio realizado.",
-                    false
-            );
+            String htmlContent = """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body { font-family: 'Arial', sans-serif; background-color: #f5f5f5; margin: 0; padding: 0; }
+                        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+                        .header { background-color: #343434; padding: 30px; text-align: center; }
+                        .header img { max-height: 70px; }
+                        .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
+                        .h-title { color: #343434; font-size: 22px; margin-bottom: 10px; font-weight: bold; }
+                        .footer { background-color: #f8f9fa; border-top: 3px solid #008B8B; padding: 20px 30px; font-size: 13px; color: #666; }
+                        .footer-row { margin-bottom: 4px; }
+                        .footer-nombre { font-weight: bold; color: #343434; font-size: 14px; margin-bottom: 10px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <img src="cid:logoEstudio" alt="INK&CO" />
+                        </div>
+                        <div class="content">
+                            <p class="h-title">Hola, %s</p>
+                            <p>Gracias por confiar en <strong>INK & CO</strong>. Adjuntamos la factura correspondiente al servicio realizado.</p>
+                            <p>Si tienes cualquier duda, no dudes en contactarnos.</p>
+                        </div>
+                        <div class="footer">
+                            <div class="footer-nombre">%s</div>
+                            <div class="footer-row">%s</div>
+                            <div class="footer-row">%s</div>
+                            <div class="footer-row">%s</div>
+                            <div class="footer-row">%s</div>
+                            <div class="footer-row">%s</div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                """.formatted(
+                    nombreCliente,
+                    ESTUDIO_NOMBRE,
+                    ESTUDIO_DIR1,
+                    ESTUDIO_DIR2,
+                    ESTUDIO_TEL,
+                    ESTUDIO_EMAIL,
+                    ESTUDIO_CIF
+                );
 
-            helper.addAttachment(
-                    "factura.pdf",
-                    new ByteArrayResource(pdfAdjunto)
-            );
+            helper.setText(htmlContent, true);
+
+            // Adjuntar PDF
+            helper.addAttachment("factura.pdf", new ByteArrayResource(pdfAdjunto));
+
+            // Embeber logo
+            ClassPathResource logo = new ClassPathResource("static/logo-placeholder.png");
+            helper.addInline("logoEstudio", logo);
 
             javaMailSender.send(message);
-
             System.out.println("✅ Factura enviada a cliente y estudio");
 
         } catch (Exception e) {
             throw new RuntimeException("Error enviando factura", e);
         }
     }
-}
+    }
+

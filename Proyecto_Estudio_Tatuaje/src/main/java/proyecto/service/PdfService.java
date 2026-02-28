@@ -32,7 +32,7 @@ public class PdfService {
     private static final String ESTUDIO_DIR1  = "Calle Me Falta un Tornillo, 5, Local Bajo";
     private static final String ESTUDIO_DIR2  = "47195 Arroyo de la Encomienda (Valladolid), España";
     private static final String ESTUDIO_TEL   = "TEL: 621 89 78 27";
-    private static final String ESTUDIO_EMAIL = "EMAIL: administracion@inkandco.com";
+    private static final String ESTUDIO_EMAIL = "EMAIL: tatusys@gmail.com";
     private static final String ESTUDIO_CIF   = "CIF: 12345678Z";
 
     // --- COLORES PALETA ---
