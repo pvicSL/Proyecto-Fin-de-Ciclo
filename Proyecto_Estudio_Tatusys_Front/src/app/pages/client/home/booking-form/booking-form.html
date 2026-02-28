@@ -95,23 +95,23 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="needInvoice"
                                         formControlName="needInvoice">
-                                    <label class="form-check-label" for="needInvoice">¿Necesitas factura?</label>
+                                    <label class="form-check-label" for="needInvoice">¿Vas a necesitar factura? (Se
+                                        emitirá en el estudio al completar el servicio).</label>
                                 </div>
                             </div>
 
-                            @if (bookingForm.get('needInvoice')?.value) {
-                            <div class="col-md-6">
+                            <div class="col-md-6 d-none">
                                 <label for="cif" class="form-label">CIF/NIF</label>
                                 <input type="text" id="cif" class="form-control" formControlName="cif"
                                     placeholder="Ej.: 71771771P">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 d-none">
                                 <label for="billingAddress" class="form-label">Dirección fiscal</label>
                                 <input type="text" id="billingAddress" class="form-control"
                                     formControlName="billingAddress"
                                     placeholder="Ej.: Calle X, N12. Localidad, CP11111...">
                             </div>
-                            }
+
 
                             <div class="col-12">
                                 <hr class="border-secondary my-3">
