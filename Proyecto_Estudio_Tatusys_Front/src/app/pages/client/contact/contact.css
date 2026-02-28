@@ -123,6 +123,44 @@ h6,
     outline-offset: 4px;
 }
 
+/* Botón final */
+.legal-footer {
+    margin-top: 3.125rem;
+    text-align: center;
+    border-top: 1px solid rgba(236, 236, 236, 0.1);
+    padding-top: 30px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 30px;
+    text-decoration: none;
+    font-family: var(--font-main);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1rem;
+    color: var(--antiflash-white);
+    background-color: var(--burgundy);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.btn-back:hover {
+    background-color: var(--cardinal);
+    color: black;
+}
+
+
+.btn-back:focus-visible {
+    outline: 3px solid var(--night);
+    outline-offset: 4px;
+}
+
 /* =========================================
    5. RESPONSIVE
 ========================================= */

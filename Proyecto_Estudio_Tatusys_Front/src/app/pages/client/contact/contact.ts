@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AppointmentService } from '../../../core/services/appointment.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-contact',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, RouterLink],
     templateUrl: './contact.html',
     styleUrl: './contact.css'
 })
