@@ -75,7 +75,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
     private TrabajadorRepository trabajadorRepository;
     
     @Autowired
-    private EmailServiceImpl emailService;
+    private EmailService emailService;
     
     @Autowired
     private PrecioService precioService;

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
@@ -51,6 +52,7 @@ public class EmailServiceImpl implements EmailService {
     /* =====================================================
        SOLICITUD DE PAGO
        ===================================================== */
+    @Async("mailExecutor")
     @Override
     public void enviarSolicitudPago(String destinatarioReal,
                                     String nombreCliente,
@@ -103,6 +105,7 @@ public class EmailServiceImpl implements EmailService {
     /* =====================================================
        RECUPERACIÓN PASSWORD
        ===================================================== */
+    @Async("mailExecutor")
     @Override
     public void enviarEmailRecuperacion(String destinatario, String token) {
 
@@ -138,6 +141,7 @@ public class EmailServiceImpl implements EmailService {
     /* =====================================================
        CONFIRMACIÓN PASSWORD
        ===================================================== */
+    @Async("mailExecutor")
     @Override
     public void enviarEmailConfirmacion(String destinatario,
                                         String mensaje) {
@@ -157,6 +161,7 @@ public class EmailServiceImpl implements EmailService {
     /* =====================================================
        CONTACTO WEB
        ===================================================== */
+    @Async("mailExecutor")
     @Override
     public void enviarMensajeContacto(ContactoDTO contacto) {
 
@@ -199,6 +204,7 @@ public class EmailServiceImpl implements EmailService {
     /* =====================================================
        FACTURA
        ===================================================== */
+    @Async("mailExecutor")
     @Override
     public void enviarFactura(String destinatario,
                               String nombreCliente,
