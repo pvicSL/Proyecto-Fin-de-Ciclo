@@ -55,6 +55,7 @@ public class CitaServiceImplJpaMy8 implements CitaService {
     // --- NUEVO: HORARIOS CENTRALIZADOS ---
     private static final LocalTime HORA_APERTURA = LocalTime.of(10, 0); // 10:00 AM
     private static final LocalTime HORA_CIERRE = LocalTime.of(20, 0);   // 08:00 PM
+    private static final String EMAIL_ESTUDIO = "inkandcostudio@proton.me";
     // -------------------------------------
 
 	
@@ -74,10 +75,13 @@ public class CitaServiceImplJpaMy8 implements CitaService {
     private TrabajadorRepository trabajadorRepository;
     
     @Autowired
-    private EmailServiceImpl emailService;
+    private EmailService emailService;
     
     @Autowired
     private PrecioService precioService;
+    
+    @Autowired
+    private PdfService pdfService;
     
     
 
@@ -922,19 +926,41 @@ public class CitaServiceImplJpaMy8 implements CitaService {
     }
     
     @Transactional
-    public void generarFacturaManual(Integer idCita) {
+    public void generarFacturaManual(Integer idCita, String documentoIdentificacion, String direccionFiscal) {
         Cita cita = citaRepository.findById(idCita)
             .orElseThrow(() -> new EntityNotFoundException("Cita no encontrada"));
-        
-        // 1. Forzamos el boolean a true
+
+        // Guardar DNI si es null
+        Cliente cliente = cita.getCliente();
+        if (cliente.getDocumentoIdentificacion() == null && documentoIdentificacion != null) {
+            cliente.setDocumentoIdentificacion(documentoIdentificacion);
+            clienteRepository.save(cliente);
+        }
+
         cita.setFactura(true);
-        
-        // 2. Cambiamos el estado para que aparezca en el listado de facturación
         cita.setEstadoFactura(EstadoFactura.ENVIADA);
-        
         citaRepository.save(cita);
+
+        // Obtenemos el DTO completo (ya con el DNI actualizado)
+        CitaCompletaDTO citaDTO = obtenerCitaCompleta(idCita);
+
+        try {
+            byte[] pdf = pdfService.generarFacturaPdf(citaDTO, direccionFiscal);
+            String nombreCliente = citaDTO.getClienteNombre() + " " + citaDTO.getClienteApellido1();
+
+            emailService.enviarFactura(citaDTO.getClienteEmail(), nombreCliente, pdf);
+            
+            try {
+                Thread.sleep(15000);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+            
+            emailService.enviarFactura(EMAIL_ESTUDIO, nombreCliente, pdf);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al generar la factura PDF", e);
+        }
     }
-    
     @Override
     public List<CitaCompletaDTO> obtenerFacturasRealizadas() {
         // 1. Obtenemos las citas básicas
@@ -980,6 +1006,8 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         }
         return BigDecimal.ZERO;
     }
+
+	
     
 
 

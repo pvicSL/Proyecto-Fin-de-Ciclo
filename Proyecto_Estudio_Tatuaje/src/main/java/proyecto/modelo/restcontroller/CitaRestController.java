@@ -950,9 +950,12 @@ public class CitaRestController {
         }
         // Endpoint para la factura confirmada manualmente
         @PutMapping("/{id}/generar-factura")
-        public ResponseEntity<?> generarFacturaManual(@PathVariable Integer id) {
-        citaService.generarFacturaManual(id);
-        return ResponseEntity.ok().build();
+        public ResponseEntity<?> generarFacturaManual(
+                @PathVariable Integer id,
+                @RequestParam(required = false) String documentoIdentificacion,
+                @RequestParam(required = false) String direccionFiscal) {
+            citaService.generarFacturaManual(id, documentoIdentificacion, direccionFiscal);
+            return ResponseEntity.ok().build();
         }
 
         

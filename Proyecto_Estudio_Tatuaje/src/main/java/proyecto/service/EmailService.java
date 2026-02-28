@@ -14,4 +14,6 @@ public interface EmailService {
 	void enviarEmailConfirmacion(String destinatario, String mensaje);
 
 	void enviarMensajeContacto(ContactoDTO contacto);
+	
+	void enviarFactura(String destinatario, String nombreCliente, byte[] pdfAdjunto);
 }

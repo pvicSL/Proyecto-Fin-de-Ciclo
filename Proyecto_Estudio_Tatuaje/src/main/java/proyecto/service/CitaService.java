@@ -82,7 +82,7 @@ public interface CitaService {
 	
 	void finalizarTrabajo(Integer idCita);
 	
-	void generarFacturaManual(Integer idCita);
+	void generarFacturaManual(Integer idCita, String documentoIdentificacion, String direccionFiscal);
 	
 	List<CitaCompletaDTO> obtenerFacturasRealizadas();
 
