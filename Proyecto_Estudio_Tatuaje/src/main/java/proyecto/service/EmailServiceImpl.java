@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import proyecto.modelo.dto.ContactoDTO;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,6 +14,12 @@ import java.math.BigDecimal;
 
 @Service
 public class EmailServiceImpl implements EmailService {
+	
+	@Value("${spring.mail.username}")
+	private String emailRemitente;
+
+	@Value("${tatusys.email.estudio}")
+	private String emailEstudio;
 
 	@Autowired
 	private JavaMailSender javaMailSender;
@@ -28,7 +35,7 @@ public class EmailServiceImpl implements EmailService {
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-			helper.setFrom("no-reply@inkandco.com");
+			helper.setFrom("tatusyspruebas@gmail.com");
 			helper.setTo(destinatarioReal);
 
 			System.out.println(
@@ -102,7 +109,7 @@ public class EmailServiceImpl implements EmailService {
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-			helper.setFrom("no-reply@tatusys.com");
+			helper.setFrom("tatusyspruebas@gmail.com");
 			helper.setTo(destinatario);
 			helper.setSubject("TatuSys - Recuperación de Contraseña");
 
@@ -160,7 +167,7 @@ public class EmailServiceImpl implements EmailService {
 	public void enviarEmailConfirmacion(String destinatario, String mensaje) {
 		SimpleMailMessage message = new SimpleMailMessage();
 
-		message.setFrom("noreply@tatusys.com");
+		message.setFrom("tatusyspruebas@gmail.com");
 		message.setTo(destinatario);
 		message.setSubject("TatuSys - Contraseña Actualizada");
 		message.setText(mensaje);
@@ -176,12 +183,12 @@ public class EmailServiceImpl implements EmailService {
 	@Override
 	public void enviarMensajeContacto(ContactoDTO contacto) {
 		// En este caso, el destinatario no es el cliente, sino el propio estudio
-		String destinatarioEstudio = "inkandcostudio@proton.me";
+		String destinatarioEstudio = "tatusyspruebas@gmail.com";
 
 		SimpleMailMessage message = new SimpleMailMessage();
 
 		// El from suele requerir ser un correo validado por el servidor SMTP
-		message.setFrom("no-reply@inkandco.com");
+		message.setFrom("tatusyspruebas@gmail.com");
 		message.setTo(destinatarioEstudio);
 
 		// Asunto claro para identificar rápidamente los mensajes web
@@ -217,7 +224,7 @@ public class EmailServiceImpl implements EmailService {
 	    MimeMessage message = javaMailSender.createMimeMessage();
 	    try {
 	        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-	        helper.setFrom("no-reply@inkandco.com");
+	        helper.setFrom("tatusyspruebas@gmail.com");
 	        helper.setTo(destinatario);
 	        helper.setSubject("INK&CO - Tu factura");
 	        helper.setText("Adjuntamos la factura correspondiente al servicio realizado. Gracias por confiar en INK&CO.", false);
