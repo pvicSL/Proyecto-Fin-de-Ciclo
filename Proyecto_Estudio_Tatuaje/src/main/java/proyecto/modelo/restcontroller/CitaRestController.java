@@ -943,7 +943,7 @@ public class CitaRestController {
         }
 
      // Endpoint para el cierre operativo
-        @PutMapping("/{id}/finalizar-trabajo")
+        @PutMapping("{id}")
         public ResponseEntity<?> finalizarTrabajo(@PathVariable Integer id) {
         citaService.finalizarTrabajo(id);
         return ResponseEntity.ok().build();
