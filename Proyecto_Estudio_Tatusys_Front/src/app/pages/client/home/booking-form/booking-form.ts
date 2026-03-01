@@ -406,7 +406,7 @@ export class BookingFormComponent implements OnInit {
           apellido2: raw.secondSurname,
           email: raw.email.toLowerCase(),
           telefono: raw.phone,
-          documentoIdentificacion: raw.cif
+          documentoIdentificacion: raw.cif ? raw.cif : null,
         }
       };
 
