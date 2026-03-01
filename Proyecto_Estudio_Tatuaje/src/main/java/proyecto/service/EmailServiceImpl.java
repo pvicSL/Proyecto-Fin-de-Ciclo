@@ -167,10 +167,115 @@ public class EmailServiceImpl implements EmailService {
             String enlace =
                     BASE_URL_FRONT + "/reset-password?token=" + token;
 
-            helper.setText("""
-                    <h2>Recuperación de contraseña</h2>
-                    <a href="%s">Restablecer contraseña</a>
-                    """.formatted(enlace), true);
+            String html = """
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f5f5f5;
+                                margin: 0;
+                                padding: 0;
+                            }
+
+                            .container {
+                                max-width: 600px;
+                                margin: 40px auto;
+                                background-color: #ffffff;
+                                border-radius: 8px;
+                                overflow: hidden;
+                                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                            }
+
+                            .header {
+                                background-color: #343434;
+                                padding: 30px;
+                                text-align: center;
+                            }
+
+                            .content {
+                                padding: 40px 30px;
+                                color: #333;
+                                line-height: 1.6;
+                            }
+
+                            .h-title {
+                                color: #343434;
+                                font-size: 22px;
+                                margin-bottom: 20px;
+                                font-weight: bold;
+                            }
+
+                            .box-info {
+                                background-color: #f8f9fa;
+                                border-left: 5px solid #343434;
+                                padding: 20px 25px;
+                                border-radius: 4px;
+                                text-align: center;
+                            }
+
+                            .btn-action {
+                                display: block;
+                                width: fit-content;
+                                margin: 30px auto;
+                                background-color: #008B8B;
+                                color: #ffffff !important;
+                                padding: 15px 35px;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                font-weight: bold;
+                                letter-spacing: 1px;
+                            }
+
+                            .footer {
+                                text-align: center;
+                                font-size: 13px;
+                                color: #777;
+                                margin-top: 20px;
+                            }
+                        </style>
+                    </head>
+
+                    <body>
+                        <div class="container">
+
+                            <div class="header">
+                                <img src="cid:logoEstudio"
+                                     alt="TatuSys"
+                                     style="max-height:70px;" />
+                            </div>
+
+                            <div class="content">
+
+                                <p class="h-title">
+                                    Recuperación de contraseña
+                                </p>
+
+                                <p>
+                                    Hemos recibido una solicitud para restablecer tu contraseña.
+                                </p>
+
+                                <div class="box-info">
+                                    Pulsa el botón inferior para crear una nueva contraseña.
+                                </div>
+
+                                <a class="btn-action" href="%s">
+                                    RESTABLECER CONTRASEÑA
+                                </a>
+
+                                <div class="footer">
+                                    Si no solicitaste este cambio, puedes ignorar este correo.
+                                </div>
+
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                    """.formatted(enlace);
+
+            helper.setText(html, true);
 
             javaMailSender.send(message);
 
@@ -187,18 +292,121 @@ public class EmailServiceImpl implements EmailService {
        ===================================================== */
     @Async("mailExecutor")
     @Override
-    public void enviarEmailConfirmacion(String destinatario,
-                                        String mensaje) {
+    public void enviarEmailConfirmacion(String destinatario, String mensaje) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        MimeMessage message = javaMailSender.createMimeMessage();
 
-        message.setFrom(emailRemitente);
-        message.setTo(destinatario);
-        message.setCc(emailEstudio);
-        message.setSubject("TatuSys - Contraseña Actualizada");
-        message.setText(mensaje);
+        try {
 
-        javaMailSender.send(message);
+            MimeMessageHelper helper = crearHelper(message);
+
+            helper.setTo(destinatario);
+            añadirCopiaEstudio(helper);
+
+            helper.setSubject("TatuSys - Contraseña Actualizada");
+
+            String html = """
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f5f5f5;
+                                margin: 0;
+                                padding: 0;
+                            }
+
+                            .container {
+                                max-width: 600px;
+                                margin: 40px auto;
+                                background-color: #ffffff;
+                                border-radius: 8px;
+                                overflow: hidden;
+                                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                            }
+
+                            .header {
+                                background-color: #343434;
+                                padding: 30px;
+                                text-align: center;
+                            }
+
+                            .content {
+                                padding: 40px 30px;
+                                color: #333;
+                                line-height: 1.6;
+                                text-align: center;
+                            }
+
+                            .h-title {
+                                color: #343434;
+                                font-size: 22px;
+                                margin-bottom: 20px;
+                                font-weight: bold;
+                            }
+
+                            .box-info {
+                                background-color: #f8f9fa;
+                                border-left: 5px solid #008B8B;
+                                padding: 20px;
+                                border-radius: 4px;
+                                margin-top: 20px;
+                            }
+
+                            .footer {
+                                margin-top: 25px;
+                                font-size: 13px;
+                                color: #777;
+                            }
+                        </style>
+                    </head>
+
+                    <body>
+                        <div class="container">
+
+                            <div class="header">
+                                <img src="cid:logoEstudio"
+                                     alt="TatuSys"
+                                     style="max-height:70px;" />
+                            </div>
+
+                            <div class="content">
+
+                                <p class="h-title">
+                                    ✅ Contraseña actualizada correctamente
+                                </p>
+
+                                <div class="box-info">
+                                    %s
+                                </div>
+
+                                <div class="footer">
+                                    Si no realizaste este cambio,
+                                    contacta con el estudio inmediatamente.
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </body>
+                    </html>
+                    """.formatted(mensaje);
+
+            helper.setText(html, true);
+
+            ClassPathResource logo =
+                    new ClassPathResource("static/logo-placeholder.png");
+            helper.addInline("logoEstudio", logo);
+
+            javaMailSender.send(message);
+
+            System.out.println("✅ Email confirmación enviado");
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error enviando email confirmación", e);
+        }
     }
 
 
@@ -209,39 +417,154 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void enviarMensajeContacto(ContactoDTO contacto) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        MimeMessage message = javaMailSender.createMimeMessage();
 
-        message.setFrom(emailRemitente);
-        message.setTo(emailEstudio);
+        try {
 
-        message.setSubject(
-                "NUEVO MENSAJE WEB - " + contacto.getNombre()
-        );
+            MimeMessageHelper helper = crearHelper(message);
 
-        String telefono =
-                contacto.getTelefono() != null
-                        ? contacto.getTelefono()
-                        : "No proporcionado";
+            helper.setTo(emailEstudio);
+            helper.setSubject(
+                    "NUEVO MENSAJE WEB - " + contacto.getNombre()
+            );
 
-        message.setText("""
-                NUEVO MENSAJE WEB
+            String telefono =
+                    contacto.getTelefono() != null &&
+                    !contacto.getTelefono().isBlank()
+                            ? contacto.getTelefono()
+                            : "No proporcionado";
 
-                Nombre: %s
-                Email: %s
-                Teléfono: %s
+            String html = """
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f5f5f5;
+                                margin: 0;
+                                padding: 0;
+                            }
 
-                Mensaje:
-                %s
-                """.formatted(
-                contacto.getNombre(),
-                contacto.getEmail(),
-                telefono,
-                contacto.getMensaje()
-        ));
+                            .container {
+                                max-width: 600px;
+                                margin: 40px auto;
+                                background-color: #ffffff;
+                                border-radius: 8px;
+                                overflow: hidden;
+                                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                            }
 
-        javaMailSender.send(message);
+                            .header {
+                                background-color: #343434;
+                                padding: 30px;
+                                text-align: center;
+                            }
 
-        System.out.println("✅ Mensaje contacto recibido");
+                            .content {
+                                padding: 40px 30px;
+                                color: #333;
+                                line-height: 1.6;
+                            }
+
+                            .title {
+                                font-size: 22px;
+                                font-weight: bold;
+                                margin-bottom: 25px;
+                                color: #343434;
+                            }
+
+                            .box-info {
+                                background-color: #f8f9fa;
+                                border-left: 5px solid #008B8B;
+                                padding: 20px;
+                                border-radius: 4px;
+                            }
+
+                            .info-row {
+                                margin-bottom: 12px;
+                            }
+
+                            .label {
+                                color: #666;
+                                font-size: 14px;
+                            }
+
+                            .value {
+                                font-weight: bold;
+                                color: #343434;
+                            }
+
+                            .mensaje {
+                                margin-top: 20px;
+                                padding-top: 15px;
+                                border-top: 1px solid #eee;
+                                white-space: pre-line;
+                            }
+                        </style>
+                    </head>
+
+                    <body>
+                        <div class="container">
+
+                            <div class="header">
+                                <img src="cid:logoEstudio"
+                                     alt="TatuSys"
+                                     style="max-height:70px;" />
+                            </div>
+
+                            <div class="content">
+
+                                <div class="title">
+                                    📩 Nuevo mensaje desde la web
+                                </div>
+
+                                <div class="box-info">
+
+                                    <div class="info-row">
+                                        <span class="label">Nombre:</span><br>
+                                        <span class="value">%s</span>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <span class="label">Email:</span><br>
+                                        <span class="value">%s</span>
+                                    </div>
+
+                                    <div class="info-row">
+                                        <span class="label">Teléfono:</span><br>
+                                        <span class="value">%s</span>
+                                    </div>
+
+                                    <div class="mensaje">
+                                        <span class="label">Mensaje:</span><br><br>
+                                        %s
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </body>
+                    </html>
+                    """.formatted(
+                    contacto.getNombre(),
+                    contacto.getEmail(),
+                    telefono,
+                    contacto.getMensaje()
+            );
+
+            helper.setText(html, true);
+
+            javaMailSender.send(message);
+
+            System.out.println("✅ Mensaje contacto recibido");
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error enviando mensaje contacto", e);
+        }
     }
 
 
