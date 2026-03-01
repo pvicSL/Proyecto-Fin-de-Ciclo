@@ -22,8 +22,14 @@ export class CalendarPage {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin],
     locale: esLocale,
+    height: 'parent',
+    displayEventTime: false,
     headerToolbar: false,
-    // Este evento se lanza al cargar y cada vez que cambias de mes
+    handleWindowResize: true, // El calendario se redibuja al girar el móvil
+    aspectRatio: 1.35,        // Relación ancho/alto (ajusta según prefieras)
+    dayMaxEvents: true,       // Si hay muchas citas, pone un "+2 más" en lugar de estirar la celda
+    
+    
     datesSet: (info: DatesSetArg) => {
       this.actualizarTituloMes();
       this.cargarCitasDesdeCalendario(info);
@@ -41,27 +47,36 @@ export class CalendarPage {
    * y llama a tu servicio con los parámetros requeridos.
    */
   cargarCitasDesdeCalendario(info: DatesSetArg) {
-  const fechaISO = info.view.currentStart.toISOString().split('T')[0];
+  // 1. Obtenemos el objeto fecha actual del calendario (ej: Marzo 2026)
+  const fechaCalendario = this.calendarComponent.getApi().getDate();
   
-  this.appointmentService.getConfirmedAppointments(fechaISO, 'mes').subscribe({
+  // 2. Construimos manualmente el "YYYY-MM-01"
+  // Usamos getFullYear y getMonth (+1 porque empieza en 0)
+  const anio = fechaCalendario.getFullYear();
+  const mes = (fechaCalendario.getMonth() + 1).toString().padStart(2, '0');
+  const primerDiaMes = `${anio}-${mes}-01`;
+
+  console.log('Solicitando rango al Backend:', primerDiaMes, 'Vista: mes');
+
+  this.appointmentService.getConfirmedAppointments(primerDiaMes, 'mes').subscribe({
     next: (citas) => {
-      // 1. Mapeamos los datos
+
       const nuevosEventos = citas.map(c => ({
-        id: c.idCita.toString(),
-        title: `${c.hora} - ${c.clienteNombre}`,
-        start: c.fecha, // Asegúrate que c.fecha sea 'YYYY-MM-DD'
-        className: 'cita-badge'
+        id: String(c.idCita), 
+        
+        // El título queda limpio: solo lo que el tatuador necesita ver
+        title: `${c.hora} - ${c.clienteNombre}`, 
+        
+        start: c.fecha,
+        allDay: false,
+        backgroundColor: '#198754',
+        borderColor: '#146c43',
+        className: 'cita-confirmada' // Para darle estilos CSS si quieres
       }));
 
-      // 2. IMPORTANTE: Reasignamos el objeto de opciones para que Angular detecte el cambio
-      this.calendarOptions = {
-        ...this.calendarOptions,
-        events: nuevosEventos
-      };
-
-      console.log('Citas cargadas con éxito:', nuevosEventos);
+      this.calendarOptions = { ...this.calendarOptions, events: nuevosEventos };
     },
-    error: (err) => console.error('Error al cargar citas:', err)
+    error: (err) => console.error('Error en TatuSys API:', err)
   });
 }
 
@@ -80,7 +95,12 @@ export class CalendarPage {
   }
 
   navegarADetalle(id: string) {
-    this.router.navigate(['admin/citas/detalleCitaConfirmada', id]);
+    if (id && id !== '0') {
+      // Te lleva a la página donde está el botón "Finalizar Trabajo"
+      this.router.navigate(['admin/citas/detalleCitaConfirmada', id]);
+    } else {
+      console.error("Error: Se intentó navegar con un ID no válido");
+    }
   }
 }
 
