@@ -23,44 +23,50 @@ export class Sidebar {
   constructor(private router: Router) {} // Inyectamos el router para leer la URL
 
   isItemActive(itemLink: string): boolean {
-    const currentUrl = this.router.url;
-    
+  // Obtenemos la URL actual limpia
+  const currentUrl = this.router.url;
 
-    // Lógica especial para Home/Citas y sus hijos (detalle y presupuesto)
-    if (itemLink === '/admin/citas') {
-      return currentUrl === '/admin/citas' || 
-             currentUrl.includes('/admin/citas/detalleCitaConfirmada/:id');
-    }
-
-    // Para el resto, basta con que la URL empiece por el link del item
-    return currentUrl.startsWith(itemLink);
+  // Si el link es solo '/admin', evitamos que marque todo
+  if (itemLink === '/admin') {
+    return currentUrl === '/admin';
   }
+
+  // Si la URL actual empieza por el link del item, se marca como activo
+  // Esto cubrirá: /admin/calendario, /admin/solicitudes, etc.
+  return currentUrl.startsWith(itemLink);
+}
 
 
   // Lista de navegación centralizada
-  private allNavItems: NavItem[] = [
-    { title: 'Home', link: '/admin/citas', icon: 'bi-house-door-fill' },
-    { title: 'Solicitudes', link: '/admin/solicitudes', icon: 'bi-envelope-fill' },
-    { title: 'Facturas', link: '/facturas', icon: 'bi-file-earmark-ruled-fill' },
-    { title: 'Calendario', link: '/admin/calendario', icon: 'bi-calendar2-event-fill' },
-    // Solo para admins
-    { title: 'Trabajadores', link: '/admin/trabajadores', icon: 'bi-people-fill' }
-  ];
+private allNavItems: NavItem[] = [
+  { title: 'Home', link: '/admin/citas', icon: 'bi-house-door-fill' },
+  { title: 'Solicitudes', link: '/admin/solicitudes', icon: 'bi-envelope-fill' },
+  { title: 'Calendario', link: '/admin/calendario', icon: 'bi-calendar2-event-fill' },
+  { title: 'Trabajadores', link: '/admin/trabajadores', icon: 'bi-people-fill', onlyAdmin: true } // <--- SOLO ADMIN
+];
 
-  private allFooterItems: NavItem[] = [
-    // Solo para admins
-    { title: 'Configuración', link: '/admin/ajustes', icon: 'bi-gear-wide-connected' },
-    { title: 'Cerrar Sesión', link: '/logout', icon: 'bi-box-arrow-left' }
-  ];
+private allFooterItems: NavItem[] = [
+  { title: 'Configuración', link: '/admin/ajustes', icon: 'bi-gear-wide-connected', onlyAdmin: true }, // <--- SOLO ADMIN
+  { title: 'Cerrar Sesión', link: '/logout', icon: 'bi-box-arrow-left' }
+];
 
-  // Getter para obtener solo los items permitidos para el usuario actual
-  get navItems(): NavItem[] {
-    return this.allNavItems.filter(item => !item.onlyAdmin || this.authService.isAdmin());
-  }
+// 2. Este es el motor que limpia el sidebar
+get navItems(): NavItem[] {
+  const userRole = this.authService.currentUser()?.rol;
+  // Si es ADMIN, ve todo. Si no, filtramos los que tengan 'onlyAdmin'
+  return this.allNavItems.filter(item => {
+    if (item.onlyAdmin && userRole !== 'ADMIN') return false;
+    return true;
+  });
+}
 
-  get footerItems(): NavItem[] {
-    return this.allFooterItems.filter(item => !item.onlyAdmin || this.authService.isAdmin());
-  }
+get footerItems(): NavItem[] {
+  const userRole = this.authService.currentUser()?.rol;
+  return this.allFooterItems.filter(item => {
+    if (item.onlyAdmin && userRole !== 'ADMIN') return false;
+    return true;
+  });
+}
 
   // Modifica el método de logout para usar tu servicio
   handleLogout() {

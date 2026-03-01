@@ -46,33 +46,28 @@ export class AppointmentConfirm extends AppointmentModify{
 }
 
 finalizarCita() {
-    if (!this.citaDTO || !this.citaDTO.idCita) return;
+    if (!this.cita || !this.cita.idCita) return; // Asegúrate de usar el objeto correcto (cita o citaDTO)
 
     this.appointmentService.finalizarTrabajo(this.cita.idCita)
       .subscribe({
         next: (res) => {
           console.log("Cita finalizada con éxito");
 
-          // 3. Lógica de navegación basada en el atributo 'factura'
-          // Asumo que 'factura' viene dentro del objeto 'cita' o en la respuesta 'res'
-          const estadoFactura = this.citaDTO.estadoFactura; 
+          // Usa el ID real de la cita para la ruta
+          const idActual = this.cita.idCita; 
 
-          if (estadoFactura === 'NO_REQUIERE') {
-            this.router.navigate(['/admin/citas/generarFactura']);
+          // IMPORTANTE: No pongas ':id', pon la variable con el número
+          if (this.citaDTO.estadoFactura === 'NO_REQUIERE') {
+            this.router.navigate(['/admin/citas/generarFactura', idActual]); 
           } 
-          else if (estadoFactura === 'PENDIENTE') {
+          else if (this.citaDTO.estadoFactura === 'PENDIENTE') {
             this.router.navigate(['/admin/citas/facturaGenerada']);
-          }
-          else {
-            // Caso por defecto si el estado es distinto o ya está PAGADA
-            alert('Trabajo finalizado sin cambios en la factura.');
           }
         },
         error: (err) => {
           console.error("Error al finalizar:", err);
-          alert('Hubo un error al finalizar el trabajo.');
         }
       });
-  }
+}
 
 }

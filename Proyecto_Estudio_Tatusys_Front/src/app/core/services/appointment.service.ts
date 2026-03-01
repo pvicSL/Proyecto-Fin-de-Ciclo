@@ -208,8 +208,9 @@ export class AppointmentService {
         return this.http.put<void>(`${this.apiUrl}/${id}/finalizar-trabajo`, {});
     }
 
-    generarFactura(id: number): Observable<void> {
-        return this.http.put<void>(`${this.apiUrl}/${id}/generar-factura`, {});
+    generarFacturaManual(id: number, dni: string, direccion: string) {
+        const params = { documentoIdentificacion: dni, direccionFiscal: direccion };
+        return this.http.put(`${this.apiUrl}/${id}/generar-factura`, {}, { params });
     }
 
     getInvoices(): Observable<any[]> {

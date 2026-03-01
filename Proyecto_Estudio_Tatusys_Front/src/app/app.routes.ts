@@ -18,6 +18,17 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/public/login/login').then(m => m.Login)
   },
 
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./pages/public/forgot-password/forgot-password').then(m => m.ForgotPassword),
+    data: { title: 'Contraseña olvidada', icon: '' }
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./pages/public/reset-password/reset-password').then(m => m.ResetPassword),
+    data: { title: 'Resetear Contraseña', icon: '' }
+  },
+
 
   // 1. RUTA CLIENTE FINAL
   {
@@ -81,7 +92,7 @@ export const routes: Routes = [
             data: { title: 'Home > Confirmar Presupuesto' }
           },
           {
-            path: 'generarFactura',
+            path: 'generarFactura/:id',
             loadComponent: () => import('./pages/admin/dashboard-home/invoice-question/invoice-question').then(m => m.InvoiceQuestion),
             data: { title: 'Home > Confirmar Presupuesto > Generar Factura' }
           },
@@ -119,6 +130,28 @@ export const routes: Routes = [
             loadComponent: () => import('./pages/admin/requests/generate-budget/generate-budget').then(m => m.GenerateBudget),
             data: { title: 'Solicitudes > Pendientes > Revisar', icon: 'bi-envelope' }
           }
+        ]
+      },
+
+      {
+        path: 'facturas',
+        loadComponent: () => import('./pages/admin/invoices/invoices').then(m => m.Invoices),
+        data: { title: 'Facturas', icon: 'bi-file-earmark-ruled' },
+
+        children: [
+          { path: '', redirectTo: 'lista-facturas', pathMatch: 'full' },
+
+          {
+            path: 'lista-facturas',
+            loadComponent: () => import('./pages/admin/invoices/list-invoices/list-invoices').then(m => m.ListInvoices),
+            data: { title: 'Facturas', icon: 'bi-file-earmark-ruled' }
+          },
+          {
+            path: 'detalles-factura/:id',
+            loadComponent: () => import('./pages/admin/invoices/invoice-details/invoice-details').then(m => m.InvoiceDetails),
+            data: { title: 'Facturas > Detalle', icon: 'bi-file-earmark-ruled' }
+          }
+
         ]
       },
 

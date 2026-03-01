@@ -1,10 +1,8 @@
-
 /*=============================
 ------- SIDEBAR-MOBILE --------
 =============================*/
 
-/* ajustes sidebar-mobile */
-#sidebar-mobile{
+#sidebar-mobile {
     width: 100%;
     height: 100vh;
     top: 0;
@@ -18,25 +16,19 @@
 ----------- SIDEBAR -----------
 =============================*/
 
-/* Quitar estlilo de los elemenotos de la lista (sidebar) */
-li{
+li {
     list-style: none;
 }
 
-/* ajustes contenedor padre del sidebar */
-
-.wrapper{
+.wrapper {
     display: flex;
     height: 100vh;
-    width:fit-content;
+    width: fit-content;
     position: sticky;
-
+    top: 0;
 }
 
-/* ajustes sidebar sin expandir */
-
-#sidebar{
-    
+#sidebar {
     width: 80px;
     min-width: 80px;
     height: 100vh;
@@ -47,100 +39,97 @@ li{
     background-color: var(--dark-cyan);
 }
 
-/* ajustes sidebar expandido */
-
-#sidebar.expand{
+#sidebar.expand {
     width: 260px;
     min-width: 260px;
-    
 }
 
-/* ajustes botón hamburger que expande el sidebar */
-#toggle-btn{
+#toggle-btn {
     background-color: transparent;
     cursor: pointer;
     border: 0;
     padding: 1rem 0.5rem;
 }
 
-/* Icono hamburger */
-#toggle-btn i{
+#toggle-btn i {
     font-size: 2rem;
     color: white;
 }
 
-
-
-/* Texto cabecera del sidebar */
-.sidebar-logo p{
-    color:white;
+.sidebar-logo p {
+    color: white;
     min-width: 125px;
 }
 
-/* Ajustes de visualización en sidebar no expandido */
 #sidebar:not(.expand) .sidebar-logo,
-#sidebar:not(.expand) a.sidebar-link span{
+#sidebar:not(.expand) a.sidebar-link span {
     display: none;
 }
 
-/* Lista de enlaces a páginas del sidebar */
-.sidebar-nav{
+.sidebar-nav {
     padding: 2rem 0;
     flex: 1 1 auto;
 }
 
-/* Ajustes enlaces del footer */
-.sidebar-footer{
+.sidebar-footer {
     padding: 0;
 }
 
-/* Ajuste de cada enlace a las otras páginas */
-a.sidebar-link{
-text-decoration: none;
-   padding: 0.625rem 1.625rem; 
-   color: white;
-   display: block;
-   font-size: 1rem;
-   white-space: nowrap;
-   border-left: 3px solid transparent;
+/*=====================================
+--- ESTILO UNIFICADO DE ENLACES ---
+=====================================*/
+
+/* 1. Base de todos los links (Nav, Footer y Mobile) */
+.sidebar-link {
+    text-decoration: none;
+    padding: 0.625rem 1.625rem; 
+    color: white !important;
+    display: block;
+    font-size: 1rem;
+    white-space: nowrap;
+    border-left: 4px solid transparent; /* Reserva el espacio para el borde activo */
+    transition: all 0.2s ease;
 }
 
-/* Iconos de cada enlace a las otras páginas */
-.sidebar-link i{
+.sidebar-link i {
     font-size: 1.5rem;
-    margin-top: 0.5rem;
     margin-right: 0.75rem;
-
+    vertical-align: middle;
 }
 
-/* Color de background cuando hacemos hover en un enlace del sidebar */
-.sidebar-link:hover{
+/* 2. EFECTO HOVER (Para todos) */
+.sidebar-link:hover {
     background-color: var(--robin-egg-blue);
+    border-left: 4px solid rgba(255,255,255,0.5);
 }
 
-/* Color de background cuando un enlace del sidebar está activado */
-.sidebar-item .active{
+/* 3. ESTADO ACTIVO (La clave de tu problema) 
+   Quitamos la restricción de .sidebar-item para que funcione en TODO el menú */
+.sidebar-link.active {
     background-color: var(--robin-egg-blue) !important;
-    border-color: var(--robin-egg-blue) !important;
+    border-left: 4px solid white !important;
+    font-weight: bold;
+}
+
+/* 4. EXCEPCIÓN PARA LOGOUT */
+.sidebar-link.text-danger {
+    color: #ff4d4d !important;
+}
+
+.sidebar-link.text-danger:hover {
+    background-color: rgba(255, 77, 77, 0.1) !important;
+    border-left-color: #ff4d4d !important;
 }
 
 /*=====================================
 ----- ESTILOS PARA NAVBAR-MOBILE ------
 =====================================*/
 
-/* Color de fondo del navbar mobile */
-.navbar{
+.navbar {
     background-color: var(--dark-cyan);
 }
 
-/* Icono del navbar mobile */
-.navbar i{
+.navbar i, .navbar span {
     color: white;
-    font-size: 2rem;
-}
-
-/* Texto del navbar mobile */
-.navbar div span{
-    color: white;
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
