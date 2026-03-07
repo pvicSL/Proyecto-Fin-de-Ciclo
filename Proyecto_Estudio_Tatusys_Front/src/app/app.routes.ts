@@ -44,6 +44,11 @@ export const routes: Routes = [
       },
 
       {
+        path: 'privacidad',
+        loadComponent: () => import('./pages/client/dataprotection/dataprotection').then(m => m.DataProtectionComponent)
+      },
+
+      {
         path: 'contacto',
         // Asegúrate de que la ruta de importación coincida con dónde has guardado el archivo contact.ts
         loadComponent: () => import('./pages/client/contact/contact').then(m => m.ContactComponent)
