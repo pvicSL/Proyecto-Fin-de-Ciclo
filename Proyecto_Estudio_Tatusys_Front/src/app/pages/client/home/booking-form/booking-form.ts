@@ -126,7 +126,8 @@ export class BookingFormComponent implements OnInit {
       colorMode: ['bw', Validators.required],
       comments: [''],
       references: [''],
-      acceptTerms: [false, Validators.requiredTrue]
+      acceptTerms: [false, Validators.requiredTrue],
+      acceptDataProtection: [false, Validators.requiredTrue]
     }, { validators: this.emailMatchValidator });
 
     // Inicialización de la escucha reactiva
@@ -364,7 +365,7 @@ export class BookingFormComponent implements OnInit {
 
   //Limpiar el formulario con el botón de borrar
   resetForm() {
-    this.bookingForm.reset({ colorMode: 'bw', needInvoice: false, acceptTerms: false });
+    this.bookingForm.reset({ colorMode: 'bw', needInvoice: false, acceptTerms: false, acceptDataProtection: false });
     this.selectedSlot = null;
     this.selectedDateStr = null;
     this.selectedDayIndex = null;
