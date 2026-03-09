@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, } from '@angular/core';
 import { CalendarOptions, DatesSetArg, EventClickArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import listPlugin from '@fullcalendar/list';
 import esLocale from '@fullcalendar/core/locales/es'; // Para ponerlo en español
 import { Router } from '@angular/router';
 import { AppointmentService } from '../../../../core/services/appointment.service';
@@ -22,7 +23,8 @@ export class CalendarPage {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin],
     locale: esLocale,
-    height: 'parent',
+    height: 'auto',
+    expandRows: true,
     displayEventTime: false,
     headerToolbar: false,
     handleWindowResize: true, // El calendario se redibuja al girar el móvil

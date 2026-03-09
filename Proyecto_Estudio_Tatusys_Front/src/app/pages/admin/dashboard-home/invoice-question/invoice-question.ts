@@ -1,50 +1,59 @@
-import { Component } from '@angular/core';
+import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppointmentService } from '../../../../core/services/appointment.service';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-invoice-question',
-  imports: [CommonModule, FormsModule],
+  standalone: true, // Angular moderno es standalone por defecto
+  imports: [FormsModule],
   templateUrl: './invoice-question.html',
   styleUrl: './invoice-question.css',
 })
-export class InvoiceQuestion {
-citaId!: number;
-  loading: boolean = false;
-  
-  // Campos opcionales para la factura
-  dni: string = '';
-  direccion: string = '';
+export class InvoiceQuestion implements OnInit {
+  // Inyecciones modernas con inject()
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private appointmentService = inject(AppointmentService);
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private appointmentService: AppointmentService
-  ) {}
+  // Signals para el estado
+  citaId = signal<number>(0);
+  loading = signal<boolean>(false);
+  estadoFactura = signal<'PENDIENTE' | 'NO_REQUIERE' | string>('');
   
+  dni = signal<string>('');
+  direccion = signal<string>('');
+
+  // Computed signal para la validación (se actualiza sola)
+  isFormInvalid = computed(() => {
+    if (this.estadoFactura() === 'PENDIENTE') {
+      return !this.dni().trim() || !this.direccion().trim() || this.loading();
+    }
+    return this.loading();
+  });
 
   ngOnInit() {
-    // Obtenemos el ID de la cita de la URL (ej: /generar-factura/15)
-    this.citaId = Number(this.route.snapshot.paramMap.get('id'));
-  }
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.citaId.set(id);
 
-  confirmarGenerarFactura() {
-    this.loading = true;
-    this.appointmentService.generarFacturaManual(this.citaId, this.dni, this.direccion).subscribe({
-      next: () => {
-        alert('Factura generada con éxito. La encontrarás en el listado de facturas.');
-        this.router.navigate(['/admin/facturas']);
-      },
-      error: (err) => {
-        console.error('Error al generar factura', err);
-        this.loading = false;
-      }
+    // Simulamos la carga del estado desde el servicio
+    this.appointmentService.getAppointment(id).subscribe(cita => {
+      this.estadoFactura.set(cita.estadoFactura);
     });
   }
 
+  confirmarGenerarFactura() {
+    this.loading.set(true);
+    this.appointmentService.generarFacturaManual(this.citaId(), this.dni(), this.direccion())
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/admin/facturas']);
+        },
+        error: () => this.loading.set(false)
+      });
+  }
+
   irAlListado() {
-    this.router.navigate(['/admin/citas']); 
+    this.router.navigate(['/admin/citas']);
   }
 }

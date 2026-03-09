@@ -7,7 +7,10 @@
 /* Define cuánto espacio máximo puede ocupar la caja */
     height: 70vh;
     background-color: var(--antiflash-white);
-    
+}
+
+.card{
+    background-color: var(--antiflash-white);
 }
 
 div{

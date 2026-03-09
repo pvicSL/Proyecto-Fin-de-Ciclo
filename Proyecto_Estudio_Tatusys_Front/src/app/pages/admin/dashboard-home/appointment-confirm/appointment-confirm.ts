@@ -56,13 +56,15 @@ finalizarCita() {
           // Usa el ID real de la cita para la ruta
           const idActual = this.cita.idCita; 
 
-          // IMPORTANTE: No pongas ':id', pon la variable con el número
+          this.router.navigate(['/admin/citas/generarFactura', idActual]); 
+
+          /* IMPORTANTE: No pongas ':id', pon la variable con el número
           if (this.citaDTO.estadoFactura === 'NO_REQUIERE') {
             this.router.navigate(['/admin/citas/generarFactura', idActual]); 
           } 
           else if (this.citaDTO.estadoFactura === 'PENDIENTE') {
             this.router.navigate(['/admin/citas/facturaGenerada']);
-          }
+          }*/
         },
         error: (err) => {
           console.error("Error al finalizar:", err);
