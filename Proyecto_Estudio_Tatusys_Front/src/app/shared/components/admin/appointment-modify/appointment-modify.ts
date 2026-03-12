@@ -14,7 +14,7 @@ import { UploadService } from '../../../../core/services/upload.service';
 
 @Component({
   selector: 'app-appointment-modify',
-  imports: [CommonModule, FormsModule, ],
+  imports: [CommonModule, FormsModule, FormatoHorasPipe],
   templateUrl: './appointment-modify.html',
   styleUrls: ['./appointment-modify.css'],
   encapsulation: ViewEncapsulation.None

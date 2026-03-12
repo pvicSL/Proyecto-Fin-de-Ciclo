@@ -1,7 +1,0 @@
-/* Aseguramos que el host del componente sea un flex que ocupe el espacio disponible */
-app-pending-requests, app-reviewed-requests{
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    min-height: 0; /* importante para permitir que los hijos con overflow se ajusten */
-}

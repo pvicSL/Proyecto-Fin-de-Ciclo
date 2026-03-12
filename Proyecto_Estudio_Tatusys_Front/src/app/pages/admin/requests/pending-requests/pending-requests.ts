@@ -3,9 +3,10 @@ import { Component, OnInit, ViewEncapsulation, HostListener } from '@angular/cor
 import { AppointmentService} from '../../../../core/services/appointment.service';
 import { Router, RouterModule } from '@angular/router';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
+import { FormatoHorasPipe } from '../../../../pipes/formato-horas-pipe';
 @Component({
   selector: 'app-pending-requests',
-  imports: [],
+  imports: [FormatoHorasPipe],
   templateUrl: './pending-requests.html',
   styleUrls: ['./pending-requests.css'],
   encapsulation: ViewEncapsulation.None

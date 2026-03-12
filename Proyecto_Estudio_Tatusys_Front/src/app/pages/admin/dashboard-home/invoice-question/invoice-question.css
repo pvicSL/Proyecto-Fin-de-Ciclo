@@ -5,12 +5,17 @@
 
 .contenedor-scroll {
 /* Define cuánto espacio máximo puede ocupar la caja */
-    height: 70vh;
+    min-height: 70vh;
     background-color: var(--antiflash-white);
 }
 
 .card{
     background-color: var(--antiflash-white);
+}
+
+.invoice-card {
+    max-width: 500px;
+    width: 100%;
 }
 
 div{
@@ -19,4 +24,59 @@ div{
 
 button{
     width: 40%;
+}
+
+@media (max-width: 576px) {
+    .contenedor-scroll {
+        min-height: auto;
+        padding: 1rem !important;
+        border: none !important;
+        box-shadow: none !important;
+        align-items: flex-start !important;
+    }
+
+    .invoice-card {
+        padding: 1rem !important;
+    }
+
+    .invoice-card h1 {
+        font-size: 1.15rem;
+        line-height: 1.35;
+    }
+
+    .instruccion,
+    .small,
+    .form-label,
+    .form-control,
+    .btn {
+        font-size: 0.9rem;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+
+    .d-flex.gap-2 .btn {
+        width: 100%;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .invoice-card h1 {
+        font-size: 1.02rem;
+    }
+
+    .instruccion,
+    .small,
+    .form-label,
+    .form-control,
+    .btn {
+        font-size: 0.82rem;
+    }
 }

@@ -948,6 +948,8 @@ public class CitaRestController {
         citaService.finalizarTrabajo(id);
         return ResponseEntity.ok().build();
         }
+        
+        
         // Endpoint para la factura confirmada manualmente
         @PutMapping("/{id}/generar-factura")
         public ResponseEntity<?> generarFacturaManual(

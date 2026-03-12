@@ -6,3 +6,9 @@ app-list-staff{
     min-height: 0; /* importante para permitir que los hijos con overflow se ajusten */
 }
 
+@media (max-width: 576px) {
+    .dashboard-content {
+        min-height: 0;
+    }
+}
+

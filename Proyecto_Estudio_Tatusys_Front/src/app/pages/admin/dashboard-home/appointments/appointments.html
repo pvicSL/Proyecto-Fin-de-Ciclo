@@ -45,7 +45,7 @@
                     <th scope="row" class="d-none d-lg-table-cell">
                         <p>{{ cita.idCita }}</p> </th>
                     <td><p>{{ cita.clienteNombre }}</p></td>
-                    <td><p>{{ cita.fecha }}</p></td>
+                    <td><p>{{ cita.fecha }} ({{ cita.hora | formatoHoras }})</p></td>
                     <td class="d-none d-lg-table-cell"><p>{{ cita.tipo }}</p></td>
                     <td class="d-block d-sm-flex justify-content-around align-items-center h-100">
                         <button class="btn mb-1 mb-sm-0" (click)="irAConfirmar(cita.idCita)">Finalizar</button>
@@ -68,15 +68,13 @@
             <div class="alert-confirmadas">
                 <a [routerLink]="['/admin/citas']"> 
                     <i class="bi bi-bell-fill"></i>
-                    <p class="text-alert d-none d-sm-block">¡Tienes {{ numeroConfirmadas }} {{ numeroConfirmadas === 1 ? 'cita confirmada!' : 'citas confirmadas!' }}</p>
-                    <p class="text-alert d-sm-none fw-bold">{{ numeroConfirmadas }}</p>
+                    <p class="text-alert d-sm-block">{{ textoConfirmadas() }}</p>
                 </a>
             </div>
 
             <div class="alert-pendientes">
                 <a [routerLink]="['/admin/solicitudes']"> <i class="bi bi-bell-fill"></i>
-                    <p class="text-alert d-none d-sm-block" >¡Tienes {{ numeroPendientes }} {{ numeroPendientes === 1 ? 'solicitud pendiente!' : 'solicitudes pendientes!' }}</p>
-                    <p class="text-alert d-sm-none fw-bold">{{ numeroPendientes }} </p>
+                    <p class="text-alert d-sm-block" >{{ textoPendientes() }}</p>
                 </a>
             </div>
         </div>

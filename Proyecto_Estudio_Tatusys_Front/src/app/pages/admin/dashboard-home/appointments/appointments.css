@@ -72,3 +72,117 @@
 .alert-confirmadas a i{
     margin-right: 1rem;
 }
+
+@media (max-width: 576px) {
+    .main-content-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .text-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 0;
+    }
+
+    .time-buttons {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: space-between;
+    }
+
+    .time-buttons-days,
+    .time-buttons-arrrows {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .time-buttons button {
+        flex: 1;
+        margin: 0 !important;
+        padding: 0.45rem 0.6rem;
+        font-size: 0.875rem;
+    }
+
+    #table-confirmadas h3 {
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+
+    #table-confirmadas td p,
+    #table-confirmadas th p {
+        font-size: 0.85rem;
+        margin-bottom: 0;
+    }
+
+    #table-confirmadas td .btn {
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 0.35rem 0.5rem;
+    }
+
+    .footer {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 0.6rem;
+    }
+
+    .pagination-nav {
+        margin-left: 0 !important;
+        justify-content: center !important;
+        width: 100%;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+        row-gap: 0.35rem;
+    }
+
+    .pagination .page-link {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.55rem;
+    }
+
+    .alert-confirmadas,
+    .alert-pendientes {
+        padding: 0.55rem 0.6rem 0;
+    }
+
+    .alert-confirmadas a,
+    .alert-pendientes a {
+        align-items: center;
+    }
+
+    .alert-confirmadas a i,
+    .alert-pendientes a i {
+        margin-right: 0.6rem;
+    }
+
+    .text-alert {
+        font-size: 0.8rem;
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 380px) {
+    .text-subtitle {
+        font-size: 1.05rem;
+    }
+
+    #table-confirmadas h3 {
+        font-size: 0.8rem;
+    }
+
+    #table-confirmadas td p,
+    #table-confirmadas th p {
+        font-size: 0.78rem;
+    }
+
+    .pagination .page-link {
+        font-size: 0.75rem;
+        padding: 0.28rem 0.45rem;
+    }
+}

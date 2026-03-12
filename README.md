@@ -30,7 +30,9 @@ in ultrices sapien. Donec volutpat eros in mauris tempus, a aliquam sapien iacul
     file=NOTASPFC_DAW.docx&action=default&mobileredirect=true&DefaultItemOpen=1&wdOrigin=OFFICECOM-WEB.APPGALLERY%2CAPPHOME-WEB.JUMPBACKIN&wdPreviousSession=78461932-29a8-4406-b695-836ea7462df9
     &wdPreviousSessionSrc=AppHomeWeb&ct=1762442040318" target="_blank" rel="noopener noreferrer">Notas Compartidas (MS 365)</a>  
 - <a href="https://www.figma.com/design/MxFSHWId6q4pA8QOgZy2xJ/Gu%C3%ADa-de-Estilo-PFC?node-id=613-372&p=f&t=SQJvHF5REshyNsUX-0" target="_blank" rel="noopener noreferrer">Guía de Estilo - Figma</a>
-- <a href="https://alumnosunir-my.sharepoint.com/:w:/g/personal/patriciavictori_sanz417_comunidadunir_net/ETPE4c3cnLxDrFQ1EWrPfA4BupVdWQ-dMZauQDZuMaSM1A?e=RZ5QQD" target="_blank" rel="noopener noreferrer">MEMORIA DE PROYECTO COMPARTIDA EDITABLE</a>
+- <a href="https://alumnosunir-my.sharepoint.com/:w:/g/personal/patriciavictori_sanz417_comunidadunir_net/IQD-n-flLHe8SY-NZoGa6NaFAZ1MgaT1quk2a7_SSYqoBFE?e=k4oq85" target="_blank" rel="noopener noreferrer">MEMORIA DE PROYECTO COMPARTIDA EDITABLE</a>
+- <a href="https://alumnosunir-my.sharepoint.com/:p:/g/personal/patriciavictori_sanz417_comunidadunir_net/IQA3lfaW6ybJTafL5MRbx063AQCD0CWUqCDscgs3tsu3otk?e=RVi4PW" target="_blank" rel="noopener noreferrer">PPT PRESENTACIÓN</a>
+
 
 [↑ Volver al índice](#índice)
 ---

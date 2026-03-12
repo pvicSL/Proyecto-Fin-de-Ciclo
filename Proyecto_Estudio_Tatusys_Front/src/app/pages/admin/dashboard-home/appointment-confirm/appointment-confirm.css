@@ -49,3 +49,32 @@
   transform: scale(1.05);
   transition: 0.3s;
 }
+
+@media (max-width: 576px) {
+  .contenedor-scroll {
+    max-height: none;
+    padding-right: 0;
+  }
+
+  .text-subtitle {
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+
+  .boton-animado {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+  }
+}
+
+@media (max-width: 380px) {
+  .text-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .boton-animado {
+    padding: 8px 12px;
+    font-size: 0.82rem;
+  }
+}

@@ -2,10 +2,11 @@ import { Component, HostListener, ViewEncapsulation } from '@angular/core';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
 import { Router } from '@angular/router';
 import { AppointmentService } from '../../../../core/services/appointment.service';
+import { FormatoHorasPipe } from '../../../../pipes/formato-horas-pipe';
 
 @Component({
   selector: 'app-reviewed-requests',
-  imports: [],
+  imports: [FormatoHorasPipe],
   templateUrl: './reviewed-requests.html',
   styleUrls: ['./reviewed-requests.css'],
   encapsulation: ViewEncapsulation.None

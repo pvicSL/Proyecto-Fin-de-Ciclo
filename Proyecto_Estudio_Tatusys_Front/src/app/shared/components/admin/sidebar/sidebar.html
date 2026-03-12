@@ -19,6 +19,7 @@
     <li class="sidebar-item">
       <a [routerLink]="item.link" 
          routerLinkActive="active" 
+         (click)="cerrarSidebarMobile()"
          [routerLinkActiveOptions]="{ exact: false }" 
          class="sidebar-link">
         <i class="bi {{ item.icon }}"></i>
@@ -32,13 +33,14 @@
   @for (item of footerItems; track item.title) {
     <li class="sidebar-footer-item">
       @if (item.link === '/logout') {
-        <a href="javascript:void(0)" (click)="authService.logout()" class="sidebar-link text-danger">
+        <a href="javascript:void(0)" (click)="authService.logout(); cerrarSidebarMobile() " class="sidebar-link text-danger">
           <i class="bi {{ item.icon }}"></i>
           <span>{{ item.title }}</span>
         </a>
       } @else {
         <a [routerLink]="item.link" 
            routerLinkActive="active" 
+           (click)="cerrarSidebarMobile()"
            [routerLinkActiveOptions]="{ exact: false }" 
            class="sidebar-link">
           <i class="bi {{ item.icon }}"></i>
@@ -61,7 +63,7 @@
       @if (isExpanded) {
         <div class="sidebar-logo ms-2 overflow-hidden">
           <p class="mb-0 fw-bold text-nowrap">{{ authService.currentUser()?.nombre }}</p>
-          <small class="text-secondary text-uppercase" style="font-size: 0.65rem;">
+          <small class="text-white text-uppercase" style="font-size: 0.65rem;">
             {{ authService.currentUser()?.rol }}
           </small>
         </div>
@@ -73,7 +75,7 @@
         <li class="sidebar-item">
           <a [routerLink]="item.link" 
              routerLinkActive="active" 
-             [routerLinkActiveOptions]="{ exact: true }" 
+             [routerLinkActiveOptions]="{ exact: false }" 
              class="sidebar-link">
             <i class="bi {{ item.icon }}"></i>
             <span>{{ item.title }}</span>
@@ -93,7 +95,7 @@
           } @else {
             <a [routerLink]="item.link" 
                routerLinkActive="active" 
-               [routerLinkActiveOptions]="{ exact: true }" 
+               [routerLinkActiveOptions]="{ exact: false }" 
                class="sidebar-link">
               <i class="bi {{ item.icon }}"></i>
               <span>{{ item.title }}</span>

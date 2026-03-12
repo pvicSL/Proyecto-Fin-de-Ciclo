@@ -43,34 +43,42 @@ obtenerDniYLoguear(id: number) {
   });
 }
 
+// 1. Añade esta función de limpieza para que la comparación sea justa
+private filtrarDatos(obj: any) {
+  return JSON.stringify({
+    nombre: obj.nombre,
+    apellido1: obj.apellido1,
+    apellido2: obj.apellido2,
+    dni: obj.dni,
+    email: obj.email,
+    telefono: obj.telefono,
+    numeroCuenta: obj.numeroCuenta,
+    funciones: obj.funciones,
+    rol: obj.rol,
+    contrasenia: obj.contrasenia || '' // Si es undefined, lo tratamos como string vacío
+  });
+}
+
   cargarDatosStaff(dni: string) {
   this.staffService.getStaffByDni(dni).subscribe({
     next: (data) => {
-      // 1. Forzamos la limpieza de la referencia para que Angular detecte el cambio visual
-      this.staff = null as any; 
-      if (!this.dniFijo) {
-        this.dniFijo = data.dni;
-      }
-      // 2. Usamos un pequeño timeout de 0ms para que el ciclo de detección de Angular se refresque
-      setTimeout(() => {
-        
         this.staff = data;
-        this.datosOriginales = JSON.stringify(data);
+      // Si la contraseña no viene en el JSON, la inicializamos vacía para que no de undefined
+      if (!this.staff.contrasenia) this.staff.contrasenia = ''; 
+      
+      // Guardamos la foto original filtrada (SIN CITAS)
+      this.datosOriginales = this.filtrarDatos(this.staff);
         this.hayCambios = false;
-        console.log('Datos reseteados visualmente');
-      }, 0);
-    },
-    error: (err) => {
-      console.error('Error al recuperar datos:', err);
-      alert('No se pudieron recuperar los datos originales.');
+      if (!this.dniFijo) this.dniFijo = data.dni;
     }
   });
 }
 
-  // Se llama en cada input del HTML con (input)
-  verificarCambios() {
-    this.hayCambios = JSON.stringify(this.staff) !== this.datosOriginales;
-  }
+verificarCambios() {
+  // Comparamos el estado actual (filtrado) contra el original (filtrado)
+  const actual = this.filtrarDatos(this.staff);
+  this.hayCambios = actual !== this.datosOriginales;
+}
 
   revertirCambios() {
   if (confirm('¿Seguro que quieres descartar los cambios y volver a los datos originales?')) {

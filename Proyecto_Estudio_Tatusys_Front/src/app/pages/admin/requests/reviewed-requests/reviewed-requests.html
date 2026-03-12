@@ -16,7 +16,7 @@
                     <th scope="row" class="d-none d-lg-table-cell">
                         <p>{{ cita.idCita }}</p> </th>
                     <td><p>{{ cita.clienteNombre }}</p></td>
-                    <td><p>{{ cita.fecha }}</p></td>
+                    <td><p>{{ cita.fecha }} ({{ cita.hora | formatoHoras }})</p></td>
                     <td class="d-none d-lg-table-cell"><p>{{ cita.tipo }}</p></td>
                     <td class="d-flex justify-content-around align-items-center h-100">
                         <button class="btn" (click)="verDetalles(cita.idCita)">Ver</button>

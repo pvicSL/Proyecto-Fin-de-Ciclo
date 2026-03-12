@@ -17,7 +17,7 @@
           <input type="number" [(ngModel)]="precioBaseGlobal" class="form-control fw-bold text-success">
           <span class="input-group-text">€</span>
         </div>
-        <button class="btn btn-dark btn-sm px-3" (click)="guardarPrecioBase()">Guardar</button>
+        <button class="btn btn-sm px-3" (click)="guardarPrecioBase()">Guardar</button>
       </div>
     </div>
   </div>
@@ -54,7 +54,7 @@
         </button>
       </div>
 
-      <button class="btn " (click)="crearServicio($any(cat.key))" title="Añadir nuevo {{cat.key}}">
+      <button class="btn" (click)="crearServicio($any(cat.key))" title="Añadir nuevo {{cat.key}}">
         <i class="bi bi-plus-lg"></i>
       </button>
     </div>

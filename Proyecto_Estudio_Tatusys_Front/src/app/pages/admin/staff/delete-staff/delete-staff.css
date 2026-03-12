@@ -4,3 +4,60 @@
 .contenedor{
     background-color: var(--antiflash-white);
 }
+
+@media (max-width: 576px) {
+    .text-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .contenedor {
+        padding: 1rem !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .h4 {
+        font-size: 1.05rem;
+    }
+
+    .h5 {
+        font-size: 0.95rem;
+    }
+
+    .text-secondary,
+    .small,
+    .btn {
+        font-size: 0.9rem;
+    }
+
+    .d-flex.justify-content-center.gap-3 {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .d-flex.justify-content-center.gap-3 .btn {
+        width: 100%;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .text-subtitle {
+        font-size: 1.05rem;
+    }
+
+    .h4 {
+        font-size: 0.95rem;
+    }
+
+    .h5 {
+        font-size: 0.88rem;
+    }
+
+    .text-secondary,
+    .small,
+    .btn {
+        font-size: 0.82rem;
+    }
+}

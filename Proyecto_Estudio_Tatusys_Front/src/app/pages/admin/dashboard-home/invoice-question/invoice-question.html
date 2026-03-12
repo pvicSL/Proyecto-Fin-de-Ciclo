@@ -1,5 +1,5 @@
 <div class="contenedor-scroll container-fluid p-4 rounded shadow-sm border d-flex justify-content-center align-items-center">
-  <div class="card p-5 border-0" style="max-width: 500px;">
+  <div class="card invoice-card p-5 border-0">
     <h1 class="text-subtitle m-0 fw-bold">¿Quieres crear una Factura?</h1>
     <p class="instruccion text-muted mb-4">La factura se le enviará al cliente por <strong>Email</strong>.</p>
 
@@ -34,7 +34,7 @@
         </button>
       }
 
-      <button class="btn btn-dark px-4" 
+      <button class="btn px-4" 
               (click)="confirmarGenerarFactura()" 
               [disabled]="isFormInvalid()">
         

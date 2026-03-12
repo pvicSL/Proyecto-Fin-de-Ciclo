@@ -5,11 +5,12 @@ import { Router, RouterModule } from '@angular/router';
 import { AppointmentDTO } from '../../../../core/models/appointment.model';
 import { AppointmentDetails } from '../../../../shared/components/admin/appointment-details/appointment-details';
 import { PricesService } from '../../../../core/services/prices.service';
+import { FormatoHorasPipe } from '../../../../pipes/formato-horas-pipe';
 
 
 @Component({
   selector: 'appointments',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormatoHorasPipe],
   templateUrl: 'appointments.html',
   styleUrl: 'appointments.css',
   encapsulation: ViewEncapsulation.None
@@ -162,12 +163,29 @@ irAPagina(pagina: number | string): void {
   this.stateService.paginaActual = this.paginaActual;
 }
 
+private normalizarContador(valor: unknown): number {
+  const numero = Number(valor);
+  return Number.isFinite(numero) && numero > 0 ? Math.floor(numero) : 0;
+}
+
+textoConfirmadas(): string {
+  const total = this.normalizarContador(this.numeroConfirmadas);
+  if (total === 0) return 'No tienes citas confirmadas.';
+  return `¡Tienes ${total} ${total === 1 ? 'cita confirmada!' : 'citas confirmadas!'}`;
+}
+
+textoPendientes(): string {
+  const total = this.normalizarContador(this.numeroPendientes);
+  if (total === 0) return 'No tienes solicitudes pendientes.';
+  return `¡Tienes ${total} ${total === 1 ? 'solicitud pendiente!' : 'solicitudes pendientes!'}`;
+}
+
 numeroConfirmadas = 0;
 
   cargarNumeroCitas(): void{
     this.appointmentService.getNumberConfirmedAppointments().subscribe({
       next: (data) =>{
-        this.numeroConfirmadas = data.length;
+        this.numeroConfirmadas = data?.length ?? 0;
       },
       error: (err) => console.error(err)
     });
@@ -179,7 +197,7 @@ numeroPendientes: number = 0;
   cargarCitasPendientes() {
     this.appointmentService.getRequests().subscribe({
       next: (data) => {
-        this.numeroPendientes = data.length;
+        this.numeroPendientes = data?.length ?? 0;
       },
       error: (err) => console.error(err)
     });

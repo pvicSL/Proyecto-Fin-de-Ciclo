@@ -8,6 +8,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import proyecto.modelo.dto.CitaCompletaDTO;
@@ -21,6 +22,10 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+
 @Service
 public class PdfService {
 
@@ -32,7 +37,7 @@ public class PdfService {
     private static final String ESTUDIO_DIR1  = "Calle Me Falta un Tornillo, 5, Local Bajo";
     private static final String ESTUDIO_DIR2  = "47195 Arroyo de la Encomienda (Valladolid), España";
     private static final String ESTUDIO_TEL   = "TEL: 621 89 78 27";
-    private static final String ESTUDIO_EMAIL = "EMAIL: administracion@inkandco.com";
+    private static final String ESTUDIO_EMAIL = "EMAIL: tatusys@gmail.com";
     private static final String ESTUDIO_CIF   = "CIF: 12345678Z";
 
     // --- COLORES PALETA ---
@@ -46,6 +51,9 @@ public class PdfService {
     private static final float[] COLOR_ROW_ALT   = {0.925f, 0.925f, 0.925f};
     // #C62D49 red accent
     private static final float[] COLOR_RED       = {0.776f, 0.176f, 0.286f};
+    
+    @Value("${tatusys.facturas.ruta}")
+    private String rutaFacturas;
 
     public byte[] generarFacturaPdf(CitaCompletaDTO cita, String direccionFiscal) throws IOException {
 
@@ -263,7 +271,23 @@ public class PdfService {
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             document.save(baos);
-            return baos.toByteArray();
+            
+         // Guardar PDF en local
+            byte[] pdfBytes = baos.toByteArray();
+
+            String nombreCliente = cita.getClienteNombre() + "_" + cita.getClienteApellido1();
+            String nombreArchivo = "factura_" + nombreCliente + "_" + cita.getIdCita() + ".pdf";
+
+            Path carpeta = Path.of(rutaFacturas);
+            if (!Files.exists(carpeta)) {
+                Files.createDirectories(carpeta);
+            }
+
+            Files.write(carpeta.resolve(nombreArchivo), pdfBytes);
+            System.out.println("✅ Factura guardada en: " + carpeta.resolve(nombreArchivo).toAbsolutePath());
+
+            return pdfBytes;
+            
         }
     }
 

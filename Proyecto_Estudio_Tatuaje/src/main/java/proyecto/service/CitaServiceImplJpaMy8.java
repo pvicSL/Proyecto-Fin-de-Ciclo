@@ -915,10 +915,11 @@ public class CitaServiceImplJpaMy8 implements CitaService {
         
         presupuesto.setEstado(Estado.FINALIZADO);
         
-        // 4. Si el cliente pidió factura, la marcamos como enviada
+        /*4.Si el cliente pidió factura, la marcamos como enviada
         if (Boolean.TRUE.equals(cita.getFactura())) {
-            cita.setEstadoFactura(EstadoFactura.ENVIADA);
-        }
+        	cita.setEstadoFactura(EstadoFactura.ENVIADA);
+        }*/
+        
         
         // 5. Guardamos ambas entidades
         citaRepository.save(cita);

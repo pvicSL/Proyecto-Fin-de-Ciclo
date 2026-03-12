@@ -18,3 +18,60 @@
 
     background-color: var(--antiflash-white);
 }
+
+@media (max-width: 576px) {
+    .contenedor-scroll {
+        max-height: none;
+        padding-right: 0;
+        padding: 1rem !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    h2,
+    h5,
+    .form-label,
+    .badge,
+    .btn,
+    .form-control,
+    .input-group-text,
+    .tag-input-name,
+    .tag-input-price,
+    .euro,
+    small {
+        font-size: 0.9rem !important;
+    }
+
+    .input-group {
+        width: 130px !important;
+    }
+
+    .d-flex.justify-content-end.gap-3 {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .d-flex.justify-content-end.gap-3 .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+    h2,
+    h5,
+    .form-label,
+    .badge,
+    .btn,
+    .form-control,
+    .input-group-text,
+    .tag-input-name,
+    .tag-input-price,
+    .euro,
+    small {
+        font-size: 0.82rem !important;
+    }
+
+    .input-group {
+        width: 120px !important;
+    }
+}

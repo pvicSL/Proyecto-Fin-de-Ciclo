@@ -35,20 +35,29 @@ export class DeleteStaff implements OnInit {
     });
   }
 
-  confirmarBorrado() {
-    if (this.staff && this.staff.idTrabajador) {
-      this.staffService.deleteStaff(this.staff.idTrabajador).subscribe({
-        next: () => {
+confirmarBorrado() {
+  if (this.staff && this.staff.idTrabajador) {
+    this.staffService.deleteStaff(this.staff.idTrabajador).subscribe({
+      next: (resultado: any) => {
+        // En Java, si el método devuelve un int, llega aquí
+        if (resultado === 0) {
           alert('Trabajador eliminado con éxito');
-          window.history.back(); // O la ruta de tu lista
-        },
-        error: (err) => {
-          console.error(err);
-          alert('Error al intentar eliminar: ' + (err.error?.message || 'Servidor no disponible'));
+          window.history.back();
+        } else if (resultado > 0) {
+          // Caso: Retorna numeroCitas
+          alert(`No se puede eliminar: El trabajador tiene ${resultado} citas asignadas.`);
+        } else if (resultado === -1) {
+          alert('Error: El trabajador ya no existe en la base de datos.');
         }
-      });
-    }
+      },
+      error: (err) => {
+        // Si el backend lanza una excepción o devuelve 400
+        console.error('Error 400 del servidor:', err);
+        alert('El servidor rechazó la petición. Verifica si el trabajador tiene citas o si el ID es correcto.');
+      }
+    });
   }
+}
 
   cancelar() {
     window.history.back();

@@ -353,7 +353,25 @@
 
                                 @if (bookingForm.get('acceptTerms')?.invalid && bookingForm.get('acceptTerms')?.touched)
                                 {
-                                <div class="invalid-feedback d-block">Debes aceptar los términos para continuar.</div>
+                                <div class="invalid-feedback d-block text-center">Debes aceptar los términos para
+                                    continuar.</div>
+                                }
+                            </div>
+
+                            <div class="col-12 text-center mt-2">
+                                <div class="d-flex justify-content-center align-items-center flex-wrap gap-1">
+                                    <input class="form-check-input" type="checkbox"
+                                        formControlName="acceptDataProtection" id="dataProtection">
+                                    <label class="form-check-label ms-2" for="dataProtection">Autorizo el tratamiento de
+                                        mis datos de acuerdo con la</label>
+                                    <a href="/privacidad" target="_blank" rel="noopener noreferrer"
+                                        class="text-decoration-underline text-white">Política de protección</a>.
+                                </div>
+
+                                @if (bookingForm.get('acceptDataProtection')?.invalid &&
+                                bookingForm.get('acceptDataProtection')?.touched) {
+                                <div class="invalid-feedback d-block text-center">Debes autorizar el tratamiento de
+                                    datos.</div>
                                 }
                             </div>
 
