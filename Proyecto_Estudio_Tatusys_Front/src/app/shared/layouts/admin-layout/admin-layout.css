@@ -47,12 +47,14 @@ h1{
     background-color: var(--dark-cyan);
     color: white;
     font-weight: bold;
-    border: 2px solid var(--dark-cyan)
+    border: 2px solid var(--dark-cyan);
 }
 
 /* cambio de color del btn principal en hover */
 .btn:hover{
     background-color: var(--robin-egg-blue);
+    color: black;
+    border: 2px solid var(--robin-egg-blue);
 }
 
 /* ajustes personalizados botón secundario */

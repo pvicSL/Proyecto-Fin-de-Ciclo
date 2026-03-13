@@ -23,48 +23,48 @@
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Nombre:</label>
                         <input type="text" class="form-control" name="nombre" 
-                            [(ngModel)]="staff.nombre" (input)="verificarCambios()" required>
+                            [(ngModel)]="staff.nombre" (ngModelChange)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Apellido 1:</label>
                         <input type="text" class="form-control" name="apellido1" 
-                            [(ngModel)]="staff.apellido1" (input)="verificarCambios()" required>
+                            [(ngModel)]="staff.apellido1" (ngModelChange)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Apellido 2:</label>
                         <input type="text" class="form-control" name="apellido2" 
-                            [(ngModel)]="staff.apellido2" (input)="verificarCambios()" required>
+                            [(ngModel)]="staff.apellido2" (ngModelChange)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">DNI:</label>
                         <input type="text" class="form-control" name="dni" 
-                            [(ngModel)]="staff.dni" (input)="verificarCambios()" required>
+                            [(ngModel)]="staff.dni" (ngModelChange)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Email:</label>
                         <input type="text" class="form-control" name="email" 
-                            [(ngModel)]="staff.email" (input)="verificarCambios()" required>
+                            [(ngModel)]="staff.email" (ngModelChange)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Teléfono:</label>
                         <input type="text" class="form-control" name="telefono" 
-                            [(ngModel)]="staff.telefono" (input)="verificarCambios()" required>
+                            [(ngModel)]="staff.telefono" (ngModelChange)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Nº Cuenta:</label>
                         <input type="text" class="form-control" name="numeroCuenta" 
-                            [(ngModel)]="staff.numeroCuenta" (input)="verificarCambios()" required>
+                            [(ngModel)]="staff.numeroCuenta" (ngModelChange)="verificarCambios()" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Funciones:</label>
-                        <select class="form-select" name="funciones" [(ngModel)]="staff.funciones" (change)="verificarCambios()">
+                        <select class="form-select" name="funciones" [(ngModel)]="staff.funciones" (ngModelChange)="verificarCambios()">
                             <option value="CREACION">Creación</option>
                             <option value="ELIMINACION">Eliminación</option>
                         </select>
@@ -72,7 +72,7 @@
 
                     <div class="col-md-4">
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Rol:</label>
-                        <select class="form-select" name="rol" [(ngModel)]="staff.rol" (change)="verificarCambios()">
+                        <select class="form-select" name="rol" [(ngModel)]="staff.rol" (ngModelChange)="verificarCambios()">
                             <option value="TRABAJADOR">Trabajador</option>
                         </select>
                     </div>
@@ -80,7 +80,7 @@
                         <label class="fw-bold small mb-1 text-uppercase text-muted">Contraseña:</label>
                         <div class="input-group">
                             <input type="text" class="form-control" name="contrasenia" 
-                                [(ngModel)]="staff.contrasenia" (input)="verificarCambios()" 
+                                [(ngModel)]="staff.contrasenia" (ngModelChange)="verificarCambios()" 
                                 placeholder="********" required>
                         </div>
                     </div>
@@ -91,9 +91,9 @@
                     <button type="button" class="btn btn-danger px-4" (click)=" cargarDatosStaff(dniFijo)" [disabled]="!hayCambios">
                         REVERTIR CAMBIOS
                     </button>
-                    <button class="btn py-2 px-5 fw-bold text-white" 
+                    <button class="btn py-2 px-5 fw-bold text-white " 
                             (click)="guardarStaff()" 
-                            [disabled]="!staffForm.valid || !hayCambios">
+                            [disabled]="!hayCambios">
                         {{ hayCambios ? 'ACTUALIZAR DATOS' : 'SIN CAMBIOS' }}
                     </button>
                 </div>

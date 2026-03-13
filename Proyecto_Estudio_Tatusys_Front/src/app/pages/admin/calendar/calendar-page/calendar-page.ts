@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild, } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild, } from '@angular/core';
 import { CalendarOptions, DatesSetArg, EventClickArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import listPlugin from '@fullcalendar/list';
 import esLocale from '@fullcalendar/core/locales/es'; // Para ponerlo en español
 import { Router } from '@angular/router';
 import { AppointmentService } from '../../../../core/services/appointment.service';
@@ -22,7 +23,8 @@ export class CalendarPage {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin],
     locale: esLocale,
-    height: 'parent',
+    height: 'auto',
+    expandRows: true,
     displayEventTime: false,
     headerToolbar: false,
     handleWindowResize: true, // El calendario se redibuja al girar el móvil
@@ -79,6 +81,36 @@ export class CalendarPage {
     error: (err) => console.error('Error en TatuSys API:', err)
   });
 }
+
+ngOnInit() {
+    this.configurarVistaSegunPantalla();
+  }
+
+  configurarVistaSegunPantalla() {
+    const esMovil = window.innerWidth < 768;
+    
+    this.calendarOptions = {
+      ...this.calendarOptions,
+      plugins: [dayGridPlugin, listPlugin], // Asegúrate de incluir listPlugin
+      initialView: esMovil ? 'listMonth' : 'dayGridMonth',
+      // Personaliza el texto de la lista si no hay eventos
+      noEventsText: 'No hay citas para este mes'
+    };
+  }
+
+  // Opcional: Escuchar el cambio de tamaño en tiempo real
+  @HostListener('window:resize')
+  onResize() {
+    const api = this.calendarComponent.getApi();
+    const esMovil = window.innerWidth < 768;
+    const vistaActual = api.view.type;
+
+    if (esMovil && vistaActual !== 'listMonth') {
+      api.changeView('listMonth');
+    } else if (!esMovil && vistaActual !== 'dayGridMonth') {
+      api.changeView('dayGridMonth');
+    }
+  }
 
   // --- Métodos de navegación (Flechas) ---
 

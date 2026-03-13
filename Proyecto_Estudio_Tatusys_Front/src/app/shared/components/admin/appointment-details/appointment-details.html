@@ -142,8 +142,12 @@
             </div>
             <div>
                 <span class="text-secondary d-block small">Fecha y Hora:
-                  <span class="text-dark">{{cita.fecha| date:'dd/MM/yyyy'}} {{cita.hora}}</span>
+                  <span class="text-dark">{{cita.fecha| date:'dd/MM/yyyy'}} {{cita.hora | formatoHoras}}</span>
                 </span>
+            </div>
+            <div>
+              <span class="text-secondary d-block small">Trabajador:</span>
+              <span>{{citaDTO.nombreTrabajador || 'No asignado'}}</span>
             </div>
           </div>
             

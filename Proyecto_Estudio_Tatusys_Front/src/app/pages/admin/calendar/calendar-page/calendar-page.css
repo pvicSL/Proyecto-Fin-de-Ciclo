@@ -1,103 +1,204 @@
-/* Asegúrate de que el texto de la cita sea visible */
-::ng-deep .fc-event {
-  background-color: #5ba19b !important; /* Color verde que querías */
-  color: white !important;
-  border: none !important;
-  padding: 2px !important;
-  display: block !important;
+:host {
+  display: block;
 }
 
-/* Si usas la clase personalizada que pusimos en el mapeo */
-::ng-deep .cita-badge {
-  cursor: pointer;
-  font-size: 0.85em;
+/* 1. RESET UNIVERSAL: Nada de azul ni subrayados en ningún enlace */
+::ng-deep .fc a, 
+::ng-deep .fc a:hover,
+::ng-deep .fc-list-day-text, 
+::ng-deep .fc-list-day-side-text {
+  text-decoration: none !important;
+  color: #000000 !important; /* Forzamos negro para los días y fechas */
 }
 
-/* Contenedor principal */
-.calendar-container {
-  max-width: 100%;
-  overflow-x: hidden; /* Evita scroll lateral innecesario */
+/* 2. VISTA MÓVIL (LISTA): Forzar texto blanco dentro de las filas verdes */
+::ng-deep .fc-list-event-time,
+::ng-deep .fc-list-event-title,
+::ng-deep .fc-list-event-title a {
+  color: #ffffff !important; /* El texto de la cita SIEMPRE blanco */
 }
 
-/* Forzar altura mínima para que no se colapse en móviles */
-::ng-deep .fc {
-  min-height: 500px;
-  font-size: 0.85rem; /* Fuente un poco más pequeña en general */
+/* 3. VISTA ESCRITORIO (CUADRÍCULA): Asegurar blanco en los eventos */
+::ng-deep .fc-daygrid-event,
+::ng-deep .fc-daygrid-event-dot,
+::ng-deep .fc-event-time,
+::ng-deep .fc-event-title {
+  color: #ffffff !important;
 }
 
-/* Ajustes específicos para móviles */
-@media (max-width: 768px) {
-  .calendar-container {
-    padding: 1rem !important;
-  }
-
-  /* Reducimos el tamaño del título del mes */
-  h1.text-capitalize {
-    font-size: 1.5rem;
-  }
-
-  /* Hacemos que los botones de navegación sean más compactos */
-  .btn-outline-primary {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.9rem;
-  }
-
-  /* Ajustamos las celdas del calendario para que no sean tan altas */
-  ::ng-deep .fc .fc-daygrid-day-frame {
-    min-height: 60px;
-  }
-
-  /* Ocultamos el texto largo y dejamos solo un punto o el título corto */
-  ::ng-deep .fc-event-title {
-    font-size: 0.7rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+/* 4. CABECERAS DE LA LISTA (Móvil) */
+/* Esto quita el azul de los títulos de los días en la lista (ej: "9 de marzo") */
+::ng-deep .fc-list-day-cushion a {
+  color: #000000 !important;
+  font-weight: bold;
 }
 
-/* Estilo para citas */
-::ng-deep .cita-badge {
-  background-color: #0d6efd !important;
-  border: none !important;
-  color: white !important;
-  border-radius: 4px;
-  padding: 2px 4px;
-  cursor: pointer;
+/* 5. HOVER EN MÓVIL: Que no se pierda el blanco al pulsar */
+::ng-deep .fc-list-event:hover td * {
+  color: #ffffff !important;
 }
 
-
+/* Wrapper */
 .calendar-page-wrapper {
-  height: 100vh; 
   display: flex;
   flex-direction: column;
 }
 
+/* Desktop: ocupar toda la altura */
+@media (min-width: 992px) {
+  .calendar-page-wrapper {
+    height: 100%;
+  }
 
-.calendar-scroll-area {
-  flex-grow: 1;
-  overflow-y: auto; /* Scroll vertical si el calendario es largo */
-  overflow-x: auto; /* Scroll horizontal si se hace zoom o la pantalla es muy pequeña */
-  border: 1px solid #dee2e6;
+  .calendar-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .calendar-main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  ::ng-deep .fc {
+    height: 100% !important;
+  }
 }
 
-/* Evita que el calendario se encoja demasiado y permite el scroll horizontal en móviles */
-.calendar-min-width {
-  min-width: 700px; /* Al hacer zoom o en móvil, esto activará el scroll lateral del div, no del body */
+/* Móvil: altura automática */
+@media (max-width: 991px) {
+  .calendar-main-container {
+    padding-bottom: 1rem;
+  }
+
+  ::ng-deep .fc {
+    height: auto !important;
+  }
 }
 
-/* Ajuste de altura de FullCalendar para que llene el contenedor */
-::ng-deep .fc {
-  height: 100% !important;
-  min-height: 600px; /* Asegura que siempre tenga un tamaño decente */
+/* Eventos */
+::ng-deep .fc-event {
+  background-color: var(--dark-cyan) !important;
+  border: none !important;
+  color: white !important;
+  padding: 2px 4px !important;
+  font-size: 0.8rem;
 }
 
-/* Estética de la barra de scroll (opcional para que se vea más pro) */
-.calendar-scroll-area::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+::ng-deep .fc-event-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.calendar-scroll-area::-webkit-scrollbar-thumb {
-  background: #cbd5e0;
-  border-radius: 4px;
+
+::ng-deep .fc-event:hover{
+  cursor: pointer;
+  background-color: var(--robin-egg-blue) !important;
+}
+
+/* Estilos específicos para la vista de Lista */
+::ng-deep .fc-list-event {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* 1. Quitamos cualquier fondo por defecto de las celdas */
+::ng-deep .fc-list-event td {
+  background-color: transparent !important;
+}
+
+/* 2. Aplicamos el hover a las celdas cuando pasamos por encima de la fila */
+::ng-deep .fc-list-event:hover td {
+  background-color: var(--robin-egg-blue) !important;
+  cursor: pointer;
+}
+
+/* Bolita de color en la lista */
+::ng-deep .fc-list-event-dot {
+  border-color: var(--dark-cyan) !important; /* El verde que definiste */
+}
+
+/* Ajuste de altura para que no scrollee el body sino el calendario */
+@media (max-width: 767px) {
+  .calendar-main-container {
+    border: none;
+    box-shadow: none;
+  }
+
+  .calendar-page-wrapper {
+    padding: 0.9rem !important;
+  }
+
+  .calendar-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .calendar-header .btn {
+    font-size: 0.88rem;
+    padding: 0.35rem 0.55rem;
+  }
+
+  ::ng-deep .fc .fc-toolbar-title {
+    font-size: 1rem !important;
+  }
+
+  ::ng-deep .fc .fc-col-header-cell-cushion,
+  ::ng-deep .fc .fc-daygrid-day-number,
+  ::ng-deep .fc .fc-list-day-cushion {
+    font-size: 0.82rem !important;
+  }
+
+  ::ng-deep .fc-list-event-time,
+  ::ng-deep .fc-list-event-title,
+  ::ng-deep .fc-list-event-title a,
+  ::ng-deep .fc-event-time,
+  ::ng-deep .fc-event-title {
+    font-size: 0.8rem !important;
+  }
+  
+  ::ng-deep .fc-view-harness {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 380px) {
+  .calendar-page-wrapper {
+    padding: 0.7rem !important;
+  }
+
+  .calendar-header h1 {
+    font-size: 1.05rem;
+  }
+
+  .calendar-header .btn {
+    font-size: 0.78rem;
+    padding: 0.28rem 0.45rem;
+  }
+
+  ::ng-deep .fc .fc-toolbar-title {
+    font-size: 0.92rem !important;
+  }
+
+  ::ng-deep .fc .fc-col-header-cell-cushion,
+  ::ng-deep .fc .fc-daygrid-day-number,
+  ::ng-deep .fc .fc-list-day-cushion,
+  ::ng-deep .fc-list-event-time,
+  ::ng-deep .fc-list-event-title,
+  ::ng-deep .fc-list-event-title a,
+  ::ng-deep .fc-event-time,
+  ::ng-deep .fc-event-title {
+    font-size: 0.74rem !important;
+  }
+}
+
+::ng-deep .fc-list-empty{
+  background-color: white !important;
+}
+
+::ng-deep .fc-listMonth-view{
+  border: 0px solid #000 !important;
 }

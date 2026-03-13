@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AppointmentService } from '../../../../core/services/appointment.service';
 import { StaffDTO } from '../../../../core/models/staff.model'; // Ajusta la ruta a tu modelo
-import { Observable } from 'rxjs';
 import { StaffService } from '../../../../core/services/staff.service';
 
 @Component({
@@ -19,10 +17,8 @@ export class ListStaff implements OnInit {
   // Usamos el DTO que has definido
   listaStaff: StaffDTO[] = [];
   paginaActual: number = 1;
-  numeroPendientes: number = 0;
 
   constructor(
-    private appointmentService: AppointmentService,
     private staffService: StaffService,
     private router: Router
   ) {}
@@ -62,30 +58,19 @@ export class ListStaff implements OnInit {
     this.router.navigate(['admin/trabajadores/eliminar', id]);
   }
 
-  // --- Lógica de Paginación Dinámica ---
-  
   get itemsPorPagina(): number {
-  const altoVentana = window.innerHeight;
-  const anchoVentana = window.innerWidth;
-
-  // 1. Definimos el espacio que NO es tabla (Header + Breadcrumb + Footer + Margen)
-  // En móvil el header suele ser más alto, en desktop más bajo.
-  const espacioOcupado = anchoVentana < 992 ? 380 : 340;
-
-  // 2. Definimos cuánto mide cada fila (ajusta según tu CSS)
-  const altoFila = anchoVentana < 576 ? 80 : 65; 
-
-  // 3. Calculamos cuántas caben
-  const espacioDisponible = altoVentana - espacioOcupado;
-  const filasCalculadas = Math.floor(espacioDisponible / altoFila);
-
-  // 4. Ponemos límites lógicos (mínimo 4, máximo según necesites)
-  return Math.max(4, filasCalculadas);
-}
+    const altoVentana = window.innerHeight;
+    const anchoVentana = window.innerWidth;
+    const espacioOcupado = anchoVentana < 992 ? 380 : 340;
+    const altoFila = anchoVentana < 576 ? 80 : 65;
+    const espacioDisponible = altoVentana - espacioOcupado;
+    const filasCalculadas = Math.floor(espacioDisponible / altoFila);
+    return Math.max(4, filasCalculadas);
+  }
 
   @HostListener('window:resize')
-  onResize() { 
-    this.paginaActual = 1; 
+  onResize() {
+    this.paginaActual = 1;
   }
 
   get staffPaginado() {

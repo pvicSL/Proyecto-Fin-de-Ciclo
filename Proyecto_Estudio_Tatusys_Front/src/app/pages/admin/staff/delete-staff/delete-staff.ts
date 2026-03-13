@@ -35,20 +35,31 @@ export class DeleteStaff implements OnInit {
     });
   }
 
-  confirmarBorrado() {
-    if (this.staff && this.staff.idTrabajador) {
-      this.staffService.deleteStaff(this.staff.idTrabajador).subscribe({
-        next: () => {
-          alert('Trabajador eliminado con éxito');
-          window.history.back(); // O la ruta de tu lista
-        },
-        error: (err) => {
-          console.error(err);
-          alert('Error al intentar eliminar: ' + (err.error?.message || 'Servidor no disponible'));
+confirmarBorrado() {
+  if (this.staff && this.staff.idTrabajador) {
+    this.staffService.deleteStaff(this.staff.idTrabajador).subscribe({
+      next: (response: any) => {
+        // Al entrar en 'next', sabemos que el servidor respondió con un 200 OK
+        // En tu Java, el caso 0 devuelve ResponseEntity.ok()
+        alert('Trabajador eliminado con éxito');
+        window.history.back();
+      },
+      error: (err) => {
+        // Aquí manejamos los casos de error (400, 404, etc.)
+        if (err.status === 404) {
+          alert('Error: El trabajador ya no existe en la base de datos.');
+        } else if (err.status === 400) {
+          // Extraemos el mensaje de error que pusiste en el ResponseEntity de Java
+          const mensajeError = err.error?.error || 'El trabajador tiene citas asignadas.';
+          alert(mensajeError);
+        } else {
+          alert('El servidor rechazó la petición. Verifica la conexión.');
         }
-      });
-    }
+        console.error('Detalles del error:', err);
+      }
+    });
   }
+}
 
   cancelar() {
     window.history.back();

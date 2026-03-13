@@ -1,19 +1,28 @@
-<div class="calendar-page-wrapper d-flex flex-column vh-100 p-3 p-md-4 overflow-hidden">
-  
-  <div class="calendar-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3 flex-shrink-0">
-    <h1 class="text-capitalize fw-bold m-0">{{ mesActual }}</h1>
+<div class="calendar-page-wrapper p-3 p-md-4">
+
+  <div class="calendar-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+    
+    <h1 class="text-capitalize fw-bold m-0 text-truncate">
+      {{ mesActual }}
+    </h1>
+
     <div class="d-flex gap-2">
-      <button class="btn btn-outline-primary" (click)="irAlMesAnterior()">
-        <i class="bi bi-chevron-left"></i> <span class="d-none d-sm-inline">Anterior</span>
+      <button class="btn" (click)="irAlMesAnterior()">
+        <i class="bi bi-chevron-left"></i>
+        <span class="d-none d-sm-inline">Anterior</span>
       </button>
-      <button class="btn btn-outline-primary" (click)="irAlMesSiguiente()">
-        <span class="d-none d-sm-inline">Siguiente</span> <i class="bi bi-chevron-right"></i>
+
+      <button class="btn" (click)="irAlMesSiguiente()">
+        <span class="d-none d-sm-inline">Siguiente</span>
+        <i class="bi bi-chevron-right"></i>
       </button>
     </div>
+
   </div>
 
-  <div class="calendar-scroll-area bg-white shadow-sm rounded-3 flex-grow-1 overflow-auto p-2">
-    <div class="calendar-min-width"> <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+  <div class="calendar-body">
+    <div class="calendar-main-container bg-white shadow-sm rounded-3 border">
+      <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     </div>
   </div>
 

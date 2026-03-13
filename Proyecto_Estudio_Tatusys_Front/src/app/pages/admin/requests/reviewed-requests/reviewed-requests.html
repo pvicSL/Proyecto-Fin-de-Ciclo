@@ -1,37 +1,39 @@
-<div class="d-flex flex-column flex-grow-1 h-100">
-    <table id="table-confirmadas" class="table table-striped table-borderless align-middle">
-        <thead class="table-header">
-            <tr>
-                <th scope="col" class="d-none d-lg-table-cell"><h3>#</h3></th>
-                <th scope="col"><h3>Nombre</h3></th>
-                <th scope="col"><h3>Fecha y Hora</h3></th>
-                <th scope="col" class="d-none d-lg-table-cell"><h3>Tipo</h3></th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody class="table-body">
-            
-            @for (cita of citasPaginadas; track cita.idCita ; let i = $index) {
+<div class="requests-page d-flex flex-column flex-grow-1 h-100">
+    <div class="requests-table-wrapper flex-grow-1">
+        <table id="table-confirmadas" class="table table-striped table-borderless align-middle mb-0">
+            <thead class="table-header">
                 <tr>
-                    <th scope="row" class="d-none d-lg-table-cell">
-                        <p>{{ cita.idCita }}</p> </th>
-                    <td><p>{{ cita.clienteNombre }}</p></td>
-                    <td><p>{{ cita.fecha }}</p></td>
-                    <td class="d-none d-lg-table-cell"><p>{{ cita.tipo }}</p></td>
-                    <td class="d-flex justify-content-around align-items-center h-100">
-                        <button class="btn" (click)="verDetalles(cita.idCita)">Ver</button>
-                    </td>
+                    <th scope="col" class="d-none d-lg-table-cell"><h3>#</h3></th>
+                    <th scope="col"><h3>Nombre</h3></th>
+                    <th scope="col"><h3>Fecha y Hora</h3></th>
+                    <th scope="col" class="d-none d-lg-table-cell"><h3>Tipo</h3></th>
+                    <th scope="col"></th>
                 </tr>
-            } @empty {
-                <tr>
-                    <td colspan="5" class="text-center p-4">
-                        <p class="text-muted">No hay solicitudes pendientes por confirmar.</p>
-                    </td>
-                </tr>
-            }
+            </thead>
+            <tbody class="table-body">
+                
+                @for (cita of citasPaginadas; track cita.idCita ; let i = $index) {
+                    <tr>
+                        <th scope="row" class="d-none d-lg-table-cell">
+                            <p>{{ cita.idCita }}</p> </th>
+                        <td><p>{{ cita.clienteNombre }}</p></td>
+                        <td><p>{{ cita.fecha }} ({{ cita.hora | formatoHoras }})</p></td>
+                        <td class="d-none d-lg-table-cell"><p>{{ cita.tipo }}</p></td>
+                        <td class="d-flex justify-content-around align-items-center h-100">
+                            <button class="btn" (click)="verDetalles(cita.idCita)">Ver</button>
+                        </td>
+                    </tr>
+                } @empty {
+                    <tr>
+                        <td colspan="5" class="text-center p-4">
+                            <p class="text-muted">No hay solicitudes pendientes por confirmar.</p>
+                        </td>
+                    </tr>
+                }
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
     <div class="footer mt-auto">
 

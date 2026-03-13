@@ -18,3 +18,58 @@
 
     background-color: var(--antiflash-white);
 }
+
+@media (max-width: 576px) {
+    .contenedor-scroll {
+        max-height: none;
+        padding-right: 0;
+        padding: 1rem !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .text-subtitle {
+        font-size: 1.2rem;
+        line-height: 1.35;
+    }
+
+    .h5 {
+        font-size: 1rem;
+    }
+
+    .small,
+    .form-control,
+    .form-select,
+    .btn,
+    label {
+        font-size: 0.9rem !important;
+    }
+
+    .d-flex.justify-content-end.mt-5 {
+        margin-top: 1.25rem !important;
+    }
+
+    .d-flex.justify-content-end.mt-5 .btn {
+        width: 100%;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .text-subtitle {
+        font-size: 1.05rem;
+    }
+
+    .h5 {
+        font-size: 0.92rem;
+    }
+
+    .small,
+    .form-control,
+    .form-select,
+    .btn,
+    label {
+        font-size: 0.82rem !important;
+    }
+}

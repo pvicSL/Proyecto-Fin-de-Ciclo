@@ -14,7 +14,7 @@ import { UploadService } from '../../../../core/services/upload.service';
 
 @Component({
   selector: 'app-appointment-modify',
-  imports: [CommonModule, FormsModule, ],
+  imports: [CommonModule, FormsModule, FormatoHorasPipe],
   templateUrl: './appointment-modify.html',
   styleUrls: ['./appointment-modify.css'],
   encapsulation: ViewEncapsulation.None
@@ -29,6 +29,14 @@ export class AppointmentModify implements OnInit {
   citaOriginal!: AppointmentAdminDTO; // <-- Importante: El respaldo
   tarifasBBDD: any = {};
   duracionEstimada: number = 0;
+  opcionesSeleccionables: Record<string, string[]> = {
+  TIPO: [],
+  ZONA: [],
+  TAMANIO: [],
+  DETALLE: [],
+  COLORACION: [],
+  ESTILO: []
+};
 
   constructor(
     protected appointmentService: AppointmentService,
@@ -123,6 +131,18 @@ private sincronizarYCalcularDuracion() {
           this.tarifasBBDD[llave] = p.precioAdicional;
         }
       });
+
+      respuestas.todosLosPrecios.forEach(p => {
+      if (p && p.valor && p.categoria) {
+        const llave = p.valor.trim().toUpperCase();
+        this.tarifasBBDD[llave] = p.precioAdicional;
+
+        // Llenamos las opciones dinámicas si la categoría existe en nuestro objeto
+        if (this.opcionesSeleccionables[p.categoria]) {
+          this.opcionesSeleccionables[p.categoria].push(p.valor);
+        }
+      }
+    });
 
       // 3. URLs de imágenes
       if (this.cita.imagenRef1) this.cita.imagenRef1 = this.uploadService.getImagenUrl(this.cita.imagenRef1);

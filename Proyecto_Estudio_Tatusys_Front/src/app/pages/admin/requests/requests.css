@@ -5,3 +5,26 @@ app-pending-requests, app-reviewed-requests{
     flex-grow: 1;
     min-height: 0; /* importante para permitir que los hijos con overflow se ajusten */
 }
+
+@media (max-width: 576px) {
+    .filter-group {
+        display: flex;
+        width: 100%;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .filter-group .btn {
+        flex: 1;
+        margin-right: 0 !important;
+        font-size: 0.9rem;
+        padding: 0.45rem 0.6rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .filter-group .btn {
+        font-size: 0.82rem;
+        padding: 0.38rem 0.5rem;
+    }
+}

@@ -45,7 +45,7 @@
                     <th scope="row" class="d-none d-lg-table-cell">
                         <p>{{ cita.idCita }}</p> </th>
                     <td><p>{{ cita.clienteNombre }}</p></td>
-                    <td><p>{{ cita.fecha }}</p></td>
+                    <td><p>{{ cita.fecha }} ({{ cita.hora | formatoHoras }})</p></td>
                     <td class="d-none d-lg-table-cell"><p>{{ cita.tipo }}</p></td>
                     <td class="d-block d-sm-flex justify-content-around align-items-center h-100">
                         <button class="btn mb-1 mb-sm-0" (click)="irAConfirmar(cita.idCita)">Finalizar</button>
@@ -68,15 +68,13 @@
             <div class="alert-confirmadas">
                 <a [routerLink]="['/admin/citas']"> 
                     <i class="bi bi-bell-fill"></i>
-                    <p class="text-alert d-none d-sm-block">¡Tienes {{ numeroConfirmadas }} {{ numeroConfirmadas === 1 ? 'cita confirmada!' : 'citas confirmadas!' }}</p>
-                    <p class="text-alert d-sm-none fw-bold">{{ numeroConfirmadas }}</p>
+                    <p class="text-alert d-sm-block">{{ textoConfirmadas() }}</p>
                 </a>
             </div>
 
             <div class="alert-pendientes">
                 <a [routerLink]="['/admin/solicitudes']"> <i class="bi bi-bell-fill"></i>
-                    <p class="text-alert d-none d-sm-block" >¡Tienes {{ numeroPendientes }} {{ numeroPendientes === 1 ? 'solicitud pendiente!' : 'solicitudes pendientes!' }}</p>
-                    <p class="text-alert d-sm-none fw-bold">{{ numeroPendientes }} </p>
+                    <p class="text-alert d-sm-block" >{{ textoPendientes() }}</p>
                 </a>
             </div>
         </div>
@@ -84,10 +82,10 @@
         <nav class="pagination-nav d-flex justify-content-end ms-4">
             <ul class="pagination">
                 
-                <li class="page-item me-1" [class.disabled]="paginaActual === 1 || totalPaginas.length === 0">
+                <li class="page-item me-1" [class.disabled]="paginaActual === 1 || citasConfirmadas.length === 0">
                     <a class="page-link btn" 
-                    [class.btn-secondary]="paginaActual !== 1 && totalPaginas.length > 0" 
-                    (click)="totalPaginas.length && irAPagina('prev')">
+                    [class.btn-secondary]="paginaActual !== 1 && citasConfirmadas.length > 0" 
+                    (click)="citasConfirmadas.length && irAPagina('prev')">
                     Anterior
                     </a>
                 </li>
@@ -102,10 +100,10 @@
                     </li>
                 }
 
-                <li class="page-item me-1" [class.disabled]="paginaActual === totalPaginas.length || totalPaginas.length === 0">
+                <li class="page-item me-1" [class.disabled]="paginaActual === totalPaginas.length || citasConfirmadas.length === 0">
                     <a class="page-link btn" 
-                    [class.btn-secondary]="paginaActual !== totalPaginas.length && totalPaginas.length > 0" 
-                    (click)="totalPaginas.length && irAPagina('next')">
+                    [class.btn-secondary]="paginaActual !== totalPaginas.length && citasConfirmadas.length > 0" 
+                    (click)="citasConfirmadas.length && irAPagina('next')">
                     Siguiente
                     </a>
                 </li>
