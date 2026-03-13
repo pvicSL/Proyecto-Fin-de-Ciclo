@@ -74,6 +74,10 @@
 }
 
 @media (max-width: 576px) {
+    .alerts {
+        display: none;
+    }
+
     .main-content-header {
         flex-direction: column;
         align-items: stretch;

@@ -96,6 +96,11 @@ export class Appointments implements OnInit{
     this.appointmentService.getConfirmedAppointments(fechaISO, this.vista).subscribe({
       next: (data) => {
         this.citasConfirmadas = data;
+        const totalPaginas = this.totalPaginas.length;
+        if (this.citasConfirmadas.length === 0 || this.paginaActual > totalPaginas) {
+          this.paginaActual = 1;
+          this.stateService.paginaActual = 1;
+        }
       },
       error: (error) => console.error('Error al filtrar citas', error)
     });
@@ -148,7 +153,7 @@ export class Appointments implements OnInit{
   // El cálculo de páginas se ajusta solo al cambiar el divisor
   get totalPaginas(): number[] {
     const total = Math.ceil(this.citasConfirmadas.length / this.citasPorPagina);
-    return Array.from({ length: total }, (_, i) => i + 1);
+    return Array.from({ length: Math.max(1, total) }, (_, i) => i + 1);
   }
 
 // 3. Método para navegar

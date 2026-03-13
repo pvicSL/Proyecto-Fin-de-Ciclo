@@ -1,6 +1,19 @@
 /* Ajusta la ruta según dónde esté tu archivo del padre */
 @import "../../../../shared/layouts/admin-layout/admin-layout.css";
 
+.requests-page {
+	min-height: 0;
+}
+
+.requests-table-wrapper {
+	min-height: 0;
+	overflow: visible;
+}
+
+.footer {
+	margin-top: auto;
+}
+
 @media (max-width: 576px) {
 	#table-confirmadas h3 {
 		font-size: 0.9rem;
@@ -17,10 +30,6 @@
 		width: 100%;
 		font-size: 0.8rem;
 		padding: 0.35rem 0.5rem;
-	}
-
-	.footer {
-		margin-top: 0.5rem !important;
 	}
 
 	.pagination-nav {

@@ -20,6 +20,7 @@ export interface AppointmentDTO {
     estatus: string; // 'PENDIENTE', 'CONFIRMADA', etc.
     duracionEstimada?: number; // Duración de la cita en min
     idTrabajador?: number; // id del trabajador
+    nombreTrabajador?: string; // nombre del trabajador asignado (si ya lo tiene)
 
     // Datos del cliente
     clienteNombre: string;

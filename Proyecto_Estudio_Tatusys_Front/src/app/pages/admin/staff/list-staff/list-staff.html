@@ -14,7 +14,7 @@
             <tr>
                 <th scope="col" class="d-none d-lg-table-cell"><h3>ID</h3></th>
                 <th scope="col"><h3>Nombre</h3></th>
-                <th scope="col" class="d-none d-lg-table-cell"><h3>Email</h3></th>
+                <th scope="col" class="d-none d-sm-table-cell"><h3>Email</h3></th>
                 <th scope="col"><h3>Tel.</h3></th>
                 <th scope="col"></th>
             </tr>
@@ -26,7 +26,7 @@
                         <p>{{ miembro.idTrabajador }}</p> 
                     </th>
                     <td><p>{{ miembro.nombre }} {{ miembro.apellido1 }}</p></td>
-                    <td class="d-none d-lg-table-cell"><p>{{ miembro.email }}</p></td>
+                    <td class="d-none d-sm-table-cell"><p>{{ miembro.email }}</p></td>
                     <td><p>{{ miembro.telefono }}</p></td>
                     <td class="d-block d-sm-flex justify-content-around align-items-center h-100">
                         <button class="btn mb-1 mb-sm-0" (click)="editarStaff(miembro.dni)">Editar</button>

@@ -82,10 +82,10 @@
         <nav class="pagination-nav d-flex justify-content-end ms-4">
             <ul class="pagination">
                 
-                <li class="page-item me-1" [class.disabled]="paginaActual === 1 || totalPaginas.length === 0">
+                <li class="page-item me-1" [class.disabled]="paginaActual === 1 || citasConfirmadas.length === 0">
                     <a class="page-link btn" 
-                    [class.btn-secondary]="paginaActual !== 1 && totalPaginas.length > 0" 
-                    (click)="totalPaginas.length && irAPagina('prev')">
+                    [class.btn-secondary]="paginaActual !== 1 && citasConfirmadas.length > 0" 
+                    (click)="citasConfirmadas.length && irAPagina('prev')">
                     Anterior
                     </a>
                 </li>
@@ -100,10 +100,10 @@
                     </li>
                 }
 
-                <li class="page-item me-1" [class.disabled]="paginaActual === totalPaginas.length || totalPaginas.length === 0">
+                <li class="page-item me-1" [class.disabled]="paginaActual === totalPaginas.length || citasConfirmadas.length === 0">
                     <a class="page-link btn" 
-                    [class.btn-secondary]="paginaActual !== totalPaginas.length && totalPaginas.length > 0" 
-                    (click)="totalPaginas.length && irAPagina('next')">
+                    [class.btn-secondary]="paginaActual !== totalPaginas.length && citasConfirmadas.length > 0" 
+                    (click)="citasConfirmadas.length && irAPagina('next')">
                     Siguiente
                     </a>
                 </li>
