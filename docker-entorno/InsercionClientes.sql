@@ -1,3 +1,5 @@
+USE estudio_tatuajes;
+
 -- Clientes de prueba para TatuSys
 INSERT INTO clientes (nombre, apellido1, apellido2, email, telefono, documento_identificacion) VALUES
 	('María', 'García', 'López', 'Maria.Garcia@email.com', '654123456', '12345678A'),

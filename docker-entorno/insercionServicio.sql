@@ -1,3 +1,5 @@
+USE estudio_tatuajes;
+
 -- Servicios de prueba para TatuSys
 INSERT INTO servicios (tipo, zona, tamanio, detalle, coloracion, estilo, fecha, hora, comentarios, duracion_minutos, imagen_ref_1, imagen_ref_2, imagen_ref_3, referencia, id_cliente, factura, estatus) VALUES
 	('TATUAJE', 'BRAZO', 'MEDIANO', 'MEDIO', 'COLOR', 'REALISMO', '2024-12-15', '10:30:00', 'Cliente quiere un diseño de león realista', 120, 'leon_ref1.jpg', 'leon_ref2.jpg', NULL, NULL, 1, true, 'CONFIRMADO'),
